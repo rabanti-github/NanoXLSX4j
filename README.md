@@ -87,4 +87,4 @@ catch (Exception ex)
 
 ## Further References
 See the full <b>API-Documentation</b> at: [https://rabanti-github.github.io/NanoXLSX4j/](https://rabanti-github.github.io/NanoXLSX4j/).<br>
-The [Demo class](https://github.com/rabanti-github/NanoXLSX4j/blob/master/src/main/java/ch/rabanti/nanoxlsx4j/demo/NanoXLSX4j.java) contains 13 simple use cases. You can find also the full documentation in the [Javadoc-Folder](https://github.com/rabanti-github/NanoXLSX4j/tree/master/dist/javadoc) or as Javadoc annotations in the .java files.<br>
+The [Demo class](https://github.com/rabanti-github/NanoXLSX4j/blob/master/src/main/java/ch/rabanti/nanoxlsx4j/demo/NanoXLSX4j.java) contains 13 simple use cases. You can also look at the full API documentation or the Javadoc annotations in the particular .java files.<br>
