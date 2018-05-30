@@ -11,6 +11,7 @@ import ch.rabanti.nanoxlsx4j.exception.RangeException;
 import ch.rabanti.nanoxlsx4j.exception.StyleException;
 import ch.rabanti.nanoxlsx4j.style.Style;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -211,6 +212,7 @@ public class Cell implements Comparable<Cell>{
     public Cell()
     {
         this.worksheetReference = null;
+        this.dataType = CellType.DEFAULT;
     }
     /**
      * Constructor with value and cell type. Cells created with this constructor do not have a link to a worksheet initially
@@ -221,7 +223,10 @@ public class Cell implements Comparable<Cell>{
     {
         this.dataType = type;
         this.value = value;
-        resolveCellType();
+        if (type == CellType.DEFAULT)
+        {
+            resolveCellType();
+        }
     }
 
     /**
@@ -314,15 +319,18 @@ public class Cell implements Comparable<Cell>{
             this.setDataType(CellType.EMPTY);
             value = "";
             return;
-        }        
+        } // the following section is intended to be as similar as possible to PicoXLSX for C#
         if (this.dataType == CellType.FORMULA || this.dataType == CellType.EMPTY) {return;}
-        if (value instanceof Integer) { this.dataType = CellType.NUMBER; }
-        else if (value instanceof Long) { this.dataType = CellType.NUMBER; }
-        else if (value instanceof Float) { this.dataType = CellType.NUMBER; }
-        else if (value instanceof Double) { this.dataType = CellType.NUMBER; }
-        else if (value instanceof Boolean) { this.dataType = CellType.BOOL; }
-        else if (value instanceof Date) { this.dataType = CellType.DATE; }
-        else { this.dataType = CellType.STRING; } // Default
+        else if (value instanceof Boolean)      { this.dataType = CellType.BOOL; }
+        else if (value instanceof Byte)         { this.dataType = CellType.NUMBER; } // sbyte not existing in Java
+        else if (value instanceof BigDecimal)   { this.dataType = CellType.NUMBER; } // decimal
+        else if (value instanceof Double)       { this.dataType = CellType.NUMBER; }
+        else if (value instanceof Float)        { this.dataType = CellType.NUMBER; }
+        else if (value instanceof Integer)      { this.dataType = CellType.NUMBER; } // uint not existing in Java
+        else if (value instanceof Long)         { this.dataType = CellType.NUMBER; }
+        else if (value instanceof Short)        { this.dataType = CellType.NUMBER; } // ushort not existing in Java
+        else if (value instanceof Date)         { this.dataType = CellType.DATE; }
+        else { this.dataType = CellType.STRING; } // Default (char, string, object)
     }
     /**
      * Sets the lock state of the cell
@@ -408,38 +416,19 @@ public class Cell implements Comparable<Cell>{
         for (int i = 0; i < list.size(); i++)
         {
             o = list.get(i);
-            if (o instanceof Integer)
-            {
-                c = new Cell(o, CellType.NUMBER);
-            }
-            else if (o instanceof Long)
-            {
-                c = new Cell(o, CellType.NUMBER);
-            }
-            else if (o instanceof Float)
-            {
-                c = new Cell(o, CellType.NUMBER);
-            }
-            else if (o instanceof Double)
-            {
-                c = new Cell(o, CellType.NUMBER);
-            }
-            else if (o instanceof Boolean)
-            {
-                c = new Cell(o, CellType.BOOL);
-            }
-            else if (o instanceof Date)
-            {
-                c = new Cell(o, CellType.DATE);
-            }
-            else if (o instanceof String)
-            {
-                c = new Cell(o, CellType.STRING);
-            }
+            if (o instanceof Boolean)         { c = new Cell(o, CellType.BOOL);   }
+            if (o instanceof Byte)            { c = new Cell(o, CellType.NUMBER); }
+            else if (o instanceof BigDecimal) { c = new Cell(o, CellType.NUMBER); }
+            else if (o instanceof Double)     { c = new Cell(o, CellType.NUMBER); }
+            else if (o instanceof Float)      { c = new Cell(o, CellType.NUMBER); }
+            else if (o instanceof Integer)    { c = new Cell(o, CellType.NUMBER); }
+            else if (o instanceof Long)       { c = new Cell(o, CellType.NUMBER); }
+            else if (o instanceof Short)      { c = new Cell(o, CellType.NUMBER); }
+            else if (o instanceof Date)       { c = new Cell(o, CellType.DATE);   }
+            else if (o instanceof String)     { c = new Cell(o, CellType.STRING); }
             else
             {
                 c = new Cell(o, CellType.DEFAULT);
-                //throw new UnsupportedDataTypeException("The data type '" + t.toString() + "' is not supported");
             }
             output.add(c);
         }
