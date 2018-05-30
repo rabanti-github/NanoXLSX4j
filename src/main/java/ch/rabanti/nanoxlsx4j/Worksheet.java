@@ -1130,7 +1130,7 @@ public class Worksheet {
         ArrayList<Integer> columnsToDelete = new ArrayList<>();
         for(Map.Entry<Integer, Column> col  : this.getColumns().entrySet())
         {
-            if (col.getValue().hasAutoFilter() == false && col.getValue().isHidden() == false && col.getValue().getWidth() != Worksheet.DEFAULT_COLUMN_WIDTH)
+            if (col.getValue().hasAutoFilter() == false && col.getValue().isHidden() == false && col.getValue().getWidth() == Worksheet.DEFAULT_COLUMN_WIDTH)
             {
                 columnsToDelete.add(col.getKey());
             }

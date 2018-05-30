@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -386,24 +387,13 @@ public class LowLevel {
                 typeAttribute = "n";
                 tValue = " t=\"" + typeAttribute + "\" ";
                 Object o = item.getValue();
-
-                if (o instanceof Integer)
-                {
-                    value = Integer.toString((int)item.getValue());
-                }
-                else if(o instanceof Long)
-                {
-                    value = Long.toString((long)item.getValue());
-                }
-                else if(o instanceof Double)
-                {
-                    value = Double.toString((double)item.getValue());
-                }
-                else if (o instanceof Float)
-                {
-                    value = Float.toString((float)item.getValue());
-                }
-
+                if (o instanceof Byte)            { value = Byte.toString((byte)item.getValue()); }
+                else if (o instanceof BigDecimal) { value = ((BigDecimal)item.getValue()).toString(); }
+                else if (o instanceof Double)     { value = Double.toString((double)item.getValue()); }
+                else if (o instanceof Float)      { value = Float.toString((float)item.getValue());}
+                else if (o instanceof Integer)    { value = Integer.toString((int)item.getValue()); }
+                else if (o instanceof Long)       { value = Long.toString((long)item.getValue()); }
+                else if (o instanceof Short)      { value = Short.toString((short)item.getValue()); }
             }
             // Date parsing
             else if (item.getDataType() == Cell.CellType.DATE)

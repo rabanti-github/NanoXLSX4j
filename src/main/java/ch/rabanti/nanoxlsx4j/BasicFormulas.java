@@ -9,6 +9,8 @@ package ch.rabanti.nanoxlsx4j;
 import ch.rabanti.nanoxlsx4j.Cell.CellType;
 import ch.rabanti.nanoxlsx4j.exception.FormatException;
 
+import java.math.BigDecimal;
+
 /**
  * Class for handling of basic Excel formulas
  * @author Raphael Stoeckli
@@ -225,22 +227,13 @@ public final class BasicFormulas
         String arg1, arg2, arg3, arg4;
         if (numericLookup == true)
         {
-            if (number instanceof  Integer)
-            {
-                arg1 =  Integer.toString((int)number);
-            }
-            else if (number instanceof  Long)
-            {
-                arg1 =  Long.toString((long)number);
-            }
-            else if (number instanceof  Double)
-            {
-                arg1 =  Double.toString((double)number);
-            }
-            else if (number instanceof  Float)
-            {
-                arg1 =  Float.toString((float)number);
-            }
+            if (number instanceof  Byte)           { arg1 = Byte.toString((byte)number); }
+            else if (number instanceof BigDecimal) { arg1 = ((BigDecimal)number).toString(); }
+            else if (number instanceof  Double)    { arg1 =  Double.toString((double)number); }
+            else if (number instanceof  Float)     { arg1 =  Float.toString((float)number); }
+            else if (number instanceof  Integer)   { arg1 =  Integer.toString((int)number); }
+            else if (number instanceof  Long)      { arg1 =  Long.toString((long)number); }
+            else if (number instanceof  Short)     { arg1 =  Short.toString((short)number); }
             else
             {
                 throw new FormatException("InvalidLookupType", "The lookup variable can only be a cell address or a numeric value. The value '" + number + "' is invalid.");
