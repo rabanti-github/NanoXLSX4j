@@ -181,7 +181,7 @@ public class Workbook {
     
 // ### C O N S T R U C T O R S ###
     /**
-     * Default Constructor with additional parameter to create a default worksheet
+     * Constructor with additional parameter to create a default worksheet. This constructor can be used to define a workbook that is saved as stream
      * @param createWorksheet If true, a default worksheet with the name 'Sheet1' will be created and set as current worksheet
      */
     public Workbook(boolean createWorksheet)
@@ -192,20 +192,31 @@ public class Workbook {
                 addWorksheet("Sheet1");
             }       
     }
+
     /**
-     * Constructor with filename ant the name of the first worksheet
+     * Constructor with additional parameter to create a default worksheet with the specified name. This constructor can be used to define a workbook that is saved as stream
+     * @param sheetName Name of the first worksheet. The name will be sanitized automatically according to the specifications of Excel
+     * @throws FormatException Thrown if the worksheet name contains illegal characters
+     */
+    public Workbook(String sheetName)
+    {
+        init();
+        addWorksheet(sheetName, true);
+    }
+
+    /**
+     * Constructor with filename ant the name of the first worksheet. This constructor can be used to define a workbook that is saved as stream
      * @param filename Filename of the workbook
-     * @param sheetName Name of the first worksheet
-     * @throws WorksheetException thrown if the passed worksheet name already exists
+     * @param sheetName Name of the first worksheet. The name will be sanitized automatically according to the specifications of Excel
      * @throws FormatException Thrown if the worksheet name contains illegal characters
      */
     public Workbook(String filename, String sheetName)
     {
         init();   
         this.filename = filename;
-        addWorksheet(sheetName);
+        addWorksheet(sheetName, true);
     }
-    
+
     /**
      * Constructor with filename ant the name of the first worksheet
      * @param filename Filename of the workbook

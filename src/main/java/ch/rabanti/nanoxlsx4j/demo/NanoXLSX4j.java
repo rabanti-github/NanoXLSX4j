@@ -52,8 +52,9 @@ public class NanoXLSX4j {
         demo7();
         demo8();
         demo9();
+        demo10();
     }
-    
+
         /**
          * This is a very basic demo (adding three values and save the workbook)
          */
@@ -269,7 +270,7 @@ public class NanoXLSX4j {
             workbook.getCurrentWorksheet().addNextCell("C");                    // Add cell C3
 
             Style s = new Style();                                              // Create new style
-            s.getFill().SetColor("FF22FF11", Fill.FillType.fillColor);          // Set fill color
+            s.getFill().setColor("FF22FF11", Fill.FillType.fillColor);          // Set fill color
             s.getFont().setDoubleUnderline(true);                               // Set double underline
             s.getCellXf().setHorizontalAlign(CellXf.HorizontalAlignValue.center);  // Set alignment
             
@@ -523,6 +524,37 @@ public class NanoXLSX4j {
             {
                System.out.println(e.getMessage()); 
             }
-        }        
+        }
+
+    /**
+     * This demo shows the usage of style appending
+     */
+    private static void demo10()
+    {
+        Workbook wb = new Workbook(outputFolder + "demo10.xlsx", "styleAppending");  // Create a new workbook
+
+        Style style = new Style();                                                              // Create a new style
+        style.append(BasicStyles.Bold());                                                       // Append a basic style (bold)
+        style.append(BasicStyles.Underline());                                                  // Append a basic style (underline)
+        style.append(BasicStyles.font("Arial Black", 20));                    // Append a basic style (custom Font)
+
+        wb.WS.value("THIS IS A TEST", style);                                             // Add text and the appended style
+        wb.WS.down();                                                                           // Go to a new row
+
+        Style chainedStyle = new Style()                                                        // Create a new style...
+                .append(BasicStyles.Underline())                                                // ... and append another part (chaining underline)
+                .append(BasicStyles.colorizedText("FF00FF"))                               // ... and append another part (chaining colorized text)
+                .append(BasicStyles.colorizedBackground("AAFFAA"));                        // ... and append another part (chaining colorized background)
+
+        wb.WS.value("Another test", chainedStyle);                                        // Add text and the appended style
+        try
+        {
+            wb.save();                                                                          // Save the workbook
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
     
 }

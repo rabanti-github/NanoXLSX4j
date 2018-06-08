@@ -1,5 +1,20 @@
 # Change Log
 
+## v1.1.0
+
+---
+Release Date: **08.06.2018**
+
+- Added style appending (builder / method chaining)
+- Added new basic styles colorizedText, colorizedBackground and font as functions
+- Added a new constructor for Workbooks without file name to handle stream-only workbooks more logical
+- Added the functions hasCell, getLastColumnNumber and getLastRowNumber in the Worksheet class
+- Renamed the function SetColor in the class Fill (Style) to setColor, to follow conventions. Minor refactoring in existing projects may be possible
+- Fixed a bug when overriding a worksheet name with sanitizing
+- Added new demo for the introduced style features
+- Internal optimizations and fixes
+
+
 ## v1.0.1
  
 ---

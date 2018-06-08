@@ -919,15 +919,82 @@ public class Worksheet {
     
     /**
      * Gets the cell of the specified column and row number (zero-based)
-     * @param columnNumber Column address of the cell
-     * @param rowNumber Row address of the cell
+     * @param columnNumber Column number of the cell (zero-based)
+     * @param rowNumber Row number of the cell (zero-based)
      * @return Cell object
      * @throws WorksheetException Throws a WorksheetException if the cell was not found on the cell table of this worksheet
      */
     public Cell getCell(int columnNumber, int rowNumber)
     {
         return getCell(new Address(columnNumber, rowNumber));
-    }    
+    }
+
+    /**
+     * Gets whether the specified address exists in the worksheet. Existing means that a value was stored at the address
+     * @param address Address to check
+     * @return True if the cell exists, otherwise false
+     */
+    public boolean hasCell(Address address)
+    {
+        return this.cells.containsKey(address.getAddress());
+    }
+
+    /**
+     * Gets whether the specified address exists in the worksheet. Existing means that a value was stored at the address
+     * @param columnNumber Column number of the cell to check (zero-based)
+     * @param rowNumber Row number of the cell to check (zero-based)
+     * @return True if the cell exists, otherwise false
+     */
+    public boolean hasCell(int columnNumber, int rowNumber)
+    {
+        return hasCell(new Address(columnNumber, rowNumber));
+    }
+
+    /**
+     * Gets the last existing column number in the current worksheet (zero-based)
+     * @return Zero-based column number. In case of a empty worksheet, -1 will be returned
+     */
+    public int getLastColumnNumber()
+    {
+        return getLastAddress(true);
+    }
+
+    /**
+     * Gets the last existing row number in the current worksheet (zero-based)
+     * @return Zero-based row number. In case of a empty worksheet, -1 will be returned
+     */
+    public int getLastRowNumber()
+    {
+        return getLastAddress(false);
+    }
+
+    /**
+     * Gets the last existing row or column number of the current worksheet (zero-based)
+     * @param column If true, the output will be the last column, otherwise the last row
+     * @return Row or column number (zero-based)
+     */
+    private int getLastAddress(boolean column)
+    {
+        int max = -1;
+        int number;
+        for(Map.Entry<String, Cell> cell : this.cells.entrySet())
+        {
+            if (column == true)
+            {
+                number = cell.getValue().getColumnNumber();
+            }
+            else
+            {
+                number = cell.getValue().getRowNumber();
+            }
+            if (number > max)
+            {
+                max = number;
+            }
+        }
+        return max;
+    }
+
     
     /**
      * Set the current cell address
@@ -989,6 +1056,7 @@ public class Worksheet {
        {
            throw new WorksheetException("MissingReferenceException", "The worksheet name cannot be sanitized because no workbook is referenced");
        }
+       this.sheetName = ""; // Empty name (temporary) to prevent conflicts during sanitizing
        this.sheetName =  Worksheet.sanitizeWorksheetName(sheetName, this.workbookReference);         
     }
     

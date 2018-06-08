@@ -9,7 +9,7 @@ package ch.rabanti.nanoxlsx4j.style;
 import static ch.rabanti.nanoxlsx4j.style.StyleManager.FILLPREFIX;
 
 /**
- *
+ * Class representing a Fill (background) entry. The Fill entry is used to define background colors and fill patterns
  * @author Raphael Stoeckli
  */
 public class Fill extends AbstractStyle
@@ -237,7 +237,7 @@ public class Fill extends AbstractStyle
      * @param value Color value
      * @param fillType Fill type (fill or pattern)
      */
-    public void SetColor(String value, FillType fillType)
+    public void setColor(String value, FillType fillType)
     {
         if (fillType == FillType.fillColor)
         {
