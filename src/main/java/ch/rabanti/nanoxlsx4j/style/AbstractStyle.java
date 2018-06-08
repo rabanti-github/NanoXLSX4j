@@ -6,6 +6,11 @@
  */
 package ch.rabanti.nanoxlsx4j.style;
 
+import ch.rabanti.nanoxlsx4j.exception.StyleException;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+
 /**
  * Class represents an abstract style component
  * @author Raphael Stoeckli
@@ -13,6 +18,7 @@ package ch.rabanti.nanoxlsx4j.style;
 public abstract class AbstractStyle implements Comparable<AbstractStyle>
 {
 // ### P R I V A T E  F I E L D S ###
+    @AppendAnnotation(ignore = true)
     private Integer internalID = null;
     
 // ### G E T T E R S  &  S E T T E R S ###
@@ -132,6 +138,54 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle>
         if (delimiter != null)
         {
             sb.append(delimiter);
+        }
+    }
+
+    /**
+     * Internal method to copy altered fields from a source object. The decision whether a field is copied is dependent on a untouched reference object
+     * @param source Style or sub-class of Style that extends AbstractStyle
+     * @param reference Source object with properties to copy
+     * @param <T> Reference object to decide whether the fields from the source objects are altered or not
+     */
+    <T extends AbstractStyle> void copyFields(T source, T reference)
+    {
+        if (this.getClass().equals(source.getClass()) == false && this.getClass().equals(reference.getClass()) == false )
+        {
+            throw new StyleException("CopyFieldException", "The objects of the source, target and reference for style appending are not of the same type");
+        }
+        boolean ignore;
+        Field[] infos = this.getClass().getDeclaredFields();
+        Field sourceInfo, referenceInfo;
+        Annotation[] annotations;
+        try {
+            for (Field info : infos) {
+                annotations = info.getDeclaredAnnotationsByType(AppendAnnotation.class);
+                if (annotations.length > 0) {
+                    ignore = false;
+                    for (Annotation annotation : annotations) {
+                        if (((AppendAnnotation) annotation).ignore() == true || ((AppendAnnotation) annotation).nestedProperty() == true) {
+                            ignore = true;
+                            break;
+                        }
+                    }
+                    if (ignore == true) {
+                        continue;
+                    } // skip field
+                }
+                sourceInfo = source.getClass().getDeclaredField(info.getName());
+                sourceInfo.setAccessible(true); // Necessary to access private field
+                referenceInfo = reference.getClass().getDeclaredField(info.getName());
+                referenceInfo.setAccessible(true); // Necessary to access private field
+                if (sourceInfo.get(source).equals(referenceInfo.get(reference)) == false)
+                {
+                    info.setAccessible(true); // Necessary to access private field
+                    info.set(this, sourceInfo.get(source));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new StyleException("CopyFieldException", "The field of the source object could not be copied to the target object: " + ex.getMessage());
         }
     }
     

@@ -16,14 +16,23 @@ public class Style extends AbstractStyle
 {
     
 // ### P R I V A T E  F I E L D S ###
+    @AppendAnnotation(nestedProperty = true)
     private Border borderRef;
+    @AppendAnnotation(nestedProperty = true)
     private CellXf cellXfRef;
+    @AppendAnnotation(nestedProperty = true)
     private Fill fillRef;
+    @AppendAnnotation(nestedProperty = true)
     private Font fontRef;
+    @AppendAnnotation(nestedProperty = true)
     private NumberFormat numberFormatRef;
+    @AppendAnnotation(ignore = true)
     private StyleManager styleManagerReference = null;
+    @AppendAnnotation(ignore = true)
     private String name;
+    @AppendAnnotation(ignore = true)
     private boolean internalStyle;
+    @AppendAnnotation(ignore = true)
     private boolean styleNameDefined;
 
 // ### G E T T E R S  &  S E T T E R S ###
@@ -196,6 +205,45 @@ public class Style extends AbstractStyle
     }
     
 // ### M E T H O D S ###
+
+    /**
+     * Appends the specified style parts to the current one. The parts can be instances of sub-classes like Border or CellXf or a Style instance. Only the altered properties of the specified style or style part that differs from a new / untouched style instance will be appended. This enables method chaining
+     * @param styleToAppend The style to append or a sub-class of Style
+     * @return Current style with appended style parts
+     */
+    public Style append(AbstractStyle styleToAppend)
+    {
+        if (styleToAppend instanceof Border)
+        {
+            this.getBorder().copyFields(styleToAppend, new Border());
+        }
+        else if (styleToAppend instanceof CellXf)
+        {
+            this.getCellXf().copyFields(styleToAppend, new CellXf());
+        }
+        else if (styleToAppend instanceof Fill)
+        {
+            this.getFill().copyFields(styleToAppend, new Fill());
+        }
+        else if (styleToAppend instanceof Font)
+        {
+            this.getFont().copyFields(styleToAppend, new Font());
+        }
+        else if (styleToAppend instanceof NumberFormat)
+        {
+            this.getNumberFormat().copyFields(styleToAppend, new NumberFormat());
+        }
+        else if (styleToAppend instanceof Style)
+        {
+            this.getBorder().copyFields(((Style) styleToAppend).getBorder(), new Border());
+            this.getCellXf().copyFields(((Style) styleToAppend).getCellXf(), new CellXf());
+            this.getFill().copyFields(((Style) styleToAppend).getFill(), new Fill());
+            this.getFont().copyFields(((Style) styleToAppend).getFont(), new Font());
+            this.getNumberFormat().copyFields(((Style) styleToAppend).getNumberFormat(), new NumberFormat());
+        }
+        return this;
+    }
+
     /**
      * Method to reorganize / synchronize the components of this style
      */

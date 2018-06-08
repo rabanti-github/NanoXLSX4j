@@ -26,7 +26,7 @@ The only requirement for developments are a current JDK to develop and JRE to ru
 
 # Installation
 ## As JAR
-Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-1.0.1.jar**) into the lib folder of your project and create a library reference to it in your IDE.
+Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-1.1.0.jar**) into the lib folder of your project and create a library reference to it in your IDE.
 ## As source files
 Place all .java files from the NanoXLSX4j source folder into your project. The folder structure defines the packages. Please use refactoring if you want to relocate the files.
 ## Maven ##
@@ -35,7 +35,7 @@ Add the following information to your POM file within the <code>&lt;dependencies
 <dependency>
     <groupId>ch.rabanti</groupId>
     <artifactId>nanoxlsx4j</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ``` 
 
@@ -87,4 +87,4 @@ catch (Exception ex)
 
 ## Further References
 See the full <b>API-Documentation</b> at: [https://rabanti-github.github.io/NanoXLSX4j/](https://rabanti-github.github.io/NanoXLSX4j/).<br>
-The [Demo class](https://github.com/rabanti-github/NanoXLSX4j/blob/master/src/main/java/ch/rabanti/nanoxlsx4j/demo/NanoXLSX4j.java) contains 13 simple use cases. You can also look at the full API documentation or the Javadoc annotations in the particular .java files.<br>
+The [Demo class](https://github.com/rabanti-github/NanoXLSX4j/blob/master/src/main/java/ch/rabanti/nanoxlsx4j/demo/NanoXLSX4j.java) contains 14 simple use cases. You can also look at the full API documentation or the Javadoc annotations in the particular .java files.<br>

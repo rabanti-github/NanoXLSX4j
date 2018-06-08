@@ -266,7 +266,81 @@ public final class BasicStyles {
                 break;
         }
         return s.copyStyle(); // Copy makes basic styles immutable
-    }     
-     
+    }
+
+    /**
+     * Gets a style to colorize the text of a cell
+     * @param rgb RGB code in hex format (e.g. FF00AC). Alpha will be set to full opacity (FF)
+     * @return Style with Font color definition
+     */
+    public static Style colorizedText(String rgb)
+    {
+        Style s = new Style();
+        s.getFont().setColorValue("FF" + rgb.toUpperCase());
+        return s;
+    }
+
+    /**
+     * Gets a style to colorize the background of a cell
+     * @param rgb RGB code in hex format (e.g. FF00AC). Alpha will be set to full opacity (FF)
+     * @return Style with background color definition
+     */
+    public static Style colorizedBackground(String rgb)
+    {
+        Style s = new Style();
+        s.getFill().setColor("FF" + rgb.toUpperCase(), Fill.FillType.fillColor);
+        return s;
+    }
+
+    /**
+     * Gets a style with a user defined Font (Font size 11)<br>Note: The Font name as well as the availability of bold and italic on the Font cannot be validated by PicoXLSX4j. The generated file may be corrupt or rendered with a fall-back Font in case of an error
+     * @param fontName Name of the Font
+     * @return Style with Font definition
+     */
+    public static Style font(String fontName)
+    {
+        return BasicStyles.font(fontName, 11, false, false);
+    }
+
+    /**
+     * Gets a style with a user defined Font<br>Note: The Font name as well as the availability of bold and italic on the Font cannot be validated by PicoXLSX4j. The generated file may be corrupt or rendered with a fall-back Font in case of an error
+     * @param fontName Name of the Font
+     * @param fontSize Size of the Font in points
+     * @return Style with Font definition
+     */
+    public static Style font(String fontName, int fontSize)
+    {
+        return BasicStyles.font(fontName, fontSize, false, false);
+    }
+
+    /**
+     * Gets a style with a user defined Font<br>Note: The Font name as well as the availability of bold and italic on the Font cannot be validated by PicoXLSX4j. The generated file may be corrupt or rendered with a fall-back Font in case of an error
+     * @param fontName Name of the Font
+     * @param fontSize Size of the Font in points
+     * @param isBold If true, the Font will be bold
+     * @return Style with Font definition
+     */
+    public static Style font(String fontName, int fontSize, boolean isBold)
+    {
+        return BasicStyles.font(fontName, fontSize, isBold, false);
+    }
+
+    /**
+     * Gets a style with a user defined Font<br>Note: The Font name as well as the availability of bold and italic on the Font cannot be validated by PicoXLSX4j. The generated file may be corrupt or rendered with a fall-back Font in case of an error
+     * @param fontName Name of the Font
+     * @param fontSize Size of the Font in points
+     * @param isBold If true, the Font will be bold
+     * @param isItalic If true, the Font will be italic
+     * @return Style with Font definition
+     */
+    public static Style font(String fontName, int fontSize, boolean isBold, boolean isItalic)
+    {
+        Style s = new Style();
+        s.getFont().setName(fontName);
+        s.getFont().setSize(fontSize);
+        s.getFont().setBold(isBold);
+        s.getFont().setItalic(isItalic);
+        return s;
+    }
      
 }
