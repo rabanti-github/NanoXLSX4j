@@ -58,7 +58,30 @@ public class Cell implements Comparable<Cell>{
          * Default Type, not specified
          */
         DEFAULT
-    }    
+    }
+
+    /**
+     * Enum for the referencing style of the address
+     */
+    public enum AddressType
+    {
+        /**
+         * Default behavior (e.g. 'C3')
+         */
+        Default,
+        /**
+         * Row of the address is fixed (e.g. 'C$3')
+         */
+        FixedRow,
+        /**
+         * Column of the address is fixed (e.g. '$C3')
+         */
+        FixedColumn,
+        /**
+         * Row and column of the address is fixed (e.g. '$C$3')
+         */
+        FixedRowAndColumn
+    }
     
 // ### P R I V A T E  F I E L D S ###
     
@@ -501,7 +524,7 @@ public class Cell implements Comparable<Cell>{
             }
             return output;
     }
-    
+
     /**
      * Gets the address of a cell by the column and row number (zero based)
      * @param column Column address of the cell (zero-based)
@@ -511,11 +534,41 @@ public class Cell implements Comparable<Cell>{
      */
     public static String resolveCellAddress(int column, int row)
     {
-            if (row > Worksheet.MAX_ROW_NUMBER || row < Worksheet.MIN_ROW_NUMBER)
-            {
-                throw new RangeException("OutOfRangeException","The row number (" + Integer.toString(row) + ") is out of range. Range is from " + Integer.toString(Worksheet.MIN_ROW_NUMBER) + " to " + Integer.toString(Worksheet.MAX_ROW_NUMBER) + " (" + (Integer.toString(Worksheet.MIN_ROW_NUMBER) + 1) + " rows).");
-            }
-            return resolveColumnAddress(column) + Integer.toString(row + 1);    
+        if (row > Worksheet.MAX_ROW_NUMBER || row < Worksheet.MIN_ROW_NUMBER)
+        {
+            throw new RangeException("OutOfRangeException","The row number (" + Integer.toString(row) + ") is out of range. Range is from " + Integer.toString(Worksheet.MIN_ROW_NUMBER) + " to " + Integer.toString(Worksheet.MAX_ROW_NUMBER) + " (" + (Integer.toString(Worksheet.MIN_ROW_NUMBER) + 1) + " rows).");
+        }
+        return resolveCellAddress(column, row, AddressType.Default);
+    }
+
+    /**
+     * Gets the address of a cell by the column and row number (zero based)
+     * @param column Column address of the cell (zero-based)
+     * @param row Row address of the cell (zero-based)
+     * @param type Referencing type of the address
+     * @return Cell Address as string in the format A1 - XFD1048576
+     * @throws RangeException Thrown if the start or end address was out of range
+     */
+    public static String resolveCellAddress(int column, int row, AddressType type)
+    {
+        if (row > Worksheet.MAX_ROW_NUMBER || row < Worksheet.MIN_ROW_NUMBER)
+        {
+            throw new RangeException("OutOfRangeException","The row number (" + Integer.toString(row) + ") is out of range. Range is from " + Integer.toString(Worksheet.MIN_ROW_NUMBER) + " to " + Integer.toString(Worksheet.MAX_ROW_NUMBER) + " (" + (Integer.toString(Worksheet.MIN_ROW_NUMBER) + 1) + " rows).");
+        }
+        switch (type) {
+            case FixedRowAndColumn:
+                return "$"+ resolveColumnAddress(column) + "$" + Integer.toString(row + 1);
+            // break;
+            case FixedColumn:
+                return "$" + resolveColumnAddress(column) + Integer.toString(row + 1);
+            // break;
+            case FixedRow:
+                return resolveColumnAddress(column) + "$" + Integer.toString(row + 1);
+            // break;
+            default:
+                return resolveColumnAddress(column) + Integer.toString(row + 1);
+            // break;
+        }
     }
     
     /**
