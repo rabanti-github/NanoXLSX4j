@@ -79,7 +79,11 @@ public class Worksheet {
         /**
          * The next cell will be on the same column (A1,A2,A3...)
          */
-        RowToRow      
+        RowToRow,
+        /**
+         * The address of the next cell will be not changed when adding a cell (for manual definition of cell addresses)
+         */
+        Disabled
     }
     /**
      * Enum to define the possible protection types when protecting a worksheet
@@ -527,10 +531,11 @@ public class Worksheet {
             {
                 this.currentColumnNumber++;
             }
-            else
+            else if (this.getCurrentCellDirection() == CellDirection.RowToRow)
             {
                 this.currentRowNumber++;
             }
+            // else = disabled
         }
         else
         {
@@ -539,11 +544,12 @@ public class Worksheet {
                 this.currentColumnNumber = cell.getColumnNumber() + 1;
                 this.currentRowNumber = cell.getRowNumber();
             }
-            else
+            else if (this.getCurrentCellDirection() == CellDirection.RowToRow)
             {
                 this.currentColumnNumber = cell.getColumnNumber();
                 this.currentRowNumber = cell.getRowNumber() + 1;
             }
+            // else = disabled
         }
     }
     
