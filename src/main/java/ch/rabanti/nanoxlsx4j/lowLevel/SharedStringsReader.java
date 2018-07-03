@@ -80,7 +80,7 @@ public class SharedStringsReader
         try {
             xr = factory.createXMLStreamReader(stream);
             boolean isStringItem = false, isText = false;
-            String item = "";
+            StringBuilder sb = new StringBuilder();
             String name;
             int type;
             while (xr.hasNext()) {
@@ -97,8 +97,7 @@ public class SharedStringsReader
                 {
                     name = xr.getName().getLocalPart().toLowerCase();
                     if (name.equals("si") && isStringItem == true && isText == true) {
-                        sharedStrings.add(item);
-                        item = "";
+                        sb.setLength(0);
                         isText = false;
                         isStringItem = false;
                     }
@@ -107,7 +106,7 @@ public class SharedStringsReader
                 {
                     if (isText)
                     {
-                        item = xr.getText();
+                        sb.append(xr.getText());
                     }
                 }
             }
