@@ -1,5 +1,12 @@
 # Change Log
 
+## v1.2.1
+
+---
+Release Date: **03.07.2018**
+
+- Fixed a bug in the reader of the sharedStrings table (html entities were truncated)
+
 ## v1.2.0
 
 ---

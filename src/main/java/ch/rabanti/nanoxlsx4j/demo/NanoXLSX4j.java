@@ -40,7 +40,7 @@ public class NanoXLSX4j {
             File dir = new File(outputFolder);                                   // Create new folder if not existing
             dir.mkdirs();
         }
-        // --> Demos are starting here
+            // --> Demos are starting here
         basicDemo();
         read();
         shortenerDemo();
