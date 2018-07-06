@@ -97,6 +97,7 @@ public class SharedStringsReader
                 {
                     name = xr.getName().getLocalPart().toLowerCase();
                     if (name.equals("si") && isStringItem == true && isText == true) {
+                        sharedStrings.add(sb.toString());
                         sb.setLength(0);
                         isText = false;
                         isStringItem = false;

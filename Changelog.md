@@ -1,5 +1,12 @@
 # Change Log
 
+## v1.2.2
+
+---
+Release Date: **06.07.2018**
+
+- Fixed a bug in the reader of the sharedStrings table (follow-up bug of v.1.2.1 - Please update)
+
 ## v1.2.1
 
 ---
