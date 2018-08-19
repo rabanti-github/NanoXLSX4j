@@ -21,7 +21,7 @@ public final class BasicFormulas
     /**
     * Returns a cell with a average formula
     * @param range Cell range to apply the average operation to
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Average(Range range)
     { return Average(null, range); }
@@ -30,7 +30,7 @@ public final class BasicFormulas
     * Returns a cell with a average formula
     * @param target Target worksheet of the average operation. Can be null if on the same worksheet
     * @param range Cell range to apply the average operation to
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Average(Worksheet target, Range range)
     { return getBasicFormula(target, range, "AVERAGE", null); }
@@ -39,7 +39,7 @@ public final class BasicFormulas
     * Returns a cell with a ceil formula
     * @param address Address to apply the ceil operation to
     * @param decimals Number of decimals (digits)
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Ceil(Address address, int decimals)
     { return Ceil(null, address, decimals); }
@@ -49,7 +49,7 @@ public final class BasicFormulas
     * @param target Target worksheet of the ceil operation. Can be null if on the same worksheet
     * @param address Address to apply the ceil operation to
     * @param decimals Number of decimals (digits)
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Ceil(Worksheet target, Address address , int decimals)
     { return getBasicFormula(target, new Range(address, address), "ROUNDUP", Integer.toString(decimals)); }
@@ -58,7 +58,7 @@ public final class BasicFormulas
     * Returns a cell with a floor formula
     * @param address Address to apply the floor operation to
     * @param decimals Number of decimals (digits)
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Floor(Address address, int decimals)
     { return Floor(null, address, decimals); }
@@ -68,7 +68,7 @@ public final class BasicFormulas
     * @param target Target worksheet of the floor operation. Can be null if on the same worksheet
     * @param address Address to apply the floor operation to
     * @param decimals Number of decimals (digits)
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Floor(Worksheet target, Address address, int decimals)
     { return getBasicFormula(target, new Range(address, address), "ROUNDDOWN", Integer.toString(decimals)); }
@@ -76,7 +76,7 @@ public final class BasicFormulas
     /**
     * Returns a cell with a max formula
     * @param range Cell range to apply the max operation to
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Max(Range range)
     { return Max(null, range); }
@@ -85,7 +85,7 @@ public final class BasicFormulas
     * Returns a cell with a max formula
     * @param target Target worksheet of the max operation. Can be null if on the same worksheet
     * @param range Cell range to apply the max operation to
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Max(Worksheet target, Range range)
     { return getBasicFormula(target, range, "MAX", null); }
@@ -93,7 +93,7 @@ public final class BasicFormulas
     /**
     * Returns a cell with a median formula
     * @param range Cell range to apply the median operation to
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Median(Range range)
     { return Median(null, range); }
@@ -102,7 +102,7 @@ public final class BasicFormulas
     * Returns a cell with a median formula
     * @param target Target worksheet of the median operation. Can be null if on the same worksheet
     * @param range Cell range to apply the median operation to
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Median(Worksheet target, Range range)
     { return getBasicFormula(target, range, "MEDIAN", null); }
@@ -110,7 +110,7 @@ public final class BasicFormulas
     /**
     * Returns a cell with a min formula
     * @param range Cell range to apply the min operation to
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Min(Range range)
     { return Min(null, range); }
@@ -119,7 +119,7 @@ public final class BasicFormulas
     * Returns a cell with a min formula
     * @param target Target worksheet of the min operation. Can be null if on the same worksheet
     * @param range Cell range to apply the median operation to
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Min(Worksheet target, Range range)
     { return getBasicFormula(target, range, "MIN", null); }
@@ -128,7 +128,7 @@ public final class BasicFormulas
     * Returns a cell with a round formula
     * @param address Address to apply the round operation to
     * @param decimals Number of decimals (digits)
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Round(Address address, int decimals)
     { return Round(null, address, decimals); }
@@ -138,7 +138,7 @@ public final class BasicFormulas
     * @param target Target worksheet of the round operation. Can be null if on the same worksheet
     * @param address Address to apply the round operation to
     * @param decimals Number of decimals (digits)
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Round(Worksheet target, Address address, int decimals)
     { return getBasicFormula(target, new Range(address, address), "ROUND", Integer.toString(decimals)); }
@@ -146,7 +146,7 @@ public final class BasicFormulas
     /**
     * Returns a cell with a sum formula
     * @param range Cell range to get a sum of
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Sum(Range range)
     { return Sum(null, range); }
@@ -155,7 +155,7 @@ public final class BasicFormulas
     * Returns a cell with a sum formula
     * @param target Target worksheet of the sum operation. Can be null if on the same worksheet
     * @param range Cell range to get a sum of
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell Sum(Worksheet target, Range range)
     { return getBasicFormula(target, range, "SUM", null); }
@@ -167,7 +167,7 @@ public final class BasicFormulas
     * @param range Matrix of the lookup
     * @param columnIndex Column index of the target column (1 based)
     * @param exactMatch If true, an exact match is applied to the lookup
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell VLookup(Object number, Range range, int columnIndex, boolean exactMatch)
     { return VLookup(number, null, range, columnIndex, exactMatch); }
@@ -179,7 +179,7 @@ public final class BasicFormulas
     * @param range Matrix of the lookup
     * @param columnIndex Column index of the target column (1 based)
     * @param exactMatch If true, an exact match is applied to the lookup
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell VLookup(Object number, Worksheet rangeTarget, Range range, int columnIndex, boolean exactMatch)
     { return getVLookup(null, null, number, rangeTarget, range, columnIndex, exactMatch, true); }
@@ -190,7 +190,7 @@ public final class BasicFormulas
     * @param range Matrix of the lookup
     * @param columnIndex Column index of the target column (1 based)
     * @param exactMatch If true, an exact match is applied to the lookup
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell VLookup(Address address, Range range, int columnIndex, boolean exactMatch)
     { return VLookup(null, address, null, range, columnIndex, exactMatch); }
@@ -203,7 +203,7 @@ public final class BasicFormulas
     * @param range Matrix of the lookup
     * @param columnIndex Column index of the target column (1 based)
     * @param exactMatch If true, an exact match is applied to the lookup
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     public static Cell VLookup(Worksheet queryTarget, Address address, Worksheet rangeTarget, Range range, int columnIndex, boolean exactMatch)
     {
@@ -220,7 +220,7 @@ public final class BasicFormulas
     * @param columnIndex Column index of the target column (1 based)
     * @param exactMatch If true, an exact match is applied to the lookup
     * @param numericLookup If true, the lookup is a numeric lookup, otherwise a reference lookup
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
     */
     private static Cell getVLookup(Worksheet queryTarget, Address address, Object number, Worksheet rangeTarget, Range range, int columnIndex, boolean exactMatch, boolean numericLookup)
     {
@@ -259,7 +259,7 @@ public final class BasicFormulas
     * @param range Main argument as cell range. If applied on one cell, the start and end address are identical
     * @param functionName Internal Excel function name
     * @param postArg Optional argument
-    * @return Prepared Cell Object, ready to added to a worksheet
+    * @return Prepared Cell Object, ready to be added to a worksheet
 	*/
     private static Cell getBasicFormula(Worksheet target, Range range, String functionName, String postArg)
     {

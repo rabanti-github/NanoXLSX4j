@@ -1,5 +1,12 @@
 # Change Log
 
+## v1.2.3
+ ---
+Release Date: **19.08.2018**
+
+- Fixed a bug in the Font style class
+- Fixed typos
+
 ## v1.2.2
 
 ---

@@ -340,6 +340,7 @@ public class Font extends AbstractStyle
         copy.setBold(this.bold);
         copy.setCharset(this.charset);
         copy.setColorTheme(this.colorTheme);
+        copy.setColorValue(this.colorValue);
         copy.setVerticalAlign(this.verticalAlign);
         copy.setDoubleUnderline(this.doubleUnderline);
         copy.setFamily(this.family);
@@ -367,6 +368,7 @@ public class Font extends AbstractStyle
         castValue(this.doubleUnderline, sb, ':');
         castValue(this.strike, sb, ':');
         castValue(this.colorTheme, sb, ':');
+        castValue(this.colorValue, sb, ':');
         castValue(this.family, sb, ':');
         castValue(this.name, sb, ':');
         castValue(this.scheme.getValue(), sb, ':');
