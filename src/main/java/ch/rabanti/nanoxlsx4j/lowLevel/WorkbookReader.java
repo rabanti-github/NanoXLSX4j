@@ -23,7 +23,7 @@ public class WorkbookReader
     private final Map<Integer, String> worksheetDefinitions;
 
     /**
-     * Hashmap of worksheet definitions. The key ist the worksheet number and the value is the worksheet name
+     * Hashmap of worksheet definitions. The key is the worksheet number and the value is the worksheet name
      * @return Hashmap of number-name tuples
      */
     public Map<Integer, String> getWorksheetDefinitions() {
@@ -39,8 +39,8 @@ public class WorkbookReader
     }
 
     /**
-     * Reads the xlsx file form the passed stream and processes the workbook information
-     * @param stream Stream of the xlsx file
+     * Reads the XML file form the passed stream and processes the workbook information
+     * @param stream Stream of the XML file
      * @throws IOException Throws IOException in case of an error
      */
     public void read(InputStream stream) throws IOException

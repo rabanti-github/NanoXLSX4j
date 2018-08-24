@@ -1,5 +1,16 @@
 # Change Log
 
+## v1.2.4
+
+---
+Release Date: **24.08.2018**
+
+- Fixed a bug in the calculation of OA Dates (internal format)
+- Fixed a bug regarding formulas in the reader
+- Added support for dates in the reader
+- Documentation Update
+
+
 ## v1.2.3
  ---
 Release Date: **19.08.2018**

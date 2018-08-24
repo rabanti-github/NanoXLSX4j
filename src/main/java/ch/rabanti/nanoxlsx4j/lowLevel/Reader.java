@@ -36,7 +36,7 @@ public class Reader
 
     /**
      * Constructor with file path as parameter
-     * @param path File path of the xlsx file to load
+     * @param path File path of the XLSX file to load
      */
     public Reader(String path)
     {
@@ -46,7 +46,7 @@ public class Reader
 
     /**
      * Constructor with stream as parameter
-     * @param stream Stream of the xlsx file to load
+     * @param stream Stream of the XLSX file to load
      */
     public Reader(InputStream stream)
     {
@@ -55,9 +55,9 @@ public class Reader
     }
 
     /**
-     * Gets the input stream of the specified file in the archive (xlsx file)
-     * @param name Name of the xml file within the xlsx file
-     * @param file Zip file (xlsx)
+     * Gets the input stream of the specified file in the archive (XLSX file)
+     * @param name Name of the XML file within the XLSX file
+     * @param file Zip file (XLSX)
      * @return InputStream of the specified file
      * @throws IOException  Throws IOException in case of an error
      */
@@ -90,12 +90,12 @@ public class Reader
             }
             catch (Exception ex)
             {
-                throw new IOException("LoadException", "There was an error while extracting a stream from a xlsx file. Please see the inner exception:", ex);
+                throw new IOException("LoadException", "There was an error while extracting a stream from a XLSX file. Please see the inner exception:", ex);
             }
     }
 
     /**
-     * Reads the xlsx file from a file path or a file stream
+     * Reads the XLSX file from a file path or a file stream
      * @throws IOException  Throws IOException in case of an error
      */
     public void read() throws IOException
@@ -166,7 +166,7 @@ public class Reader
     }
 
     /**
-     * Resolves the worksheet from the loaded file
+     * Resolves the workbook with all worksheets from the loaded file
      * @return Workbook object
      */
     public Workbook getWorkbook()
