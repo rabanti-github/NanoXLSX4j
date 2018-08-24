@@ -77,7 +77,7 @@ public class WorksheetReader
     /**
      * Gets whether the specified column exists in the data
      * @param columnAddress Column address as string
-     * @return True, if the column exists
+     * @return Column address as string
      */
     public boolean hasColumn(String columnAddress)
     {
@@ -160,8 +160,8 @@ public class WorksheetReader
     }
 
     /**
-     * Reads the xlsx file form the passed stream and processes the worksheet data
-     * @param stream Stream of the xlsx file
+     * Reads the XML file form the passed stream and processes the worksheet data
+     * @param stream Stream of the XML file
      * @throws IOException Throws IOException in case of an error
      */
     public void read(InputStream stream) throws IOException {
@@ -196,12 +196,14 @@ public class WorksheetReader
                 } else if (nodeType == XMLStreamReader.CHARACTERS) {
                     if (isFormula == true) {
                         formula = xr.getText();
+                        isFormula = false; // reset
                     } else if (isCellValue == true) {
                         value = xr.getText();
+                        isCellValue = false; // reset
                     }
                 } else if (nodeType == XMLStreamReader.END_ELEMENT) {
                     name = xr.getName().getLocalPart().toLowerCase();
-                    if (name.equals("c") && isCell == true && isCellValue == true) {
+                    if (name.equals("c") && isCell == true) {
                         isCell = false;
                         isCellValue = false;
                         isFormula = false;
@@ -246,9 +248,9 @@ public class WorksheetReader
         String s;
         Cell cell;
         CellResolverTuple tuple;
-        if (style != null && style.equals("1")) // Date must come before numeric
+        if (style != null && style.equals("1")) // Date must come before numeric values
         {
-            tuple = getNumericValue(value);
+            tuple = getDateValue(value);
             if (tuple.isValid() == true)
             {
                 cell = new Cell(tuple.getData(), Cell.CellType.DATE, address);
@@ -386,6 +388,27 @@ public class WorksheetReader
             }
         }
         return new CellResolverTuple(state, value, Boolean.class);
+    }
+
+    /**
+     * Parses the date value of a raw cell
+     * @param raw Raw value as string
+     * @return CellResolverTuple with information about the validity and resolved data
+     */
+    private static CellResolverTuple getDateValue(String raw)
+    {
+        CellResolverTuple t;
+        try
+        {
+            double d = Double.parseDouble(raw);
+            Date d2 = Helper.getDateFromOA(d);
+            t = new CellResolverTuple(true, d2, Date.class);
+        }
+        catch (Exception e)
+        {
+            t = new CellResolverTuple(false, 0, Date.class);
+        }
+        return t;
     }
 
     /**

@@ -49,7 +49,7 @@ public class SharedStringsReader
     /**
      * Gets the value of the shared string table by its index
      * @param index Index of the stared string entry
-     * @return Determined shared string value
+     * @return Determined shared string value. Returns null in case of a invalid index
      */
     public String getString(int index)
     {
@@ -69,8 +69,8 @@ public class SharedStringsReader
     }
 
     /**
-     * Reads the xlsx file form the passed stream and processes the shared strings table
-     * @param stream Stream of the xlsx file
+     * Reads the XML file form the passed stream and processes the shared strings table
+     * @param stream Stream of the XML file
      * @throws IOException Throws IOException in case of an error
      */
     public void read(InputStream stream) throws IOException {

@@ -8,6 +8,8 @@ package ch.rabanti.nanoxlsx4j;
 
 import ch.rabanti.nanoxlsx4j.exception.FormatException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -18,13 +20,11 @@ import java.util.Date;
 public class Helper {
         
 // ### C O N S T A N T S ###    
-    //private static Calendar root = Calendar.getInstance();
-    //static { root.set(1899, 11, 29); }
     private static final long ROOT_TICKS;
     static
     {
         Calendar rootCalendar = Calendar.getInstance();
-        rootCalendar.set(1899, Calendar.DECEMBER, 29);
+        rootCalendar.set(1899, Calendar.DECEMBER, 30,0,0,0);
         ROOT_TICKS = rootCalendar.getTimeInMillis();
     }
     
@@ -41,13 +41,35 @@ public class Helper {
         Calendar dateCal = Calendar.getInstance();
         dateCal.setTime(date);
         long currentTicks = dateCal.getTimeInMillis();
-        double d = ((dateCal.get(Calendar.SECOND) + (dateCal.get(Calendar.MINUTE) * 60) + (dateCal.get(Calendar.HOUR_OF_DAY) * 3600)) / 86400) + Math.floor((currentTicks - ROOT_TICKS) / (86400000));
+        double d = ((double)(dateCal.get(Calendar.SECOND) + (dateCal.get(Calendar.MINUTE) * 60) + (dateCal.get(Calendar.HOUR_OF_DAY) * 3600)) / 86400) + Math.floor((currentTicks - ROOT_TICKS) / (86400000));
         if (d < 0)
         {
             throw new FormatException("FormatException","The date is not in a valid range for Excel. Dates before 1900-01-01 are not allowed.");
         }
         return d;
-    }    
+    }
+
+    /**
+     * Method to calculate a common Date from the OA date (OLE automation) format<br>
+     * OA Date format starts at January 1st 1900 (actually 00.01.1900). Dates beyond this date cannot be handled by Excel under normal circumstances and will throw a FormatException
+     * @param oaDate OA date number
+     * @return Converted date
+     */
+    public static Date getDateFromOA(double oaDate)
+    {
+        double  remainder = oaDate - (long)oaDate;
+        double hours = remainder * 24;
+        double minutes = (hours - (long)hours) * 60;
+        double seconds = (minutes- (long)minutes) * 60;
+        Calendar dateCal = Calendar.getInstance();
+        dateCal.setTimeInMillis(ROOT_TICKS);
+        dateCal.add(Calendar.DATE,(int)oaDate);
+        dateCal.add(Calendar.HOUR,(int)hours);
+        dateCal.add(Calendar.MINUTE,(int)minutes);
+        dateCal.add(Calendar.SECOND,(int)seconds + 1); // Rounding error
+        return dateCal.getTime();
+    }
+
     /**
      * Method of a string to check whether its reference is null or the content is empty
      * @param value value / reference to check
