@@ -7,7 +7,7 @@
 package ch.rabanti.nanoxlsx4j;
 
 import ch.rabanti.nanoxlsx4j.Cell.CellType;
-import ch.rabanti.nanoxlsx4j.exception.FormatException;
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 
 import java.math.BigDecimal;
 

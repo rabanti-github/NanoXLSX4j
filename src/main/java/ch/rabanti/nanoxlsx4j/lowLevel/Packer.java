@@ -35,21 +35,21 @@ public class Packer {
     private final List<Boolean> includeContentType;
     private final List<String> pathList;
     private final List<Relationship> relationships;
-    private final LowLevel lowLevelReference;
+    private final XlsXWriter xlsXWriterReference;
     
 // ### C O N S T R U C T O R S ###
     /**
      * Default constructor with parameter
      * @param reference Reference to the low level instance
      */
-    public Packer(LowLevel reference)
+    public Packer(XlsXWriter reference)
     {
         dataList = new ArrayList<>();
         pathList = new ArrayList<>();
         contentTypeList = new ArrayList<>();
         relationships = new ArrayList<>();
         includeContentType = new ArrayList<>();
-        this.lowLevelReference = reference;
+        this.xlsXWriterReference = reference;
     }
     
 // ### M E T H O D S ###    
@@ -58,11 +58,11 @@ public class Packer {
      * @param name Filename with relative path
      * @param contentType URL with information about the content type (MSXML).<br>This information is used in the main content type file
      * @param document XML document to add
-     * @throws ch.rabanti.nanoxlsx4j.exception.IOException Thrown if the document could not be converted to a byte array
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.IOException Thrown if the document could not be converted to a byte array
      */
-    public void addPart(String name, String contentType, Document document) throws ch.rabanti.nanoxlsx4j.exception.IOException
+    public void addPart(String name, String contentType, Document document) throws ch.rabanti.nanoxlsx4j.exceptions.IOException
     {
-        dataList.add(LowLevel.createBytesFromDocument(document));
+        dataList.add(XlsXWriter.createBytesFromDocument(document));
         pathList.add(name);
         contentTypeList.add(contentType);
         includeContentType.add(true);
@@ -74,11 +74,11 @@ public class Packer {
      * @param contentType URL with information about the content type (MSXML).<br>This information is used in the main content type file
      * @param document XML document to add
      * @param includeInContentType If true, the content type will be added in the main content type file, otherwise not
-     * @throws ch.rabanti.nanoxlsx4j.exception.IOException Thrown if the document could not be converted to a byte array
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.IOException Thrown if the document could not be converted to a byte array
      */
-    public void addPart(String name, String contentType, Document document, boolean includeInContentType) throws ch.rabanti.nanoxlsx4j.exception.IOException
+    public void addPart(String name, String contentType, Document document, boolean includeInContentType) throws ch.rabanti.nanoxlsx4j.exceptions.IOException
     {
-        dataList.add(LowLevel.createBytesFromDocument(document));
+        dataList.add(XlsXWriter.createBytesFromDocument(document));
         pathList.add(name);
         contentTypeList.add(contentType);
         includeContentType.add(includeInContentType);
@@ -88,9 +88,9 @@ public class Packer {
     /**
      * Creates the main content type file (MSXML)
      * @return Returns the byte array to add into the compilation
-     * @throws ch.rabanti.nanoxlsx4j.exception.IOException Thrown if the document could not be converted to a byte array
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.IOException Thrown if the document could not be converted to a byte array
      */
-    private byte[] createContentTypeDocument() throws ch.rabanti.nanoxlsx4j.exception.IOException
+    private byte[] createContentTypeDocument() throws ch.rabanti.nanoxlsx4j.exceptions.IOException
     {
         StringBuilder sb = new StringBuilder();
         sb.append("<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">\r\n");
@@ -107,8 +107,8 @@ public class Packer {
             sb.append("\" />\r\n");
         }
         sb.append("</Types>");
-        Document d = this.lowLevelReference.createXMLDocument(sb.toString(), "CONTENTTYPE");
-        return LowLevel.createBytesFromDocument(d);
+        Document d = this.xlsXWriterReference.createXMLDocument(sb.toString(), "CONTENTTYPE");
+        return XlsXWriter.createBytesFromDocument(d);
     }
     /**
      * Creates a relationship. This will be used to generate a .rels file in the compilation (MSXML)
@@ -126,9 +126,9 @@ public class Packer {
      * Creates a relationship file (MSXML)
      * @param rel Relationship object to process
      * @return  Returns the byte array to add into the compilation
-     * @throws ch.rabanti.nanoxlsx4j.exception.IOException Thrown if the document could not be converted to a byte array
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.IOException Thrown if the document could not be converted to a byte array
      */
-    private byte[] createRelationshipDocument(Relationship rel) throws ch.rabanti.nanoxlsx4j.exception.IOException
+    private byte[] createRelationshipDocument(Relationship rel) throws ch.rabanti.nanoxlsx4j.exceptions.IOException
     {
         StringBuilder sb = new StringBuilder();
         sb.append("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">\r\n");
@@ -143,15 +143,15 @@ public class Packer {
             sb.append("\"/>\r\n");
         }
         sb.append("</Relationships>");
-        Document d = this.lowLevelReference.createXMLDocument(sb.toString(), "REL: " + rel.currentId);
-        return LowLevel.createBytesFromDocument(d);
+        Document d = this.xlsXWriterReference.createXMLDocument(sb.toString(), "REL: " + rel.currentId);
+        return XlsXWriter.createBytesFromDocument(d);
     }    
     /**
      * Method to pack the data into a XLSX file. This is the actual compiling and writing method (to a OutputStream)
      * @param stream OutputStream to save the data into
-     * @throws ch.rabanti.nanoxlsx4j.exception.IOException Thrown in case of a error while packing or writing
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.IOException Thrown in case of a error while packing or writing
      */
-    public void pack(OutputStream stream) throws ch.rabanti.nanoxlsx4j.exception.IOException
+    public void pack(OutputStream stream) throws ch.rabanti.nanoxlsx4j.exceptions.IOException
     {
         try
         {
@@ -182,7 +182,7 @@ public class Packer {
         }
         catch(Exception e)
         {
-            throw new ch.rabanti.nanoxlsx4j.exception.IOException("PackingException","There was an error while packing the file. Please see the inner exception.", e);
+            throw new ch.rabanti.nanoxlsx4j.exceptions.IOException("PackingException","There was an error while packing the file. Please see the inner exception.", e);
         }
     }
     
