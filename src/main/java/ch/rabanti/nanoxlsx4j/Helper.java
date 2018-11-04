@@ -6,10 +6,8 @@
  */
 package ch.rabanti.nanoxlsx4j;
 
-import ch.rabanti.nanoxlsx4j.exception.FormatException;
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 

@@ -6,12 +6,12 @@
  */
 package ch.rabanti.nanoxlsx4j;
 
-import ch.rabanti.nanoxlsx4j.exception.FormatException;
-import ch.rabanti.nanoxlsx4j.exception.RangeException;
-import ch.rabanti.nanoxlsx4j.exception.StyleException;
-import ch.rabanti.nanoxlsx4j.exception.WorksheetException;
-import ch.rabanti.nanoxlsx4j.style.BasicStyles;
-import ch.rabanti.nanoxlsx4j.style.Style;
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
+import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
+import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
+import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
+import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
+import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -281,7 +281,7 @@ public class Worksheet {
     /**
      * Sets the default column width
      * @param defaultColumnWidth Default column width
-     * @throws RangeException Throws a RangeException exception if the passed width is out of range (set)
+     * @throws RangeException Throws a RangeException if the passed width is out of range (set)
      */
     public void setDefaultColumnWidth(float defaultColumnWidth) {
         if (defaultRowHeight < MIN_COLUMN_WIDTH || defaultRowHeight > MAX_COLUMN_WIDTH)
@@ -300,7 +300,7 @@ public class Worksheet {
     /**
      * Sets the default Row height
      * @param defaultRowHeight Default Row height
-     * @throws RangeException Throws a RangeException exception if the passed height is out of range (set)
+     * @throws RangeException Throws a RangeException if the passed height is out of range (set)
      */
     public void setDefaultRowHeight(float defaultRowHeight) {
         if (defaultRowHeight < MIN_ROW_HEIGHT || defaultRowHeight > MAX_ROW_HEIGHT)
@@ -1142,7 +1142,7 @@ public class Worksheet {
      * Merges the defined cell range
      * @param cellRange Range to merge (e.g. 'A1:B12')
      * @return Returns the validated range of the merged cells (e.g. 'A1:B12')
-     * @throws ch.rabanti.nanoxlsx4j.exception.FormatException Thrown if the passed address is malformed
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.FormatException Thrown if the passed address is malformed
      */
     public String mergeCells(String cellRange)
     {
@@ -1167,7 +1167,7 @@ public class Worksheet {
         return key;
     }    
     /**
-     * Method to recalculate the auto filter (columns) of this worksheet. This is an internal method. There is no need to use it. It must be public to require access from the LowLevel class
+     * Method to recalculate the auto filter (columns) of this worksheet. This is an internal method. There is no need to use it. It must be public to require access from the XlsXWriter class
      */
     public void recalculateAutoFilter()
     {
@@ -1197,7 +1197,7 @@ public class Worksheet {
         this.autoFilterRange = new Range(new Address(start, 0), new Address(end, endRow));
     }
     /**
-     * Method to recalculate the collection of columns of this worksheet. This is an internal method. There is no need to use it. It must be public to require access from the LowLevel class
+     * Method to recalculate the collection of columns of this worksheet. This is an internal method. There is no need to use it. It must be public to require access from the XlsXWriter class
      */
     public void recalculateColumns()
     {

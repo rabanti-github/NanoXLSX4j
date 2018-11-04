@@ -6,7 +6,7 @@
  */
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
-import ch.rabanti.nanoxlsx4j.exception.IOException;
+import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;

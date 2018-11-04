@@ -1,9 +1,24 @@
 # Change Log
 
+## v1.2.5
+
+---
+Release Date: **04.11.2018**
+- Renamed packages LowLevel to XlsxWriter, style to styles, exception to exceptions
+- Fixed a bug in the style handling of merged cells. Bug fix provided by David Courtel for PicoXLSX (C#)
+- Fixed typos
+- Documentation update
+
+
+
 ## v1.2.4
 
 ---
 Release Date: **24.08.2018**
+
+
+**Note**: Due to some refactoring (see below) in this version, changes of existing code may be necessary. However, most introduced changes are on a rather low level or can be fixed by search&replace
+
 
 - Fixed a bug in the calculation of OA Dates (internal format)
 - Fixed a bug regarding formulas in the reader

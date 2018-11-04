@@ -7,10 +7,10 @@
 package ch.rabanti.nanoxlsx4j.demo;
 
 import ch.rabanti.nanoxlsx4j.*;
-import ch.rabanti.nanoxlsx4j.style.BasicStyles;
-import ch.rabanti.nanoxlsx4j.style.CellXf;
-import ch.rabanti.nanoxlsx4j.style.Fill;
-import ch.rabanti.nanoxlsx4j.style.Style;
+import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
+import ch.rabanti.nanoxlsx4j.styles.CellXf;
+import ch.rabanti.nanoxlsx4j.styles.Fill;
+import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -99,7 +99,7 @@ public class NanoXLSX4j {
     }
 
     /**
-     * This method show the shortened style of writing cells
+     * This method shows the shortened style of writing cells
      */
     private static void shortenerDemo() {
         Workbook wb = new Workbook(outputFolder + "shortenerDemo.xlsx", "Sheet1"); // Create a workbook (important: A worksheet must be created as well)

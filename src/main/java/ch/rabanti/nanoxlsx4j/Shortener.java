@@ -6,8 +6,8 @@
  */
 package ch.rabanti.nanoxlsx4j;
 
-import ch.rabanti.nanoxlsx4j.exception.WorksheetException;
-import ch.rabanti.nanoxlsx4j.style.Style;
+import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
+import ch.rabanti.nanoxlsx4j.styles.Style;
 
 /**
  * Class to provide access to the current worksheet with a shortened syntax<br>

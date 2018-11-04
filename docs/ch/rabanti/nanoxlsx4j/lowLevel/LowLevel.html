@@ -101,7 +101,7 @@ var activeTableTab = "activeTableTab";
 <li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li>ch.rabanti.nanoxlsx4j.lowLevel.LowLevel</li>
+<li>ch.rabanti.nanoxlsx4j.lowLevel.XlsXWriter</li>
 </ul>
 </li>
 </ul>
@@ -289,7 +289,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>createXMLDocument</h4>
 <pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/org/w3c/dom/Document.html?is-external=true" title="class or interface in org.w3c.dom">Document</a>&nbsp;createXMLDocument(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;rawInput,
                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;title)
-                           throws <a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exception">IOException</a></pre>
+                           throws <a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exceptions">IOException</a></pre>
 <div class="block">Creates a XML document from a string</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -298,7 +298,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Formatted XML document</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exception">IOException</a></code> - Thrown in case of an error while creating the XML document</dd>
+<dd><code><a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exceptions">IOException</a></code> - Thrown in case of an error while creating the XML document</dd>
 </dl>
 </li>
 </ul>
@@ -309,11 +309,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>save</h4>
 <pre>public&nbsp;void&nbsp;save()
-          throws <a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exception">IOException</a></pre>
+          throws <a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exceptions">IOException</a></pre>
 <div class="block">Method to save the workbook</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exception">IOException</a></code> - Thrown in case of an error</dd>
+<dd><code><a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exceptions">IOException</a></code> - Thrown in case of an error</dd>
 </dl>
 </li>
 </ul>
@@ -324,10 +324,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>saveAsStream</h4>
 <pre>public&nbsp;void&nbsp;saveAsStream(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io">OutputStream</a>&nbsp;stream)
-                  throws <a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exception">IOException</a></pre>
+                  throws <a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exceptions">IOException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exception">IOException</a></code></dd>
+<dd><code><a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exceptions">IOException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -338,7 +338,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>createBytesFromDocument</h4>
 <pre>public static&nbsp;byte[]&nbsp;createBytesFromDocument(<a href="https://docs.oracle.com/javase/8/docs/api/org/w3c/dom/Document.html?is-external=true" title="class or interface in org.w3c.dom">Document</a>&nbsp;document)
-                                      throws <a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exception">IOException</a></pre>
+                                      throws <a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exceptions">IOException</a></pre>
 <div class="block">Method to convert an XML document to a byte array</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -346,7 +346,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>array of bytes (UTF-8)</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exception">IOException</a></code> - Thrown if the document could not be converted to a byte array</dd>
+<dd><code><a href="../../../../ch/rabanti/nanoxlsx4j/exception/IOException.html" title="class in ch.rabanti.nanoxlsx4j.exceptions">IOException</a></code> - Thrown if the document could not be converted to a byte array</dd>
 </dl>
 </li>
 </ul>
