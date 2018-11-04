@@ -6,7 +6,7 @@
  */
 package ch.rabanti.nanoxlsx4j;
 
-import ch.rabanti.nanoxlsx4j.exception.FormatException;
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 
 /**
  * Class representing the meta data of a workbook

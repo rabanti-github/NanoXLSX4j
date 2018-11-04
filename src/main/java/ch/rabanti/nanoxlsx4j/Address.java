@@ -6,7 +6,7 @@
  */
 package ch.rabanti.nanoxlsx4j;
 
-import ch.rabanti.nanoxlsx4j.exception.RangeException;
+import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 
 import static ch.rabanti.nanoxlsx4j.Cell.resolveCellAddress;
 

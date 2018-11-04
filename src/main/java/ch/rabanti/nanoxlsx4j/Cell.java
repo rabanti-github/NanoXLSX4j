@@ -6,10 +6,10 @@
  */
 package ch.rabanti.nanoxlsx4j;
 
-import ch.rabanti.nanoxlsx4j.exception.FormatException;
-import ch.rabanti.nanoxlsx4j.exception.RangeException;
-import ch.rabanti.nanoxlsx4j.exception.StyleException;
-import ch.rabanti.nanoxlsx4j.style.Style;
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
+import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
+import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
+import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -385,7 +385,7 @@ public class Cell implements Comparable<Cell>{
     
     /**
      * Sets the style of the cell
-     * @param style style to assign
+     * @param style Style to assign
      * @return If the passed style already exists in the workbook, the existing one will be returned, otherwise the passed one
      * @throws StyleException Thrown if the style is not referenced in the workbook
      */

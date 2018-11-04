@@ -6,10 +6,10 @@
  */
 package ch.rabanti.nanoxlsx4j;
 
-import ch.rabanti.nanoxlsx4j.exception.*;
-import ch.rabanti.nanoxlsx4j.lowLevel.LowLevel;
-import ch.rabanti.nanoxlsx4j.lowLevel.Reader;
-import ch.rabanti.nanoxlsx4j.style.*;
+import ch.rabanti.nanoxlsx4j.exceptions.*;
+import ch.rabanti.nanoxlsx4j.lowLevel.XlsXWriter;
+import ch.rabanti.nanoxlsx4j.lowLevel.XlsxReader;
+import ch.rabanti.nanoxlsx4j.styles.*;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -526,8 +526,8 @@ public class Workbook {
                     if (pos != 0)
                     {
                         cell.setDataType(Cell.CellType.EMPTY);
+                        cell.setStyle(mergeStyle);
                     }
-                    cell.setStyle(mergeStyle);
                     pos++;
                 }
             }
@@ -540,7 +540,7 @@ public class Workbook {
     */
     public void save() throws IOException
     {
-        LowLevel l = new LowLevel(this);
+        XlsXWriter l = new XlsXWriter(this);
         l.save();
     }
     
@@ -553,7 +553,7 @@ public class Workbook {
     {
         String backup = this.filename;
         this.filename = filename;
-        LowLevel l = new LowLevel(this);
+        XlsXWriter l = new XlsXWriter(this);
         l.save();
         this.filename = backup;
     }
@@ -565,7 +565,7 @@ public class Workbook {
      */
     public void saveAsStream(OutputStream stream) throws IOException
     {
-        LowLevel l = new LowLevel(this);
+        XlsXWriter l = new XlsXWriter(this);
         l.saveAsStream(stream);
     }
     
@@ -626,7 +626,7 @@ public class Workbook {
      */
     public static Workbook load(String filename) throws IOException
     {
-        Reader r = new Reader(filename);
+        XlsxReader r = new XlsxReader(filename);
         r.read();
         return r.getWorkbook();
     }
@@ -639,7 +639,7 @@ public class Workbook {
      */
     public static Workbook load(InputStream stream) throws IOException
     {
-        Reader r = new Reader(stream);
+        XlsxReader r = new XlsxReader(stream);
         r.read();
         return r.getWorkbook();
     }
