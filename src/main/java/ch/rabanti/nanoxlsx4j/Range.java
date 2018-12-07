@@ -55,5 +55,27 @@ package ch.rabanti.nanoxlsx4j;
         {
             return StartAddress.toString() + ":" + EndAddress.toString();
         }
+
+        /**
+         * Overwritten equals method
+         * @param o Other object to compare
+         * @return True if this instance is equal to the other instance
+         */
+        @Override
+        public boolean equals(Object o){
+            if(o == this){
+                return true;
+            }
+            if (!(o instanceof Range)){
+                return false;
+            }
+            Range range = (Range)o;
+            if (this.StartAddress.equals(range.StartAddress) && this.EndAddress.equals(range.EndAddress)){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
         
     } 

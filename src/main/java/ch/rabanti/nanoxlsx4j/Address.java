@@ -17,7 +17,7 @@ import static ch.rabanti.nanoxlsx4j.Cell.resolveCellAddress;
 public class Address
 {
 
-// ### P U B L I C  F I E L D S ###        
+// ### P U B L I C  F I E L D S ###
     /**
      * Column of the address (zero-based)
      */
@@ -34,10 +34,12 @@ public class Address
      * Constructor with with row and column as arguments
      * @param column Column of the address (zero-based)
      * @param row Row of the address (zero-based)
-
+     * @throws RangeException Thrown if the resolved address is out of range
      */
     public Address(int column, int row)
     {
+        Cell.validateRowNumber(row);
+        Cell.validateColumnNumber(column);
         this.Column = column;
         this.Row = row;
         this.Type = Cell.AddressType.Default;
@@ -46,6 +48,7 @@ public class Address
     /**
      * Constructor with address as string
      * @param address Address string (e.g. 'A1:B12')
+     * @throws RangeException Thrown if the resolved address is out of range
      */
     public Address(String address)
     {
@@ -60,9 +63,12 @@ public class Address
      * @param column Column of the address (zero-based)
      * @param row Row of the address (zero-based)
      * @param type Referencing type of the address
+     * @throws RangeException Thrown if the resolved address is out of range
      */
     public Address(int column, int row, Cell.AddressType type)
     {
+        Cell.validateRowNumber(row);
+        Cell.validateColumnNumber(column);
         this.Column = column;
         this.Row = row;
         this.Type = type;
@@ -72,6 +78,7 @@ public class Address
      * Constructor with address as string and address type
      * @param address Address string (e.g. 'A1:B12')
      * @param type Optional referencing type of the address
+     * @throws RangeException Thrown if the resolved address is out of range
      */
     public Address(String address, Cell.AddressType type)
     {
@@ -84,18 +91,24 @@ public class Address
 // ### M E T H O D S ###
 
     /**
-     * Compares two addresses whether they are equal
-     * @param o Compares two addresses whether they are equal
+     * Compares two addresses whether they are equal. The address type id neglected, only the row and column is considered
+     * @param o Address to compare
      * @return True if equal
      */
-    public boolean equals(Address o)
+    @Override
+    public boolean equals(Object o)
     {
-        if(this.Row == o.Row && this.Column == o.Column)
-        {
+        if(o == this){
             return true;
         }
-        else
-        {
+        if (!(o instanceof Address)){
+            return false;
+        }
+        Address address = (Address)o;
+        if(this.Row == address.Row && this.Column == address.Column) {
+            return true;
+        }
+        else {
             return false;
         }
     }
@@ -126,13 +139,6 @@ public class Address
     @Override
     public String toString()
     {
-        try
-        {
-            return getAddress();
-        }
-        catch(Exception e)
-        {
-            return "Illegal Address";
-        }
+        return getAddress(); // Validity already checked in method
     }
 }
