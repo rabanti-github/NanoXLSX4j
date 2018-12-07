@@ -10,12 +10,12 @@ import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 /**
  * Class representing a style which consists of several components
+ *
  * @author Raphael Stoeckli
  */
-public class Style extends AbstractStyle
-{
-    
-// ### P R I V A T E  F I E L D S ###
+public class Style extends AbstractStyle {
+
+    // ### P R I V A T E  F I E L D S ###
     @AppendAnnotation(nestedProperty = true)
     private Border borderRef;
     @AppendAnnotation(nestedProperty = true)
@@ -36,8 +36,10 @@ public class Style extends AbstractStyle
     private boolean styleNameDefined;
 
 // ### G E T T E R S  &  S E T T E R S ###
+
     /**
      * Gets the border component of the style
+     *
      * @return Border of the style
      */
     public Border getBorder() {
@@ -46,6 +48,7 @@ public class Style extends AbstractStyle
 
     /**
      * Gets the cellXf component of the style
+     *
      * @return CellXf of the style
      */
     public CellXf getCellXf() {
@@ -54,6 +57,7 @@ public class Style extends AbstractStyle
 
     /**
      * Gets the fill component of the style
+     *
      * @return Fill of the style
      */
     public Fill getFill() {
@@ -62,6 +66,7 @@ public class Style extends AbstractStyle
 
     /**
      * Gets the font component of the style
+     *
      * @return Font of the style
      */
     public Font getFont() {
@@ -70,6 +75,7 @@ public class Style extends AbstractStyle
 
     /**
      * Gets the number format component of the style
+     *
      * @return Number format of the style
      */
     public NumberFormat getNumberFormat() {
@@ -78,6 +84,7 @@ public class Style extends AbstractStyle
 
     /**
      * Sets the border component of the style
+     *
      * @param borderRef Border of the style
      */
     public void setBorder(Border borderRef) {
@@ -87,6 +94,7 @@ public class Style extends AbstractStyle
 
     /**
      * Sets the cellXf component of the style
+     *
      * @param cellXfRef CellXf of the style
      */
     public void setCellXf(CellXf cellXfRef) {
@@ -96,6 +104,7 @@ public class Style extends AbstractStyle
 
     /**
      * Sets the fill component of the style
+     *
      * @param fillRef Fill of the style
      */
     public void setFill(Fill fillRef) {
@@ -105,6 +114,7 @@ public class Style extends AbstractStyle
 
     /**
      * Sets the font component of the style
+     *
      * @param fontRef Font of the style
      */
     public void setFont(Font fontRef) {
@@ -114,6 +124,7 @@ public class Style extends AbstractStyle
 
     /**
      * Sets the number format component of the style
+     *
      * @param numberFormatRef Number format of the style
      */
     public void setNumberFormat(NumberFormat numberFormatRef) {
@@ -123,6 +134,7 @@ public class Style extends AbstractStyle
 
     /**
      * Sets the reference of the style manager
+     *
      * @param styleManagerReference Reference to the corresponding style manager object
      */
     public void setStyleManagerReference(StyleManager styleManagerReference) {
@@ -132,6 +144,7 @@ public class Style extends AbstractStyle
 
     /**
      * Gets the name of the style.
+     *
      * @return Name
      */
     public String getName() {
@@ -140,7 +153,8 @@ public class Style extends AbstractStyle
 
     /**
      * Sets the name of the style. If not defined, the automatically calculated hash will be used as name
-     * @param name Name 
+     *
+     * @param name Name
      */
     public void setName(String name) {
         this.name = name;
@@ -149,33 +163,34 @@ public class Style extends AbstractStyle
 
     /**
      * Gets whether the style is system internal
+     *
      * @return If true, the style is an internal style. Such styles are not meant to be altered
      */
     public boolean isInternalStyle() {
         return internalStyle;
     }
-    
-// ### C O N S T R U C T O R S ###   
+
+// ### C O N S T R U C T O R S ###
+
     /**
      * Default constructor
      */
-    public Style()
-    {
+    public Style() {
         this.borderRef = new Border();
         this.cellXfRef = new CellXf();
         this.fillRef = new Fill();
         this.fontRef = new Font();
         this.numberFormatRef = new NumberFormat();
         this.styleNameDefined = false;
-        this.name = this.calculateHash();
+        this.name = Integer.toString(this.hashCode());
     }
-    
+
     /**
      * Constructor with parameters
+     *
      * @param name Name of the style
      */
-    public Style(String name)
-    {
+    public Style(String name) {
         this.borderRef = new Border();
         this.cellXfRef = new CellXf();
         this.fillRef = new Fill();
@@ -184,15 +199,15 @@ public class Style extends AbstractStyle
         this.styleNameDefined = false;
         this.name = name;
     }
-    
+
     /**
      * Constructor with parameters (internal use)
-     * @param name Name of the style
+     *
+     * @param name        Name of the style
      * @param forcedOrder Number of the style for sorting purpose. Style will be placed to this position (internal use only)
-     * @param internal If true, the style is marked as internal
+     * @param internal    If true, the style is marked as internal
      */
-    public Style(String name, int forcedOrder, boolean internal)
-    {
+    public Style(String name, int forcedOrder, boolean internal) {
         this.borderRef = new Border();
         this.cellXfRef = new CellXf();
         this.fillRef = new Fill();
@@ -203,38 +218,27 @@ public class Style extends AbstractStyle
         this.internalStyle = internal;
         this.styleNameDefined = true;
     }
-    
+
 // ### M E T H O D S ###
 
     /**
-     * Appends the specified style parts to the current one. The parts can be instances of sub-classes like Border or CellXf or a Style instance. Only the altered properties of the specified style or styles part that differs from a new / untouched style instance will be appended. This enables method chaining
-     * @param styleToAppend the style to append or a sub-class of Style
+     * Appends the specified style parts to the current one. The parts can be instances of sub-classes like Border or CellXf or a Style instance. Only the altered properties of the specified style or style part that differs from a new / untouched style instance will be appended. This enables method chaining
+     *
+     * @param styleToAppend The style to append or a sub-class of Style
      * @return Current style with appended style parts
      */
-    public Style append(AbstractStyle styleToAppend)
-    {
-        if (styleToAppend instanceof Border)
-        {
+    public Style append(AbstractStyle styleToAppend) {
+        if (styleToAppend instanceof Border) {
             this.getBorder().copyFields(styleToAppend, new Border());
-        }
-        else if (styleToAppend instanceof CellXf)
-        {
+        } else if (styleToAppend instanceof CellXf) {
             this.getCellXf().copyFields(styleToAppend, new CellXf());
-        }
-        else if (styleToAppend instanceof Fill)
-        {
+        } else if (styleToAppend instanceof Fill) {
             this.getFill().copyFields(styleToAppend, new Fill());
-        }
-        else if (styleToAppend instanceof Font)
-        {
+        } else if (styleToAppend instanceof Font) {
             this.getFont().copyFields(styleToAppend, new Font());
-        }
-        else if (styleToAppend instanceof NumberFormat)
-        {
+        } else if (styleToAppend instanceof NumberFormat) {
             this.getNumberFormat().copyFields(styleToAppend, new NumberFormat());
-        }
-        else if (styleToAppend instanceof Style)
-        {
+        } else if (styleToAppend instanceof Style) {
             this.getBorder().copyFields(((Style) styleToAppend).getBorder(), new Border());
             this.getCellXf().copyFields(((Style) styleToAppend).getCellXf(), new CellXf());
             this.getFill().copyFields(((Style) styleToAppend).getFill(), new Fill());
@@ -247,72 +251,64 @@ public class Style extends AbstractStyle
     /**
      * Method to reorganize / synchronize the components of this style
      */
-    private void reorganizeStyle()
-    {
-        if (this.styleManagerReference == null) { return; }
-        else
-        {
-           Style newStyle = this.styleManagerReference.addStyle(this);
-           this.borderRef = newStyle.getBorder();
-           this.cellXfRef = newStyle.getCellXf();
-           this.fillRef = newStyle.getFill();
-           this.fontRef = newStyle.getFont();
-           this.numberFormatRef = newStyle.getNumberFormat();
+    private void reorganizeStyle() {
+        if (this.styleManagerReference == null) {
+            return;
+        } else {
+            Style newStyle = this.styleManagerReference.addStyle(this);
+            this.borderRef = newStyle.getBorder();
+            this.cellXfRef = newStyle.getCellXf();
+            this.fillRef = newStyle.getFill();
+            this.fontRef = newStyle.getFont();
+            this.numberFormatRef = newStyle.getNumberFormat();
         }
-        if (this.styleNameDefined == false)
-        {
-            this.name = this.calculateHash();
+        if (this.styleNameDefined == false) {
+            this.name = Integer.toString(this.hashCode());
         }
-    }
-    
-     /**
-     * Override toString method
-     * @return String of a class instance
-     */
-    @Override
-    public String toString()
-    {
-        return this.getInternalID() + "->" + this.getHash();
-    }
-    
-    /**
-     * Override method to calculate the hash of this component
-     * @return Calculated hash as string
-     */
-    @Override
-    String calculateHash()
-    {
-        StringBuilder sb = new StringBuilder();
-        if (borderRef == null || cellXfRef == null || fillRef == null || fontRef == null || numberFormatRef == null)
-        {
-            throw new StyleException("MissingReferenceException","The hash of the style could not be created because one or more components are missing as references");
-        }
-        sb.append(StyleManager.STYLEPREFIX);
-        if (this.getInternalID() != null)
-        {
-            sb.append(this.getInternalID());
-            sb.append(':');
-        }
-        sb.append(borderRef.calculateHash());
-        sb.append(cellXfRef.calculateHash());
-        sb.append(fillRef.calculateHash());
-        sb.append(fontRef.calculateHash());
-        sb.append(numberFormatRef.calculateHash());
-        return sb.toString();
     }
 
     /**
-     * Method to copy the current object to a new one
-     * @return Copy of the current object without the internal ID
-     */          
+     * Override toString method
+     *
+     * @return String of a class instance
+     */
     @Override
-    public AbstractStyle copy()
-    {
-        if (borderRef == null || cellXfRef == null || fillRef == null || fontRef == null || numberFormatRef == null)
-        {
-            throw new StyleException("MissingReferenceException","The style could not be copied because one or more components are missing as references");
+    public String toString() {
+        return this.getInternalID() + "->" + Integer.toString(this.hashCode());
+    }
+
+    /**
+     * Override method to calculate the hash of this component
+     *
+     * @return Calculated hash as string
+     */
+    @Override
+    public int hashCode() {
+        if (borderRef == null || cellXfRef == null || fillRef == null || fontRef == null || numberFormatRef == null) {
+            throw new StyleException("MissingReferenceException", "The hash of the style could not be created because one or more components are missing as references");
         }
-        Style copy  = new Style();
+        int p = 241;
+        int r = 1;
+        r *= p + this.borderRef.hashCode();
+        r *= p + this.cellXfRef.hashCode();
+        r *= p + this.fillRef.hashCode();
+        r *= p + this.fontRef.hashCode();
+        r *= p + this.numberFormatRef.hashCode();
+        return r;
+    }
+
+
+    /**
+     * Method to copy the current object to a new one
+     *
+     * @return Copy of the current object without the internal ID
+     */
+    @Override
+    public AbstractStyle copy() {
+        if (borderRef == null || cellXfRef == null || fillRef == null || fontRef == null || numberFormatRef == null) {
+            throw new StyleException("MissingReferenceException", "The style could not be copied because one or more components are missing as references");
+        }
+        Style copy = new Style();
         copy.setBorder(this.borderRef.copy());
         copy.setCellXf(this.cellXfRef.copy());
         copy.setFill(this.fillRef.copy());
@@ -320,14 +316,15 @@ public class Style extends AbstractStyle
         copy.setNumberFormat(this.numberFormatRef.copy());
         return copy;
     }
-    
+
     /**
      * Copies the current object as casted style
+     *
      * @return Copy of the current object without the internal ID
      */
-    public Style copyStyle()
-    {
-        return (Style)this.copy();
+    public Style copyStyle() {
+        return (Style) this.copy();
     }
-    
+
+
 }

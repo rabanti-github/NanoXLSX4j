@@ -1,5 +1,14 @@
 # Change Log
 
+## v1.2.6
+
+---
+Release Date: **07.12.2018**
+
+- Improved the performance of adding stylized cells by factor 10 to 100
+- Code reformatting
+
+
 ## v1.2.5
 
 ---

@@ -35,12 +35,18 @@ public class NanoXLSX4j {
      */
     public static void main(String[] args) {
 
+        /** PROVIDING OUTPUT FOLDER **/
         if (Files.exists(Paths.get(outputFolder)) == false)                     // Check existence of output folder
         {
-            File dir = new File(outputFolder);                                   // Create new folder if not existing
+            File dir = new File(outputFolder);                                  // Create new folder if not existing
             dir.mkdirs();
         }
-            // --> Demos are starting here
+
+        /** PERFORMANCE TESTING **/
+        // Performance.dateStressTest(outputFolder + "stressTest.xlsx", "Dates", 40000); // Only uncomment this to test the library performance
+        /* *********************** */
+
+        /** DEMOS **/
         basicDemo();
         read();
         shortenerDemo();
