@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2018
+ * Copyright Raphael Stoeckli © 2019
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -135,7 +135,7 @@ public class XlsxReader
             int worksheetIndex = 1;
             String name, nameTemplate;
             WorksheetReader wr;
-            nameTemplate = "sheet" + Integer.toString(worksheetIndex) + ".xml";
+            nameTemplate = "sheet" + worksheetIndex + ".xml";
             name = "xl/worksheets/" + nameTemplate;
             for (int i = 0; i < this.workbook.getWorksheetDefinitions().size(); i++)
             {
@@ -144,7 +144,7 @@ public class XlsxReader
                 wr.read(stream);
                 this.worksheets.put(worksheetIndex - 1, wr);
                 worksheetIndex++;
-                nameTemplate = "sheet" + Integer.toString(worksheetIndex) + ".xml";
+                nameTemplate = "sheet" + worksheetIndex + ".xml";
                 name = "xl/worksheets/" + nameTemplate;
             }
         }

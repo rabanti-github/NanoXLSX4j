@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2018
+ * Copyright Raphael Stoeckli © 2019
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -182,7 +182,7 @@ public class XlsXWriter {
                     }
                 }
                 col = Integer.toString(column.getKey() + 1); // Add 1 for Address
-                sb.append("<col customWidth=\"1\" width=\"").append(Float.toString(column.getValue().getWidth())).append("\" max=\"").append(col).append("\" min=\"").append(col).append("\"").append(hidden).append("/>");
+                sb.append("<col customWidth=\"1\" width=\"").append(column.getValue().getWidth()).append("\" max=\"").append(col).append("\" min=\"").append(col).append("\"").append(hidden).append("/>");
             }
             String value = sb.toString();
             if (value.length() > 0)
@@ -257,7 +257,7 @@ public class XlsXWriter {
         Iterator<Map.Entry<String, Range>> itr;
         Map.Entry<String, Range> range;
         StringBuilder sb = new StringBuilder();
-        sb.append("<mergeCells count=\"").append(Integer.toString(sheet.getMergedCells().size())).append("\">");
+        sb.append("<mergeCells count=\"").append(sheet.getMergedCells().size()).append("\">");
         itr = sheet.getMergedCells().entrySet().iterator();
         while (itr.hasNext())
         {
@@ -328,7 +328,7 @@ public class XlsXWriter {
         {
             if (worksheet.getRowHeights().get(rowNumber) != worksheet.getDefaultRowHeight())
             {
-                height = " x14ac:dyDescent=\"0.25\" customHeight=\"1\" ht=\"" + Float.toString(worksheet.getRowHeights().get(rowNumber)) + "\"";
+                height = " x14ac:dyDescent=\"0.25\" customHeight=\"1\" ht=\"" + worksheet.getRowHeights().get(rowNumber) + "\"";
             }
         }
         if (worksheet.getHiddenRows().containsKey(rowNumber))
@@ -365,7 +365,7 @@ public class XlsXWriter {
             tValue = " ";
             if (item.getCellStyle() != null)
             {
-                sValue = " s=\"" + Integer.toString(item.getCellStyle().getInternalID()) + "\" ";
+                sValue = " s=\"" + item.getCellStyle().getInternalID() + "\" ";
             }
             else
             {
@@ -388,7 +388,7 @@ public class XlsXWriter {
                 tValue = " t=\"" + typeAttribute + "\" ";
                 Object o = item.getValue();
                 if (o instanceof Byte)            { value = Byte.toString((byte)item.getValue()); }
-                else if (o instanceof BigDecimal) { value = ((BigDecimal)item.getValue()).toString(); }
+                else if (o instanceof BigDecimal) { value = item.getValue().toString(); }
                 else if (o instanceof Double)     { value = Double.toString((double)item.getValue()); }
                 else if (o instanceof Float)      { value = Float.toString((float)item.getValue());}
                 else if (o instanceof Integer)    { value = Integer.toString((int)item.getValue()); }
@@ -464,9 +464,9 @@ public class XlsXWriter {
     {
             StringBuilder sb = new StringBuilder();
             sb.append("<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"");
-            sb.append(Integer.toString(this.sharedStringsTotalCount));
+            sb.append(this.sharedStringsTotalCount);
             sb.append("\" uniqueCount=\"");
-            sb.append(Integer.toString(this.sharedStrings.size()));
+            sb.append(this.sharedStrings.size());
             sb.append("\">");
             ArrayList<String> keys = this.sharedStrings.getKeys();
             //for (Map.Entry<String, String> str : sharedStrings.entrySet())
@@ -932,7 +932,7 @@ public class XlsXWriter {
         if (this.workbook.getSelectedWorksheet() > 0)
         {
             sb.append("<bookViews><workbookView activeTab=\"");
-            sb.append(Integer.toString(this.workbook.getSelectedWorksheet()));
+            sb.append(this.workbook.getSelectedWorksheet());
             sb.append("\"/></bookViews>");
         }
         if (this.workbook.isWorkbookProtectionUsed() == true)
@@ -1014,7 +1014,7 @@ public class XlsXWriter {
         for(int i = 0; i < celldata.size(); i++)
         {
             line = createRowString(celldata.get(i), worksheet);
-            sb.append(line).append("");
+            sb.append(line);
         }
         sb.append("</sheetData>");
         
@@ -1156,7 +1156,7 @@ public class XlsXWriter {
             {
                 sheet = this.workbook.getWorksheets().get(i);
                 doc = createWorksheetPart(sheet);
-                file = "sheet" + Integer.toString(sheet.getSheetID()) + ".xml";
+                file = "sheet" + sheet.getSheetID() + ".xml";
                 rel.addRelationshipEntry("/xl/worksheets/" + file, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet");
                 p.addPart("xl/worksheets/" + file, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml", doc);
             }
@@ -1264,7 +1264,7 @@ public class XlsXWriter {
         {
             j = illegalCharacters.get(i);
             type = characterTypes.get(i);
-            sb.append(input.substring(lastIndex, j));
+            sb.append(input, lastIndex, j);
             if (type == 0)
             {
                 sb.append(' '); // Whitespace as fall back on illegal character

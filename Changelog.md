@@ -1,5 +1,15 @@
 # Change Log
 
+## v1.2.7
+
+---
+Release Date: **21.05.2019**
+
+- Maintenance update
+- Code cleanup
+- Removed dist folder, since binaries are available through releases, compilation or maven central
+
+
 ## v1.2.6
 
 ---

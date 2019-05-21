@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2018
+ * Copyright Raphael Stoeckli © 2019
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -275,10 +275,10 @@ public class Metadata {
         }
         if (major > 99999)
         {
-            throw new FormatException("FormatException","The major number may not be bigger than 99999. The passed value is " + Integer.toString(major));
+            throw new FormatException("FormatException","The major number may not be bigger than 99999. The passed value is " + major);
         }
         String leftPart = Integer.toString(major);
-        String rightPart = Integer.toString(minor) + Integer.toString(build) + Integer.toString(revision);
+        String rightPart = Integer.toString(minor) + build + revision;
         rightPart = rightPart.replaceAll("0+$", "");
         if (rightPart.length() == 0) { rightPart = "0"; }
         else
