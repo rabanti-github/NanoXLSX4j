@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2018
+ * Copyright Raphael Stoeckli © 2019
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -344,7 +344,7 @@ public class CellXf extends AbstractStyle {
      */
     public int calculateInternalRotation() {
         if (this.textRotation < -90 || this.textRotation > 90) {
-            throw new RangeException("RotationRangeException", "The rotation value (" + Integer.toString(this.textRotation) + "°) is out of range. Range is form -90° to +90°");
+            throw new RangeException("RotationRangeException", "The rotation value (" + this.textRotation + "°) is out of range. Range is form -90° to +90°");
         }
         if (this.textDirection == TextDirectionValue.vertical) {
             return 255;
@@ -364,7 +364,7 @@ public class CellXf extends AbstractStyle {
      */
     @Override
     public String toString() {
-        return "StyleXF:" + Integer.toString(this.hashCode());
+        return "StyleXF:" + this.hashCode();
     }
 
     /**

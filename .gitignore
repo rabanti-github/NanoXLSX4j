@@ -21,8 +21,6 @@ build/
 
 manifest\.mf
 
-test/
-
 lib/
 /target/
 nanoxlsx4j\.iml
