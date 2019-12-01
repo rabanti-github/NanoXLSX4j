@@ -1,5 +1,13 @@
 # Change Log
 
+## v1.2.8
+
+---
+Release Date: **01.12.2019**
+
+- Fixed a bug of reorganized worksheets (when deleted in Excel)
+
+
 ## v1.2.7
 
 ---

@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -103,7 +104,6 @@ public class XlsxReader
         ZipFile zf = null;
         try
         {
-            ZipEntry entry;
             if (inputStream == null || Helper.isNullOrEmpty(filePath) == false)
             {
                 zf = new ZipFile(this.filePath);
@@ -137,12 +137,14 @@ public class XlsxReader
             WorksheetReader wr;
             nameTemplate = "sheet" + worksheetIndex + ".xml";
             name = "xl/worksheets/" + nameTemplate;
-            for (int i = 0; i < this.workbook.getWorksheetDefinitions().size(); i++)
+
+            Set<Integer> keys = workbook.getWorksheetDefinitions().keySet();
+            for (int definitionKey: keys)
             {
                 stream = getEntryStream(name, zf);
                 wr = new WorksheetReader(sharedStrings, nameTemplate, worksheetIndex);
                 wr.read(stream);
-                this.worksheets.put(worksheetIndex - 1, wr);
+                this.worksheets.put(definitionKey, wr);
                 worksheetIndex++;
                 nameTemplate = "sheet" + worksheetIndex + ".xml";
                 name = "xl/worksheets/" + nameTemplate;
@@ -172,17 +174,17 @@ public class XlsxReader
     public Workbook getWorkbook()
     {
         Workbook wb = new Workbook(false);
-        WorksheetReader wr;
         Worksheet ws;
-        for(int i = 0; i < this.worksheets.size(); i++)
+        int index = 1;
+        for (Map.Entry<Integer, WorksheetReader> reader : worksheets.entrySet())
         {
-            wr = this.worksheets.get(i);
-            ws = new Worksheet(this.workbook.getWorksheetDefinitions().get(i + 1), i+1, wb);
-            for (Map.Entry<String, Cell> cell : wr.getData().entrySet())
+            ws = new Worksheet(this.workbook.getWorksheetDefinitions().get(reader.getKey()), index, wb);
+            for (Map.Entry<String, Cell> cell : reader.getValue().getData().entrySet())
             {
                 ws.addCell(cell.getValue(), cell.getKey());
             }
             wb.addWorksheet(ws);
+            index++;
         }
         return wb;
     }
