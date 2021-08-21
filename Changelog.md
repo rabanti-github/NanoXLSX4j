@@ -12,7 +12,6 @@ Release Date: **xx.06.2021**
 - Updated documentation
 - Fixed some code formatting issues
 
-
 ## v1.3.0
 
 ---
@@ -24,6 +23,13 @@ Release Date: **02.09.2020**
 - Added a check to ensure dates are not set beyond 9999-12-31 (limitation of OAdate)
 - Updated documentation
 - Fixed some code formatting issues
+
+## v1.2.8
+
+---
+Release Date: **01.12.2019**
+
+- Fixed a bug of reorganized worksheets (when deleted in Excel)
 
 ## v1.2.7
 

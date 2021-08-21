@@ -120,7 +120,7 @@ public class NanoXLSX4j {
 
 
     /**
-     * This is a demo to read the previously created basix.xlsx file
+     * This is a demo to read the previously created basic.xlsx file
      */
     private static void read() {
         try {
