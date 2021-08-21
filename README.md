@@ -11,41 +11,52 @@ Project website: [https://picoxlsx.rabanti.ch](https://picoxlsx.rabanti.ch)
 
 See the **[Change Log](https://github.com/rabanti-github/NanoXLSX4j/blob/master/Changelog.md)** for recent updates.
 
-# Reader Support
+## Reader Support
+
 Currently, only basic reader functionality is available:
 
-- Reading and casting of cell values into the appropriate data types
-- Reading of several worksheets in on workbook with names
-- No processing of styles (when reading) at the moment
-- No support of other objects than spreadsheet data at the moment
+* Reading and casting of cell values into the appropriate data types
+* Reading of several worksheets in on workbook with names
+* Limited processing of styles (when reading) at the moment
+* No support of other objects than spreadsheet data at the moment
 
+**Note: Styles in loaded files are only considering number formats (to determine date and time values), as well as custom formats. The scope of reader functionality may change with future versions.**
 
-# Requirements
-NanoXLSX4j was created with Java 8 and may contain lambda expressions which are not available in Java 7<br>
-The only requirement for developments are a current JDK to develop and JRE to run.
+## Requirements
 
-# Installation
-## As JAR
-Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-1.2.7.jar**) into the lib folder of your project and create a library reference to it in your IDE.
-## As source files
+PicoXLSX4j was initially created with Java 8 and currently build with OpenJDK 11
+The only requirement for development is an up-to-date Java environment (OpenJDK 11 or higher recommended)
+
+## Installation
+
+### As JAR
+
+Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-1.3.0.jar**) into the lib folder of your project and create a library reference to it in your IDE.
+
+### As source files
+
 Place all .java files from the NanoXLSX4j source folder into your project. The folder structure defines the packages. Please use refactoring if you want to relocate the files.
-## Maven ##
-Add the following information to your POM file within the <code>&lt;dependencies&gt;</code> tag:
+
+### Maven
+
+Add the following information to your POM file within the ```<dependencies>``` tag:
+
 ```xml
 <dependency>
     <groupId>ch.rabanti</groupId>
     <artifactId>nanoxlsx4j</artifactId>
-    <version>1.2.7</version>
+    <version>1.3.0</version>
 </dependency>
-``` 
+```
 
 **Important:** The version number may change.
 Please see the version number of Maven Central [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.rabanti/nanoxlsx4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.rabanti/nanoxlsx4j)
- or check the [Change Log](https://github.com/rabanti-github/NanoXLSX4j/blob/master/Changelog.md) for the most recent version. The keywords ```LATEST```  and ```RELEASE``` are only valid in Maven 2, not 3 and newer. 
+ or check the [Change Log](https://github.com/rabanti-github/NanoXLSX4j/blob/master/Changelog.md) for the most recent version. The keywords ```LATEST```  and ```RELEASE``` are only valid in Maven 2, not 3 and newer.
 
+## Usage
 
-# Usage
-## Quick Start (shortened syntax)
+### Quick Start (shortened syntax)
+
 ```java
  Workbook workbook = new Workbook("myWorkbook.xlsx", "Sheet1");         // Create new workbook with a worksheet called Sheet1
  workbook.WS.value("Some Data");                                        // Add cell A1
@@ -57,7 +68,8 @@ Please see the version number of Maven Central [![Maven Central](https://maven-b
  } catch (Exception ex) {}
 ```
 
-## Quick Start (regular syntax)
+### Quick Start (regular syntax)
+
 ```java
  Workbook workbook = new Workbook("myWorkbook.xlsx", "Sheet1");       // Create new workbook with a worksheet called Sheet1
  workbook.getCurrentWorksheet().addNextCell("Some Data");             // Add cell A1
@@ -69,7 +81,8 @@ Please see the version number of Maven Central [![Maven Central](https://maven-b
  } catch (Exception ex) {}
 ```
 
-## Quick Start (read)
+### Quick Start (read)
+
 ```java
 try
 {
@@ -86,5 +99,6 @@ catch (Exception ex)
 ```
 
 ## Further References
-See the full <b>API-Documentation</b> at: [https://rabanti-github.github.io/NanoXLSX4j/](https://rabanti-github.github.io/NanoXLSX4j/).<br>
-The [Demo class](https://github.com/rabanti-github/NanoXLSX4j/blob/master/src/main/java/ch/rabanti/nanoxlsx4j/demo/NanoXLSX4j.java) contains 14 simple use cases. You can also look at the full API documentation or the Javadoc annotations in the particular .java files.<br>
+
+See the full <b>API-Documentation</b> at: [https://rabanti-github.github.io/NanoXLSX4j/](https://rabanti-github.github.io/NanoXLSX4j/).
+The [Demo class](https://github.com/rabanti-github/NanoXLSX4j/blob/master/src/main/java/ch/rabanti/nanoxlsx4j/demo/NanoXLSX4j.java) contains 14 simple use cases. You can also look at the full API documentation or the Javadoc annotations in the particular .java files.

@@ -1,5 +1,30 @@
 # Change Log
 
+## v1.4.0
+
+---
+Release Date: **xx.06.2021**
+
+- Added style reader to resolve dates and times properly
+- Added new data type TIME, represented by LocalTime objects in reader and writer
+- Added time (LocalTime) examples to the demos
+- Added a check to ensure dates are not set beyond 9999-12-31 (limitation of OAdate)
+- Updated documentation
+- Fixed some code formatting issues
+
+
+## v1.3.0
+
+---
+Release Date: **02.09.2020**
+
+- Added style reader to resolve dates and times properly
+- Added new data type TIME, represented by LocalTime objects in reader and writer
+- Added time (LocalTime) examples to the demos
+- Added a check to ensure dates are not set beyond 9999-12-31 (limitation of OAdate)
+- Updated documentation
+- Fixed some code formatting issues
+
 ## v1.2.7
 
 ---
@@ -9,7 +34,6 @@ Release Date: **21.05.2019**
 - Code cleanup
 - Removed dist folder, since binaries are available through releases, compilation or maven central
 
-
 ## v1.2.6
 
 ---
@@ -18,34 +42,30 @@ Release Date: **07.12.2018**
 - Improved the performance of adding stylized cells by factor 10 to 100
 - Code reformatting
 
-
 ## v1.2.5
 
 ---
 Release Date: **04.11.2018**
+
 - Renamed packages LowLevel to XlsxWriter, style to styles, exception to exceptions
 - Fixed a bug in the style handling of merged cells. Bug fix provided by David Courtel for PicoXLSX (C#)
 - Fixed typos
 - Documentation update
-
-
 
 ## v1.2.4
 
 ---
 Release Date: **24.08.2018**
 
-
 **Note**: Due to some refactoring (see below) in this version, changes of existing code may be necessary. However, most introduced changes are on a rather low level or can be fixed by search&replace
-
 
 - Fixed a bug in the calculation of OA Dates (internal format)
 - Fixed a bug regarding formulas in the reader
 - Added support for dates in the reader
 - Documentation Update
 
-
 ## v1.2.3
+
  ---
 Release Date: **19.08.2018**
 
@@ -91,11 +111,10 @@ Release Date: **08.06.2018**
 - Added new demo for the introduced style features
 - Internal optimizations and fixes
 
-
 ## v1.0.1
- 
+
 ---
- 
+
 Release Date: **31.05.2018**
 
 - Fixed versioning issue
@@ -103,11 +122,10 @@ Release Date: **31.05.2018**
 - Added numeric data types Byte, BigDecimal, and Short (proposal by Johan Lindvall for PicoXLSX)
 - Changed the behavior of cell type casting. User defined cell types will now only be overwritten if the type is DEFAULT (proposal by Johan Lindvall for PicoXLSX)
 
-
 ## v1.0.0
- 
+
 ---
- 
+
 Release Date: **27.05.2018**
 
 - Initial release

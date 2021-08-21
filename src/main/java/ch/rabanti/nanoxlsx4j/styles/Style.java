@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -13,7 +13,7 @@ import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
  *
  * @author Raphael Stoeckli
  */
-public class Style extends AbstractStyle {
+public class Style extends AbstractStyle implements Modifiable {
 
     // ### P R I V A T E  F I E L D S ###
     @AppendAnnotation(nestedProperty = true)
@@ -26,8 +26,6 @@ public class Style extends AbstractStyle {
     private Font fontRef;
     @AppendAnnotation(nestedProperty = true)
     private NumberFormat numberFormatRef;
-    @AppendAnnotation(ignore = true)
-    private StyleManager styleManagerReference = null;
     @AppendAnnotation(ignore = true)
     private String name;
     @AppendAnnotation(ignore = true)
@@ -89,7 +87,6 @@ public class Style extends AbstractStyle {
      */
     public void setBorder(Border borderRef) {
         this.borderRef = borderRef;
-        reorganizeStyle();
     }
 
     /**
@@ -99,7 +96,6 @@ public class Style extends AbstractStyle {
      */
     public void setCellXf(CellXf cellXfRef) {
         this.cellXfRef = cellXfRef;
-        reorganizeStyle();
     }
 
     /**
@@ -109,7 +105,6 @@ public class Style extends AbstractStyle {
      */
     public void setFill(Fill fillRef) {
         this.fillRef = fillRef;
-        reorganizeStyle();
     }
 
     /**
@@ -119,7 +114,6 @@ public class Style extends AbstractStyle {
      */
     public void setFont(Font fontRef) {
         this.fontRef = fontRef;
-        reorganizeStyle();
     }
 
     /**
@@ -129,17 +123,6 @@ public class Style extends AbstractStyle {
      */
     public void setNumberFormat(NumberFormat numberFormatRef) {
         this.numberFormatRef = numberFormatRef;
-        reorganizeStyle();
-    }
-
-    /**
-     * Sets the reference of the style manager
-     *
-     * @param styleManagerReference Reference to the corresponding style manager object
-     */
-    public void setStyleManagerReference(StyleManager styleManagerReference) {
-        this.styleManagerReference = styleManagerReference;
-        reorganizeStyle();
     }
 
     /**
@@ -249,25 +232,6 @@ public class Style extends AbstractStyle {
     }
 
     /**
-     * Method to reorganize / synchronize the components of this style
-     */
-    private void reorganizeStyle() {
-        if (this.styleManagerReference == null) {
-            return;
-        } else {
-            Style newStyle = this.styleManagerReference.addStyle(this);
-            this.borderRef = newStyle.getBorder();
-            this.cellXfRef = newStyle.getCellXf();
-            this.fillRef = newStyle.getFill();
-            this.fontRef = newStyle.getFont();
-            this.numberFormatRef = newStyle.getNumberFormat();
-        }
-        if (this.styleNameDefined == false) {
-            this.name = Integer.toString(this.hashCode());
-        }
-    }
-
-    /**
      * Override toString method
      *
      * @return String of a class instance
@@ -285,7 +249,7 @@ public class Style extends AbstractStyle {
     @Override
     public int hashCode() {
         if (borderRef == null || cellXfRef == null || fillRef == null || fontRef == null || numberFormatRef == null) {
-            throw new StyleException("MissingReferenceException", "The hash of the style could not be created because one or more components are missing as references");
+            throw new StyleException(StyleException.MISSING_REFERENCE, "The hash of the style could not be created because one or more components are missing as references");
         }
         int p = 241;
         int r = 1;
@@ -306,7 +270,7 @@ public class Style extends AbstractStyle {
     @Override
     public AbstractStyle copy() {
         if (borderRef == null || cellXfRef == null || fillRef == null || fontRef == null || numberFormatRef == null) {
-            throw new StyleException("MissingReferenceException", "The style could not be copied because one or more components are missing as references");
+            throw new StyleException(StyleException.MISSING_REFERENCE, "The style could not be copied because one or more components are missing as references");
         }
         Style copy = new Style();
         copy.setBorder(this.borderRef.copy());
@@ -324,6 +288,27 @@ public class Style extends AbstractStyle {
      */
     public Style copyStyle() {
         return (Style) this.copy();
+    }
+
+    /**
+     * Returns whether the current style component was modified (differs from new class instance)
+     * @return True if the current object was modified, otherwise false
+     */
+    @Override
+    public boolean isModified() {
+        if (this.borderRef.isModified()){
+            return true;
+        }
+        if (this.cellXfRef.isModified()){
+            return true;
+        }
+        if (this.fillRef.isModified()){
+            return true;
+        }
+        if (this.fontRef.isModified()){
+            return true;
+        }
+        return this.numberFormatRef.isModified(); // last statement returns either true or false (whole object not modified)
     }
 
 

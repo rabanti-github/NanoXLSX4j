@@ -1,20 +1,23 @@
 /*
  * NanoXLSX4j is a small Java library to generate XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.demo;
 
 import ch.rabanti.nanoxlsx4j.*;
+import ch.rabanti.nanoxlsx4j.lowLevel.XmlDocument;
 import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
 import ch.rabanti.nanoxlsx4j.styles.CellXf;
 import ch.rabanti.nanoxlsx4j.styles.Fill;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import io.reactivex.*;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -36,7 +39,7 @@ public class NanoXLSX4j {
     public static void main(String[] args) {
 
         /** PROVIDING OUTPUT FOLDER **/
-        if (Files.exists(Paths.get(outputFolder)) == false)                     // Check existence of output folder
+        if (!Files.exists(Paths.get(outputFolder)))                     // Check existence of output folder
         {
             File dir = new File(outputFolder);                                  // Create new folder if not existing
             dir.mkdirs();
@@ -46,9 +49,12 @@ public class NanoXLSX4j {
         // Performance.dateStressTest(outputFolder + "stressTest.xlsx", "Dates", 40000); // Only uncomment this to test the library performance
         /* *********************** */
 
-        /** DEMOS **/
-        basicDemo();
+         /** DEMOS **/
+       // bug();
+
+       // basicDemo();
         read();
+        /*
         shortenerDemo();
         streamDemo();
         demo1();
@@ -61,7 +67,40 @@ public class NanoXLSX4j {
         demo8();
         demo9();
         demo10();
+        */
     }
+
+    /*
+    private static void bug(){
+
+
+        Workbook data = new Workbook(false);
+
+        Observable mCheckPermissionUseCase = Observable.empty();
+
+        mCheckPermissionUseCase
+                .execute(Permission.WriteExternalStorage)
+                .doOnTerminate(() -> {
+                    if (view != null) {
+                        view.progressBarLoading(false);
+                    }
+                })
+                .compose(bindToLifecycle())
+                .subscribe(result -> {
+                            view.storagePermissionGranted();
+                            try (FileOutputStream out = context.openFileOutput(fileName, Context.MODE_PRIVATE)) {
+                                data.saveAsStream(out);
+                                File file = new File(context.getFilesDir(), fileName);
+                                view.openShareFileIntent(file, fileFormat);
+                            } catch (Exception ex) {
+                                // noop
+                            }
+
+
+                });
+    }
+*/
+
 
     /**
      * This is a very basic demo (adding three values and save the workbook)
@@ -78,6 +117,7 @@ public class NanoXLSX4j {
             System.out.println(e.getMessage());
         }
     }
+
 
     /**
      * This is a demo to read the previously created basix.xlsx file

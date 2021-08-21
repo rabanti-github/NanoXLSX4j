@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -11,9 +11,11 @@ package ch.rabanti.nanoxlsx4j.exceptions;
  * @author Raphael Stoeckli
  */
 public class FormatException extends RuntimeException{
-    
-    private Exception innerException;
-    private String exceptionTitle;
+
+    public static final String GENERAL = "A general format exception occurred";
+
+    private final Exception innerException;
+    private final String exceptionTitle;
 
     /**
      * Gets the inner exception
@@ -39,6 +41,8 @@ public class FormatException extends RuntimeException{
     public FormatException()
     {
         super();
+        this.exceptionTitle = GENERAL;
+        this.innerException = null;
     }
     
     /**
@@ -50,6 +54,7 @@ public class FormatException extends RuntimeException{
     {
         super(title + ": " + message);
         this.exceptionTitle = title;
+        this.innerException = null;
     }
     
     /**

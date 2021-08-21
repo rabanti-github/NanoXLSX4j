@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -18,37 +18,44 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-
 /**
  * Class representing a worksheet of a workbook
  */
 public class Worksheet {
-    
-// ### C O N S T A N T S ###    
+
+// ### C O N S T A N T S ###
     /**
-    * Default column width as constant
-    */
+     * Threshold, using when floats are compared
+     */
+    private static final float FLOAT_THRESHOLD = 0.0001f;
+    /**
+     * Maximum number of characters a worksheet name can have
+     */
+    public static final int MAX_WORKSHEET_NAME_LENGTH = 31;
+    /**
+     * Default column width as constant
+     */
     public static final float DEFAULT_COLUMN_WIDTH = 10f;
     /**
-    * Default row height as constant
-    */
+     * Default row height as constant
+     */
     public static final float DEFAULT_ROW_HEIGHT = 15f;
     /**
      * Maximum column number (zero-based)
      */
     public static final int MAX_COLUMN_NUMBER = 16383;
     /**
-    * Maximum column width as constant
-    */
+     * Maximum column width as constant
+     */
     public static final float MAX_COLUMN_WIDTH = 255f;
     /**
      * Maximum row number (zero-based)
      */
     public static final int MAX_ROW_NUMBER = 1048575;
     /**
-    * Maximum row height as constant
-    */
-    public static final float MAX_ROW_HEIGHT = 409.5f;    
+     * Maximum row height as constant
+     */
+    public static final float MAX_ROW_HEIGHT = 409.5f;
     /**
      * Minimum column number (zero-based)
      */
@@ -67,11 +74,11 @@ public class Worksheet {
     public static final float MIN_ROW_HEIGHT = 0f;
 
 // ### E N U M S ###
+
     /**
      * Enum to define the direction when using AddNextCell method
      */
-    public enum CellDirection
-    {
+    public enum CellDirection {
         /**
          * The next cell will be on the same row (A1,B1,C1...)
          */
@@ -85,11 +92,11 @@ public class Worksheet {
          */
         Disabled
     }
+
     /**
      * Enum to define the possible protection types when protecting a worksheet
      */
-    public enum SheetProtectionValue
-    {
+    public enum SheetProtectionValue {
         // sheet, // Is always on 1 if protected
         /**
          * If selected, the user can edit objects if the worksheets is protected
@@ -152,8 +159,30 @@ public class Worksheet {
          */
         selectUnlockedCells
     }
-    
-// ### P R I V A T E  F I E L D S ###    
+
+    /**
+     * Enum to define the pane position or active pane in a slip worksheet
+     */
+    public enum WorksheetPane {
+        /**
+         * The pane is located in the bottom right of the split worksheet
+         */
+        bottomRight,
+        /**
+         * The pane is located in the top right of the split worksheet
+         */
+        topRight,
+        /**
+         * The pane is located in the bottom left of the split worksheet
+         */
+        bottomLeft,
+        /**
+         * The pane is located in the top left of the split worksheet
+         */
+        topLeft
+    }
+
+    // ### P R I V A T E  F I E L D S ###
     private Style activeStyle;
     private Range autoFilterRange;
     private Map<String, Cell> cells;
@@ -174,150 +203,169 @@ public class Worksheet {
     private boolean useSheetProtection;
     private boolean useActiveStyle;
     private Workbook workbookReference;
-    
+    private WorksheetPane activePane = null;
+    private boolean hidden;
+    private Float paneSplitTopHeight;
+    private Float paneSplitLeftWidth;
+    private Boolean freezeSplitPanes;
+    private Address paneSplitTopLeftCell;
+    private Address paneSplitAddress;
 
-// ### G E T T E R S  &  S E T T E R S ###    
-   
+// ### G E T T E R S  &  S E T T E R S ###
+
     /**
      * Sets the column auto filter within the defined column range
+     *
      * @param range Range to apply auto filter on. The range could be 'A1:C10' for instance. The end row will be recalculated automatically when saving the file
-     * @throws RangeException Thrown if the passed range out of range
-     * @exception FormatException Thrown if the passed range is malformed
+     * @throws RangeException  Thrown if the passed range out of range
+     * @throws FormatException Thrown if the passed range is malformed
      */
-    public void setAutoFilterRange(String range)
-    {
+    public void setAutoFilterRange(String range) {
         this.autoFilterRange = Cell.resolveCellRange(range);
         recalculateAutoFilter();
         recalculateColumns();
     }
+
     /**
      * Gets the range of the auto filter. If null, no auto filters are applied
+     *
      * @return Range of auto filter
      */
     public Range getAutoFilterRange() {
         return autoFilterRange;
     }
+
     /**
      * Gets the cells of the worksheet as map with the cell address as key and the cell object as value
+     *
      * @return List of Cell objects
      */
     public Map<String, Cell> getCells() {
         return cells;
     }
+
     /**
      * Gets all columns with non-standard properties, like auto filter applied or a special width as map with the zero-based column index as key and the column object as value
+     *
      * @return map of columns
      */
     public Map<Integer, Column> getColumns() {
         return columns;
     }
-    
+
     /**
      * Gets the direction when using AddNextCell method
+     *
      * @return Cell direction
      */
     public CellDirection getCurrentCellDirection() {
         return currentCellDirection;
-    }    
+    }
+
     /**
      * Sets the direction when using AddNextCell method
+     *
      * @param currentCellDirection Cell direction
      */
     public void setCurrentCellDirection(CellDirection currentCellDirection) {
         this.currentCellDirection = currentCellDirection;
     }
+
     /**
      * Sets the current column number (zero based)
+     *
      * @param columnNumber Column number (zero based)
      * @throws RangeException Thrown if the number is out of the valid range. Range is from 0 to 16383 (16384 columns)
      */
-    public void setCurrentColumnNumber(int columnNumber)
-    {
-        if (columnNumber > MAX_COLUMN_NUMBER || columnNumber < MIN_COLUMN_NUMBER)
-        {
-            throw new RangeException("OutOfRangeException","The column number (" + columnNumber + ") is out of range. Range is from "+ MIN_COLUMN_NUMBER + " to "+ MAX_COLUMN_NUMBER +" ("+ (MAX_COLUMN_NUMBER + 1) +" columns).");
-        }
+    public void setCurrentColumnNumber(int columnNumber) {
+        Cell.validateColumnNumber(columnNumber);
         this.currentColumnNumber = columnNumber;
-    }  
+    }
+
     /**
      * Sets the current row number (zero based)
+     *
      * @param rowNumber Row number (zero based)
      * @throws RangeException Thrown if the number is out of the valid range. Range is from 0 to 1048575 (1048576 rows)
      */
-    public void setCurrentRowNumber(int rowNumber)
-    {
-        if (rowNumber > MAX_ROW_NUMBER || rowNumber < MIN_ROW_NUMBER)
-        {
-            throw new RangeException("OutOfRangeException","The row number (" + rowNumber + ") is out of range. Range is from "+ MIN_ROW_NUMBER +" to "+ MAX_ROW_NUMBER +" ("+ (MAX_ROW_NUMBER + 1) +" rows).");
-        }
+    public void setCurrentRowNumber(int rowNumber) {
+        Cell.validateRowNumber(rowNumber);
         this.currentRowNumber = rowNumber;
     }
-    
+
     /**
      * Gets the current column number (zero based)
+     *
      * @return Column number (zero-based)
      */
-    public int getCurrentColumnNumber()
-    {
+    public int getCurrentColumnNumber() {
         return this.currentColumnNumber;
     }
 
     /**
      * Gets the current row number (zero based)
+     *
      * @return Row number (zero-based)
      */
-    public int getCurrentRowNumber()
-    {
+    public int getCurrentRowNumber() {
         return this.currentRowNumber;
-    }     
-    
+    }
+
     /**
      * Gets the default column width
+     *
      * @return Default column width
      */
     public float getDefaultColumnWidth() {
         return defaultColumnWidth;
-    } 
+    }
+
     /**
      * Sets the default column width
+     *
      * @param defaultColumnWidth Default column width
      * @throws RangeException Throws a RangeException if the passed width is out of range (set)
      */
     public void setDefaultColumnWidth(float defaultColumnWidth) {
-        if (defaultRowHeight < MIN_COLUMN_WIDTH || defaultRowHeight > MAX_COLUMN_WIDTH)
-        {
-            throw new RangeException("OutOfRangeException","The passed default row height is out of range (" + MIN_COLUMN_WIDTH + " to " + MAX_COLUMN_WIDTH + ")");
+        if (defaultColumnWidth < MIN_COLUMN_WIDTH || defaultColumnWidth > MAX_COLUMN_WIDTH) {
+            throw new RangeException(RangeException.GENERAL, "The passed default row height is out of range (" + MIN_COLUMN_WIDTH + " to " + MAX_COLUMN_WIDTH + ")");
         }
         this.defaultColumnWidth = defaultColumnWidth;
-    }    
+    }
+
     /*
-    * Gets the default Row height
-    * @return Default Row height
-    */
+     * Gets the default Row height
+     * @return Default Row height
+     */
     public float getDefaultRowHeight() {
         return defaultRowHeight;
     }
+
     /**
      * Sets the default Row height
+     *
      * @param defaultRowHeight Default Row height
      * @throws RangeException Throws a RangeException if the passed height is out of range (set)
      */
     public void setDefaultRowHeight(float defaultRowHeight) {
-        if (defaultRowHeight < MIN_ROW_HEIGHT || defaultRowHeight > MAX_ROW_HEIGHT)
-        {
-            throw new RangeException("OutOfRangeException","The passed default row height is out of range (" + MIN_ROW_HEIGHT + " to " + MAX_ROW_HEIGHT + ")");
+        if (defaultRowHeight < MIN_ROW_HEIGHT || defaultRowHeight > MAX_ROW_HEIGHT) {
+            throw new RangeException(RangeException.GENERAL, "The passed default row height is out of range (" + MIN_ROW_HEIGHT + " to " + MAX_ROW_HEIGHT + ")");
         }
         this.defaultRowHeight = defaultRowHeight;
     }
+
     /**
      * Gets the hidden rows as map with the zero-based row number as key and a boolean as value. True indicates hidden, false visible. Entries with the value false are not affecting the worksheet. These entries can be removed<br>
+     *
      * @return Map with hidden rows
      */
     public Map<Integer, Boolean> getHiddenRows() {
         return hiddenRows;
     }
+
     /**
      * Gets the merged cells (only references) as map with the cell address as key and the range object as value
+     *
      * @return Hashmap with merged cell references
      */
     public Map<String, Range> getMergedCells() {
@@ -326,793 +374,1217 @@ public class Worksheet {
 
     /**
      * Gets defined row heights as map with the zero-based row number as key and the height (float from 0 to 409.5) as value
+     *
      * @return Map of row heights
      */
     public Map<Integer, Float> getRowHeights() {
         return rowHeights;
     }
+
     /**
      * Gets the range of selected cells of this worksheet. Null if no cells are selected
+     *
      * @return Cell range of the selected cells
      */
     public Range getSelectedCells() {
         return selectedCells;
     }
+
     /**
-     * Sets the selected cells on this worksheet
+     * Sets the selected cells on this worksheet. Null removes the selected cell range
+     *
      * @param range Cell range to select
-     * @throws RangeException Thrown if the passed range out of range
-     * @exception FormatException Thrown if the passed range is malformed
+     * @throws RangeException  Thrown if the passed range out of range
+     * @throws FormatException Thrown if the passed range is malformed
      */
-    public void setSelectedCells(String range)
-    {
-        this.selectedCells = Cell.resolveCellRange(range);
+    public void setSelectedCells(String range) {
+        if (range == null) {
+            this.selectedCells = null;
+        } else {
+            this.selectedCells = Cell.resolveCellRange(range);
+        }
+
     }
+
     /**
-     * Sets the selected cells on this worksheet
+     * Sets the selected cells on this worksheet. Null removes the selected cell range
+     *
      * @param range Cell range to select
      */
-    public void setSelectedCells(Range range)
-    {
-        this.selectedCells = range;
+    public void setSelectedCells(Range range) {
+        if (range == null) {
+            this.selectedCells = null;
+        } else {
+            this.selectedCells = range;
+        }
     }
+
+    /**
+     * Sets the selected cells on this worksheet. If both addresses are null, the selected cell range is removed
+     *
+     * @param startAddress Start address of the range
+     * @param endAddress   End address of the range
+     * @throws RangeException Thrown if either the start address or end address is null
+     */
+    public void setSelectedCells(Address startAddress, Address endAddress) {
+        if (startAddress == null && endAddress != null || startAddress != null && endAddress == null) {
+            throw new RangeException("NullReferenceException", "Either the start or end address is null (invalid range)");
+        }
+        if (startAddress == null && endAddress == null) {
+            this.selectedCells = null;
+        } else {
+            this.selectedCells = new Range(startAddress, endAddress);
+        }
+    }
+
+
     /**
      * Gets the internal ID of the worksheet
+     *
      * @return Worksheet ID
      */
     public int getSheetID() {
         return sheetID;
     }
+
     /**
      * Sets the internal ID of the worksheet
+     *
      * @param sheetID Worksheet ID
      */
     public void setSheetID(int sheetID) {
+        if (sheetID < 1) {
+            throw new FormatException("InvalidIDException", "The ID " + sheetID + " is invalid. Worksheet IDs must be >0");
+        }
         this.sheetID = sheetID;
     }
+
     /**
      * Gets the name of the sheet
+     *
      * @return Name of the sheet
      */
     public String getSheetName() {
         return sheetName;
     }
-    
+
     /**
      * Gets whether the worksheet is protected
+     *
      * @return If true, the worksheet is protected
      */
     public boolean isUseSheetProtection() {
         return useSheetProtection;
     }
+
     /**
      * Sets whether the worksheet is protected
+     *
      * @param useSheetProtection If true, the worksheet is protected
      */
     public void setUseSheetProtection(boolean useSheetProtection) {
         this.useSheetProtection = useSheetProtection;
     }
-    
+
     /**
      * Gets the password used for sheet protection
+     *
      * @return Password (UTF-8)
      */
     public String getSheetProtectionPassword() {
         return sheetProtectionPassword;
     }
+
     /**
      * Sets or removes the password for worksheet protection. If set, UseSheetProtection will be also set to true
+     *
      * @param password Password (UTF-8) to protect the worksheet. If the password is null or empty, no password will be used
      */
-    public void setSheetProtectionPassword(String password)
-    {
-        if (Helper.isNullOrEmpty(password) == true)
-        {
+    public void setSheetProtectionPassword(String password) {
+        if (Helper.isNullOrEmpty(password) == true) {
             this.sheetProtectionPassword = null;
-        }
-        else
-        {
+            this.useSheetProtection = false;
+        } else {
             this.sheetProtectionPassword = password;
             this.useSheetProtection = true;
         }
     }
+
     /**
      * Gets the list of SheetProtectionValues. These values define the allowed actions if the worksheet is protected
+     *
      * @return List of SheetProtectionValues
      */
     public List<SheetProtectionValue> getSheetProtectionValues() {
         return sheetProtectionValues;
     }
+
     /**
      * Gets the Reference to the parent Workbook
+     *
      * @return Workbook reference
      */
     public Workbook getWorkbookReference() {
         return workbookReference;
     }
+
     /**
      * Sets the Reference to the parent Workbook
+     *
      * @param workbookReference Workbook reference
      */
     public void setWorkbookReference(Workbook workbookReference) {
         this.workbookReference = workbookReference;
-    }    
+    }
+
+    /**
+     * Gets whether the worksheet is hidden
+     *
+     * @return If true, the worksheet is not listed in the worksheet tabs of the workbook
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /**
+     * Sets whether the worksheet is hidden
+     *
+     * @param hidden If true, the worksheet is not listed in the worksheet tabs of the workbook
+     */
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    /**
+     * Gets the height of the upper, horizontal split pane, measured from the top of the window.<br/>
+     * The value is nullable. If null, no horizontal split of the worksheet is applied.<br/>
+     * The value is only applicable to split the worksheet into panes, but not to freeze them.<br/>
+     * See also {@link #getPaneSplitAddress()}
+     *
+     * @return Height of the top pane until the split line appears
+     * @apiNote Note: This value will be modified to the Excel-internal representation,
+     * calculated by {@link Helper#getInternalPaneSplitHeight(float)}/>
+     */
+    public Float getPaneSplitTopHeight() {
+        return paneSplitTopHeight;
+    }
+
+    /**
+     * Gets the width of the left, vertical split pane, measured from the left of the window.<br/>
+     * The value is nullable. If null, no vertical split of the worksheet is applied<br/>
+     * The value is only applicable to split the worksheet into panes, but not to freeze them.<br/>
+     * See also: {@link #getPaneSplitAddress()}
+     *
+     * @return Width form the left border until the split line appears
+     * @apiNote Note: This value will be modified to the Excel-internal representation,
+     * calculated by {@link Helper#getInternalColumnWidth(float)(float)} (float)}/>
+     */
+    public Float getPaneSplitLeftWidth() {
+        return paneSplitLeftWidth;
+    }
+
+    /**
+     * Gets whether split panes are frozen.<br/>
+     * The value is nullable. If null, no freezing is applied. This property also does not apply if {@link #getPaneSplitAddress()} is null
+     *
+     * @return True if panes are frozen
+     */
+    public Boolean getFreezeSplitPanes() {
+        return freezeSplitPanes;
+    }
+
+    /**
+     * Gets the Top Left cell address of the bottom right pane if applicable and splitting is applied.<br/>
+     * The column is only relevant for vertical split, whereas the row component is only relevant for a horizontal split.<br/>
+     * The value is nullable. If null, no splitting was defined.
+     *
+     * @return Address of the top Left cell address of the bottom right pane
+     */
+    public Address getPaneSplitTopLeftCell() {
+        return paneSplitTopLeftCell;
+    }
+
+    /**
+     * Gets the split address for frozen panes or if pane split was defined in number of columns and / or rows.<br/>
+     * For vertical splits, only the column component is considered. For horizontal splits, only the row component is considered.<br/>
+     * The value is nullable. If null, no frozen panes or split by columns / rows are applied to the worksheet.
+     * However, splitting can still be applied, if the value is defined in characters.<br/>
+     * See also: {@link #getPaneSplitLeftWidth()} and {@link #getPaneSplitTopHeight()} for splitting in characters (without freezing)
+     *
+     * @return Address where the panes splits the worksheet apart
+     */
+    public Address getPaneSplitAddress() {
+        return paneSplitAddress;
+    }
+
+    /**
+     * Gets the active Pane is splitting is applied.<br/>
+     * The value is nullable. If null, no splitting was defined
+     *
+     * @return Active pane if defined
+     */
+    public WorksheetPane getActivePane() {
+        return activePane;
+    }
+
+    /**
+     * Gets the active Style of the worksheet. If null, no style is defined as active
+     *
+     * @return Active style of the worksheet
+     */
+    public Style getActiveStyle() {
+        return activeStyle;
+    }
 
     // ### C O N S T R U C T O R S ###
+
     /**
      * Default constructor. A worksheet created with this constructor cannot be used to assign styles to a cell. This will cause an exception unless a reference to the workbook was set
+     *
      * @throws StyleException Thrown if a style is added to the worksheet without w workbook reference
      */
-    public Worksheet()
-    {
+    public Worksheet() {
         init();
     }
+
     /**
-     * Constructor with workbook reference
-     * @param reference Reference to the parent Workbook
+     * Constructor with worksheet name
+     * @apiNote Note that the worksheet name is not checked against other worksheets with this operation. This is later performed when the worksheet is added to the workbook
+     *
+     * @param name Name of the new worksheet
      * @throws FormatException Thrown if the name contains illegal characters or is too long
      */
-    public Worksheet(Workbook reference)
-    {
-        init();
-        this.workbookReference = reference;
-    }
-    /**
-     * Constructor with workbook reference, name and sheet ID
-     * @param name Name of the worksheet
-     * @param id ID of the worksheet (for internal use)
-     * @param reference Reference to the parent Workbook
-     * @throws FormatException Thrown if the name contains illegal characters or is too long
-     */
-    public Worksheet(String name, int id, Workbook reference)
-    {
+    public Worksheet(String name) {
         init();
         setSheetName(name);
-        this.sheetID = id;
+    }
+
+    /**
+     * Constructor with workbook reference, name and sheet ID
+     *
+     * @param name      Name of the worksheet
+     * @param id        ID of the worksheet (for internal use)
+     * @param reference Reference to the parent Workbook
+     * @throws FormatException Thrown if the name contains illegal characters or is too long
+     */
+    public Worksheet(String name, int id, Workbook reference) {
+        init();
+        setSheetName(name);
+        this.setSheetID(id);
         this.workbookReference = reference;
-    }    
-    
+    }
+
 // ### M E T H O D S ###
-       
+
 // ### M E T H O D S  -  A D D N E X T C E L L ###
-    
+
     /**
      * Adds an object to the next cell position. If the type of the value does not match with one of the supported data types, it will be casted to a String. A prepared object of the type Cell will not be casted but adjusted<br>
      * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean. All other types will be casted into a String using the default toString() method
+     *
      * @param value Unspecified value to insert
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
      */
-    public void addNextCell(Object value)
-    {
-        addNextCell(castValue(value, this.currentColumnNumber, this.currentRowNumber),true,null);
+    public void addNextCell(Object value) {
+        addNextCell(castValue(value, this.currentColumnNumber, this.currentRowNumber), true, null);
     }
 
-     /**
+    /**
      * Adds an object to the next cell position. If the type of the value does not match with one of the supported data types, it will be casted to a String.A prepared object of the type Cell will not be casted but adjusted<br>
      * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean. All other types will be casted into a String using the default toString() method
+     *
      * @param value Unspecified value to insert
      * @param style Style object to apply on this cell
      * @throws StyleException Thrown if the default style was malformed
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
      */
-    public void addNextCell(Object value, Style style)
-    {
-        addNextCell(castValue(value, this.currentColumnNumber, this.currentRowNumber),true,style);
+    public void addNextCell(Object value, Style style) {
+        addNextCell(castValue(value, this.currentColumnNumber, this.currentRowNumber), true, style);
     }
-   
+
     /**
-     * Method to insert a generic cell to the next cell position
-     * @param cell Cell object to insert
+     * Method to insert a generic cell to the next cell position.
+     * If the cell object already has a style definition, and a style or active style is defined, the cell style will be merged, otherwise just set
+     *
+     * @param cell        Cell object to insert
      * @param incremental If true, the address value (row or column) will be incremented, otherwise not
-     * @param style If not null, the defined style will be applied to the cell, otherwise no style or the default style will be applied
+     * @param style       If not null, the defined style will be applied to the cell, otherwise no style or the default style will be applied
      * @throws StyleException Thrown if the default style was malformed
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
      */
-    private void addNextCell(Cell cell, boolean incremental, Style style)
-    {
-        cell.setWorksheetReference(this);
-        if (this.activeStyle != null && this.useActiveStyle == true && style == null)
-        {
-            cell.setStyle(this.activeStyle);
-        }
-        else if (style != null)
-        {
-            cell.setStyle(style);
-        }
-        else if (style == null && cell.getDataType() == Cell.CellType.DATE)
-        {
-            cell.setStyle(BasicStyles.DateFormat());
+    private void addNextCell(Cell cell, boolean incremental, Style style) {
+        // date and time styles are already defined by the passed cell object
+        if (style != null || (activeStyle != null && useActiveStyle)) {
+
+            if (cell.getCellStyle() == null && useActiveStyle) {
+                cell.setStyle(activeStyle);
+            } else if (cell.getCellStyle() == null && style != null) {
+                cell.setStyle(style);
+            } else if (cell.getCellStyle() != null && useActiveStyle) {
+                Style mixedStyle = (Style) cell.getCellStyle().copy();
+                mixedStyle.append(activeStyle);
+                cell.setStyle(mixedStyle);
+            } else if (cell.getCellStyle() != null && style != null) {
+                Style mixedStyle = (Style) cell.getCellStyle().copy();
+                mixedStyle.append(style);
+                cell.setStyle(mixedStyle);
+            }
         }
         String address = cell.getCellAddress();
         this.cells.put(address, cell);
-        if (incremental == true)
-        {
-            if (this.getCurrentCellDirection() == CellDirection.ColumnToColumn)
-            {
+        if (incremental == true) {
+            if (this.getCurrentCellDirection() == CellDirection.ColumnToColumn) {
                 this.currentColumnNumber++;
-            }
-            else if (this.getCurrentCellDirection() == CellDirection.RowToRow)
-            {
+            } else if (this.getCurrentCellDirection() == CellDirection.RowToRow) {
                 this.currentRowNumber++;
             }
             // else = disabled
-        }
-        else
-        {
-            if (this.getCurrentCellDirection() == CellDirection.ColumnToColumn)
-            {
+        } else {
+            if (this.getCurrentCellDirection() == CellDirection.ColumnToColumn) {
                 this.currentColumnNumber = cell.getColumnNumber() + 1;
                 this.currentRowNumber = cell.getRowNumber();
-            }
-            else if (this.getCurrentCellDirection() == CellDirection.RowToRow)
-            {
+            } else if (this.getCurrentCellDirection() == CellDirection.RowToRow) {
                 this.currentColumnNumber = cell.getColumnNumber();
                 this.currentRowNumber = cell.getRowNumber() + 1;
             }
             // else = disabled
         }
     }
-    
+
 // ### M E T H O D S  -  A D D C E L L ###
-   
+
     /**
      * Adds an object to the defined cell address. If the type of the value does not match with one of the supported data types, it will be casted to a String. A prepared object of the type Cell will not be casted but adjusted<br>
      * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean. All other types will be casted into a String using the default toString() method
-     * @param value Unspecified value to insert
-     * @param columnAddress Column number (zero based)
-     * @param rowAddress Row number (zero based)
+     *
+     * @param value        Unspecified value to insert
+     * @param columnNumber Column number (zero based)
+     * @param rowNumber    Row number (zero based)
      * @throws StyleException Thrown if the active style was malformed
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
      */
-    public void addCell(Object value, int columnAddress, int rowAddress)
-    {
-        addNextCell(castValue(value, columnAddress, rowAddress), false, null);
+    public void addCell(Object value, int columnNumber, int rowNumber) {
+        addNextCell(castValue(value, columnNumber, rowNumber), false, null);
     }
-    
+
     /**
      * Adds an object to the defined cell address. If the type of the value does not match with one of the supported data types, it will be casted to a String. A prepared object of the type Cell will not be casted but adjusted<br>
      * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean. All other types will be casted into a String using the default toString() method
-     * @param value Unspecified value to insert
-     * @param columnAddress Column number (zero based)
-     * @param rowAddress Row number (zero based)
-     * @param style Style to apply on the cell
+     *
+     * @param value        Unspecified value to insert
+     * @param columnNumber Column number (zero based)
+     * @param rowNumber    Row number (zero based)
+     * @param style        Style to apply on the cell
      * @throws StyleException Thrown if the default style was malformed
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
      */
-    public void addCell(Object value, int columnAddress, int rowAddress, Style style)
-    {
-        addNextCell(castValue(value, columnAddress, rowAddress), false, style);
+    public void addCell(Object value, int columnNumber, int rowNumber, Style style) {
+        addNextCell(castValue(value, columnNumber, rowNumber), false, style);
 
-    }    
-    
+    }
+
     /**
      * Adds an object to the defined cell address. If the type of the value does not match with one of the supported data types, it will be casted to a String. A prepared object of the type Cell will not be casted but adjusted<br>
      * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean. All other types will be casted into a String using the default toString() method
-     * @param value Unspecified value to insert
+     *
+     * @param value   Unspecified value to insert
      * @param address Cell address in the format A1 - XFD1048576
      * @throws FormatException Thrown if the passed address is malformed
-     * @throws StyleException Thrown if the default style was malformed
-     * @throws RangeException Thrown if the next cell is out of range (on row or column)
+     * @throws StyleException  Thrown if the default style was malformed
+     * @throws RangeException  Thrown if the next cell is out of range (on row or column)
      */
-    public void addCell(Object value, String address)
-    {
+    public void addCell(Object value, String address) {
         Address adr = Cell.resolveCellCoordinate(address);
         addCell(value, adr.Column, adr.Row);
-    }      
-    
+    }
+
     /**
      * Adds an object to the defined cell address. If the type of the value does not match with one of the supported data types, it will be casted to a String. A prepared object of the type Cell will not be casted but adjusted<br>
      * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean. All other types will be casted into a String using the default toString() method
-     * @param value Unspecified value to insert
+     *
+     * @param value   Unspecified value to insert
      * @param address Cell address in the format A1 - XFD1048576
-     * @param style Style to apply on the cell
+     * @param style   Style to apply on the cell
      * @throws FormatException Thrown if the passed address is malformed
-     * @throws StyleException Thrown if the default style was malformed
-     * @throws RangeException Thrown if the next cell is out of range (on row or column)
+     * @throws StyleException  Thrown if the default style was malformed
+     * @throws RangeException  Thrown if the next cell is out of range (on row or column)
      */
-    public void addCell(Object value, String address, Style style)
-    {
+    public void addCell(Object value, String address, Style style) {
         Address adr = Cell.resolveCellCoordinate(address);
         addCell(value, adr.Column, adr.Row, style);
-    }      
-    
+    }
+
 // ### M E T H O D S  -  A D D C E L L F O R M U L A ###
-    
+
     /**
      * Adds a cell formula as string to the defined cell address
+     *
      * @param formula Formula to insert
      * @param address Cell address in the format A1 - XFD1048576
      * @throws FormatException Thrown if the passed address is malformed
-     * @throws StyleException Thrown if the default style was malformed
-     * @throws RangeException Thrown if the next cell is out of range (on row or column)
+     * @throws StyleException  Thrown if the default style was malformed
+     * @throws RangeException  Thrown if the next cell is out of range (on row or column)
      */
-    public void addCellFormula(String formula, String address)
-    {
+    public void addCellFormula(String formula, String address) {
         Address adr = Cell.resolveCellCoordinate(address);
-        Cell c = new Cell(formula, Cell.CellType.FORMULA, adr.Column, adr.Row, this);
+        Cell c = new Cell(formula, Cell.CellType.FORMULA, adr.Column, adr.Row);
         addNextCell(c, false, null);
     }
-    
+
     /**
      * Adds a cell formula as string to the defined cell address
+     *
      * @param formula Formula to insert
      * @param address Cell address in the format A1 - XFD1048576
-     * @param style Style to apply on the cell
+     * @param style   Style to apply on the cell
      * @throws FormatException Thrown if the passed address is malformed
-     * @throws StyleException Thrown if the default style was malformed
-     * @throws RangeException Thrown if the next cell is out of range (on row or column)
+     * @throws StyleException  Thrown if the default style was malformed
+     * @throws RangeException  Thrown if the next cell is out of range (on row or column)
      */
-    public void addCellFormula(String formula, String address, Style style)
-    {
+    public void addCellFormula(String formula, String address, Style style) {
         Address adr = Cell.resolveCellCoordinate(address);
-        Cell c = new Cell(formula, Cell.CellType.FORMULA, adr.Column, adr.Row, this);
+        Cell c = new Cell(formula, Cell.CellType.FORMULA, adr.Column, adr.Row);
         addNextCell(c, false, style);
-    }    
-    
+    }
+
     /**
      * Adds a cell formula as string to the defined cell address
-     * @param formula Formula to insert
-     * @param columnAddress Column number (zero based)
-     * @param rowAddress Row number (zero based)
+     *
+     * @param formula      Formula to insert
+     * @param columnNumber Column number (zero based)
+     * @param rowNumber    Row number (zero based)
      * @throws StyleException Thrown if the default style was malformed
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
      */
-    public void addCellFormula(String formula, int columnAddress, int rowAddress)
-    {
-        Cell c = new Cell(formula, Cell.CellType.FORMULA, columnAddress, rowAddress, this);
+    public void addCellFormula(String formula, int columnNumber, int rowNumber) {
+        Cell c = new Cell(formula, Cell.CellType.FORMULA, columnNumber, rowNumber);
         addNextCell(c, false, null);
-    }     
-    
+    }
+
     /**
      * Adds a cell formula as string to the defined cell address
-     * @param formula Formula to insert
-     * @param columnAddress Column number (zero based)
-     * @param rowAddress Row number (zero based)
-     * @param style Style to apply on the cell
+     *
+     * @param formula      Formula to insert
+     * @param columnNumber Column number (zero based)
+     * @param rowNumber    Row number (zero based)
+     * @param style        Style to apply on the cell
      * @throws StyleException Thrown if the passed style was malformed
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
      */
-    public void addCellFormula(String formula, int columnAddress, int rowAddress, Style style)
-    {
-        Cell c = new Cell(formula, Cell.CellType.FORMULA, columnAddress, rowAddress, this);
+    public void addCellFormula(String formula, int columnNumber, int rowNumber, Style style) {
+        Cell c = new Cell(formula, Cell.CellType.FORMULA, columnNumber, rowNumber);
         addNextCell(c, false, style);
     }
-    
-   /**
-     * Adds a formula as string to the next cell position
-     * @param formula Formula to insert
-     * @throws StyleException Thrown if the default style was malformed
-     * @throws RangeException Thrown if the next cell is out of range (on row or column)
-     */
-    public void addNextCellFormula(String formula)
-    {
-        Cell c = new Cell(formula, Cell.CellType.FORMULA, this.currentColumnNumber, this.currentRowNumber, this);
-        addNextCell(c, true, null);
-    }  
-    
+
     /**
      * Adds a formula as string to the next cell position
+     *
      * @param formula Formula to insert
-     * @param style Style to apply on the cell
      * @throws StyleException Thrown if the default style was malformed
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
      */
-    public void addNextCellFormula(String formula, Style style)
-    {
-        Cell c = new Cell(formula, Cell.CellType.FORMULA, this.currentColumnNumber, this.currentRowNumber, this);
+    public void addNextCellFormula(String formula) {
+        Cell c = new Cell(formula, Cell.CellType.FORMULA, this.currentColumnNumber, this.currentRowNumber);
+        addNextCell(c, true, null);
+    }
+
+    /**
+     * Adds a formula as string to the next cell position
+     *
+     * @param formula Formula to insert
+     * @param style   Style to apply on the cell
+     * @throws StyleException Thrown if the default style was malformed
+     * @throws RangeException Thrown if the next cell is out of range (on row or column)
+     */
+    public void addNextCellFormula(String formula, Style style) {
+        Cell c = new Cell(formula, Cell.CellType.FORMULA, this.currentColumnNumber, this.currentRowNumber);
         addNextCell(c, true, style);
-    }   
-    
-    
+    }
+
+
 // ### M E T H O D S  -  A D D C E L L R A N G E ###
 
     /**
      * Adds a list of object values to a defined cell range. If the type of the a particular value does not match with one of the supported data types, it will be casted to a String. A prepared object of the type Cell will not be casted but adjusted<br>
      * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean. All other types will be casted into a String using the default toString() method
-     * @param values List of unspecified objects to insert
+     *
+     * @param values       List of unspecified objects to insert
      * @param startAddress Start address
-     * @param endAddress End address
+     * @param endAddress   End address
      * @throws StyleException Thrown if the default style was malformed
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
      */
-    public void addCellRange(List<Object> values, Address startAddress, Address endAddress)
-    {
+    public void addCellRange(List<Object> values, Address startAddress, Address endAddress) {
         addCellRangeInternal(values, startAddress, endAddress, null);
-    }  
-    
-   /**
+    }
+
+    /**
      * Adds a list of object values to a defined cell range. If the type of the a particular value does not match with one of the supported data types, it will be casted to a String. A prepared object of the type Cell will not be casted but adjusted<br>
      * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean. All other types will be casted into a String using the default toString() method
-     * @param values List of unspecified objects to insert
+     *
+     * @param values       List of unspecified objects to insert
      * @param startAddress Start address
-     * @param endAddress End address
-     * @param style Style to apply on the all cells of the range
+     * @param endAddress   End address
+     * @param style        Style to apply on the all cells of the range
      * @throws StyleException Thrown if the default style was malformed
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
      */
-    public void addCellRange(List<Object> values, Address startAddress, Address endAddress, Style style)
-    {
+    public void addCellRange(List<Object> values, Address startAddress, Address endAddress, Style style) {
         addCellRangeInternal(values, startAddress, endAddress, style);
-    }     
+    }
 
     /**
      * Adds a list of object values to a defined cell range. If the type of the a particular value does not match with one of the supported data types, it will be casted to a String. A prepared object of the type Cell will not be casted but adjusted<br>
      * The data types in the passed list can be mixed. Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean. All other types will be casted into a String using the default toString() method
-     * @param values List of unspecified objects to insert
+     *
+     * @param values    List of unspecified objects to insert
      * @param cellRange Cell range as string in the format like A1:D1 or X10:X22
      * @throws FormatException Thrown if the passed address is malformed
-     * @throws StyleException Thrown if the default style was malformed
-     * @throws RangeException Thrown if the next cell is out of range (on row or column)
+     * @throws StyleException  Thrown if the default style was malformed
+     * @throws RangeException  Thrown if the next cell is out of range (on row or column)
      */
-    public void addCellRange(List<Object> values, String cellRange)
-    {
+    public void addCellRange(List<Object> values, String cellRange) {
         Range rng = Cell.resolveCellRange(cellRange);
         addCellRangeInternal(values, rng.StartAddress, rng.EndAddress, null);
-    }       
-    
+    }
+
     /**
      * Adds a list of object values to a defined cell range. If the type of the a particular value does not match with one of the supported data types, it will be casted to a String. A prepared object of the type Cell will not be casted but adjusted<br>
      * The data types in the passed list can be mixed. Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean. All other types will be casted into a String using the default toString() method
-     * @param values List of unspecified objects to insert
+     *
+     * @param values    List of unspecified objects to insert
      * @param cellRange Cell range as string in the format like A1:D1 or X10:X22
-     * @param style Style to apply on the all cells of the range
+     * @param style     Style to apply on the all cells of the range
      * @throws FormatException Thrown if the passed address is malformed
-     * @throws StyleException Thrown if the default style was malformed
-     * @throws RangeException Thrown if the next cell is out of range (on row or column)
+     * @throws StyleException  Thrown if the default style was malformed
+     * @throws RangeException  Thrown if the next cell is out of range (on row or column)
      */
-    public void addCellRange(List<Object> values, String cellRange, Style style)
-    {
+    public void addCellRange(List<Object> values, String cellRange, Style style) {
         Range rng = Cell.resolveCellRange(cellRange);
         addCellRangeInternal(values, rng.StartAddress, rng.EndAddress, style);
-    }      
-    
+    }
+
     /**
      * Internal function to add a generic list of value to the defined cell range
-     * @param <T> Data type of the generic value list
-     * @param values List of values
+     *
+     * @param <T>          Data type of the generic value list
+     * @param values       List of values
      * @param startAddress Start address
-     * @param endAddress End address
-     * @param style Style to apply on the all cells of the range. If null, no style or the default style will be applied
+     * @param endAddress   End address
+     * @param style        Style to apply on the all cells of the range. If null, no style or the default style will be applied
      * @throws StyleException Thrown if the default style was malformed
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
      */
-    private <T> void addCellRangeInternal(List<T> values, Address startAddress, Address endAddress, Style style)
-    {
+    private <T> void addCellRangeInternal(List<T> values, Address startAddress, Address endAddress, Style style) {
         List<Address> addresses = Cell.getCellRange(startAddress, endAddress);
-        if (values.size() != addresses.size())
-        {
-            throw new RangeException("MalformedRangeException","The number of passed values (" + values.size() + ") differs from the number of cells within the range (" + addresses.size() + ")");
+        if (values.size() != addresses.size()) {
+            throw new RangeException("MalformedRangeException", "The number of passed values (" + values.size() + ") differs from the number of cells within the range (" + addresses.size() + ")");
         }
         List<Cell> list = Cell.convertArray(values);
         int len = values.size();
-        for(int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             list.get(i).setRowNumber(addresses.get(i).Row);
             list.get(i).setColumnNumber(addresses.get(i).Column);
-            list.get(i).setWorksheetReference(this);
             addNextCell(list.get(i), false, style);
         }
     }
-    
+
 // ### M E T H O D S  -  R E M O V E C E L L ###
-    
+
     /**
      * Removes a previous inserted cell at the defined address
-     * @param columnAddress Column number (zero based)
-     * @param rowAddress Row number (zero based)
+     *
+     * @param columnNumber Column number (zero based)
+     * @param rowNumber    Row number (zero based)
      * @return Returns true if the cell could be removed (existed), otherwise false (did not exist)
      * @throws RangeException Thrown if the resolved cell address is out of range
      */
-    public boolean removeCell(int columnAddress, int rowAddress)
-    {
-        String address = Cell.resolveCellAddress(columnAddress, rowAddress);
-        if (this.cells.containsKey(address))
-        {
+    public boolean removeCell(int columnNumber, int rowNumber) {
+        String address = Cell.resolveCellAddress(columnNumber, rowNumber);
+        if (this.cells.containsKey(address)) {
             this.cells.remove(address);
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
+
     /**
      * Removes a previous inserted cell at the defined address
+     *
      * @param address Cell address in the format A1 - XFD1048576
      * @return Returns true if the cell could be removed (existed), otherwise false (did not exist)
-     * @throws RangeException Thrown if the resolved cell address is out of range
+     * @throws RangeException  Thrown if the resolved cell address is out of range
      * @throws FormatException Thrown if the passed address is malformed
      */
-    public boolean removeCell(String address)
-    {
+    public boolean removeCell(String address) {
         Address adr = Cell.resolveCellCoordinate(address);
         return removeCell(adr.Column, adr.Row);
-    }    
-    
-// ### C O M M O N   M E T H O D S ###   
-    
+    }
+
+// ### M E T H O D S  -  S E T S T Y L E ###
+
+    /**
+     * Sets the passed style on the passed cell range. If cells are already existing, the style will be added or replaced.
+     * Otherwise, an empty cell will be added with the assigned style. If the passed style is null, all styles will be removed on existing cells and no additional (empty) cells are added to the worksheet
+     *
+     * @param cellRange Cell range to apply the style
+     * @param style     Style to apply or null to clear the range
+     * @throws RangeException Throws a {@link RangeException} if the range is invalid
+     * @implNote This method may invalidate an existing date and time value since dates and times are defined by specific style. The result of a redefinition will be a number, instead of a date or time
+     */
+    public void setStyle(Range cellRange, Style style) {
+        if (cellRange == null) {
+            throw new RangeException(RangeException.GENERAL, "No cell range was defined");
+        }
+        List<Address> addresses = cellRange.resolveEnclosedAddresses();
+        for (Address address : addresses) {
+            String key = address.getAddress();
+            if (this.cells.containsKey(key)) {
+                if (style == null) {
+                    cells.get(key).removeStyle();
+                } else {
+                    cells.get(key).setStyle(style);
+                }
+            } else {
+                if (style != null) {
+                    addCell(null, address.Column, address.Row, style);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the passed style on the passed cell range, derived from a start and end address. If cells are already existing, the style will be added or replaced.
+     * Otherwise, an empty cell will be added with the assigned style. If the passed style is null, all styles will be removed on existing cells and no additional (empty) cells are added to the worksheet
+     *
+     * @param startAddress Start address of the cell range
+     * @param endAddress   End address of the cell range
+     * @param style        Style to apply or null to clear the range
+     * @implNote This method may invalidate an existing date and time value since dates and times are defined by specific style. The result of a redefinition will be a number, instead of a date or time
+     */
+    public void setStyle(Address startAddress, Address endAddress, Style style) {
+        setStyle(new Range(startAddress, endAddress), style);
+    }
+
+    /**
+     * Sets the passed style on the passed (singular) cell address. If the cell is already existing, the style will be added or replaced.
+     * Otherwise, an empty cell will be added with the assigned style. If the passed style is null, all styles will be removed on existing cells and no additional (empty) cells are added to the worksheet
+     *
+     * @param address Cell address to apply the style
+     * @param style   Style to apply or null to clear the range
+     * @implNote This method may invalidate an existing date and time value since dates and times are defined by specific style. The result of a redefinition will be a number, instead of a date or time
+     */
+    public void setStyle(Address address, Style style) {
+        setStyle(address, address, style);
+    }
+
+    /**
+     * Sets the passed style on the passed address expression. Such an expression may be a single cell or a cell range.
+     * If the cell is already existing, the style will be added or replaced.
+     * Otherwise, an empty cell will be added with the assigned style. If the passed style is null, all styles will be removed on existing cells and no additional (empty) cells are added to the worksheet
+     *
+     * @param addressExpression Expression of a cell address or range of addresses
+     * @param style             Style to apply or null to clear the range
+     * @implNote This method may invalidate an existing date and time value since dates and times are defined by specific style. The result of a redefinition will be a number, instead of a date or time
+     */
+    public void setStyle(String addressExpression, Style style) {
+        Cell.AddressScope scope = Cell.getAddressScope(addressExpression);
+        if (scope == Cell.AddressScope.SingleAddress) {
+            Address address = new Address(addressExpression);
+            setStyle(address, style);
+        } else if (scope == Cell.AddressScope.Range) {
+            Range range = new Range(addressExpression);
+            setStyle(range, style);
+        } else {
+            throw new FormatException("InvalidAddressExpression", "The passed address'" + addressExpression + "' is neither a cell address, nor a range");
+        }
+    }
+
+// ### C O M M O N   M E T H O D S ###
+
     /**
      * Method to add allowed actions if the worksheet is protected. If one or more values are added, UseSheetProtection will be set to true
+     *
      * @param typeOfProtection Allowed action on the worksheet or cells
+     * @apiNote If {@link SheetProtectionValue#selectLockedCells} is added, {@link SheetProtectionValue#selectUnlockedCells} is added automatically
      */
-    public void addAllowedActionOnSheetProtection(SheetProtectionValue typeOfProtection)
-    {
-        if (this.sheetProtectionValues.contains(typeOfProtection) == false)
-        {
-            if (typeOfProtection == SheetProtectionValue.selectLockedCells && this.sheetProtectionValues.contains(SheetProtectionValue.selectUnlockedCells) == false)
-            {
+    public void addAllowedActionOnSheetProtection(SheetProtectionValue typeOfProtection) {
+        if (typeOfProtection == null) {
+            return;
+        }
+        if (!this.sheetProtectionValues.contains(typeOfProtection)) {
+            if (typeOfProtection == SheetProtectionValue.selectLockedCells && !this.sheetProtectionValues.contains(SheetProtectionValue.selectUnlockedCells)) {
                 this.sheetProtectionValues.add(SheetProtectionValue.selectUnlockedCells);
             }
             this.sheetProtectionValues.add(typeOfProtection);
             this.setUseSheetProtection(true);
         }
-    }  
-      
+    }
+
     /**
      * Sets the defined column as hidden
+     *
      * @param columnNumber Column number to hide on the worksheet
      * @throws RangeException Thrown if the passed row number was out of range
      */
-    public void addHiddenColumn(int columnNumber)
-    {
+    public void addHiddenColumn(int columnNumber) {
         setColumnHiddenState(columnNumber, true);
-    }   
+    }
+
     /**
      * Sets the defined column as hidden
+     *
      * @param columnAddress Column address to hide on the worksheet
      * @throws RangeException Thrown if the passed row number was out of range
      */
-    public void addHiddenColumn(String columnAddress)
-    {
+    public void addHiddenColumn(String columnAddress) {
         int columnNumber = Cell.resolveColumn(columnAddress);
         setColumnHiddenState(columnNumber, true);
     }
+
     /**
      * Sets the defined row as hidden
+     *
      * @param rowNumber Row number to hide on the worksheet
      * @throws RangeException Thrown if the passed column number was out of range
      */
-    public void addHiddenRow(int rowNumber)
-    {
+    public void addHiddenRow(int rowNumber) {
         setRowHiddenState(rowNumber, true);
-    }    
-   
+    }
+
     /**
      * Method to cast a value or align an object of the type Cell to the context of the worksheet
-     * @param value Unspecified value or object of the type Cell
+     *
+     * @param value  Unspecified value or object of the type Cell
      * @param column Column index
-     * @param row Row index
+     * @param row    Row index
      * @return Cell object
      */
-    private Cell castValue(Object value, int column, int row)
-    {
+    private Cell castValue(Object value, int column, int row) {
         Cell c;
-        if (value instanceof Cell)
-        {
-            c = (Cell)value;
-            c.setWorksheetReference(this);
+        if (value instanceof Cell) {
+            c = (Cell) value;
             c.setCellAddress2(new Address(column, row));
-        }
-        else
-        {
-            c = new Cell(value, Cell.CellType.DEFAULT, column, row, this);
+        } else {
+            c = new Cell(value, Cell.CellType.DEFAULT, column, row);
         }
         return c;
     }
-    
+
     /**
      * Clears the active style of the worksheet. All later added cells will contain no style unless another active style is set
      */
-    public void clearActiveStyle()
-    {
+    public void clearActiveStyle() {
         this.useActiveStyle = false;
+        this.activeStyle = null;
     }
-    
+
     /**
      * Gets the cell of the specified address
+     *
      * @param address Address of the cell
      * @return Cell object
      * @throws WorksheetException Throws a WorksheetException if the cell was not found on the cell table of this worksheet
      */
-    public Cell getCell(Address address)
-    {
-        if (this.cells.containsKey(address.getAddress()) == false)
-        {
+    public Cell getCell(Address address) {
+        if (!this.cells.containsKey(address.getAddress())) {
             throw new WorksheetException("CellNotFoundException", "The cell with the address " + address.getAddress() + " does not exist in this worksheet");
         }
         return this.cells.get(address.getAddress());
     }
-    
+
     /**
      * Gets the cell of the specified column and row number (zero-based)
+     *
      * @param columnNumber Column number of the cell (zero-based)
-     * @param rowNumber Row number of the cell (zero-based)
+     * @param rowNumber    Row number of the cell (zero-based)
      * @return Cell object
      * @throws WorksheetException Throws a WorksheetException if the cell was not found on the cell table of this worksheet
      */
-    public Cell getCell(int columnNumber, int rowNumber)
-    {
+    public Cell getCell(int columnNumber, int rowNumber) {
         return getCell(new Address(columnNumber, rowNumber));
     }
 
     /**
      * Gets whether the specified address exists in the worksheet. Existing means that a value was stored at the address
+     *
      * @param address Address to check
      * @return True if the cell exists, otherwise false
      */
-    public boolean hasCell(Address address)
-    {
+    public boolean hasCell(Address address) {
         return this.cells.containsKey(address.getAddress());
     }
 
     /**
      * Gets whether the specified address exists in the worksheet. Existing means that a value was stored at the address
+     *
      * @param columnNumber Column number of the cell to check (zero-based)
-     * @param rowNumber Row number of the cell to check (zero-based)
+     * @param rowNumber    Row number of the cell to check (zero-based)
      * @return True if the cell exists, otherwise false
+     * @throws RangeException A RangeException is thrown if the column or row number is invalid
      */
-    public boolean hasCell(int columnNumber, int rowNumber)
-    {
+    public boolean hasCell(int columnNumber, int rowNumber) {
         return hasCell(new Address(columnNumber, rowNumber));
     }
 
     /**
-     * Gets the last existing column number in the current worksheet (zero-based)
-     * @return Zero-based column number. In case of a empty worksheet, -1 will be returned
+     * Resets the defined column, if existing. The corresponding instance will be removed from {@link WorksheetPane#getColumns()}
+     *
+     * @param columnNumber Column number to reset (zero-based)
+     * @apiNote If the column is inside an autoFilter-Range, the column cannot be entirely removed from {@link #getColumns()}.
+     * The hidden state will be set to false and width to default, in this case.
      */
-    public int getLastColumnNumber()
-    {
-        return getLastAddress(true);
+    public void resetColumn(int columnNumber) {
+        if (columns.containsKey(columnNumber) && !columns.get(columnNumber).hasAutoFilter()) // AutoFilters cannot have gaps
+        {
+            columns.remove(columnNumber);
+        } else if (columns.containsKey(columnNumber)) {
+            columns.get(columnNumber).setHidden(false);
+            columns.get(columnNumber).setWidth(DEFAULT_COLUMN_WIDTH);
+        }
+    }
+
+    /**
+     * Gets the last existing column number in the current worksheet (zero-based)
+     *
+     * @return Zero-based column number. In case of an empty worksheet, -1 will be returned
+     * @apiNote getLastColumnNumber() will not return the last column with data in any case. If there is a formatted
+     * (or with the definition of AutoFilter, column width or hidden state) but empty cell (or many) beyond the last cell with data,
+     * getLastColumnNumber() will return the column number of this empty cell. Use {@link Worksheet#getLastDataColumnNumber()} in this case.
+     */
+    public int getLastColumnNumber() {
+        return getLastAddress(true, false);
+    }
+
+    /**
+     * Gets the last existing column number with data in the current worksheet (zero-based)
+     *
+     * @return Zero-based column number. In case of an empty worksheet, -1 will be returned
+     * @apiNote GetLastDataColumnNumber() will ignore formatted (or with the definition of AutoFilter, column width or hidden state)
+     * but empty cells beyond the last column with data. getLastColumnNumber() will return the column number of this empty cell.
+     * Use {@link Worksheet#getLastColumnNumber()} in this case.
+     */
+    public int getLastDataColumnNumber() {
+        return getLastAddress(true, true);
     }
 
     /**
      * Gets the last existing row number in the current worksheet (zero-based)
-     * @return Zero-based row number. In case of a empty worksheet, -1 will be returned
+     *
+     * @return Zero-based row number. In case of an empty worksheet, -1 will be returned
+     * @apiNote getLastRowNumber() will not return the last row with data in any case. If there is a formatted
+     * (or with the definition of row height or hidden state) but empty cell (or many) beyond the last cell with data,
+     * getLastRowNumber() will return the row number of this empty cell. Use {@link Worksheet#getLastDataRowNumber()} in this case.
      */
-    public int getLastRowNumber()
-    {
-        return getLastAddress(false);
+    public int getLastRowNumber() {
+        return getLastAddress(false, false);
+    }
+
+    /**
+     * Gets the last existing row number with data in the current worksheet (zero-based)
+     *
+     * @return Zero-based row number. in case of an empty worksheet, -1 will be returned
+     * @apiNote GetLastDataColumnNumber() will ignore formatted (or with the definition of row height or hidden state)
+     * but empty cells beyond the last column with data.
+     * If you want the last defined column, use {@link Worksheet#getLastRowNumber()} instead.
+     */
+    public int getLastDataRowNumber() {
+        return getLastAddress(false, true);
+    }
+
+
+    /**
+     * Gets the last existing cell in the current worksheet (bottom right)
+     *
+     * @return Cell Address. If no cell address could be determined, null will be returned
+     * @apiNote getLastCellAddress() will not return the last cell with data in any case. If there is a formatted
+     * (or with definitions of hidden states, AutoFilters, heights or widths) but empty cell (or many) beyond the last cell with data,
+     * getLastCellAddress() will return the address of this empty cell. Use {@link Worksheet#getLastDataCellAddress} in this case.
+     */
+    public Address getLastCellAddress() {
+        int lastRow = getLastRowNumber();
+        int lastColumn = getLastColumnNumber();
+        if (lastRow < 0 || lastColumn < 0) {
+            return null;
+        }
+        return new Address(lastColumn, lastRow);
+    }
+
+    /**
+     * Gets the last existing cell with data in the current worksheet (bottom right)
+     *
+     * @return Cell Address. If no cell address could be determined, null will be returned
+     * @apiNote GetLastDataCellAddress() will ignore formatted (or with definitions of hidden states, AutoFilters, heights or widths)
+     * but empty cells beyond the last cell with data. If you want the last defined cell, use {@link Worksheet#getLastCellAddress()} instead.
+     */
+    public Address getLastDataCellAddress() {
+        int lastRow = getLastDataRowNumber();
+        int lastColumn = getLastDataColumnNumber();
+        if (lastRow < 0 || lastColumn < 0) {
+            return null;
+        }
+        return new Address(lastColumn, lastRow);
     }
 
     /**
      * Gets the last existing row or column number of the current worksheet (zero-based)
-     * @param column If true, the output will be the last column, otherwise the last row
+     *
+     * @param column      If true, the output will be the last column, otherwise the last row
+     * @param ignoreEmpty If true, empty cells are ignored and the last column or row is this one with a value
      * @return Row or column number (zero-based)
      */
-    private int getLastAddress(boolean column)
-    {
+    private int getLastAddress(boolean column, boolean ignoreEmpty) {
         int max = -1;
         int number;
-        for(Map.Entry<String, Cell> cell : this.cells.entrySet())
-        {
-            if (column == true)
-            {
-                number = cell.getValue().getColumnNumber();
-            }
-            else
-            {
-                number = cell.getValue().getRowNumber();
-            }
-            if (number > max)
-            {
+        for (Map.Entry<String, Cell> cell : this.cells.entrySet()) {
+            number = column ? cell.getValue().getColumnNumber() : cell.getValue().getRowNumber();
+            if (ignoreEmpty && cell.getValue().getValue() != null && !cell.getValue().getValue().toString().equals("") && number > max) {
                 max = number;
+            } else if (!ignoreEmpty && number > max) {
+                max = number;
+            }
+        }
+        if (column && !ignoreEmpty && columns.size() > 0) {
+            int maxColumnDefinition = columns.entrySet().stream().max((c1, c2) -> Integer.compare(c1.getValue().getNumber(), c2.getValue().getNumber())).get().getValue().getNumber();
+            if (maxColumnDefinition > max) {
+                max = maxColumnDefinition;
+            }
+        } else if (!column && !ignoreEmpty && (hiddenRows.size() > 0 || rowHeights.size() > 0)) {
+            if (hiddenRows.size() > 0) {
+                int maxHiddenRowItem = hiddenRows.entrySet().stream().max((r1, r2) -> Integer.compare(r1.getKey(), r2.getKey())).get().getKey();
+                if (maxHiddenRowItem > max) {
+                    max = maxHiddenRowItem;
+                }
+            }
+            if (rowHeights.size() > 0) {
+                int maxRowHeightItem = rowHeights.entrySet().stream().max((r1, r2) -> Integer.compare(r1.getKey(), r2.getKey())).get().getKey();
+                if (maxRowHeightItem > max) {
+                    max = maxRowHeightItem;
+                }
             }
         }
         return max;
     }
 
-    
+
     /**
      * Set the current cell address
+     *
      * @param columnAddress Column number (zero based)
-     * @param width Row number (zero based)
+     * @param width         Row number (zero based)
      * @throws RangeException Thrown if the address is out of the valid range. Range is from 0 to 16383 (16384 columns)
      */
-    public void setColumnWidth(String columnAddress, float width)
-    {
+    public void setColumnWidth(String columnAddress, float width) {
         int columnNumber = Cell.resolveColumn(columnAddress);
         setColumnWidth(columnNumber, width);
-    } 
-    
+    }
+
     /**
      * Set the current cell address
+     *
      * @param address Cell address in the format A1 - XFD1048576
-     * @throws RangeException Thrown if the address is out of the valid range. Range is for rows from 0 to 1048575 (1048576 rows) and for columns from 0 to 16383 (16384 columns)
+     * @throws RangeException  Thrown if the address is out of the valid range. Range is for rows from 0 to 1048575 (1048576 rows) and for columns from 0 to 16383 (16384 columns)
      * @throws FormatException Thrown if the passed address is malformed
      */
-    public void setCurrentCellAddress(String address)
-    {
+    public void setCurrentCellAddress(String address) {
         Address adr = Cell.resolveCellCoordinate(address);
         setCurrentCellAddress(adr.Column, adr.Row);
-    }  
-   
+    }
+
     /**
      * Sets the name of the sheet
+     *
      * @param sheetName Name of the sheet
      * @throws FormatException Thrown if the name contains illegal characters or is longer than 31 characters
      */
-    public void setSheetName(String sheetName)
-    {
-        if (Helper.isNullOrEmpty(sheetName))
-        {
-            throw new FormatException("FormatException","The sheet name must be between 1 and 31 characters");
+    public void setSheetName(String sheetName) {
+        if (Helper.isNullOrEmpty(sheetName)) {
+            throw new FormatException("FormatException", "The sheet name must be between 1 and " + MAX_WORKSHEET_NAME_LENGTH + " characters");
         }
-        if (sheetName.length() > 31)
-        {
-            throw new FormatException("FormatException","The sheet name must be between 1 and 31 characters");
+        if (sheetName.length() > MAX_WORKSHEET_NAME_LENGTH) {
+            throw new FormatException("FormatException", "The sheet name must be between 1 and " + MAX_WORKSHEET_NAME_LENGTH + " characters");
         }
-        Pattern pattern = Pattern.compile("[\\[\\]\\*\\?/\\\\]");
-        Matcher mx = pattern.matcher(sheetName);
-        if (mx.groupCount() > 0)
-        {
-            throw new FormatException("FormatException","The sheet name must must not contain the characters [  ]  * ? / \\ ");
+        if (sheetName.matches(".*[\\[\\]\\*\\?/\\\\].*")) {
+            throw new FormatException("FormatException", "The sheet name must must not contain the characters [  ]  * ? / \\ ");
         }
         this.sheetName = sheetName;
     }
-    
+
     /**
      * Sets the name of the sheet
+     *
      * @param sheetName Name of the sheet
-     * @param sanitize If true, the filename will be sanitized automatically according to the specifications of Excel
+     * @param sanitize  If true, the filename will be sanitized automatically according to the specifications of Excel
      * @throws WorksheetException Thrown if no workbook is referenced. This information is necessary to determine whether the name already exists
      */
-    public void setSheetName(String sheetName, boolean sanitize)
-    {    
-       if (this.workbookReference == null)
-       {
-           throw new WorksheetException("MissingReferenceException", "The worksheet name cannot be sanitized because no workbook is referenced");
-       }
-       this.sheetName = ""; // Empty name (temporary) to prevent conflicts during sanitizing
-       this.sheetName =  Worksheet.sanitizeWorksheetName(sheetName, this.workbookReference);         
+    public void setSheetName(String sheetName, boolean sanitize) {
+        if (sanitize) {
+            this.sheetName = ""; // Empty name (temporary) to prevent conflicts during sanitizing
+            this.sheetName = Worksheet.sanitizeWorksheetName(sheetName, this.workbookReference);
+        } else {
+            setSheetName(sheetName);
+        }
     }
-    
+
+    /**
+     * Sets the horizontal split of the worksheet into two panes. The measurement in characters cannot be used to freeze panes
+     *
+     * @param topPaneHeight Height (similar to row height) from top of the worksheet to the split line in characters
+     * @param topLeftCell   Top Left cell address of the bottom right pane (if applicable). Only the row component is important in a horizontal split
+     * @param activePane    Active pane in the split window
+     */
+    public void setHorizontalSplit(float topPaneHeight, Address topLeftCell, WorksheetPane activePane) {
+        setSplit(null, topPaneHeight, topLeftCell, activePane);
+    }
+
+    /**
+     * Sets the horizontal split of the worksheet into two panes. The measurement in rows can be used to split and freeze panes
+     *
+     * @param numberOfRowsFromTop Number of rows from top of the worksheet to the split line. The particular row heights are considered
+     * @param freeze              If true, all panes are frozen, otherwise remains movable
+     * @param topLeftCell         Top Left cell address of the bottom right pane (if applicable). Only the row component is important in a horizontal split
+     * @param activePane          Active pane in the split window
+     * @throws WorksheetException WorksheetException Thrown if the row number of the top left cell is smaller the split panes number of rows from top, if freeze is applied
+     */
+    public void setHorizontalSplit(int numberOfRowsFromTop, boolean freeze, Address topLeftCell, WorksheetPane activePane) {
+        setSplit(null, numberOfRowsFromTop, freeze, topLeftCell, activePane);
+    }
+
+    /**
+     * Sets the vertical split of the worksheet into two panes. The measurement in columns can be used to split and freeze panes
+     *
+     * @param numberOfColumnsFromLeft Number of columns from left of the worksheet to the split line. The particular column widths are considered
+     * @param freeze                  If true, all panes are frozen, otherwise remains movable
+     * @param topLeftCell             Top Left cell address of the bottom right pane (if applicable). Only the column component is important in a vertical split
+     * @param activePane              Active pane in the split window
+     * @throws WorksheetException Thrown if the column number of the top left cell is smaller the split panes number of columns from left, if freeze is applied
+     */
+    public void setVerticalSplit(int numberOfColumnsFromLeft, boolean freeze, Address topLeftCell, WorksheetPane activePane) {
+        setSplit(numberOfColumnsFromLeft, null, freeze, topLeftCell, activePane);
+    }
+
+    /**
+     * Sets the vertical split of the worksheet into two panes. The measurement in characters cannot be used to freeze panes
+     *
+     * @param leftPaneWidth Width (similar to column width) from left of the worksheet to the split line in characters
+     * @param topLeftCell   Top Left cell address of the bottom right pane (if applicable). Only the column component is important in a vertical split
+     * @param activePane    Active pane in the split window
+     */
+    public void setVerticalSplit(float leftPaneWidth, Address topLeftCell, WorksheetPane activePane) {
+        setSplit(leftPaneWidth, null, topLeftCell, activePane);
+    }
+
+    /**
+     * Sets the horizontal and vertical split of the worksheet into four panes. The measurement in rows and columns can be used to split and freeze panes
+     *
+     * @param numberOfColumnsFromLeft Number of columns from left of the worksheet to the split line. The particular column widths are considered.<br/>
+     *                                The parameter is nullable. If left null, the method acts identical to {@link #setHorizontalSplit(int, boolean, Address, WorksheetPane)}
+     * @param numberOfRowsFromTop     Number of rows from top of the worksheet to the split line. The particular row heights are considered.<br/>
+     *                                The parameter is nullable. If left null, the method acts identical to {@link #setVerticalSplit(int, boolean, Address, WorksheetPane)}
+     * @param freeze                  If true, all panes are frozen, otherwise remains movable
+     * @param topLeftCell             Top Left cell address of the bottom right pane (if applicable)
+     * @param activePane              Active pane in the split window
+     * @throws WorksheetException Thrown if the address of the top left cell is smaller the split panes address, if freeze is applied
+     */
+    public void setSplit(Integer numberOfColumnsFromLeft, Integer numberOfRowsFromTop, boolean freeze, Address topLeftCell, WorksheetPane activePane) {
+        if (freeze) {
+            if (numberOfColumnsFromLeft != null && topLeftCell.Column < numberOfColumnsFromLeft) {
+                throw new WorksheetException("InvalidTopLeftCellException", "The column number " + topLeftCell.Column +
+                        " is not valid for a frozen, vertical split with the split pane column number " + numberOfColumnsFromLeft);
+            }
+            if (numberOfRowsFromTop != null && topLeftCell.Row < numberOfRowsFromTop) {
+                throw new WorksheetException("InvalidTopLeftCellException", "The row number " + topLeftCell.Row +
+                        " is not valid for a frozen, horizontal split height the split pane row number " + numberOfRowsFromTop);
+            }
+        }
+        this.paneSplitLeftWidth = null;
+        this.paneSplitTopHeight = null;
+        this.freezeSplitPanes = freeze;
+        int row = numberOfRowsFromTop != null ? numberOfRowsFromTop : 0;
+        int column = numberOfColumnsFromLeft != null ? numberOfColumnsFromLeft : 0;
+        this.paneSplitAddress = new Address(column, row);
+        this.paneSplitTopLeftCell = topLeftCell;
+        this.activePane = activePane;
+    }
+
+    /**
+     * Sets the horizontal and vertical split of the worksheet into four panes. The measurement in characters cannot be used to freeze panes
+     *
+     * @param leftPaneWidth Width (similar to column width) from left of the worksheet to the split line in characters.<br/>
+     *                      The parameter is nullable. If left null, the method acts identical to {@link #setHorizontalSplit(float, Address, WorksheetPane)}
+     * @param topPaneHeight Height (similar to row height) from top of the worksheet to the split line in characters.<br/>
+     *                      The parameter is nullable. If left null, the method acts identical to {@link #setVerticalSplit(float, Address, WorksheetPane)}
+     * @param topLeftCell   Top Left cell address of the bottom right pane (if applicable)
+     * @param activePane    Active pane in the split window
+     */
+    public void setSplit(Float leftPaneWidth, Float topPaneHeight, Address topLeftCell, WorksheetPane activePane) {
+        this.paneSplitLeftWidth = leftPaneWidth;
+        this.paneSplitTopHeight = topPaneHeight;
+        this.freezeSplitPanes = null;
+        this.paneSplitAddress = null;
+        this.paneSplitTopLeftCell = topLeftCell;
+        this.activePane = activePane;
+    }
+
+    /**
+     * Resets splitting of the worksheet into panes, as well as their freezing
+     */
+    public void resetSplit() {
+        this.paneSplitLeftWidth = null;
+        this.paneSplitTopHeight = null;
+        this.freezeSplitPanes = null;
+        this.paneSplitAddress = null;
+        this.paneSplitTopLeftCell = null;
+        this.activePane = null;
+    }
+
     /**
      * Moves the current position to the next column
      */
-    public void goToNextColumn()
-    {
+    public void goToNextColumn() {
         this.currentColumnNumber++;
         this.currentRowNumber = 0;
+        Cell.validateColumnNumber(currentColumnNumber);
     }
-    
+
     /**
      * Moves the current position to the next column with the number of cells to move
+     *
      * @param numberOfColumns Number of columns to move
+     * @apiNote The value can also be negative. However, resulting column numbers below 0 or above 16383 will cause an exception
      */
-    public void goToNextColumn(int numberOfColumns)
-    {
-        for(int i = 0; i < numberOfColumns; i++)
-        {
-            goToNextColumn();
-        }
+    public void goToNextColumn(int numberOfColumns) {
+        currentColumnNumber += numberOfColumns;
+        currentRowNumber = 0;
+        Cell.validateColumnNumber(currentColumnNumber);
     }
-    
+
     /**
      * Moves the current position to the next row (use for a new line)
      */
-    public void goToNextRow()
-    {
+    public void goToNextRow() {
         this.currentRowNumber++;
         this.currentColumnNumber = 0;
+        Cell.validateRowNumber(currentRowNumber);
     }
-    
+
     /**
      * Moves the current position to the next row with the number of cells to move (use for a new line)
+     *
      * @param numberOfRows Number of rows to move
+     * @apiNote The value can also be negative. However, resulting row numbers below 0 or above 1048575 will cause an exception
      */
-    public void goToNextRow(int numberOfRows)
-    {
-        for(int i = 0; i < numberOfRows; i++)
-        {
-            goToNextRow();
-        }
+    public void goToNextRow(int numberOfRows) {
+        currentRowNumber += numberOfRows;
+        currentColumnNumber = 0;
+        Cell.validateRowNumber(currentRowNumber);
     }
-    
+
     /**
      * Init method for constructors
      */
-    private void init()
-    {
+    private void init() {
         this.currentCellDirection = CellDirection.ColumnToColumn;
         this.cells = new HashMap<>();
         this.currentRowNumber = 0;
@@ -1122,384 +1594,461 @@ public class Worksheet {
         this.rowHeights = new HashMap<>();
         this.activeStyle = null;
         this.workbookReference = null;
-        this.mergedCells = new HashMap<>();    
+        this.mergedCells = new HashMap<>();
         this.sheetProtectionValues = new ArrayList<>();
         this.hiddenRows = new HashMap<>();
         this.columns = new HashMap<>();
     }
-    
+
     /**
      * Merges the defined cell range
+     *
      * @param cellRange Range to merge
      * @return Returns the validated range of the merged cells (e.g. 'A1:B12')
      */
-    public String mergeCells(Range cellRange)
-    {
+    public String mergeCells(Range cellRange) {
         return mergeCells(cellRange.StartAddress, cellRange.EndAddress);
     }
 
     /**
      * Merges the defined cell range
+     *
      * @param cellRange Range to merge (e.g. 'A1:B12')
      * @return Returns the validated range of the merged cells (e.g. 'A1:B12')
      * @throws ch.rabanti.nanoxlsx4j.exceptions.FormatException Thrown if the passed address is malformed
      */
-    public String mergeCells(String cellRange)
-    {
+    public String mergeCells(String cellRange) {
         Range range = Cell.resolveCellRange(cellRange);
         return mergeCells(range.StartAddress, range.EndAddress);
-    }    
-    
+    }
+
     /**
      * Merges the defined cell range
+     *
      * @param startAddress Start address of the merged cell range
-     * @param endAddress End address of the merged cell range
+     * @param endAddress   End address of the merged cell range
      * @return Returns the validated range of the merged cells (e.g. 'A1:B12')
+     * @throws RangeException Thrown if one of the passed cell addresses is out of range or if one or more cell addresses are already occupied in another merge range
      */
-    public String mergeCells(Address startAddress, Address endAddress)
-    {
+    public String mergeCells(Address startAddress, Address endAddress) {
         String key = startAddress.toString() + ":" + endAddress.toString();
         Range value = new Range(startAddress, endAddress);
-        if (this.mergedCells.containsKey(key) == false)
-        {
-            this.mergedCells.put(key, value);
+        List<Address> cells = value.resolveEnclosedAddresses();
+        for (Map.Entry<String, Range> item : mergedCells.entrySet()) {
+            if (item.getValue().resolveEnclosedAddresses().stream().anyMatch(cells::contains)) {
+                throw new RangeException("ConflictingRangeException", "The passed range: " + value.toString() + " contains cells that are already in the defined merge range: " + item.getKey());
+            }
         }
+        this.mergedCells.put(key, value);
         return key;
-    }    
+    }
+
     /**
      * Method to recalculate the auto filter (columns) of this worksheet. This is an internal method. There is no need to use it. It must be public to require access from the XlsXWriter class
      */
-    public void recalculateAutoFilter()
-    {
-        if (this.autoFilterRange == null) { return; }
+    public void recalculateAutoFilter() {
+        if (this.autoFilterRange == null) {
+            return;
+        }
         int start = this.autoFilterRange.StartAddress.Column;
         int end = this.autoFilterRange.EndAddress.Column;
         int endRow = 0;
-        for(Map.Entry<String, Cell> item  : this.getCells().entrySet())
-        {
-            if (item.getValue().getColumnNumber() < start || item.getValue().getColumnNumber() > end) { continue; }
-            if (item.getValue().getRowNumber() > endRow) {endRow = item.getValue().getRowNumber();}
+        for (Map.Entry<String, Cell> item : this.getCells().entrySet()) {
+            if (item.getValue().getColumnNumber() < start || item.getValue().getColumnNumber() > end) {
+                continue;
+            }
+            if (item.getValue().getRowNumber() > endRow) {
+                endRow = item.getValue().getRowNumber();
+            }
         }
         Column c;
-        for(int i = start; i <= end; i++)
-        {
-            if (this.columns.containsKey(i) == false)
-            {
+        for (int i = start; i <= end; i++) {
+            if (!this.columns.containsKey(i)) {
                 c = new Column(i);
                 c.setAutoFilter(true);
                 this.columns.put(i, c);
-            }
-            else
-            {
+            } else {
                 this.getColumns().get(i).setAutoFilter(true);
             }
         }
         this.autoFilterRange = new Range(new Address(start, 0), new Address(end, endRow));
     }
+
     /**
      * Method to recalculate the collection of columns of this worksheet. This is an internal method. There is no need to use it. It must be public to require access from the XlsXWriter class
      */
-    public void recalculateColumns()
-    {
+    public void recalculateColumns() {
         ArrayList<Integer> columnsToDelete = new ArrayList<>();
-        for(Map.Entry<Integer, Column> col  : this.getColumns().entrySet())
-        {
-            if (col.getValue().hasAutoFilter() == false && col.getValue().isHidden() == false && col.getValue().getWidth() == Worksheet.DEFAULT_COLUMN_WIDTH)
-            {
+        for (Map.Entry<Integer, Column> col : this.getColumns().entrySet()) {
+            if (!col.getValue().hasAutoFilter() && !col.getValue().isHidden() && Math.abs(col.getValue().getWidth() - DEFAULT_COLUMN_WIDTH) <= FLOAT_THRESHOLD) {
+                columnsToDelete.add(col.getKey());
+            }
+            if (!col.getValue().hasAutoFilter() && !col.getValue().isHidden() && Math.abs(col.getValue().getWidth() - DEFAULT_COLUMN_WIDTH) <= FLOAT_THRESHOLD) {
                 columnsToDelete.add(col.getKey());
             }
         }
-        for(Iterator<Integer> index = columnsToDelete.iterator(); index.hasNext(); )
-        {
+        for (Iterator<Integer> index = columnsToDelete.iterator(); index.hasNext(); ) {
             this.columns.remove(index.next());
         }
     }
+
+    /**
+     * Method to resolve all merged cells of the worksheet. Only the value of the very first cell of the merged cells range will be visible. The other values are still present (set to EMPTY) but will not be stored in the worksheet.<br/>
+     * This is an internal method. There is no need to use it.
+     *
+     * @throws StyleException Thrown if an unreferenced style was in the style sheet
+     * @throws RangeException Thrown if the cell range was not found
+     */
+    public void resolveMergedCells() {
+        Style mergeStyle = BasicStyles.MergeCellStyle();
+        int pos;
+        for (Map.Entry<String, Range> range : getMergedCells().entrySet()) {
+            pos = 0;
+            List<Address> addresses = Cell.getCellRange(range.getValue().StartAddress, range.getValue().EndAddress);
+            for (Address address : addresses) {
+                Cell cell = null;
+                if (!cells.containsKey(address.getAddress())) {
+                    cell = new Cell();
+                    cell.setDataType(Cell.CellType.EMPTY);
+                    cell.setRowNumber(address.Row);
+                    cell.setColumnNumber(address.Column);
+                    addCell(cell, cell.getColumnNumber(), cell.getRowNumber());
+                } else {
+                    cell = getCells().get(address.getAddress());
+                }
+                if (pos != 0) {
+                    cell.setDataType(Cell.CellType.EMPTY);
+                    cell.setStyle(mergeStyle);
+                }
+                pos++;
+            }
+        }
+
+    }
+
     /**
      * Removes auto filters from the worksheet
      */
-    public void removeAutoFilter()
-    {
+    public void removeAutoFilter() {
         this.autoFilterRange = null;
     }
-    
+
     /**
      * Sets a previously defined, hidden column as visible again
+     *
      * @param columnNumber Column number to make visible again
      * @throws RangeException Thrown if the passed row number was out of range
      */
-    public void removeHiddenColumn(int columnNumber)
-    {
+    public void removeHiddenColumn(int columnNumber) {
         setColumnHiddenState(columnNumber, false);
     }
-    
+
     /**
      * Sets a previously defined, hidden column as visible again
+     *
      * @param columnAddress Column address to make visible again
      * @throws RangeException Thrown if the passed row number was out of range
      */
-    public void removeHiddenColumn(String columnAddress)
-    {
+    public void removeHiddenColumn(String columnAddress) {
         int columnNumber = Cell.resolveColumn(columnAddress);
         setColumnHiddenState(columnNumber, false);
     }
+
     /**
      * Sets a previously defined, hidden row as visible again
+     *
      * @param rowNumber Row number to hide on the worksheet
      * @throws RangeException Thrown if the passed column number was out of range
      */
-    public void removeHiddenRow(int rowNumber)
-    {
+    public void removeHiddenRow(int rowNumber) {
         setRowHiddenState(rowNumber, false);
     }
+
     /**
      * Removes the defined merged cell range
+     *
      * @param range Cell range to remove the merging
-     * @throws RangeException Thrown if the passed cell range was not merged earlier
+     * @throws RangeException  Thrown if the passed cell range was not merged earlier
      * @throws FormatException Thrown if the passed address is malformed
      */
-    public void removeMergedCells(String range)
-    {
-        range = range.toUpperCase();
-        if (this.mergedCells.containsKey(range) == false)
-        {
-            throw new RangeException("MissingReferenceException","The cell range " + range + " was not found in the list of merged cell ranges");
+    public void removeMergedCells(String range) {
+        if (range != null) {
+            range = range.toUpperCase();
         }
-        else
-        {
+        if (range == null || !this.mergedCells.containsKey(range)) {
+            throw new RangeException("UnknownRangeException", "The cell range " + range + " was not found in the list of merged cell ranges");
+        } else {
             List<Address> addresses = Cell.getCellRange(range);
             Cell cell;
-            //foreach(Address address in addresses)
-            for(int i = 0; i < addresses.size(); i++)
-            {
-                if (this.cells.containsKey(addresses.get(i).toString()))
-                {
+            for (int i = 0; i < addresses.size(); i++) {
+                if (this.cells.containsKey(addresses.get(i).toString())) {
                     cell = this.cells.get(addresses.get(i).toString());
-                    cell.setDataType(Cell.CellType.DEFAULT); // resets the type
-                    if (cell.getValue() == null)
-                    {
-                        cell.setValue("");
+                    if (BasicStyles.MergeCellStyle().equals(cell.getCellStyle())) {
+                        cell.removeStyle();
                     }
+                    cell.resolveCellType(); // resets the type
                 }
             }
             this.mergedCells.remove(range);
         }
     }
+
     /**
      * Removes the cell selection of this worksheet
      */
-    public void removeSelectedCells()
-    {
+    public void removeSelectedCells() {
         this.selectedCells = null;
     }
+
+    /**
+     * Removes the defined, non-standard row height
+     *
+     * @param rowNumber Row number (zero-based)
+     */
+    public void removeRowHeight(int rowNumber) {
+        if (rowHeights.containsKey(rowNumber)) {
+            rowHeights.remove(rowNumber);
+        }
+    }
+
+    /**
+     * Removes an allowed action on the current worksheet or its cells
+     *
+     * @param value Allowed action on the worksheet or cells
+     */
+    public void removeAllowedActionOnSheetProtection(SheetProtectionValue value) {
+        if (sheetProtectionValues.contains(value)) {
+            sheetProtectionValues.remove(value);
+        }
+    }
+
     /**
      * Sets the active style of the worksheet. This style will be assigned to all later added cells
+     *
      * @param style Style to set as active style
      * @throws StyleException Thrown if the worksheet has no workbook referenced when trying to set the active style
      */
-    public void setActiveStyle(Style style)
-    {
-        this.useActiveStyle = true;
+    public void setActiveStyle(Style style) {
+        if (style == null) {
+            this.useActiveStyle = false;
+        } else {
+            this.useActiveStyle = true;
+        }
         this.activeStyle = style;
     }
-    
+
     /**
      * Sets the column auto filter within the defined column range
+     *
      * @param startColumn Column number with the first appearance of an auto filter drop down
-     * @param endColumn Column number with the last appearance of an auto filter drop down
+     * @param endColumn   Column number with the last appearance of an auto filter drop down
      * @throws RangeException Thrown if one of the passed column numbers are out of range
      */
-    public void setAutoFilter(int startColumn, int endColumn)
-    {
+    public void setAutoFilter(int startColumn, int endColumn) {
         String start = Cell.resolveCellAddress(startColumn, 0);
         String end = Cell.resolveCellAddress(endColumn, 0);
-        if (endColumn < startColumn)
-        {
+        if (endColumn < startColumn) {
             setAutoFilterRange(end + ":" + start);
-        }
-        else
-        {
+        } else {
             setAutoFilterRange(start + ":" + end);
         }
     }
+
+    /**
+     * Sets the column auto filter within the defined column range
+     *
+     * @param range Range to apply auto filter on. The range could be 'A1:C10' for instance. The end row will be recalculated automatically when saving the file
+     * @throws RangeException  Throws an RangeException if the passed range out of range
+     * @throws FormatException Throws an FormatException if the passed range is malformed
+     */
+    public void setAutoFilter(String range) {
+        autoFilterRange = Cell.resolveCellRange(range);
+        recalculateAutoFilter();
+        recalculateColumns();
+    }
+
     /**
      * Sets the defined column as hidden or visible
+     *
      * @param columnNumber Column number to hide on the worksheet
-     * @param state If true, the column will be hidden, otherwise be visible
+     * @param state        If true, the column will be hidden, otherwise be visible
      * @throws RangeException Thrown if the passed row number was out of range
      */
-    private void setColumnHiddenState(int columnNumber, boolean state)
-    {
-        if (columnNumber > MAX_COLUMN_NUMBER || columnNumber < 0)
-        {
-            throw new RangeException("OutOfRangeException","The column number (" + columnNumber + ") is out of range. Range is from 0 to "+ MAX_COLUMN_NUMBER +" ("+ (MAX_COLUMN_NUMBER + 1) +" columns).");
-        }
-        if (this.columns.containsKey(columnNumber) && state == true)
-        {
-            this.columns.get(columnNumber).setHidden(state);
-        }
-        else if (state == true)
-        {
+    private void setColumnHiddenState(int columnNumber, boolean state) {
+        Cell.validateColumnNumber(columnNumber);
+        if (columns.containsKey(columnNumber)) {
+            columns.get(columnNumber).setHidden(state);
+        } else if (state) {
             Column c = new Column(columnNumber);
-            c.setHidden(state);
-            this.columns.put(columnNumber, c);
+            c.setHidden(true);
+            columns.put(columnNumber, c);
         }
-    } 
+        if (!columns.get(columnNumber).isHidden() && Math.abs(columns.get(columnNumber).getWidth() - DEFAULT_COLUMN_WIDTH) <= FLOAT_THRESHOLD && !columns.get(columnNumber).hasAutoFilter()) {
+            columns.remove(columnNumber);
+        }
+    }
+
     /**
      * Sets the width of the passed column number (zero-based)
+     *
      * @param columnNumber Column number (zero-based, from 0 to 16383)
-     * @param width Width from 0 to 255.0
+     * @param width        Width from 0 to 255.0
      * @throws RangeException Thrown if the address is out of the valid range. Range is from 0 to 16383 (16384 columns)
      */
-    public void setColumnWidth(int columnNumber, float width)
-    {
-        if (columnNumber > MAX_COLUMN_NUMBER || columnNumber < MIN_COLUMN_NUMBER)
-        {
-            throw new RangeException("OutOfRangeException","The column number (" + columnNumber + ") is out of range. Range is from "+ MIN_COLUMN_NUMBER + " to "+ MAX_COLUMN_NUMBER +" ("+ (MAX_COLUMN_NUMBER + 1) +" columns).");
+    public void setColumnWidth(int columnNumber, float width) {
+        Cell.validateColumnNumber(columnNumber);
+        if (width < MIN_COLUMN_WIDTH || width > MAX_COLUMN_WIDTH) {
+            throw new RangeException(RangeException.GENERAL, "The column width (" + width + ") is out of range. Range is from " + MIN_COLUMN_WIDTH + " to " + MAX_COLUMN_WIDTH + " (chars).");
         }
-        if (width < MIN_COLUMN_WIDTH || width > MAX_COLUMN_WIDTH)
-        {
-            throw new RangeException("OutOfRangeException","The column width (" + width + ") is out of range. Range is from "+ MIN_COLUMN_WIDTH + " to "+ MAX_COLUMN_WIDTH + " (chars).");
-        }
-        if (this.columns.containsKey(columnNumber))
-        {
+        if (this.columns.containsKey(columnNumber)) {
             this.columns.get(columnNumber).setWidth(width);
-        }
-        else
-        {
+        } else {
             Column c = new Column(columnNumber);
             c.setWidth(width);
             this.columns.put(columnNumber, c);
         }
-    }    
+    }
+
     /**
      * Set the current cell address
-     * @param columnAddress Column number (zero based)
-     * @param rowAddress Row number (zero based)
+     *
+     * @param columnNumber Column number (zero based)
+     * @param rowNumber    Row number (zero based)
      * @throws RangeException Thrown if the address is out of the valid range. Range is for rows from 0 to 1048575 (1048576 rows) and for columns from 0 to 16383 (16384 columns)
      */
-    public void setCurrentCellAddress(int columnAddress, int rowAddress)
-    {
-        setCurrentColumnNumber(columnAddress);
-        setCurrentRowNumber(rowAddress);
+    public void setCurrentCellAddress(int columnNumber, int rowNumber) {
+        setCurrentColumnNumber(columnNumber);
+        setCurrentRowNumber(rowNumber);
     }
+
     /**
      * Sets the height of the passed row number (zero-based)
+     *
      * @param rowNumber Row number (zero-based, 0 to 1048575)
-     * @param height Height from 0 to 409.5
+     * @param height    Height from 0 to 409.5
      * @throws RangeException Thrown if the address is out of the valid range. Range is from 0 to 1048575 (1048576 rows)
      */
-    public void setRowHeight(int rowNumber, float height)
-    {
-        if (rowNumber > MAX_ROW_NUMBER || rowNumber < MIN_ROW_NUMBER)
-        {
-            throw new RangeException("OutOfRangeException","The row number (" + rowNumber + ") is out of range. Range is from "+ MIN_ROW_NUMBER +" to "+ MAX_ROW_NUMBER +" ("+ (MAX_ROW_NUMBER + 1) +" rows).");
-        }       
-        if (height < 0 || height > 409.5)
-        {
-            throw new RangeException("OutOfRangeException","The row height (" + height + ") is out of range. Range is from 0 to 409.5 (equals 546px).");
+    public void setRowHeight(int rowNumber, float height) {
+        Cell.validateRowNumber(rowNumber);
+        if (height < 0 || height > 409.5) {
+            throw new RangeException(RangeException.GENERAL, "The row height (" + height + ") is out of range. Range is from 0 to 409.5 (equals 546px).");
         }
         this.rowHeights.put(rowNumber, height);
     }
+
     /**
      * Sets the defined row as hidden or visible
+     *
      * @param rowNumber Row number to hide on the worksheet
-     * @param state If true, the row will be hidden, otherwise visible
-     * @throws RangeException Thrown if the passed column number was out of range
+     * @param state     If true, the row will be hidden, otherwise visible
+     * @throws RangeException Thrown if the passed row number was out of range
      */
-    private void setRowHiddenState(int rowNumber, boolean state)
-    {
-        if (rowNumber > MAX_ROW_NUMBER || rowNumber < MIN_ROW_NUMBER)
-        {
-            throw new RangeException("OutOfRangeException","The row number (" + rowNumber + ") is out of range. Range is from "+ MIN_ROW_NUMBER +" to "+ MAX_ROW_NUMBER +" ("+ (MAX_ROW_NUMBER + 1) +" rows).");
-        }
-        if (this.hiddenRows.containsKey(rowNumber))
-        {
-            if (state == true)
-            {
+    private void setRowHiddenState(int rowNumber, boolean state) {
+        Cell.validateRowNumber(rowNumber);
+        if (this.hiddenRows.containsKey(rowNumber)) {
+            if (state == true) {
                 this.hiddenRows.put(rowNumber, state);
-            }
-            else
-            {
+            } else {
                 this.hiddenRows.remove(rowNumber);
             }
-        }
-        else if (state == true)
-        {
+        } else if (state == true) {
             this.hiddenRows.put(rowNumber, state);
         }
     }
-    
-    /**
-     * Sets the selected cells on this worksheet
-     * @param startAddress Start address of the range
-     * @param endAddress End address of the range
-     */
-    public void setSelectedCells(Address startAddress, Address endAddress)
-    {
-       this.selectedCells = new Range(startAddress, endAddress); 
-    }
- 
+
+
     //### S T A T I C   M E T H O D S
+
     /**
      * Sanitizes a worksheet name
-     * @param input Name to sanitize
+     *
+     * @param input    Name to sanitize
      * @param workbook Workbook reference
      * @return Name of the sanitized worksheet
+     * @throws WorksheetException thrown if the workbook reference is null, since all worksheets have to be considered during sanitation
      */
-    public static String sanitizeWorksheetName(String input, Workbook workbook)
-    {
-        if (input == null){input = "Sheet1";}
-        int len = input.length();
-        if (len > 31) { len = 31; }
-        else if (len == 0)
-        {
+    public static String sanitizeWorksheetName(String input, Workbook workbook) {
+        if (input == null || input.isEmpty()) {
             input = "Sheet1";
         }
-        StringBuilder sb = new StringBuilder(31);
-        char c;
-        for(int i = 0; i < len; i++)
-        {
-            c = input.charAt(i);
-            if (c == '[' || c == ']' || c == '*' || c == '?' || c == '\\' || c == '/')
-            { sb.append('_');}
-            else
-            {  sb.append(c); }
+        int len;
+        if (input.length() > MAX_WORKSHEET_NAME_LENGTH) {
+            len = MAX_WORKSHEET_NAME_LENGTH;
+        } else {
+            len = input.length();
         }
-        String name = sb.toString();
-        String originalName = name;
-        int number = 1;
-        while(true)
-        {
-            if (Worksheet.worksheetExists(name, workbook) == false) { break; } // OK
-            if (originalName.length() + (number/10) >= 31)
-            {
-                name = originalName.substring(0,30-number/10) + number;
+        StringBuilder sb = new StringBuilder(MAX_WORKSHEET_NAME_LENGTH);
+        char c;
+        for (int i = 0; i < len; i++) {
+            c = input.charAt(i);
+            if (c == '[' || c == ']' || c == '*' || c == '?' || c == '\\' || c == '/') {
+                sb.append('_');
+            } else {
+                sb.append(c);
             }
-            else
-            {
-                name = originalName + number;
+        }
+        return getUnusedWorksheetName(sb.toString(), workbook);
+    }
+
+    /**
+     * Determines the next unused worksheet name in the passed workbook
+     *
+     * @param name     Original name to start the check
+     * @param workbook Workbook to look for existing worksheets
+     * @return Not yet used worksheet name
+     * @throws WorksheetException thrown if the workbook reference is null, since all worksheets have to be considered during sanitation
+     * @implNote The 'rare' case where 10^31 Worksheets exists (leads to a crash) is deliberately not handled,
+     * since such a number of sheets would consume at least one quintillion bytes of RAM... what is vastly out of the 64 bit range
+     */
+    private static String getUnusedWorksheetName(String name, Workbook workbook) {
+        if (workbook == null) {
+            throw new WorksheetException("MissingReferenceException", "The workbook reference is null");
+        }
+        if (!worksheetExists(name, workbook))
+        { return name; }
+        Pattern pattern = Pattern.compile("^(.*?)(\\d{1,31})$"); //
+        Matcher matcher = pattern.matcher(name);
+        String prefix = name;
+        int number = 1;
+        if (matcher.matches() && matcher.groupCount() > 1) {
+            prefix = matcher.group(1);
+            try{
+                number = Integer.parseInt(matcher.group(2));
+            }
+            catch (Exception ex){
+                number = 0;
+                // if this failed, the start number is 0 (parsed number was >max. int32)
+            }
+        }
+        while (true) {
+            String numberString = Integer.toString(number);
+            if (numberString.length() + prefix.length() > MAX_WORKSHEET_NAME_LENGTH) {
+                int endIndex = prefix.length() - (numberString.length() + prefix.length() - MAX_WORKSHEET_NAME_LENGTH);
+                prefix = prefix.substring(0, endIndex);
+            }
+            String newName = prefix + numberString;
+            if (!worksheetExists(newName, workbook)) {
+                return newName;
             }
             number++;
         }
-        return name;
     }
+
     /**
      * Checks whether a worksheet with the given name exists
-     * @param name Name to check
+     *
+     * @param name     Name to check
      * @param workbook Workbook reference
      * @return True if the name exits, otherwise false
      */
-    private static boolean worksheetExists(String name, Workbook workbook)
-    {
+    private static boolean worksheetExists(String name, Workbook workbook) {
         int len = workbook.getWorksheets().size();
-        for(int i = 0; i < len; i++)
-        {
-            if (workbook.getWorksheets().get(i).getSheetName().equals(name))
-            {
+        for (int i = 0; i < len; i++) {
+            if (workbook.getWorksheets().get(i).getSheetName().equals(name)) {
                 return true;
             }
         }
         return false;
-    }   
-    
+    }
+
 }

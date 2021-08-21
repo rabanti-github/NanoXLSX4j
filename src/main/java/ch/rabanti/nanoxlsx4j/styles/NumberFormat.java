@@ -1,22 +1,25 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.styles;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Class representing a NumberFormat entry. The NumberFormat entry is used to define cell formats like currency or date
  *
  * @author Raphael Stoeckli
  */
-public class NumberFormat extends AbstractStyle {
+public class NumberFormat extends AbstractStyle implements Modifiable {
 // ### C O N S T A N T S ###
     /**
      * Start ID for custom number formats as constant
      */
-    public static final int CUSTOMFORMAT_START_NUMBER = 124;
+    public static final int CUSTOMFORMAT_START_NUMBER = 164;
 
 // ### E N U M S ###
 
@@ -300,5 +303,158 @@ public class NumberFormat extends AbstractStyle {
         return r;
     }
 
+    /**
+     * Returns whether the current style component was modified (differs from new class instance)
+     * @return True if the current object was modified, otherwise false
+     */
+    @Override
+    public boolean isModified() {
+        NumberFormat reference = new NumberFormat();
+        if(areDifferent(this.customFormatCode, reference.customFormatCode)){
+            return true;
+        }
+        if(areDifferent(this.customFormatID, reference.customFormatID)){
+            return true;
+        }
+        return areDifferent(this.number.numVal, reference.number.numVal); // last statement returns either true or false (whole object not modified)
+    }
+
+    /**
+     * Tries to parse registered format numbers. If the parsing fails, it is assumed that the number is a custom format number (164 or higher) and 'custom' is returned
+     *
+     * @param number Raw number to parse<
+     * @return Format range. Will return 'invalid' if out of any range (e.g. negative value)
+     */
+    public static NumberFormatEvaluation tryParseFormatNumber(int number) {
+        NumberFormatEvaluation result = new NumberFormatEvaluation();
+        Optional<FormatNumber> enumValue = Arrays.stream(FormatNumber.values()).filter(x -> x.getValue() == number).findFirst();
+        if (enumValue.isPresent()) {
+            result.setFormat(enumValue.get());
+            result.setRange(NumberFormatEvaluation.FormatRange.defined_format);
+        } else {
+            if (number < 0) {
+                result.setFormat(FormatNumber.none);
+                result.setRange(NumberFormatEvaluation.FormatRange.invalid);
+            } else if (number > 0 && number < CUSTOMFORMAT_START_NUMBER) {
+                result.setFormat(FormatNumber.none);
+                result.setRange(NumberFormatEvaluation.FormatRange.undefined);
+            } else {
+                result.setFormat(FormatNumber.custom);
+                result.setRange(NumberFormatEvaluation.FormatRange.custom_format);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Determines whether a defined style format number represents a date (or date and time).<br>
+     * Note: Custom number formats (higher than 164), as well as not officially defined numbers (below 164) are currently not considered during the check and will return false
+     *
+     * @param number Format number to check
+     * @return True if the format represents a date, otherwise false
+     */
+    public static boolean isDateFormat(FormatNumber number) {
+        switch (number) {
+            case format_14:
+            case format_15:
+            case format_16:
+            case format_17:
+            case format_22:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determines whether a defined style format number represents a time).<br>
+     * Note: Custom number formats (higher than 164), as well as not officially defined numbers (below 164) are currently not considered during the check and will return false
+     *
+     * @param number Format number to check
+     * @return True if the format represents a time, otherwise false
+     */
+    public static boolean isTimeFormat(FormatNumber number) {
+        switch (number) {
+            case format_18:
+            case format_19:
+            case format_20:
+            case format_21:
+            case format_45:
+            case format_46:
+            case format_47:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+// ### S U B - C L A S S E S ###
+
+    /**
+     * Class represents the evaluation of a number format (number) and its purpose
+     */
+    public static class NumberFormatEvaluation {
+
+        /**
+         * Range or validity of the format number
+         */
+        public enum FormatRange {
+            /**
+             * Format from 0 to 163 (with gaps)
+             */
+            defined_format,
+            /**
+             * Custom defined formats from 164 and higher
+             */
+            custom_format,
+            /**
+             * Probably invalid format numbers (e.g. negative value)
+             */
+            invalid,
+            /**
+             * Values between 0 and 164 that are not defined as enum value. This may be caused by changes of the OOXML specifications or Excel versions that have encoded loaded files
+             */
+            undefined
+        }
+
+        private FormatNumber format;
+        private FormatRange range;
+
+        /**
+         * Gets the evaluated Format
+         *
+         * @return Number format
+         */
+        public FormatNumber getFormatNumber() {
+            return format;
+        }
+
+        /**
+         * Gets the range of the evaluated number format
+         *
+         * @return Format range
+         */
+        public FormatRange getRange() {
+            return range;
+        }
+
+        /**
+         * Sets the evaluated Format
+         *
+         * @param format Number format
+         */
+        public void setFormat(FormatNumber format) {
+            this.format = format;
+        }
+
+        /**
+         * Sets the range of the evaluated number format
+         *
+         * @param range Format range
+         */
+        public void setRange(FormatRange range) {
+            this.range = range;
+        }
+    }
 
 }

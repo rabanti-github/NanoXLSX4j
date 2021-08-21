@@ -1,17 +1,19 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.styles;
+
+import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 /**
  * Class representing a Fill (background) entry. The Fill entry is used to define background colors and fill patterns
  *
  * @author Raphael Stoeckli
  */
-public class Fill extends AbstractStyle {
+public class Fill extends AbstractStyle implements Modifiable {
     // ### C O N S T A N T S ###
     public static final String DEFAULTCOLOR = "FF000000";
 // ### E N U M S ###
@@ -85,44 +87,7 @@ public class Fill extends AbstractStyle {
         }
     }
 
-    /**
-     * Gets the pattern name from the enum
-     *
-     * @param pattern Enum to process
-     * @return The valid value of the pattern as String
-     */
-    public static String getPatternName(PatternValue pattern) {
-        String output;
-        switch (pattern) {
-            case none:
-                output = "none";
-                break;
-            case solid:
-                output = "solid";
-                break;
-            case darkGray:
-                output = "darkGray";
-                break;
-            case mediumGray:
-                output = "mediumGray";
-                break;
-            case lightGray:
-                output = "lightGray";
-                break;
-            case gray0625:
-                output = "gray0625";
-                break;
-            case gray125:
-                output = "gray125";
-                break;
-            default:
-                output = "none";
-                break;
-        }
-        return output;
-    }
-
-    // ### P R I V A T E  F I E L D S ###
+// ### P R I V A T E  F I E L D S ###
     public int indexedColor;
     public PatternValue patternFill;
     public String foregroundColor;
@@ -305,5 +270,98 @@ public class Fill extends AbstractStyle {
         return r;
     }
 
+    /**
+     * Returns whether the current style component was modified (differs from new class instance)
+     * @return True if the current object was modified, otherwise false
+     */
+    @Override
+    public boolean isModified() {
+        Fill reference = new Fill();
+        if(areDifferent(this.indexedColor, reference.indexedColor)){
+            return true;
+        }
+        if(areDifferent(this.patternFill.value, reference.patternFill.value)){
+            return true;
+        }
+        if(areDifferent(this.foregroundColor, reference.foregroundColor)){
+            return true;
+        }
+        return areDifferent(this.backgroundColor, reference.backgroundColor); // last statement returns either true or false (whole object not modified)
+    }
+
+// ###  S T A T I C   F U N C T I O N S ###
+    /**
+     * Gets the pattern name from the enum
+     *
+     * @param pattern Enum to process
+     * @return The valid value of the pattern as String
+     */
+    public static String getPatternName(PatternValue pattern) {
+        String output;
+        switch (pattern) {
+            case none:
+                output = "none";
+                break;
+            case solid:
+                output = "solid";
+                break;
+            case darkGray:
+                output = "darkGray";
+                break;
+            case mediumGray:
+                output = "mediumGray";
+                break;
+            case lightGray:
+                output = "lightGray";
+                break;
+            case gray0625:
+                output = "gray0625";
+                break;
+            case gray125:
+                output = "gray125";
+                break;
+            default:
+                output = "none";
+                break;
+        }
+        return output;
+    }
+
+    /**
+     * Validates the passed string, whether it is a valid RGB value that can be used for Fills or Fonts
+     * @param hexCode Hex string to check
+     * @param useAlpha If true, two additional characters (total 8) are expected as alpha value
+     * @throws StyleException thrown if an invalid hex value is passed
+     */
+    public static void validateColor(String hexCode, boolean useAlpha){
+        int length;
+        String expression;
+        length = useAlpha ? 8 : 6;
+        if (hexCode == null || hexCode.length() != length)
+        {
+            throw new StyleException("A general style exception occurred", "The value '" + hexCode + "' is invalid. A valid value must contain six hex characters");
+        }
+        if (!hexCode.matches("[a-fA-F0-9]{6,8}"))
+        {
+            throw new StyleException("A general style exception occurred", "The expression '" + hexCode + "' is a valid hex value");
+        }
+    }
+
+    /**
+     * Validates the passed string, whether it is a valid RGB value that can be used for Fills or Fonts
+     * @param hexCode Hex string to check
+     * @param useAlpha If true, two additional characters (total 8) are expected as alpha value
+     * @param allowEmpty Optional parameter that allows null or empty as valid values
+     * @throws StyleException thrown if an invalid hex value is passed
+     */
+    public static void validateColor(String hexCode, boolean useAlpha, boolean allowEmpty){
+        if ((hexCode == null || hexCode.isEmpty())){
+            if (allowEmpty){
+                return;
+            }
+            throw new StyleException("A general style exception occurred", "The color expression was null or empty");
+        }
+        validateColor(hexCode, useAlpha);
+    }
 
 }

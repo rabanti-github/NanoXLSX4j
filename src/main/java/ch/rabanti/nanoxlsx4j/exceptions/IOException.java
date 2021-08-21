@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -11,9 +11,12 @@ package ch.rabanti.nanoxlsx4j.exceptions;
  * @author Raphael Stoeckli
  */
 public class IOException extends Exception{
-    
-    private Exception innerException;
-    private String exceptionTitle;
+
+    public static final String GENERAL = "A general IO exception occurred";
+    public static final String LOADING = "An exception during loading occurred";
+
+    private final Exception innerException;
+    private final String exceptionTitle;
 
      /**
      * Gets the inner exception
@@ -38,6 +41,8 @@ public class IOException extends Exception{
     public IOException()
     {
         super();
+        this.innerException = null;
+        this.exceptionTitle = GENERAL;
     }
     
     /**
@@ -48,6 +53,7 @@ public class IOException extends Exception{
     public IOException(String title, String message)
     {
         super(title + ": " + message);
+        this.innerException = null;
         this.exceptionTitle = title;
     }
     

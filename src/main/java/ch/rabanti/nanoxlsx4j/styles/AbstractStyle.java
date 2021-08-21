@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -10,6 +10,7 @@ import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 /**
  * Class represents an abstract style component
@@ -44,12 +45,6 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
 
 
     // ### M E T H O D S ###
-    /**
-     * Abstract method definition to calculate the hash of the component
-     * @return Returns the hash of the component as string
-     */
-    //abstract String calculateHash();
-
 
     /**
      * Abstract method to copy a component (dereferencing)
@@ -61,12 +56,17 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
     /**
      * Method to compare two objects for sorting purpose
      *
-     * @param other Other object to compare with this object
+     * @param o Other object to compare with this object
      * @return True if both objects are equal, otherwise false
      */
-    public boolean equals(AbstractStyle other) {
-        return this.hashCode() == other.hashCode();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractStyle that = (AbstractStyle) o;
+        return Objects.equals(this.hashCode(), that.hashCode());
     }
+
 
     /**
      * Method to compare two objects for sorting purpose
@@ -76,7 +76,6 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
      */
     @Override
     public int compareTo(AbstractStyle o) {
-        // return this.hash.compareTo(o.getHash());
         if (this.internalID == null) {
             return -1;
         } else if (o.getInternalID() == null) {
@@ -97,7 +96,7 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
         if (o == null) {
             sb.append('#');
         } else if (o instanceof Boolean) {
-            if ((boolean) o == true) {
+            if ((boolean) o) { // == true
                 sb.append(1);
             } else {
                 sb.append(0);
@@ -126,6 +125,39 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
         }
     }
 
+    private static <T> void handleType(T o, StringBuilder sb){
+        if (o instanceof Boolean){
+            if ((boolean) o) { // == true
+                sb.append(1);
+            } else {
+                sb.append(0);
+            }
+        }
+        else if (o instanceof String){
+            if (o.toString().equals("#")) {
+                sb.append("_#_");
+            } else {
+                sb.append((String) o);
+            }
+        }
+        else {
+            sb.append(o.toString());
+        }
+    }
+
+    static <T> boolean areDifferent(T a, T b){
+        if ((a == null && b != null) || (a != null && b == null)){
+            return true;
+        }
+        if (a == null ){ // b is always null in this case
+            return false; // a and b = null
+        }
+        if (!a.getClass().equals(b.getClass())){
+            return true; // Not same class
+        }
+        return !a.equals(b); // Invert
+    }
+
     /**
      * Internal method to copy altered fields from a source object. The decision whether a field is copied is dependent on a untouched reference object
      *
@@ -134,12 +166,13 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
      * @param <T>       Reference object to decide whether the fields from the source objects are altered or not
      */
     <T extends AbstractStyle> void copyFields(T source, T reference) {
-        if (this.getClass().equals(source.getClass()) == false && this.getClass().equals(reference.getClass()) == false) {
+        if (!this.getClass().equals(source.getClass()) && !this.getClass().equals(reference.getClass())) {
             throw new StyleException("CopyFieldException", "The objects of the source, target and reference for style appending are not of the same type");
         }
         boolean ignore;
         Field[] infos = this.getClass().getDeclaredFields();
-        Field sourceInfo, referenceInfo;
+        Field sourceInfo;
+        Field referenceInfo;
         Annotation[] annotations;
         try {
             for (Field info : infos) {
@@ -147,12 +180,12 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
                 if (annotations.length > 0) {
                     ignore = false;
                     for (Annotation annotation : annotations) {
-                        if (((AppendAnnotation) annotation).ignore() == true || ((AppendAnnotation) annotation).nestedProperty() == true) {
+                        if (((AppendAnnotation) annotation).ignore() || ((AppendAnnotation) annotation).nestedProperty()) {
                             ignore = true;
                             break;
                         }
                     }
-                    if (ignore == true) {
+                    if (ignore) {
                         continue;
                     } // skip field
                 }
@@ -160,7 +193,7 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
                 sourceInfo.setAccessible(true); // Necessary to access private field
                 referenceInfo = reference.getClass().getDeclaredField(info.getName());
                 referenceInfo.setAccessible(true); // Necessary to access private field
-                if (sourceInfo.get(source).equals(referenceInfo.get(reference)) == false) {
+                if (!sourceInfo.get(source).equals(referenceInfo.get(reference))) {
                     info.setAccessible(true); // Necessary to access private field
                     info.set(this, sourceInfo.get(source));
                 }

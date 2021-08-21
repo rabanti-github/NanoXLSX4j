@@ -1,18 +1,22 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.styles;
 
+import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 /**
- * Class representing a style manager to maintain all styles and its components of a workbook
+ * Class representing a style manager to maintain all styles and its components of a workbook.<br/>
+ * This class is only internally used to compose the style environment right before saving an XLSX file
  *
  * @author Raphael Stockeli
  */
@@ -26,7 +30,6 @@ public class StyleManager {
     private final ArrayList<AbstractStyle> numberFormats;
     private final ArrayList<AbstractStyle> styles;
     private final ArrayList<String> styleNames;
-    //private final Map<String, AbstractStyle> internalStyleCache;
 
 // ### C O N S T R U C T O R S ###
 
@@ -41,7 +44,6 @@ public class StyleManager {
         this.numberFormats = new ArrayList<>();
         this.styles = new ArrayList<>();
         this.styleNames = new ArrayList<>();
-        //this.internalStyleCache = new HashMap<>();
     }
 
 // ###  M E T H O D S ###
@@ -73,7 +75,7 @@ public class StyleManager {
     public Border getBorderByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.borders, hash);
         if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style component with the hash '" + hash + "' was not found");
+            throw new StyleException(StyleException.MISSING_REFERENCE, "The style component with the hash '" + hash + "' was not found");
         }
         return (Border) component;
     }
@@ -106,7 +108,7 @@ public class StyleManager {
     public CellXf getCellXfByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.cellXfs, hash);
         if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style component with the hash '" + hash + "' was not found");
+            throw new StyleException(StyleException.MISSING_REFERENCE, "The style component with the hash '" + hash + "' was not found");
         }
         return (CellXf) component;
     }
@@ -139,7 +141,7 @@ public class StyleManager {
     public Fill getFillByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.fills, hash);
         if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style component with the hash '" + hash + "' was not found");
+            throw new StyleException(StyleException.MISSING_REFERENCE, "The style component with the hash '" + hash + "' was not found");
         }
         return (Fill) component;
     }
@@ -172,7 +174,7 @@ public class StyleManager {
     public Font getFontByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.fonts, hash);
         if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style component with the hash '" + hash + "' was not found");
+            throw new StyleException(StyleException.MISSING_REFERENCE, "The style component with the hash '" + hash + "' was not found");
         }
         return (Font) component;
     }
@@ -205,7 +207,7 @@ public class StyleManager {
     public NumberFormat getNumberFormatByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.numberFormats, hash);
         if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style component with the hash '" + hash + "' was not found");
+            throw new StyleException(StyleException.MISSING_REFERENCE, "The style component with the hash '" + hash + "' was not found");
         }
         return (NumberFormat) component;
     }
@@ -242,7 +244,7 @@ public class StyleManager {
                 return (Style) this.styles.get(i);
             }
         }
-        throw new StyleException("MissingReferenceException", "The style with the name '" + name + "' was not found");
+        throw new StyleException(StyleException.MISSING_REFERENCE, "The style with the name '" + name + "' was not found");
     }
 
     /**
@@ -255,7 +257,7 @@ public class StyleManager {
     public Style getStyleByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.styles, hash);
         if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style with the hash '" + hash + "' was not found");
+            throw new StyleException(StyleException.MISSING_REFERENCE, "The style with the hash '" + hash + "' was not found");
         }
         return (Style) component;
     }
@@ -337,7 +339,7 @@ public class StyleManager {
             reorganize(numberFormats);
         } else if (style instanceof Style) {
             Style s = (Style) style;
-            if (this.styleNames.contains(s.getName()) == true) {
+            if (this.styleNames.contains(s.getName())) {
                 throw new StyleException("StyleAlreadyExistsException", "The style with the name '" + s.getName() + "' already exists");
             }
             if (this.getComponentByHash(this.styles, hash) == null) {
@@ -373,23 +375,49 @@ public class StyleManager {
      * @throws StyleException Throws a StyleException if the style was not found in the style manager
      */
     public void removeStyle(String styleName) {
-//        String hash = null;
         boolean match = false;
         int len = this.styles.size();
         int index = -1;
         for (int i = 0; i < len; i++) {
-            if (((Style) this.styles.get(i)).getName().equals(styleName) == true) {
+            if (((Style) this.styles.get(i)).getName().equals(styleName)) {
                 match = true;
-//                hash = ((Style)this.styles.get(i)).getHash();
                 index = i;
                 break;
             }
         }
-        if (match == false) {
-            throw new StyleException("MissingReferenceException", "The style with the name '" + styleName + "' was not found in the style manager");
+        if (!match) {
+            throw new StyleException(StyleException.MISSING_REFERENCE, "The style with the name '" + styleName + "' was not found in the style manager");
         }
         this.styles.remove(index);
         cleanupStyleComponents();
+    }
+
+    /**
+     * Method to gather all styles of the cells in all worksheets
+     * @param workbook Workbook to get all cells with possible style definitions
+     * @return StyleManager object, to be processed by the save methods
+     */
+    public static StyleManager getManagedStyles(Workbook workbook)
+    {
+        StyleManager styleManager = new StyleManager();
+        styleManager.addStyle(new Style("default", 0, true));
+        Style borderStyle = new Style("default_border_style", 1, true);
+        borderStyle.setBorder(BasicStyles.DottedFill_0_125().getBorder());
+        borderStyle.setFill(BasicStyles.DottedFill_0_125().getFill());
+        styleManager.addStyle(borderStyle);
+
+        for (int i = 0; i < workbook.getWorksheets().size(); i++)
+        {
+            for (Map.Entry<String, Cell> cell : workbook.getWorksheets().get(i).getCells().entrySet())
+            {
+                if (cell.getValue().getCellStyle() != null)
+                {
+                    Style resolvedStyle = styleManager.addStyle(cell.getValue().getCellStyle());
+                    workbook.getWorksheets().get(i).getCells().get(cell.getKey()).setStyle(resolvedStyle, true);
+                }
+            }
+        }
+        return styleManager;
     }
 
     /**
@@ -416,39 +444,39 @@ public class StyleManager {
         Fill fill;
         Font font;
         NumberFormat numberFormat;
-        int len = this.borders.size();
+        int len = this.borders.size() -1;
         int i;
         for (i = len; i >= 0; i--) {
             border = (Border) this.borders.get(i);
-            if (isUsedByStyle(border) == false) {
+            if (!isUsedByStyle(border)) {
                 this.borders.remove(i);
             }
         }
-        len = this.cellXfs.size();
+        len = this.cellXfs.size()- 1;
         for (i = len; i >= 0; i--) {
             cellXf = (CellXf) this.cellXfs.get(i);
-            if (isUsedByStyle(cellXf) == false) {
+            if (!isUsedByStyle(cellXf)) {
                 this.cellXfs.remove(i);
             }
         }
-        len = this.fills.size();
+        len = this.fills.size()- 1;
         for (i = len; i >= 0; i--) {
             fill = (Fill) this.fills.get(i);
-            if (isUsedByStyle(fill) == false) {
+            if (!isUsedByStyle(fill)) {
                 this.fills.remove(i);
             }
         }
-        len = this.fonts.size();
+        len = this.fonts.size()- 1;
         for (i = len; i >= 0; i--) {
             font = (Font) this.fonts.get(i);
-            if (isUsedByStyle(font) == false) {
+            if (!isUsedByStyle(font)) {
                 this.fonts.remove(i);
             }
         }
-        len = this.numberFormats.size();
+        len = this.numberFormats.size()- 1;
         for (i = len; i >= 0; i--) {
             numberFormat = (NumberFormat) this.numberFormats.get(i);
-            if (isUsedByStyle(numberFormat) == false) {
+            if (!isUsedByStyle(numberFormat)) {
                 this.numberFormats.remove(i);
             }
         }
@@ -477,24 +505,23 @@ public class StyleManager {
                     match = true;
                     break;
                 }
-            }
-            if (component instanceof Fill) {
+            } else if (component instanceof Fill) {
                 if (s.getFill().hashCode() == hash) {
                     match = true;
                     break;
                 }
-            }
-            if (component instanceof Font) {
+            } else if (component instanceof Font) {
                 if (s.getFont().hashCode() == hash) {
                     match = true;
                     break;
                 }
-            }
-            if (component instanceof NumberFormat) {
+            } else if (component instanceof NumberFormat) {
                 if (s.getNumberFormat().hashCode() == hash) {
                     match = true;
                     break;
                 }
+            } else {
+                throw new StyleException("UnsupportedComponent", "The component ' " + component.getClass().getName() + "' is not implemented yet");
             }
         }
         return match;

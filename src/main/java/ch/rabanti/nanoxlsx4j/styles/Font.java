@@ -1,22 +1,54 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.styles;
+
+import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 /**
  * Class representing a Font entry. The Font entry is used to define text formatting
  *
  * @author Raphael Stoeckli
  */
-public class Font extends AbstractStyle {
+public class Font extends AbstractStyle implements Modifiable{
 // ### E N U M S ###
     /**
      * Default font family as constant
      */
-    public static final String DEFAULTFONT = "Calibri";
+    public static final String DEFAULT_FONT_NAME = "Calibri";
+
+    /**
+     * Maximum possible font size
+     */
+    public static final float MIN_FONT_SIZE = 1f;
+
+    /**
+     * Minimum possible font size
+     */
+    public static final float MAX_FONT_SIZE = 409f;
+
+    /**
+     * Default font size
+     */
+    public static final float DEFAULT_FONT_SIZE = 11f;
+
+    /**
+     * Default font family
+     */
+    public static final String DEFAULT_FONT_FAMILY = "2";
+
+    /**
+     * Default font scheme
+     */
+    public static final SchemeValue DEFAULT_FONT_SCHEME = SchemeValue.minor;
+
+    /**
+     * Default vertical alignment
+     */
+    public static final VerticalAlignValue DEFAULT_VERTICAL_ALIGN = VerticalAlignValue.none;
 
     /**
      * Enum for the vertical alignment of the text from base line
@@ -76,7 +108,7 @@ public class Font extends AbstractStyle {
     }
 
     // ### P R I V A T E  F I E L D S ###
-    private int size;
+    private float size;
     private String name;
     private String family;
     private int colorTheme;
@@ -93,24 +125,24 @@ public class Font extends AbstractStyle {
 // ### G E T T E R S  &  S E T T E R S ###
 
     /**
-     * Gets the font size. Valid range is from 8 to 75
+     * Gets the font size. Valid range is from 1.0 to 409.0
      *
      * @return Font size
      */
-    public int getSize() {
+    public float getSize() {
         return size;
     }
 
     /**
-     * Sets the Font size. Valid range is from 8 to 75
+     * Sets the Font size. Valid range is from 1 to 409
      *
      * @param size Font size
      */
-    public void setSize(int size) {
-        if (size < 8) {
-            this.size = 8;
-        } else if (size > 75) {
-            this.size = 72;
+    public void setSize(float size) {
+        if (size < MIN_FONT_SIZE ) {
+            this.size = MIN_FONT_SIZE;
+        } else if (size > MAX_FONT_SIZE) {
+            this.size = MAX_FONT_SIZE;
         } else {
             this.size = size;
         }
@@ -129,8 +161,13 @@ public class Font extends AbstractStyle {
      * Sets the font name (Default is Calibri)
      *
      * @param name Font name
+     * @throws StyleException thrown if the name is null or empty.
+     * @apiNote Note that the font name is not validated whether it is a valid or existing font
      */
     public void setName(String name) {
+        if (name == null || name.isEmpty()){
+            throw new StyleException("A general style exception occurred", "The font name was null or empty");
+        }
         this.name = name;
     }
 
@@ -165,8 +202,13 @@ public class Font extends AbstractStyle {
      * Sets the font color theme (Default is 1)
      *
      * @param colorTheme Font color theme
+     * @throws StyleException thrown if the number is below 1
      */
     public void setColorTheme(int colorTheme) {
+        if (colorTheme < 1)
+        {
+            throw new StyleException( StyleException.GENERAL, "The color theme number " + colorTheme + " is invalid. Should be >0");
+        }
         this.colorTheme = colorTheme;
     }
 
@@ -180,11 +222,14 @@ public class Font extends AbstractStyle {
     }
 
     /**
-     * Sets the font color (default is empty)
+     * Sets the color code of the font color. The value is expressed as hex string with the format AARRGGBB. AA (Alpha) is usually FF.<br>
+     * To omit the color, an empty string can be set. Empty is also default.
      *
      * @param colorValue Font color
+     * @throws StyleException thrown if the passed ARGB value is not valid
      */
     public void setColorValue(String colorValue) {
+        Fill.validateColor(colorValue, true, true);
         this.colorValue = colorValue;
     }
 
@@ -348,14 +393,14 @@ public class Font extends AbstractStyle {
      * Default constructor
      */
     public Font() {
-        this.size = 11;
-        this.name = DEFAULTFONT;
-        this.family = "2";
+        this.size = DEFAULT_FONT_SIZE;
+        this.name = DEFAULT_FONT_NAME;
+        this.family = DEFAULT_FONT_FAMILY;
         this.colorTheme = 1;
         this.colorValue = "";
         this.charset = "";
-        this.scheme = SchemeValue.minor;
-        this.verticalAlign = VerticalAlignValue.none;
+        this.scheme = DEFAULT_FONT_SCHEME;
+        this.verticalAlign = DEFAULT_VERTICAL_ALIGN;
     }
 
     /**
@@ -402,10 +447,10 @@ public class Font extends AbstractStyle {
         int p = 257;
         int r = 1;
         r *= p + (this.bold ? 0 : 1);
-        r *= p + (this.italic ? 0 : 1);
-        r *= p + (this.underline ? 0 : 1);
-        r *= p + (this.doubleUnderline ? 0 : 1);
-        r *= p + (this.strike ? 0 : 1);
+        r *= p + (this.italic ? 0 : 2);
+        r *= p + (this.underline ? 0 : 4);
+        r *= p + (this.doubleUnderline ? 0 : 8);
+        r *= p + (this.strike ? 0 : 16);
         r *= p + this.colorTheme;
         r *= p + this.colorValue.hashCode();
         r *= p + this.family.hashCode();
@@ -413,8 +458,54 @@ public class Font extends AbstractStyle {
         r *= p + this.scheme.getValue();
         r *= p + this.verticalAlign.value;
         r *= p + this.charset.hashCode();
-        r *= p + this.size;
+        r *= p + Float.hashCode(this.size);
         return r;
+    }
+
+    /**
+     * Returns whether the current style component was modified (differs from new class instance)
+     * @return True if the current object was modified, otherwise false
+     */
+    @Override
+    public boolean isModified() {
+        Font reference = new Font();
+        if(areDifferent(this.bold, reference.bold)){
+            return true;
+        }
+        if(areDifferent(this.italic, reference.italic)){
+            return true;
+        }
+        if(areDifferent(this.underline, reference.underline)){
+            return true;
+        }
+        if(areDifferent(this.doubleUnderline, reference.doubleUnderline)){
+            return true;
+        }
+        if(areDifferent(this.strike, reference.strike)){
+            return true;
+        }
+        if(areDifferent(this.colorTheme, reference.colorTheme)){
+            return true;
+        }
+        if(areDifferent(this.colorValue, reference.colorValue)){
+            return true;
+        }
+        if(areDifferent(this.family, reference.family)){
+            return true;
+        }
+        if(areDifferent(this.name, reference.name)){
+            return true;
+        }
+        if(areDifferent(this.scheme, reference.scheme)){
+            return true;
+        }
+        if(areDifferent(this.verticalAlign.value, reference.verticalAlign.value)){
+            return true;
+        }
+        if(areDifferent(this.charset, reference.charset)){
+            return true;
+        }
+        return areDifferent(this.size, reference.size); // last statement returns either true or false (whole object not modified)
     }
 
 

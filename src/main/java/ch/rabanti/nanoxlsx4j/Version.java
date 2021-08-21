@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -20,6 +20,6 @@ public final class Version {
     /**
      * Version of the library
      */
-    public static final String VERSION = "1.2700"; // 1.2.7
+    public static final String VERSION = "1.3000"; // 1.3.0
     
 }
