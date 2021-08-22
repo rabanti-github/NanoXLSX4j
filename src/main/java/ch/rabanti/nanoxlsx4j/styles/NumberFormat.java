@@ -14,7 +14,7 @@ import java.util.Optional;
  *
  * @author Raphael Stoeckli
  */
-public class NumberFormat extends AbstractStyle implements Modifiable {
+public class NumberFormat extends AbstractStyle {
 // ### C O N S T A N T S ###
     /**
      * Start ID for custom number formats as constant
@@ -301,22 +301,6 @@ public class NumberFormat extends AbstractStyle implements Modifiable {
         r *= p + this.customFormatID;
         r *= p + this.number.getValue();
         return r;
-    }
-
-    /**
-     * Returns whether the current style component was modified (differs from new class instance)
-     * @return True if the current object was modified, otherwise false
-     */
-    @Override
-    public boolean isModified() {
-        NumberFormat reference = new NumberFormat();
-        if(areDifferent(this.customFormatCode, reference.customFormatCode)){
-            return true;
-        }
-        if(areDifferent(this.customFormatID, reference.customFormatID)){
-            return true;
-        }
-        return areDifferent(this.number.numVal, reference.number.numVal); // last statement returns either true or false (whole object not modified)
     }
 
     /**

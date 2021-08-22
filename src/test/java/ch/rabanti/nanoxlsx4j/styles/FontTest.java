@@ -472,7 +472,6 @@ public class FontTest {
     }
 
     // For code coverage
-
     @DisplayName("Test of the toString function")
     @Test()
     void toStringTest()
@@ -481,6 +480,14 @@ public class FontTest {
         String s1 = font.toString();
         font.setName("YXZ");
         assertNotEquals(s1, font.toString()); // An explicit value comparison is probably not sensible
+    }
+
+    @DisplayName("Test of the getValue function of the VerticalAlignValue enum")
+    @Test()
+    void verticalAlignValueTest(){
+        assertEquals(0, Font.VerticalAlignValue.none.getValue());
+        assertEquals(1, Font.VerticalAlignValue.subscript.getValue());
+        assertEquals(2, Font.VerticalAlignValue.superscript.getValue());
     }
 
 

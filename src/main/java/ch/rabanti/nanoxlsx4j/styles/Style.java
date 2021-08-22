@@ -13,7 +13,7 @@ import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
  *
  * @author Raphael Stoeckli
  */
-public class Style extends AbstractStyle implements Modifiable {
+public class Style extends AbstractStyle {
 
     // ### P R I V A T E  F I E L D S ###
     @AppendAnnotation(nestedProperty = true)
@@ -288,27 +288,6 @@ public class Style extends AbstractStyle implements Modifiable {
      */
     public Style copyStyle() {
         return (Style) this.copy();
-    }
-
-    /**
-     * Returns whether the current style component was modified (differs from new class instance)
-     * @return True if the current object was modified, otherwise false
-     */
-    @Override
-    public boolean isModified() {
-        if (this.borderRef.isModified()){
-            return true;
-        }
-        if (this.cellXfRef.isModified()){
-            return true;
-        }
-        if (this.fillRef.isModified()){
-            return true;
-        }
-        if (this.fontRef.isModified()){
-            return true;
-        }
-        return this.numberFormatRef.isModified(); // last statement returns either true or false (whole object not modified)
     }
 
 

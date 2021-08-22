@@ -13,7 +13,7 @@ import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
  *
  * @author Raphael Stoeckli
  */
-public class CellXf extends AbstractStyle implements Modifiable {
+public class CellXf extends AbstractStyle {
 // ### E N U M S ###
 
     /**
@@ -408,37 +408,6 @@ public class CellXf extends AbstractStyle implements Modifiable {
         r *= p + (this.locked ? 0 : 2);
         r *= p + (this.hidden ? 0 : 4);
         return r;
-    }
-
-    /**
-     * Returns whether the current style component was modified (differs from new class instance)
-     * @return True if the current object was modified, otherwise false
-     */
-    @Override
-    public boolean isModified() {
-        CellXf reference = new CellXf();
-        if(areDifferent(this.horizontalAlign.value, reference.horizontalAlign.value)){
-            return true;
-        }
-        if(areDifferent(this.verticalAlign.value, reference.verticalAlign.value)){
-            return true;
-        }
-        if(areDifferent(this.alignment.value, reference.alignment.value)){
-            return true;
-        }
-        if(areDifferent(this.textDirection.value, reference.textDirection.value)){
-            return true;
-        }
-        if(areDifferent(this.textRotation, reference.textRotation)){
-            return true;
-        }
-        if(areDifferent(this.forceApplyAlignment, reference.forceApplyAlignment)){
-            return true;
-        }
-        if(areDifferent(this.locked, reference.locked)){
-            return true;
-        }
-        return areDifferent(this.hidden, reference.hidden); // last statement returns either true or false (whole object not modified)
     }
 
 }  

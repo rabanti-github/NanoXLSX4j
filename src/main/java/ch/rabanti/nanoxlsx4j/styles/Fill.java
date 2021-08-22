@@ -13,7 +13,7 @@ import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
  *
  * @author Raphael Stoeckli
  */
-public class Fill extends AbstractStyle implements Modifiable {
+public class Fill extends AbstractStyle {
     // ### C O N S T A N T S ###
     public static final String DEFAULTCOLOR = "FF000000";
 // ### E N U M S ###
@@ -268,25 +268,6 @@ public class Fill extends AbstractStyle implements Modifiable {
         r *= p + this.foregroundColor.hashCode();
         r *= p + this.backgroundColor.hashCode();
         return r;
-    }
-
-    /**
-     * Returns whether the current style component was modified (differs from new class instance)
-     * @return True if the current object was modified, otherwise false
-     */
-    @Override
-    public boolean isModified() {
-        Fill reference = new Fill();
-        if(areDifferent(this.indexedColor, reference.indexedColor)){
-            return true;
-        }
-        if(areDifferent(this.patternFill.value, reference.patternFill.value)){
-            return true;
-        }
-        if(areDifferent(this.foregroundColor, reference.foregroundColor)){
-            return true;
-        }
-        return areDifferent(this.backgroundColor, reference.backgroundColor); // last statement returns either true or false (whole object not modified)
     }
 
 // ###  S T A T I C   F U N C T I O N S ###

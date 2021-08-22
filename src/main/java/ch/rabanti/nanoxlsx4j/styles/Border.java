@@ -11,7 +11,7 @@ package ch.rabanti.nanoxlsx4j.styles;
  *
  * @author Raphael Stoeckli
  */
-public class Border extends AbstractStyle implements Modifiable {
+public class Border extends AbstractStyle {
 
     // ### E N U M S ###
 
@@ -499,49 +499,6 @@ public class Border extends AbstractStyle implements Modifiable {
         r *= p + (this.diagonalDown ? 0 : 1);
         r *= p + (this.diagonalUp ? 0 : 2);
         return r;
-    }
-
-    /**
-     * Returns whether the current style component was modified (differs from new class instance)
-     * @return True if the current object was modified, otherwise false
-     */
-    @Override
-    public boolean isModified() {
-        Border reference = new Border();
-        if (areDifferent(this.bottomStyle.value, reference.bottomStyle.value)){
-            return true;
-        }
-        if (areDifferent(this.diagonalStyle.value, reference.diagonalStyle.value)){
-            return true;
-        }
-        if (areDifferent(this.topStyle.value, reference.topStyle.value)){
-            return true;
-        }
-        if (areDifferent(this.leftStyle.value, reference.leftStyle.value)){
-            return true;
-        }
-        if (areDifferent(this.rightStyle.value, reference.rightStyle.value)){
-            return true;
-        }
-        if (areDifferent(this.bottomColor, reference.bottomColor)){
-            return true;
-        }
-        if (areDifferent(this.diagonalColor, reference.diagonalColor)){
-            return true;
-        }
-        if (areDifferent(this.topColor, reference.topColor)){
-            return true;
-        }
-        if (areDifferent(this.leftColor, reference.leftColor)){
-            return true;
-        }
-        if (areDifferent(this.rightColor, reference.rightColor)){
-            return true;
-        }
-        if (areDifferent(this.diagonalDown, reference.diagonalDown)){
-            return true;
-        }
-        return areDifferent(this.diagonalUp, reference.diagonalUp); // last statement returns either true or false (whole object not modified)
     }
 
 }

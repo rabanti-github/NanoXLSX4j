@@ -13,7 +13,7 @@ import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
  *
  * @author Raphael Stoeckli
  */
-public class Font extends AbstractStyle implements Modifiable{
+public class Font extends AbstractStyle{
 // ### E N U M S ###
     /**
      * Default font family as constant
@@ -461,52 +461,5 @@ public class Font extends AbstractStyle implements Modifiable{
         r *= p + Float.hashCode(this.size);
         return r;
     }
-
-    /**
-     * Returns whether the current style component was modified (differs from new class instance)
-     * @return True if the current object was modified, otherwise false
-     */
-    @Override
-    public boolean isModified() {
-        Font reference = new Font();
-        if(areDifferent(this.bold, reference.bold)){
-            return true;
-        }
-        if(areDifferent(this.italic, reference.italic)){
-            return true;
-        }
-        if(areDifferent(this.underline, reference.underline)){
-            return true;
-        }
-        if(areDifferent(this.doubleUnderline, reference.doubleUnderline)){
-            return true;
-        }
-        if(areDifferent(this.strike, reference.strike)){
-            return true;
-        }
-        if(areDifferent(this.colorTheme, reference.colorTheme)){
-            return true;
-        }
-        if(areDifferent(this.colorValue, reference.colorValue)){
-            return true;
-        }
-        if(areDifferent(this.family, reference.family)){
-            return true;
-        }
-        if(areDifferent(this.name, reference.name)){
-            return true;
-        }
-        if(areDifferent(this.scheme, reference.scheme)){
-            return true;
-        }
-        if(areDifferent(this.verticalAlign.value, reference.verticalAlign.value)){
-            return true;
-        }
-        if(areDifferent(this.charset, reference.charset)){
-            return true;
-        }
-        return areDifferent(this.size, reference.size); // last statement returns either true or false (whole object not modified)
-    }
-
 
 }
