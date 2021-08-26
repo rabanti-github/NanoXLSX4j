@@ -13,6 +13,17 @@ package ch.rabanti.nanoxlsx4j.styles;
  */
 public class Border extends AbstractStyle {
 
+    // ### C O N S T A N T S ###
+    /**
+     * Default border style as constant
+     */
+    public static final StyleValue DEFAULT_BORDER_STYLE = StyleValue.none;
+
+    /**
+     * Default border color as constant
+     */
+    public static final String DEFAULT_BORDER_COLOR = "";
+
     // ### E N U M S ###
 
     /**
@@ -301,6 +312,7 @@ public class Border extends AbstractStyle {
      * @param leftColor Color code (ARGB)
      */
     public void setLeftColor(String leftColor) {
+        Fill.validateColor(leftColor, true, true);
         this.leftColor = leftColor;
     }
 
@@ -319,6 +331,7 @@ public class Border extends AbstractStyle {
      * @param rightColor Color code (ARGB)
      */
     public void setRightColor(String rightColor) {
+        Fill.validateColor(rightColor, true, true);
         this.rightColor = rightColor;
     }
 
@@ -337,6 +350,7 @@ public class Border extends AbstractStyle {
      * @param topColor Color code (ARGB)
      */
     public void setTopColor(String topColor) {
+        Fill.validateColor(topColor, true, true);
         this.topColor = topColor;
     }
 
@@ -355,6 +369,7 @@ public class Border extends AbstractStyle {
      * @param bottomColor Color code (ARGB)
      */
     public void setBottomColor(String bottomColor) {
+        Fill.validateColor(bottomColor, true, true);
         this.bottomColor = bottomColor;
     }
 
@@ -373,6 +388,7 @@ public class Border extends AbstractStyle {
      * @param diagonalColor Color code (ARGB)
      */
     public void setDiagonalColor(String diagonalColor) {
+        Fill.validateColor(diagonalColor, true, true);
         this.diagonalColor = diagonalColor;
     }
 
@@ -382,16 +398,16 @@ public class Border extends AbstractStyle {
      * Default constructor
      */
     public Border() {
-        this.bottomColor = "";
-        this.topColor = "";
-        this.leftColor = "";
-        this.rightColor = "";
-        this.diagonalColor = "";
-        this.leftStyle = StyleValue.none;
-        this.rightStyle = StyleValue.none;
-        this.topStyle = StyleValue.none;
-        this.bottomStyle = StyleValue.none;
-        this.diagonalStyle = StyleValue.none;
+        this.bottomColor = DEFAULT_BORDER_COLOR;
+        this.topColor = DEFAULT_BORDER_COLOR;
+        this.leftColor = DEFAULT_BORDER_COLOR;
+        this.rightColor = DEFAULT_BORDER_COLOR;
+        this.diagonalColor = DEFAULT_BORDER_COLOR;
+        this.leftStyle = DEFAULT_BORDER_STYLE;
+        this.rightStyle = DEFAULT_BORDER_STYLE;
+        this.topStyle = DEFAULT_BORDER_STYLE;
+        this.bottomStyle = DEFAULT_BORDER_STYLE;
+        this.diagonalStyle = DEFAULT_BORDER_STYLE;
         this.diagonalDown = false;
         this.diagonalUp = false;
     }
@@ -405,34 +421,34 @@ public class Border extends AbstractStyle {
      */
     public boolean isEmpty() {
         boolean state = true;
-        if (this.bottomColor.length() != 0) {
+        if (!this.bottomColor.equals(DEFAULT_BORDER_COLOR)) {
             state = false;
         }
-        if (this.topColor.length() != 0) {
+        if (!this.topColor.equals(DEFAULT_BORDER_COLOR)) {
             state = false;
         }
-        if (this.leftColor.length() != 0) {
+        if (!this.leftColor.equals(DEFAULT_BORDER_COLOR)) {
             state = false;
         }
-        if (this.rightColor.length() != 0) {
+        if (!this.rightColor.equals(DEFAULT_BORDER_COLOR)) {
             state = false;
         }
-        if (this.diagonalColor.length() != 0) {
+        if (!this.diagonalColor.equals(DEFAULT_BORDER_COLOR)) {
             state = false;
         }
-        if (this.leftStyle != StyleValue.none) {
+        if (this.leftStyle != DEFAULT_BORDER_STYLE) {
             state = false;
         }
-        if (this.rightStyle != StyleValue.none) {
+        if (this.rightStyle != DEFAULT_BORDER_STYLE) {
             state = false;
         }
-        if (this.topStyle != StyleValue.none) {
+        if (this.topStyle != DEFAULT_BORDER_STYLE) {
             state = false;
         }
-        if (this.bottomStyle != StyleValue.none) {
+        if (this.bottomStyle != DEFAULT_BORDER_STYLE) {
             state = false;
         }
-        if (this.diagonalStyle != StyleValue.none) {
+        if (this.diagonalStyle != DEFAULT_BORDER_STYLE) {
             state = false;
         }
         if (this.diagonalDown) {

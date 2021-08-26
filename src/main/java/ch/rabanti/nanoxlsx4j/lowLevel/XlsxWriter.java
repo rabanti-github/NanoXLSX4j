@@ -298,7 +298,7 @@ public class XlsxWriter {
             if (Helper.isNullOrEmpty(font.getColorValue()) == true) {
                 continue;
             }
-            if (font.getColorValue().equals(Fill.DEFAULTCOLOR)) {
+            if (font.getColorValue().equals(Fill.DEFAULT_COLOR)) {
                 continue;
             }
             if (!tempColors.contains(font.getColorValue())) {
@@ -307,14 +307,14 @@ public class XlsxWriter {
         }
         for (Fill fill : fills) {
             if (!Helper.isNullOrEmpty(fill.getBackgroundColor())) {
-                if (!fill.getBackgroundColor().equals(Fill.DEFAULTCOLOR)) {
+                if (!fill.getBackgroundColor().equals(Fill.DEFAULT_COLOR)) {
                     if (!tempColors.contains(fill.getBackgroundColor())) {
                         tempColors.add(fill.getBackgroundColor());
                     }
                 }
             }
             if (!Helper.isNullOrEmpty(fill.getForegroundColor())) {
-                if (!fill.getForegroundColor().equals(Fill.DEFAULTCOLOR)) {
+                if (!fill.getForegroundColor().equals(Fill.DEFAULT_COLOR)) {
                     if (!tempColors.contains(fill.getForegroundColor())) {
                         tempColors.add(fill.getForegroundColor());
                     }

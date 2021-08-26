@@ -31,6 +31,32 @@ public class FontTest {
         exampleStyle.setVerticalAlign(Font.VerticalAlignValue.subscript);
     }
 
+    @DisplayName("Test of the default values")
+    @Test()
+    void defaultValuesTest()
+    {
+        assertEquals(11f, Font.DEFAULT_FONT_SIZE);
+        assertEquals("2", Font.DEFAULT_FONT_FAMILY);
+        assertEquals(Font.SchemeValue.minor, Font.DEFAULT_FONT_SCHEME);
+        assertEquals(Font.VerticalAlignValue.none, Font.DEFAULT_VERTICAL_ALIGN);
+        assertEquals("Calibri", Font.DEFAULT_FONT_NAME);
+    }
+
+    @DisplayName("Test of the constructor")
+    @Test()
+    void constructorTest()
+    {
+        Font font = new Font();
+        assertEquals(Font.DEFAULT_FONT_SIZE, font.getSize());
+        assertEquals(Font.DEFAULT_FONT_NAME, font.getName());
+        assertEquals(Font.DEFAULT_FONT_FAMILY, font.getFamily());
+        assertEquals(Font.DEFAULT_FONT_SCHEME, font.getScheme());
+        assertEquals(Font.DEFAULT_VERTICAL_ALIGN, font.getVerticalAlign());
+        assertEquals("", font.getColorValue());
+        assertEquals("", font.getCharset());
+        assertEquals(1, font.getColorTheme());
+    }
+
     @DisplayName("Test of the get and set function of the bold field")
     @ParameterizedTest(name = "Given value {0} should lead to the defined field")
     @CsvSource({
@@ -285,6 +311,13 @@ public class FontTest {
         assertFalse(font.isDefaultFont());
     }
 
+    @DisplayName("Test of the copy function")
+    @Test()
+    void copyTest()
+    {
+        Font copy = exampleStyle.copy();
+        assertEquals(exampleStyle.hashCode(), copy.hashCode());
+    }
 
     @DisplayName("Test of the equals method")
     @Test()

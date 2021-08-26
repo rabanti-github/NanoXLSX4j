@@ -180,7 +180,7 @@ public class BasicStylesTest {
         Style style = BasicStyles.colorizedBackground(hexCode);
         assertNotNull(style);
         assertEquals(expectedHexCode, style.getFill().getForegroundColor());
-        assertEquals(Fill.DEFAULTCOLOR, style.getFill().getBackgroundColor());
+        assertEquals(Fill.DEFAULT_COLOR, style.getFill().getBackgroundColor());
         assertEquals(Fill.PatternValue.solid, style.getFill().getPatternFill());
     }
 

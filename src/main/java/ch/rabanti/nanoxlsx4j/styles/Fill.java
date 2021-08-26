@@ -15,7 +15,19 @@ import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
  */
 public class Fill extends AbstractStyle {
     // ### C O N S T A N T S ###
-    public static final String DEFAULTCOLOR = "FF000000";
+    /**
+     * Default Color (foreground or background)
+     */
+    public static final String DEFAULT_COLOR = "FF000000";
+    /**
+     * Default index color
+     */
+    public static final int DEFAULT_INDEXED_COLOR = 64;
+    /**
+     * Default pattern
+     */
+    public static final PatternValue DEFAULT_PATTERN_FILL = PatternValue.none;
+
 // ### E N U M S ###
 
     /**
@@ -87,7 +99,7 @@ public class Fill extends AbstractStyle {
         }
     }
 
-// ### P R I V A T E  F I E L D S ###
+    // ### P R I V A T E  F I E L D S ###
     public int indexedColor;
     public PatternValue patternFill;
     public String foregroundColor;
@@ -146,6 +158,7 @@ public class Fill extends AbstractStyle {
      * @param foregroundColor Foreground color of the fill
      */
     public void setForegroundColor(String foregroundColor) {
+        validateColor(foregroundColor, true);
         this.foregroundColor = foregroundColor;
     }
 
@@ -164,6 +177,7 @@ public class Fill extends AbstractStyle {
      * @param backgroundColor Background color of the fill
      */
     public void setBackgroundColor(String backgroundColor) {
+        validateColor(backgroundColor, true);
         this.backgroundColor = backgroundColor;
     }
 
@@ -173,10 +187,10 @@ public class Fill extends AbstractStyle {
      * Default constructor
      */
     public Fill() {
-        this.indexedColor = 64;
-        this.patternFill = PatternValue.none;
-        this.foregroundColor = DEFAULTCOLOR;
-        this.backgroundColor = DEFAULTCOLOR;
+        this.indexedColor = DEFAULT_INDEXED_COLOR;
+        this.patternFill = DEFAULT_PATTERN_FILL;
+        this.foregroundColor = DEFAULT_COLOR;
+        this.backgroundColor = DEFAULT_COLOR;
     }
 
     /**
@@ -186,9 +200,9 @@ public class Fill extends AbstractStyle {
      * @param background Background color of the fill
      */
     public Fill(String foreground, String background) {
-        this.backgroundColor = background;
-        this.foregroundColor = foreground;
-        this.indexedColor = 64;
+        this.setBackgroundColor(background);
+        this.setForegroundColor(foreground);
+        this.indexedColor = DEFAULT_INDEXED_COLOR;
         this.patternFill = PatternValue.solid;
     }
 
@@ -200,13 +214,13 @@ public class Fill extends AbstractStyle {
      */
     public Fill(String value, FillType fillType) {
         if (fillType == FillType.fillColor) {
-            this.backgroundColor = value;
-            this.foregroundColor = DEFAULTCOLOR;
+            this.backgroundColor = DEFAULT_COLOR;
+            this.setForegroundColor(value);
         } else {
-            this.backgroundColor = DEFAULTCOLOR;
-            this.foregroundColor = value;
+            this.setBackgroundColor(value);
+            this.foregroundColor = DEFAULT_COLOR;
         }
-        this.indexedColor = 64;
+        this.indexedColor = DEFAULT_INDEXED_COLOR;
         this.patternFill = PatternValue.solid;
     }
 
@@ -220,11 +234,11 @@ public class Fill extends AbstractStyle {
      */
     public void setColor(String value, FillType fillType) {
         if (fillType == FillType.fillColor) {
-            this.foregroundColor = value;
-            this.backgroundColor = DEFAULTCOLOR;
+            this.backgroundColor = DEFAULT_COLOR;
+            this.setForegroundColor(value);
         } else {
-            this.foregroundColor = DEFAULTCOLOR;
-            this.backgroundColor = value;
+            this.setBackgroundColor(value);
+            this.foregroundColor = DEFAULT_COLOR;
         }
         this.patternFill = PatternValue.solid;
     }
@@ -271,6 +285,7 @@ public class Fill extends AbstractStyle {
     }
 
 // ###  S T A T I C   F U N C T I O N S ###
+
     /**
      * Gets the pattern name from the enum
      *
@@ -310,34 +325,34 @@ public class Fill extends AbstractStyle {
 
     /**
      * Validates the passed string, whether it is a valid RGB value that can be used for Fills or Fonts
-     * @param hexCode Hex string to check
+     *
+     * @param hexCode  Hex string to check
      * @param useAlpha If true, two additional characters (total 8) are expected as alpha value
      * @throws StyleException thrown if an invalid hex value is passed
      */
-    public static void validateColor(String hexCode, boolean useAlpha){
+    public static void validateColor(String hexCode, boolean useAlpha) {
         int length;
         String expression;
         length = useAlpha ? 8 : 6;
-        if (hexCode == null || hexCode.length() != length)
-        {
+        if (hexCode == null || hexCode.length() != length) {
             throw new StyleException("A general style exception occurred", "The value '" + hexCode + "' is invalid. A valid value must contain six hex characters");
         }
-        if (!hexCode.matches("[a-fA-F0-9]{6,8}"))
-        {
+        if (!hexCode.matches("[a-fA-F0-9]{6,8}")) {
             throw new StyleException("A general style exception occurred", "The expression '" + hexCode + "' is a valid hex value");
         }
     }
 
     /**
      * Validates the passed string, whether it is a valid RGB value that can be used for Fills or Fonts
-     * @param hexCode Hex string to check
-     * @param useAlpha If true, two additional characters (total 8) are expected as alpha value
+     *
+     * @param hexCode    Hex string to check
+     * @param useAlpha   If true, two additional characters (total 8) are expected as alpha value
      * @param allowEmpty Optional parameter that allows null or empty as valid values
      * @throws StyleException thrown if an invalid hex value is passed
      */
-    public static void validateColor(String hexCode, boolean useAlpha, boolean allowEmpty){
-        if ((hexCode == null || hexCode.isEmpty())){
-            if (allowEmpty){
+    public static void validateColor(String hexCode, boolean useAlpha, boolean allowEmpty) {
+        if ((hexCode == null || hexCode.isEmpty())) {
+            if (allowEmpty) {
                 return;
             }
             throw new StyleException("A general style exception occurred", "The color expression was null or empty");
