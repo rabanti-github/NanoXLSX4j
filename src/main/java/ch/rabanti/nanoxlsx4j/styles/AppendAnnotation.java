@@ -27,7 +27,7 @@ public @interface AppendAnnotation {
     boolean ignore() default false;
 
     /**
-     * Indicates whether the property annotated with the attribute is a nested property. Nested properties are ignored but during the copying of properties but can be broken down to its sub-properties
+     * Indicates whether the property annotated with the attribute is a nested property. Nested properties are ignored during the copying of properties but can be broken down to its sub-properties
      *
      * @return True if the style property is nested (default false)
      */

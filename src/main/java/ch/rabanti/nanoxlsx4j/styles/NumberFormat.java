@@ -6,6 +6,8 @@
  */
 package ch.rabanti.nanoxlsx4j.styles;
 
+import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
+
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -20,6 +22,11 @@ public class NumberFormat extends AbstractStyle {
      * Start ID for custom number formats as constant
      */
     public static final int CUSTOMFORMAT_START_NUMBER = 164;
+
+    /**
+     * Default format number as constant
+     */
+    public static final FormatNumber DEFAULT_NUMBER = FormatNumber.none;
 
 // ### E N U M S ###
 
@@ -221,6 +228,11 @@ public class NumberFormat extends AbstractStyle {
      * @param customFormatID Format number of the custom format
      */
     public void setCustomFormatID(int customFormatID) {
+
+        if (customFormatID < CUSTOMFORMAT_START_NUMBER)
+        {
+            throw new StyleException(StyleException.GENERAL, "The number '" + customFormatID + "' is not a valid custom format ID. Must be at least " + CUSTOMFORMAT_START_NUMBER);
+        }
         this.customFormatID = customFormatID;
     }
 
@@ -257,7 +269,7 @@ public class NumberFormat extends AbstractStyle {
      * Default constructor
      */
     public NumberFormat() {
-        this.number = FormatNumber.none;
+        this.number = DEFAULT_NUMBER;
         this.customFormatCode = "";
         this.customFormatID = CUSTOMFORMAT_START_NUMBER;
     }
@@ -384,11 +396,11 @@ public class NumberFormat extends AbstractStyle {
          */
         public enum FormatRange {
             /**
-             * Format from 0 to 163 (with gaps)
+             * Format from 0 to 164 (with gaps)
              */
             defined_format,
             /**
-             * Custom defined formats from 164 and higher
+             * Custom defined formats from 165 and higher. Although 164 is already custom, it is still defined as enum value
              */
             custom_format,
             /**
@@ -398,7 +410,7 @@ public class NumberFormat extends AbstractStyle {
             /**
              * Values between 0 and 164 that are not defined as enum value. This may be caused by changes of the OOXML specifications or Excel versions that have encoded loaded files
              */
-            undefined
+            undefined,
         }
 
         private FormatNumber format;
