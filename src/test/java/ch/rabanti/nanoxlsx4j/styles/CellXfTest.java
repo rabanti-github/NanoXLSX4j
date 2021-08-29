@@ -349,6 +349,27 @@ public class CellXfTest {
         assertNotEquals(exampleStyle.hashCode(), copy.hashCode());
     }
 
+    @DisplayName("Test of the compareTo method")
+    @Test()
+    void compareToTest()
+    {
+        CellXf cellXf = new CellXf();
+        CellXf other = new CellXf();
+        cellXf.setInternalID(null);
+        other.setInternalID(null);
+        assertEquals(-1, cellXf.compareTo(other));
+        cellXf.setInternalID(5);
+        assertEquals(1, cellXf.compareTo(other));
+        assertEquals(1, cellXf.compareTo(null));
+        other.setInternalID(5);
+        assertEquals(0, cellXf.compareTo(other));
+        other.setInternalID(4);
+        assertEquals(1, cellXf.compareTo(other));
+        other.setInternalID(6);
+        assertEquals(-1, cellXf.compareTo(other));
+    }
+
+
     // For code coverage
 
     @DisplayName("Test of the toString function")

@@ -301,6 +301,26 @@ public class NumberFormatTest {
         assertEquals(164, NumberFormat.CUSTOMFORMAT_START_NUMBER); // Expected 164
     }
 
+    @DisplayName("Test of the CompareTo method")
+    @Test()
+    void compareToTest()
+    {
+        NumberFormat numberFormat = new NumberFormat();
+        NumberFormat other = new NumberFormat();
+        numberFormat.setInternalID(null);
+        other.setInternalID(null);
+        assertEquals(-1, numberFormat.compareTo(other));
+        numberFormat.setInternalID(5);
+        assertEquals(1, numberFormat.compareTo(other));
+        assertEquals(1, numberFormat.compareTo(null));
+        other.setInternalID(5);
+        assertEquals(0, numberFormat.compareTo(other));
+        other.setInternalID(4);
+        assertEquals(1, numberFormat.compareTo(other));
+        other.setInternalID(6);
+        assertEquals(-1, numberFormat.compareTo(other));
+    }
+
     // For code coverage
 
     @DisplayName("Test of the ToString function")

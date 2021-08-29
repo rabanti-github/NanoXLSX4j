@@ -30,8 +30,6 @@ public class Style extends AbstractStyle {
     private String name;
     @AppendAnnotation(ignore = true)
     private boolean internalStyle;
-    @AppendAnnotation(ignore = true)
-    private boolean styleNameDefined;
 
 // ### G E T T E R S  &  S E T T E R S ###
 
@@ -141,7 +139,6 @@ public class Style extends AbstractStyle {
      */
     public void setName(String name) {
         this.name = name;
-        this.styleNameDefined = true;
     }
 
     /**
@@ -164,7 +161,6 @@ public class Style extends AbstractStyle {
         this.fillRef = new Fill();
         this.fontRef = new Font();
         this.numberFormatRef = new NumberFormat();
-        this.styleNameDefined = false;
         this.name = Integer.toString(this.hashCode());
     }
 
@@ -179,7 +175,6 @@ public class Style extends AbstractStyle {
         this.fillRef = new Fill();
         this.fontRef = new Font();
         this.numberFormatRef = new NumberFormat();
-        this.styleNameDefined = false;
         this.name = name;
     }
 
@@ -187,7 +182,7 @@ public class Style extends AbstractStyle {
      * Constructor with parameters (internal use)
      *
      * @param name        Name of the style
-     * @param forcedOrder Number of the style for sorting purpose. Style will be placed to this position (internal use only)
+     * @param forcedOrder Number of the style for sorting purpose. The style will be placed at this position (internal use only)
      * @param internal    If true, the style is marked as internal
      */
     public Style(String name, int forcedOrder, boolean internal) {
@@ -199,7 +194,6 @@ public class Style extends AbstractStyle {
         this.name = name;
         this.setInternalID(forcedOrder);
         this.internalStyle = internal;
-        this.styleNameDefined = true;
     }
 
 // ### M E T H O D S ###
@@ -211,6 +205,9 @@ public class Style extends AbstractStyle {
      * @return Current style with appended style parts
      */
     public Style append(AbstractStyle styleToAppend) {
+        if (styleToAppend == null) {
+            return this;
+        }
         if (styleToAppend instanceof Border) {
             this.getBorder().copyFields(styleToAppend, new Border());
         } else if (styleToAppend instanceof CellXf) {
@@ -238,7 +235,11 @@ public class Style extends AbstractStyle {
      */
     @Override
     public String toString() {
-        return this.getInternalID() + "->" + this.hashCode();
+        if (name == null || name.isEmpty()) {
+            return Integer.toString(this.hashCode());
+        } else {
+            return this.name + "->" + this.hashCode();
+        }
     }
 
     /**

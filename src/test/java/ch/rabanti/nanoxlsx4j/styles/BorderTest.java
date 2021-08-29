@@ -487,6 +487,28 @@ public class BorderTest {
         assertNotEquals(exampleStyle.hashCode(), copy.hashCode());
     }
 
+    @DisplayName("Test of the compareTo method")
+    @Test()
+    void compareToTest()
+    {
+        Border border = new Border();
+        Border other = new Border();
+        border.setInternalID(null);
+        other.setInternalID(null);
+        assertEquals(-1, border.compareTo(other));
+        border.setInternalID(5);
+        assertEquals(1, border.compareTo(other));
+        assertEquals(1, border.compareTo(null));
+        other.setInternalID(5);
+        assertEquals(0, border.compareTo(other));
+        other.setInternalID(4);
+        assertEquals(1, border.compareTo(other));
+        other.setInternalID(6);
+        assertEquals(-1, border.compareTo(other));
+    }
+
+
+
     // For code coverage
 
     @DisplayName("Test of the ToString function")

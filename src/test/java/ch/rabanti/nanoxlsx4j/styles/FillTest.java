@@ -366,6 +366,28 @@ public class FillTest {
         assertNotEquals(exampleStyle.hashCode(), copy.hashCode()); // For code coverage
     }
 
+    @DisplayName("Test of the compareTo method")
+    @Test()
+    void compareToTest()
+    {
+        Fill fill = new Fill();
+        Fill other = new Fill();
+        fill.setInternalID(null);
+        other.setInternalID(null);
+        assertEquals(-1, fill.compareTo(other));
+        fill.setInternalID(5);
+        assertEquals(1, fill.compareTo(other));
+        assertEquals(1, fill.compareTo(null));
+        other.setInternalID(5);
+        assertEquals(0, fill.compareTo(other));
+        other.setInternalID(4);
+        assertEquals(1, fill.compareTo(other));
+        other.setInternalID(6);
+        assertEquals(-1, fill.compareTo(other));
+    }
+
+
+
     // For code coverage
     @DisplayName("Test of the ToString function")
     @Test()

@@ -78,84 +78,11 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
     public int compareTo(AbstractStyle o) {
         if (this.internalID == null) {
             return -1;
-        } else if (o.getInternalID() == null) {
+        } else if (o == null || o.getInternalID() == null) {
             return 1;
         } else {
             return this.internalID.compareTo(o.getInternalID());
         }
-    }
-
-    /**
-     * Method to cast values of the components to string values for the hash calculation
-     *
-     * @param o         Value to cast
-     * @param sb        StringBuilder reference to put the casted object in
-     * @param delimiter Delimiter character to append after the casted value
-     */
-    static void castValue(Object o, StringBuilder sb, Character delimiter) {
-        if (o == null) {
-            sb.append('#');
-        } else if (o instanceof Boolean) {
-            if ((boolean) o) { // == true
-                sb.append(1);
-            } else {
-                sb.append(0);
-            }
-        } else if (o instanceof Integer) {
-            sb.append((int) o);
-        } else if (o instanceof Double) {
-            sb.append((double) o);
-        } else if (o instanceof Float) {
-            sb.append((float) o);
-        } else if (o instanceof String) {
-            if (o.toString().equals("#")) {
-                sb.append("_#_");
-            } else {
-                sb.append((String) o);
-            }
-        } else if (o instanceof Long) {
-            sb.append((long) o);
-        } else if (o instanceof Character) {
-            sb.append((char) o);
-        } else {
-            sb.append(o);
-        }
-        if (delimiter != null) {
-            sb.append(delimiter);
-        }
-    }
-
-    private static <T> void handleType(T o, StringBuilder sb){
-        if (o instanceof Boolean){
-            if ((boolean) o) { // == true
-                sb.append(1);
-            } else {
-                sb.append(0);
-            }
-        }
-        else if (o instanceof String){
-            if (o.toString().equals("#")) {
-                sb.append("_#_");
-            } else {
-                sb.append((String) o);
-            }
-        }
-        else {
-            sb.append(o.toString());
-        }
-    }
-
-    static <T> boolean areDifferent(T a, T b){
-        if ((a == null && b != null) || (a != null && b == null)){
-            return true;
-        }
-        if (a == null ){ // b is always null in this case
-            return false; // a and b = null
-        }
-        if (!a.getClass().equals(b.getClass())){
-            return true; // Not same class
-        }
-        return !a.equals(b); // Invert
     }
 
     /**
@@ -166,7 +93,7 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
      * @param <T>       Reference object to decide whether the fields from the source objects are altered or not
      */
     <T extends AbstractStyle> void copyFields(T source, T reference) {
-        if (!this.getClass().equals(source.getClass()) && !this.getClass().equals(reference.getClass())) {
+        if (source == null || !this.getClass().equals(source.getClass()) && !this.getClass().equals(reference.getClass())) {
             throw new StyleException("CopyFieldException", "The objects of the source, target and reference for style appending are not of the same type");
         }
         boolean ignore;

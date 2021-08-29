@@ -504,6 +504,26 @@ public class FontTest {
         assertNotEquals(exampleStyle.hashCode(), copy.hashCode());
     }
 
+    @DisplayName("Test of the CompareTo method")
+    @Test()
+    void compareToTest()
+    {
+        Font font = new Font();
+        Font other = new Font();
+        font.setInternalID(null);
+        other.setInternalID(null);
+        assertEquals(-1, font.compareTo(other));
+        font.setInternalID(5);
+        assertEquals(1, font.compareTo(other));
+        assertEquals(1, font.compareTo(null));
+        other.setInternalID(5);
+        assertEquals(0, font.compareTo(other));
+        other.setInternalID(4);
+        assertEquals(1, font.compareTo(other));
+        other.setInternalID(6);
+        assertEquals(-1, font.compareTo(other));
+    }
+
     // For code coverage
     @DisplayName("Test of the toString function")
     @Test()
