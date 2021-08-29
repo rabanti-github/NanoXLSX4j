@@ -166,7 +166,7 @@ public class Font extends AbstractStyle{
      */
     public void setName(String name) {
         if (name == null || name.isEmpty()){
-            throw new StyleException("A general style exception occurred", "The font name was null or empty");
+            throw new StyleException("The font name was null or empty");
         }
         this.name = name;
     }
@@ -207,7 +207,7 @@ public class Font extends AbstractStyle{
     public void setColorTheme(int colorTheme) {
         if (colorTheme < 1)
         {
-            throw new StyleException( StyleException.GENERAL, "The color theme number " + colorTheme + " is invalid. Should be >0");
+            throw new StyleException("The color theme number " + colorTheme + " is invalid. Should be >0");
         }
         this.colorTheme = colorTheme;
     }

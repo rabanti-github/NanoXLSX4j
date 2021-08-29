@@ -287,7 +287,7 @@ public class Workbook {
     public void addWorksheet(String name) {
         for (int i = 0; i < this.worksheets.size(); i++) {
             if (this.worksheets.get(i).getSheetName().equals(name)) {
-                throw new WorksheetException("WorksheetNameAlreadyExistsException", "The worksheet with the name '" + name + "' already exists.");
+                throw new WorksheetException("The worksheet with the name '" + name + "' already exists.");
             }
         }
         int number = getNextWorksheetId();
@@ -338,11 +338,11 @@ public class Workbook {
             worksheet.setSheetName(name);
         } else {
             if (worksheet.getSheetName() == null || worksheet.getSheetName().isEmpty()) {
-                throw new WorksheetException("MissingWorksheetNameException", "The name of the passed worksheet is null or empty.");
+                throw new WorksheetException("The name of the passed worksheet is null or empty.");
             }
             for (int i = 0; i < this.worksheets.size(); i++) {
                 if (this.worksheets.get(i).getSheetName().equals(worksheet.getSheetName())) {
-                    throw new WorksheetException("WorksheetNameAlreadyExistsException", "The worksheet with the name '" + worksheet.getSheetName() + "' already exists.");
+                    throw new WorksheetException("The worksheet with the name '" + worksheet.getSheetName() + "' already exists.");
                 }
             }
         }
@@ -388,7 +388,7 @@ public class Workbook {
      */
     public void removeStyle(Style style, boolean onlyIfUnused) {
         if (style == null) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "The style to remove is not defined");
+            throw new StyleException("The style to remove is not defined");
         }
         removeStyle(style.getName(), onlyIfUnused);
     }
@@ -404,7 +404,7 @@ public class Workbook {
      */
     public void removeStyle(String styleName, boolean onlyIfUnused) {
         if (Helper.isNullOrEmpty(styleName)) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "The style to remove is not defined (no name specified)");
+            throw new StyleException("The style to remove is not defined (no name specified)");
         }
         // noOp / deprecated
     }
@@ -419,7 +419,7 @@ public class Workbook {
     public void removeWorksheet(String name) {
         Optional<Worksheet> worksheetToRemove = this.worksheets.stream().filter(w -> w.getSheetName().equals(name)).findFirst();
         if (worksheetToRemove.isEmpty()) {
-            throw new WorksheetException("UnknownWorksheetException", "The worksheet with the name '" + name + "' does not exist.");
+            throw new WorksheetException("The worksheet with the name '" + name + "' does not exist.");
         }
         int index = this.worksheets.indexOf(worksheetToRemove.get());
         boolean resetCurrentWorksheet = worksheetToRemove.get() == this.currentWorksheet;
@@ -435,7 +435,7 @@ public class Workbook {
      */
     public void removeWorksheet(int index) {
         if (index < 0 || index >= worksheets.size()) {
-            throw new WorksheetException("OutOfRangeException", "The worksheet index " + index + " is out of range");
+            throw new WorksheetException("The worksheet index " + index + " is out of range");
         }
         boolean resetCurrentWorksheet = worksheets.get(index) == currentWorksheet;
         removeWorksheet(index, resetCurrentWorksheet);
@@ -499,7 +499,7 @@ public class Workbook {
     public Worksheet setCurrentWorksheet(String name) {
         Optional<Worksheet> worksheet = worksheets.stream().filter(w -> w.getSheetName().equals(name)).findFirst();
         if (worksheet.isEmpty()){
-            throw new WorksheetException("MissingReferenceException", "The worksheet with the name '" + name + "' does not exist.");
+            throw new WorksheetException("The worksheet with the name '" + name + "' does not exist.");
         }
         else{
             this.currentWorksheet = worksheet.get();
@@ -518,7 +518,7 @@ public class Workbook {
     public Worksheet setCurrentWorksheet(int worksheetIndex) {
         if (worksheetIndex < 0 || worksheetIndex > worksheets.size() - 1)
         {
-            throw new RangeException(RangeException.GENERAL, "The worksheet index " + worksheetIndex + " is out of range");
+            throw new RangeException("The worksheet index " + worksheetIndex + " is out of range");
         }
         currentWorksheet = worksheets.get(worksheetIndex);
         this.WS.setCurrentWorksheet(currentWorksheet);
@@ -530,7 +530,7 @@ public class Workbook {
         int index = worksheets.indexOf(worksheet);
         if (index < 0)
         {
-            throw new WorksheetException("UnknownWorksheetException", "The passed worksheet object is not in the worksheet collection.");
+            throw new WorksheetException("The passed worksheet object is not in the worksheet collection.");
         }
         currentWorksheet = worksheets.get(index);
         this.WS.setCurrentWorksheet(worksheet);
@@ -545,7 +545,7 @@ public class Workbook {
     {
         Optional<Worksheet> worksheet = worksheets.stream().filter(w -> w.getSheetName().equals(name)).findFirst();
         if (worksheet.isEmpty()){
-            throw new WorksheetException("MissingReferenceException", "The worksheet with the name '" + name + "' does not exist.");
+            throw new WorksheetException("The worksheet with the name '" + name + "' does not exist.");
         }
         this.selectedWorksheet = worksheets.indexOf(worksheet.get());
     }
@@ -558,7 +558,7 @@ public class Workbook {
      */
     public void setSelectedWorksheet(int worksheetIndex) {
         if (worksheetIndex < 0 || worksheetIndex > this.worksheets.size() - 1) {
-            throw new RangeException(RangeException.GENERAL, "The worksheet index " + worksheetIndex + " is out of range");
+            throw new RangeException("The worksheet index " + worksheetIndex + " is out of range");
         }
         this.selectedWorksheet = worksheetIndex;
     }
@@ -579,7 +579,7 @@ public class Workbook {
             }
         }
         if (!check) {
-            throw new WorksheetException("MissingReferenceException", "The passed worksheet object is not in the worksheet collection.");
+            throw new WorksheetException("The passed worksheet object is not in the worksheet collection.");
         }
     }
 

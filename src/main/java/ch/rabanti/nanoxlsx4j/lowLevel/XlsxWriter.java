@@ -946,7 +946,7 @@ public class XlsxWriter {
      */
     private Document createWorkbookDocument() throws IOException {
         if (this.workbook.getWorksheets().isEmpty()) {
-            throw new RangeException("UnknownRangeException", "The workbook can not be created because no worksheet was defined.");
+            throw new RangeException("The workbook can not be created because no worksheet was defined.");
         }
         StringBuilder sb = new StringBuilder();
         sb.append("<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">");
@@ -1063,7 +1063,7 @@ public class XlsxWriter {
             }
             return doc;
         } catch (Exception e) {
-            throw new IOException("XmlDocumentException", "There was an error while creating the XML document. Please see the inner exception.", e);
+            throw new IOException("There was an error while creating the XML document. Please see the inner exception.", e);
         }
     }
 
@@ -1128,7 +1128,7 @@ public class XlsxWriter {
             FileOutputStream dest = new FileOutputStream(this.workbook.getFilename());
             saveAsStream(dest);
         } catch (Exception e) {
-            throw new IOException("SaveException", "There was an error while creating the workbook document during saving to a file. Please see the inner exception:" + e.getMessage(), e);
+            throw new IOException("There was an error while creating the workbook document during saving to a file. Please see the inner exception:" + e.getMessage(), e);
         }
     }
 
@@ -1165,7 +1165,7 @@ public class XlsxWriter {
             p.addPart("xl/styles.xml", "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml", styles);
             p.pack(stream);
         } catch (Exception e) {
-            throw new IOException("SaveException", "There was an error while creating the workbook document during writing to a stream. Please see the inner exception:" + e.getMessage(), e);
+            throw new IOException("There was an error while creating the workbook document during writing to a stream. Please see the inner exception:" + e.getMessage(), e);
         }
     }
 
@@ -1192,7 +1192,7 @@ public class XlsxWriter {
             bs.close();
             return bytes;
         } catch (Exception e) {
-            throw new IOException("ByteSteamException", "There was an error while creating the byte array. Please see the inner exception.", e);
+            throw new IOException("There was an error while creating the byte array. Please see the inner exception.", e);
         }
     }
 

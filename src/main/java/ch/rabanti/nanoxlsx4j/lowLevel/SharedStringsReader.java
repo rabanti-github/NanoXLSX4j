@@ -79,7 +79,7 @@ public class SharedStringsReader {
                 }
             }
         } catch (Exception ex) {
-            throw new IOException("XMLStreamException", "The XML entry could not be read from the input stream. Please see the inner exception:", ex);
+            throw new IOException("The XML entry could not be read from the input stream. Please see the inner exception:", ex);
         } finally {
             if (stream != null) {
                 stream.close();

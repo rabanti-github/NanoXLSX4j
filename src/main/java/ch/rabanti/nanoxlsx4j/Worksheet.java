@@ -328,7 +328,7 @@ public class Worksheet {
      */
     public void setDefaultColumnWidth(float defaultColumnWidth) {
         if (defaultColumnWidth < MIN_COLUMN_WIDTH || defaultColumnWidth > MAX_COLUMN_WIDTH) {
-            throw new RangeException(RangeException.GENERAL, "The passed default row height is out of range (" + MIN_COLUMN_WIDTH + " to " + MAX_COLUMN_WIDTH + ")");
+            throw new RangeException("The passed default row height is out of range (" + MIN_COLUMN_WIDTH + " to " + MAX_COLUMN_WIDTH + ")");
         }
         this.defaultColumnWidth = defaultColumnWidth;
     }
@@ -349,7 +349,7 @@ public class Worksheet {
      */
     public void setDefaultRowHeight(float defaultRowHeight) {
         if (defaultRowHeight < MIN_ROW_HEIGHT || defaultRowHeight > MAX_ROW_HEIGHT) {
-            throw new RangeException(RangeException.GENERAL, "The passed default row height is out of range (" + MIN_ROW_HEIGHT + " to " + MAX_ROW_HEIGHT + ")");
+            throw new RangeException("The passed default row height is out of range (" + MIN_ROW_HEIGHT + " to " + MAX_ROW_HEIGHT + ")");
         }
         this.defaultRowHeight = defaultRowHeight;
     }
@@ -428,7 +428,7 @@ public class Worksheet {
      */
     public void setSelectedCells(Address startAddress, Address endAddress) {
         if (startAddress == null && endAddress != null || startAddress != null && endAddress == null) {
-            throw new RangeException("NullReferenceException", "Either the start or end address is null (invalid range)");
+            throw new RangeException("Either the start or end address is null (invalid range)");
         }
         if (startAddress == null && endAddress == null) {
             this.selectedCells = null;
@@ -454,7 +454,7 @@ public class Worksheet {
      */
     public void setSheetID(int sheetID) {
         if (sheetID < 1) {
-            throw new FormatException("InvalidIDException", "The ID " + sheetID + " is invalid. Worksheet IDs must be >0");
+            throw new FormatException("The ID " + sheetID + " is invalid. Worksheet IDs must be >0");
         }
         this.sheetID = sheetID;
     }
@@ -978,7 +978,7 @@ public class Worksheet {
     private <T> void addCellRangeInternal(List<T> values, Address startAddress, Address endAddress, Style style) {
         List<Address> addresses = Cell.getCellRange(startAddress, endAddress);
         if (values.size() != addresses.size()) {
-            throw new RangeException("MalformedRangeException", "The number of passed values (" + values.size() + ") differs from the number of cells within the range (" + addresses.size() + ")");
+            throw new RangeException("The number of passed values (" + values.size() + ") differs from the number of cells within the range (" + addresses.size() + ")");
         }
         List<Cell> list = Cell.convertArray(values);
         int len = values.size();
@@ -1035,7 +1035,7 @@ public class Worksheet {
      */
     public void setStyle(Range cellRange, Style style) {
         if (cellRange == null) {
-            throw new RangeException(RangeException.GENERAL, "No cell range was defined");
+            throw new RangeException("No cell range was defined");
         }
         List<Address> addresses = cellRange.resolveEnclosedAddresses();
         for (Address address : addresses) {
@@ -1097,7 +1097,7 @@ public class Worksheet {
             Range range = new Range(addressExpression);
             setStyle(range, style);
         } else {
-            throw new FormatException("InvalidAddressExpression", "The passed address'" + addressExpression + "' is neither a cell address, nor a range");
+            throw new FormatException("The passed address'" + addressExpression + "' is neither a cell address, nor a range");
         }
     }
 
@@ -1189,7 +1189,7 @@ public class Worksheet {
      */
     public Cell getCell(Address address) {
         if (!this.cells.containsKey(address.getAddress())) {
-            throw new WorksheetException("CellNotFoundException", "The cell with the address " + address.getAddress() + " does not exist in this worksheet");
+            throw new WorksheetException("The cell with the address " + address.getAddress() + " does not exist in this worksheet");
         }
         return this.cells.get(address.getAddress());
     }
@@ -1400,13 +1400,13 @@ public class Worksheet {
      */
     public void setSheetName(String sheetName) {
         if (Helper.isNullOrEmpty(sheetName)) {
-            throw new FormatException("FormatException", "The sheet name must be between 1 and " + MAX_WORKSHEET_NAME_LENGTH + " characters");
+            throw new FormatException("The sheet name must be between 1 and " + MAX_WORKSHEET_NAME_LENGTH + " characters");
         }
         if (sheetName.length() > MAX_WORKSHEET_NAME_LENGTH) {
-            throw new FormatException("FormatException", "The sheet name must be between 1 and " + MAX_WORKSHEET_NAME_LENGTH + " characters");
+            throw new FormatException("The sheet name must be between 1 and " + MAX_WORKSHEET_NAME_LENGTH + " characters");
         }
         if (sheetName.matches(".*[\\[\\]\\*\\?/\\\\].*")) {
-            throw new FormatException("FormatException", "The sheet name must must not contain the characters [  ]  * ? / \\ ");
+            throw new FormatException("The sheet name must must not contain the characters [  ]  * ? / \\ ");
         }
         this.sheetName = sheetName;
     }
@@ -1490,11 +1490,11 @@ public class Worksheet {
     public void setSplit(Integer numberOfColumnsFromLeft, Integer numberOfRowsFromTop, boolean freeze, Address topLeftCell, WorksheetPane activePane) {
         if (freeze) {
             if (numberOfColumnsFromLeft != null && topLeftCell.Column < numberOfColumnsFromLeft) {
-                throw new WorksheetException("InvalidTopLeftCellException", "The column number " + topLeftCell.Column +
+                throw new WorksheetException("The column number " + topLeftCell.Column +
                         " is not valid for a frozen, vertical split with the split pane column number " + numberOfColumnsFromLeft);
             }
             if (numberOfRowsFromTop != null && topLeftCell.Row < numberOfRowsFromTop) {
-                throw new WorksheetException("InvalidTopLeftCellException", "The row number " + topLeftCell.Row +
+                throw new WorksheetException("The row number " + topLeftCell.Row +
                         " is not valid for a frozen, horizontal split height the split pane row number " + numberOfRowsFromTop);
             }
         }
@@ -1636,7 +1636,7 @@ public class Worksheet {
         List<Address> cells = value.resolveEnclosedAddresses();
         for (Map.Entry<String, Range> item : mergedCells.entrySet()) {
             if (item.getValue().resolveEnclosedAddresses().stream().anyMatch(cells::contains)) {
-                throw new RangeException("ConflictingRangeException", "The passed range: " + value.toString() + " contains cells that are already in the defined merge range: " + item.getKey());
+                throw new RangeException("The passed range: " + value.toString() + " contains cells that are already in the defined merge range: " + item.getKey());
             }
         }
         this.mergedCells.put(key, value);
@@ -1776,7 +1776,7 @@ public class Worksheet {
             range = range.toUpperCase();
         }
         if (range == null || !this.mergedCells.containsKey(range)) {
-            throw new RangeException("UnknownRangeException", "The cell range " + range + " was not found in the list of merged cell ranges");
+            throw new RangeException("The cell range " + range + " was not found in the list of merged cell ranges");
         } else {
             List<Address> addresses = Cell.getCellRange(range);
             Cell cell;
@@ -1898,7 +1898,7 @@ public class Worksheet {
     public void setColumnWidth(int columnNumber, float width) {
         Cell.validateColumnNumber(columnNumber);
         if (width < MIN_COLUMN_WIDTH || width > MAX_COLUMN_WIDTH) {
-            throw new RangeException(RangeException.GENERAL, "The column width (" + width + ") is out of range. Range is from " + MIN_COLUMN_WIDTH + " to " + MAX_COLUMN_WIDTH + " (chars).");
+            throw new RangeException("The column width (" + width + ") is out of range. Range is from " + MIN_COLUMN_WIDTH + " to " + MAX_COLUMN_WIDTH + " (chars).");
         }
         if (this.columns.containsKey(columnNumber)) {
             this.columns.get(columnNumber).setWidth(width);
@@ -1931,7 +1931,7 @@ public class Worksheet {
     public void setRowHeight(int rowNumber, float height) {
         Cell.validateRowNumber(rowNumber);
         if (height < 0 || height > 409.5) {
-            throw new RangeException(RangeException.GENERAL, "The row height (" + height + ") is out of range. Range is from 0 to 409.5 (equals 546px).");
+            throw new RangeException("The row height (" + height + ") is out of range. Range is from 0 to 409.5 (equals 546px).");
         }
         this.rowHeights.put(rowNumber, height);
     }
@@ -2002,7 +2002,7 @@ public class Worksheet {
      */
     private static String getUnusedWorksheetName(String name, Workbook workbook) {
         if (workbook == null) {
-            throw new WorksheetException("MissingReferenceException", "The workbook reference is null");
+            throw new WorksheetException("The workbook reference is null");
         }
         if (!worksheetExists(name, workbook))
         { return name; }

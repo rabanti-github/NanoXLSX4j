@@ -11,20 +11,6 @@ package ch.rabanti.nanoxlsx4j.exceptions;
  * @author Raphael Stoeckli
  */
 public class RangeException extends RuntimeException{
-
-    public static final String GENERAL = "A general range exception occurred";
-
-    
-    private final String exceptionTitle;
- 
-    /**
-     * Gets the title of the exception
-     * @return Title as string
-     */
-    public String getExceptionTitle() {
-        return exceptionTitle;
-    }
-        
     
     /**
      * Default constructor
@@ -32,18 +18,15 @@ public class RangeException extends RuntimeException{
     public RangeException()
     {
         super();
-        this.exceptionTitle = GENERAL;
     }
     
     /**
      * Constructor with passed message
-     * @param title Title of the exception
      * @param message Message of the exception
      */    
-    public RangeException(String title, String message)
+    public RangeException(String message)
     {
-        super(title + ": " + message);
-        this.exceptionTitle = title;
+        super(message);
     }
     
     

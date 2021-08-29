@@ -83,7 +83,7 @@ public class Helper {
         long currentTicks = dateCal.getTimeInMillis();
         double d = ((double) (dateCal.get(Calendar.SECOND) + (dateCal.get(Calendar.MINUTE) * 60) + (dateCal.get(Calendar.HOUR_OF_DAY) * 3600)) / 86400) + Math.floor((currentTicks - ROOT_TICKS) / (86400000));
         if (d < MIN_OADATE_VALUE || d > MAX_OADATE_VALUE) {
-            throw new FormatException("FormatException", "The date is not in a valid range for Excel. Dates before 1900-01-01 are not allowed.");
+            throw new FormatException("The date is not in a valid range for Excel. Dates before 1900-01-01 are not allowed.");
         }
         return Double.toString(d);
     }
@@ -102,7 +102,7 @@ public class Helper {
             double d = seconds / 86400d;
             return Double.toString(d);
         } catch (Exception e) {
-            throw new FormatException("ConversionException", "The time could not be transformed into Excel format (OADate).", e);
+            throw new FormatException("The time could not be transformed into Excel format (OADate).", e);
         }
     }
 

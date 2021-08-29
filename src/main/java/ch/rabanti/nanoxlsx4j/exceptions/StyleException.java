@@ -12,50 +12,30 @@ package ch.rabanti.nanoxlsx4j.exceptions;
  */
 public class StyleException extends RuntimeException{
 
-    public static final String MISSING_REFERENCE = "A reference is missing in the style definition";
-    public static final String GENERAL = "A general style exception occurred";
-    public static final String NOT_SUPPORTED = "A not supported style component could not be handled";
-
-    private final String exceptionTitle;
-
-    /**
-     * Gets the title of the exception
-     * @return Title as string
-     */
-    public String getExceptionTitle() {
-        return exceptionTitle;
-    }
-    
-    
     /**
      * Default constructor
      */    
     public StyleException()
     {
         super();
-        this.exceptionTitle = GENERAL;
     }
     
     /**
      * Constructor with passed message
-     * @param title Title of the exception
      * @param message Message of the exception
      */    
-    public StyleException(String title, String message)
+    public StyleException(String message)
     {
-        super(title + ": " + message);
-        this.exceptionTitle = title;
+        super(message);
     }
 
     /**
      * Constructor with passed message
-     * @param title Title of the exception
      * @param message Message of the exception
      * @param inner Inner exception
      */
-    public StyleException(String title, String message, Exception inner)
+    public StyleException(String message, Exception inner)
     {
-        super(title + ": " + message);
-        this.exceptionTitle = title;
+        super(message);
     }
 }

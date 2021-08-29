@@ -250,7 +250,7 @@ public class Style extends AbstractStyle {
     @Override
     public int hashCode() {
         if (borderRef == null || cellXfRef == null || fillRef == null || fontRef == null || numberFormatRef == null) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "The hash of the style could not be created because one or more components are missing as references");
+            throw new StyleException("The hash of the style could not be created because one or more components are missing as references");
         }
         int p = 241;
         int r = 1;
@@ -271,7 +271,7 @@ public class Style extends AbstractStyle {
     @Override
     public AbstractStyle copy() {
         if (borderRef == null || cellXfRef == null || fillRef == null || fontRef == null || numberFormatRef == null) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "The style could not be copied because one or more components are missing as references");
+            throw new StyleException("The style could not be copied because one or more components are missing as references");
         }
         Style copy = new Style();
         copy.setBorder(this.borderRef.copy());

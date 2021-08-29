@@ -279,7 +279,7 @@ public final class BasicFormulas {
             } else if (number instanceof Short) {
                 arg1 = Short.toString((short) number);
             } else {
-                throw new FormatException("InvalidLookupType", "The lookup variable can only be a cell address or a numeric value. The value '" + number + "' is invalid.");
+                throw new FormatException("The lookup variable can only be a cell address or a numeric value. The value '" + number + "' is invalid.");
             }
         } else {
             if (queryTarget != null) {

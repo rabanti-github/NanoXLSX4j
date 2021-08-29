@@ -252,7 +252,7 @@ public class Metadata {
         }
         if (!state)
         {
-            throw new FormatException("FormatException","The format of the version in the meta data is wrong (" + this.applicationVersion + "). Should be in the format and a range from '0.0' to '99999.99999'");
+            throw new FormatException("The format of the version in the meta data is wrong (" + this.applicationVersion + "). Should be in the format and a range from '0.0' to '99999.99999'");
         }
     }
 
@@ -271,11 +271,11 @@ public class Metadata {
     {
         if (major < 0 || minor < 0 || build < 0 || revision < 0)
         {
-            throw new FormatException("FormatException","The format of the passed version is wrong. No negative number allowed.");
+            throw new FormatException("The format of the passed version is wrong. No negative number allowed.");
         }
         if (major > 99999)
         {
-            throw new FormatException("FormatException","The major number may not be bigger than 99999. The passed value is " + major);
+            throw new FormatException("The major number may not be bigger than 99999. The passed value is " + major);
         }
         String leftPart = Integer.toString(major);
         String rightPart = Integer.toString(minor) + build + revision;

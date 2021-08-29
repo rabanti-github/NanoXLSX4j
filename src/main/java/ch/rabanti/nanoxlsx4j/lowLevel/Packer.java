@@ -182,7 +182,7 @@ public class Packer {
             out.flush();
             out.close();
         } catch (Exception e) {
-            throw new ch.rabanti.nanoxlsx4j.exceptions.IOException("PackingException", "There was an error while packing the file. Please see the inner exception.", e);
+            throw new ch.rabanti.nanoxlsx4j.exceptions.IOException("There was an error while packing the file. Please see the inner exception.", e);
         }
     }
 

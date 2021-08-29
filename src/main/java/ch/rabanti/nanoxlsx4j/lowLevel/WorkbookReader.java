@@ -50,7 +50,7 @@ public class WorkbookReader {
                 getWorkbookInformation(node);
             }
         } catch (Exception ex) {
-            throw new IOException("XMLStreamException", "The XML entry could not be read from the input stream. Please see the inner exception:", ex);
+            throw new IOException("The XML entry could not be read from the input stream. Please see the inner exception:", ex);
         } finally {
             if (stream != null) {
                 stream.close();
@@ -71,7 +71,7 @@ public class WorkbookReader {
                 int id = Integer.parseInt(node.getAttribute("sheetId")); // Default will rightly throw an exception
                 worksheetDefinitions.put(id, sheetName);
             } catch (Exception e) {
-                throw new IOException("XMLStreamException", "The workbook information could not be resolved. Please see the inner exception:", e);
+                throw new IOException("The workbook information could not be resolved. Please see the inner exception:", e);
             }
         }
         if (node.hasChildNodes()) {

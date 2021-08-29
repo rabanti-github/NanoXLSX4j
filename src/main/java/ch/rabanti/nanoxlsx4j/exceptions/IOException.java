@@ -12,11 +12,7 @@ package ch.rabanti.nanoxlsx4j.exceptions;
  */
 public class IOException extends Exception{
 
-    public static final String GENERAL = "A general IO exception occurred";
-    public static final String LOADING = "An exception during loading occurred";
-
     private final Exception innerException;
-    private final String exceptionTitle;
 
      /**
      * Gets the inner exception
@@ -25,16 +21,7 @@ public class IOException extends Exception{
     public Exception getInnerException() {
         return innerException;
     }
-    
-    /**
-     * Gets the title of the exception
-     * @return Title as string
-     */
-    public String getExceptionTitle() {
-        return exceptionTitle;
-    }
-        
- 
+
     /**
      * Default constructor
      */    
@@ -42,32 +29,27 @@ public class IOException extends Exception{
     {
         super();
         this.innerException = null;
-        this.exceptionTitle = GENERAL;
     }
     
     /**
      * Constructor with passed message
-     * @param title Title of the exception
      * @param message Message of the exception
      */    
-    public IOException(String title, String message)
+    public IOException(String message)
     {
-        super(title + ": " + message);
+        super(message);
         this.innerException = null;
-        this.exceptionTitle = title;
     }
     
     /**
      * Constructor with passed message and inner exception
-     * @param title Title of the exception
      * @param message Message of the exception
      * @param inner Inner exception
      */    
-    public  IOException(String title, String message, Exception inner)
+    public  IOException(String message, Exception inner)
     {
-        super(title + ": " + message);
+        super(message);
         this.innerException = inner;
-        this.exceptionTitle = title;
     }
     
     

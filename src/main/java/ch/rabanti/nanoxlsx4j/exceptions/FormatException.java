@@ -12,10 +12,7 @@ package ch.rabanti.nanoxlsx4j.exceptions;
  */
 public class FormatException extends RuntimeException{
 
-    public static final String GENERAL = "A general format exception occurred";
-
     private final Exception innerException;
-    private final String exceptionTitle;
 
     /**
      * Gets the inner exception
@@ -26,48 +23,33 @@ public class FormatException extends RuntimeException{
     }
 
     /**
-     * Gets the title of the exception
-     * @return Title as string
-     */
-    public String getExceptionTitle() {
-        return exceptionTitle;
-    }
-    
-    
-    
-    /**
      * Default constructor
      */
     public FormatException()
     {
         super();
-        this.exceptionTitle = GENERAL;
         this.innerException = null;
     }
     
     /**
      * Constructor with passed message
-     * @param title Title of the exception
      * @param message Message of the exception
      */
-    public FormatException(String title, String message)
+    public FormatException(String message)
     {
-        super(title + ": " + message);
-        this.exceptionTitle = title;
+        super(message);
         this.innerException = null;
     }
     
     /**
-     * Constructor with passed message and inner 
-     * @param title Title of the exception
+     * Constructor with passed message and inner
      * @param message Message of the exception
      * @param inner Inner exception
      */
-    public  FormatException(String title, String message, Exception inner)
+    public  FormatException(String message, Exception inner)
     {
-        super(title + ": " + message);
+        super(message);
         this.innerException = inner;
-        this.exceptionTitle = title;
     }
     
     

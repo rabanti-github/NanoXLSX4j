@@ -75,7 +75,7 @@ public class StyleManager {
     public Border getBorderByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.borders, hash);
         if (component == null) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "The style component with the hash '" + hash + "' was not found");
+            throw new StyleException("The style component with the hash '" + hash + "' was not found");
         }
         return (Border) component;
     }
@@ -108,7 +108,7 @@ public class StyleManager {
     public CellXf getCellXfByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.cellXfs, hash);
         if (component == null) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "The style component with the hash '" + hash + "' was not found");
+            throw new StyleException("The style component with the hash '" + hash + "' was not found");
         }
         return (CellXf) component;
     }
@@ -141,7 +141,7 @@ public class StyleManager {
     public Fill getFillByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.fills, hash);
         if (component == null) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "The style component with the hash '" + hash + "' was not found");
+            throw new StyleException("The style component with the hash '" + hash + "' was not found");
         }
         return (Fill) component;
     }
@@ -174,7 +174,7 @@ public class StyleManager {
     public Font getFontByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.fonts, hash);
         if (component == null) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "The style component with the hash '" + hash + "' was not found");
+            throw new StyleException("The style component with the hash '" + hash + "' was not found");
         }
         return (Font) component;
     }
@@ -207,7 +207,7 @@ public class StyleManager {
     public NumberFormat getNumberFormatByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.numberFormats, hash);
         if (component == null) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "The style component with the hash '" + hash + "' was not found");
+            throw new StyleException("The style component with the hash '" + hash + "' was not found");
         }
         return (NumberFormat) component;
     }
@@ -244,7 +244,7 @@ public class StyleManager {
                 return (Style) this.styles.get(i);
             }
         }
-        throw new StyleException(StyleException.MISSING_REFERENCE, "The style with the name '" + name + "' was not found");
+        throw new StyleException("The style with the name '" + name + "' was not found");
     }
 
     /**
@@ -257,7 +257,7 @@ public class StyleManager {
     public Style getStyleByHash(int hash) {
         AbstractStyle component = getComponentByHash(this.styles, hash);
         if (component == null) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "The style with the hash '" + hash + "' was not found");
+            throw new StyleException("The style with the hash '" + hash + "' was not found");
         }
         return (Style) component;
     }
@@ -340,7 +340,7 @@ public class StyleManager {
         } else if (style instanceof Style) {
             Style s = (Style) style;
             if (this.styleNames.contains(s.getName())) {
-                throw new StyleException("StyleAlreadyExistsException", "The style with the name '" + s.getName() + "' already exists");
+                throw new StyleException("The style with the name '" + s.getName() + "' already exists");
             }
             if (this.getComponentByHash(this.styles, hash) == null) {
                 Integer id;
@@ -386,7 +386,7 @@ public class StyleManager {
             }
         }
         if (!match) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "The style with the name '" + styleName + "' was not found in the style manager");
+            throw new StyleException("The style with the name '" + styleName + "' was not found in the style manager");
         }
         this.styles.remove(index);
         cleanupStyleComponents();
@@ -521,7 +521,7 @@ public class StyleManager {
                     break;
                 }
             } else {
-                throw new StyleException("UnsupportedComponent", "The component ' " + component.getClass().getName() + "' is not implemented yet");
+                throw new StyleException("The component ' " + component.getClass().getName() + "' is not implemented yet");
             }
         }
         return match;

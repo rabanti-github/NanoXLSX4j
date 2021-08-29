@@ -475,7 +475,7 @@ public class Cell implements Comparable<Cell> {
      */
     public Style setStyle(Style style, boolean unmanaged) {
         if (style == null) {
-            throw new StyleException(StyleException.MISSING_REFERENCE, "No style to assign was defined");
+            throw new StyleException("No style to assign was defined");
         }
         if (unmanaged) {
             this.cellStyle = style;
@@ -662,7 +662,7 @@ public class Cell implements Comparable<Cell> {
     public static Address resolveCellCoordinate(String address) {
         int row, column;
         if (Helper.isNullOrEmpty(address)) {
-            throw new FormatException("FormatException", "The cell address is null or empty and could not be resolved");
+            throw new FormatException("The cell address is null or empty and could not be resolved");
         }
         address = address.toUpperCase();
         Pattern pattern = Pattern.compile("(^(\\$?)([A-Z]{1,3})(\\$?)([0-9]{1,7})$)"); //
@@ -682,7 +682,7 @@ public class Cell implements Comparable<Cell> {
                 return new Address(column, row, AddressType.Default);
             }
         } else {
-            throw new FormatException("FormatException", "The format of the cell address (" + address + ") is malformed");
+            throw new FormatException("The format of the cell address (" + address + ") is malformed");
         }
     }
 
@@ -695,18 +695,18 @@ public class Cell implements Comparable<Cell> {
      */
     public static Range resolveCellRange(String range) {
         if (Helper.isNullOrEmpty(range)) {
-            throw new FormatException("FormatException", "The cell range is null or empty and could not be resolved");
+            throw new FormatException("The cell range is null or empty and could not be resolved");
         }
         String[] split = range.split(":");
         if (split.length != 2) {
-            throw new FormatException("FormatException", "The cell range (" + range + ") is malformed and could not be resolved");
+            throw new FormatException("The cell range (" + range + ") is malformed and could not be resolved");
         }
         try {
             Address start = resolveCellCoordinate(split[0]);
             Address end = resolveCellCoordinate(split[1]);
             return new Range(start, end);
         } catch (Exception e) {
-            throw new FormatException("FormatException", "The start address or end address could not be resolved. See inner exception", e);
+            throw new FormatException("The start address or end address could not be resolved. See inner exception", e);
         }
     }
 
@@ -719,7 +719,7 @@ public class Cell implements Comparable<Cell> {
      */
     public static int resolveColumn(String columnAddress) {
         if (Helper.isNullOrEmpty(columnAddress)) {
-            throw new RangeException(RangeException.GENERAL, "The passed address was null or empty");
+            throw new RangeException("The passed address was null or empty");
         }
         columnAddress = columnAddress.toUpperCase();
         int chr;
@@ -800,7 +800,7 @@ public class Cell implements Comparable<Cell> {
      */
     static void validateColumnNumber(int columnNumber) {
         if (columnNumber > Worksheet.MAX_COLUMN_NUMBER || columnNumber < Worksheet.MIN_COLUMN_NUMBER) {
-            throw new RangeException(RangeException.GENERAL, "The column number (" + columnNumber + ") is out of range. Range is from " + Worksheet.MIN_COLUMN_NUMBER + " to " + Worksheet.MAX_COLUMN_NUMBER + " (" + (Worksheet.MAX_COLUMN_NUMBER + 1) + " columns).");
+            throw new RangeException("The column number (" + columnNumber + ") is out of range. Range is from " + Worksheet.MIN_COLUMN_NUMBER + " to " + Worksheet.MAX_COLUMN_NUMBER + " (" + (Worksheet.MAX_COLUMN_NUMBER + 1) + " columns).");
         }
     }
 
@@ -812,7 +812,7 @@ public class Cell implements Comparable<Cell> {
      */
     static void validateRowNumber(int rowNumber) {
         if (rowNumber > Worksheet.MAX_ROW_NUMBER || rowNumber < Worksheet.MIN_ROW_NUMBER) {
-            throw new RangeException(RangeException.GENERAL, "The row number (" + rowNumber + ") is out of range. Range is from " + Worksheet.MIN_ROW_NUMBER + " to " + Worksheet.MAX_ROW_NUMBER + " (" + (Worksheet.MAX_ROW_NUMBER + 1) + " rows).");
+            throw new RangeException("The row number (" + rowNumber + ") is out of range. Range is from " + Worksheet.MIN_ROW_NUMBER + " to " + Worksheet.MAX_ROW_NUMBER + " (" + (Worksheet.MAX_ROW_NUMBER + 1) + " rows).");
         }
     }
 

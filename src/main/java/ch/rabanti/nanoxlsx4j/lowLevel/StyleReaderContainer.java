@@ -61,7 +61,7 @@ public class StyleReaderContainer {
         } else if (component instanceof Font) {
             this.fonts.add((Font) component);
         } else {
-            throw new StyleException(StyleException.GENERAL, "The style definition of the type '" + component.getClass().getName() + "' is unknown or not implemented yet");
+            throw new StyleException("The style definition of the type '" + component.getClass().getName() + "' is unknown or not implemented yet");
         }
     }
 
@@ -82,7 +82,7 @@ public class StyleReaderContainer {
             if (returnNullOnFail) {
                 return null;
             } else {
-                throw new StyleException(StyleException.GENERAL, "The style definition could not be retrieved, because of the invalid style index '" + index + "'");
+                throw new StyleException("The style definition could not be retrieved, because of the invalid style index '" + index + "'");
             }
         }
     }
@@ -249,7 +249,7 @@ public class StyleReaderContainer {
                 if (result.isPresent()) {
                     return result.get();
                 } else {
-                    throw new StyleException(StyleException.GENERAL, "The number format with the numFmtId: " + index + " was not found");
+                    throw new StyleException("The number format with the numFmtId: " + index + " was not found");
                 }
             } else if (cls.equals(Style.class)) {
                 return this.styles.get(index);
@@ -260,13 +260,13 @@ public class StyleReaderContainer {
             } else if (cls.equals(Font.class)) {
                 return this.fonts.get(index);
             } else {
-                throw new StyleException(StyleException.GENERAL, "The style definition of the type '" + cls.getClass().getName() + "' is unknown or not implemented yet");
+                throw new StyleException("The style definition of the type '" + cls.getClass().getName() + "' is unknown or not implemented yet");
             }
         } catch (Exception ex) {
             if (returnNullOnFail) {
                 return null;
             } else {
-                throw new StyleException(StyleException.GENERAL, "The style definition could not be retrieved. Please see inner exception:", ex);
+                throw new StyleException("The style definition could not be retrieved. Please see inner exception:", ex);
             }
         }
     }

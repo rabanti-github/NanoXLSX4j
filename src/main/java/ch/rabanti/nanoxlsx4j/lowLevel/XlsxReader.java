@@ -105,7 +105,7 @@ public class XlsxReader {
             }
             return is;
         } catch (Exception ex) {
-            throw new IOException(IOException.LOADING, "There was an error while extracting a stream from a XLSX file. Please see the inner exception:", ex);
+            throw new IOException("There was an error while extracting a stream from a XLSX file. Please see the inner exception:", ex);
         }
     }
 
@@ -128,7 +128,7 @@ public class XlsxReader {
                 inputStream.close();
                 memoryStream = new ByteArrayInputStream(os.toByteArray());
             } else {
-                throw new IOException(IOException.LOADING, "No valid stream or file path was provided to open");
+                throw new IOException("No valid stream or file path was provided to open");
             }
             InputStream stream;
             SharedStringsReader sharedStrings = new SharedStringsReader();
@@ -158,7 +158,7 @@ public class XlsxReader {
                 name = "xl/worksheets/" + nameTemplate;
             }
         } catch (Exception ex) {
-            throw new IOException(IOException.LOADING, "There was an error while reading an XLSX file. Please see the inner exception:", ex);
+            throw new IOException("There was an error while reading an XLSX file. Please see the inner exception:", ex);
         } finally {
             if (memoryStream != null) {
                 memoryStream.close();

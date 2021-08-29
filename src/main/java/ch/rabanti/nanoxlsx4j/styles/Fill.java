@@ -335,10 +335,10 @@ public class Fill extends AbstractStyle {
         String expression;
         length = useAlpha ? 8 : 6;
         if (hexCode == null || hexCode.length() != length) {
-            throw new StyleException("A general style exception occurred", "The value '" + hexCode + "' is invalid. A valid value must contain six hex characters");
+            throw new StyleException("The value '" + hexCode + "' is invalid. A valid value must contain six hex characters");
         }
         if (!hexCode.matches("[a-fA-F0-9]{6,8}")) {
-            throw new StyleException("A general style exception occurred", "The expression '" + hexCode + "' is a valid hex value");
+            throw new StyleException("The expression '" + hexCode + "' is a valid hex value");
         }
     }
 
@@ -355,7 +355,7 @@ public class Fill extends AbstractStyle {
             if (allowEmpty) {
                 return;
             }
-            throw new StyleException("A general style exception occurred", "The color expression was null or empty");
+            throw new StyleException("The color expression was null or empty");
         }
         validateColor(hexCode, useAlpha);
     }

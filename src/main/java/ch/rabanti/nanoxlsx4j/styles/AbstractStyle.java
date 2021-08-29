@@ -94,7 +94,7 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
      */
     <T extends AbstractStyle> void copyFields(T source, T reference) {
         if (source == null || !this.getClass().equals(source.getClass()) && !this.getClass().equals(reference.getClass())) {
-            throw new StyleException("CopyFieldException", "The objects of the source, target and reference for style appending are not of the same type");
+            throw new StyleException("The objects of the source, target and reference for style appending are not of the same type");
         }
         boolean ignore;
         Field[] infos = this.getClass().getDeclaredFields();
@@ -126,7 +126,7 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
                 }
             }
         } catch (Exception ex) {
-            throw new StyleException("CopyFieldException", "The field of the source object could not be copied to the target object: " + ex.getMessage());
+            throw new StyleException("The field of the source object could not be copied to the target object: " + ex.getMessage());
         }
     }
 

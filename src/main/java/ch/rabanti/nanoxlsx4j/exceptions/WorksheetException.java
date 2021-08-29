@@ -11,19 +11,6 @@ package ch.rabanti.nanoxlsx4j.exceptions;
  * @author Raphael Stoeckli
  */
 public class WorksheetException extends RuntimeException{
-
-    public static final String GENERAL = "A general worksheet exception occurred";
-
-    private final String exceptionTitle;
-    
-    /**
-     * Gets the title of the exception
-     * @return Title as string
-     */
-    public String getExceptionTitle() {
-        return exceptionTitle;
-    }
-    
     
     /**
      * Default constructor
@@ -31,18 +18,15 @@ public class WorksheetException extends RuntimeException{
     public WorksheetException()
     {
         super();
-        this.exceptionTitle = GENERAL;
     }
     
     /**
      * Constructor with passed message
-     * @param title Title of the exception
      * @param message Message of the exception
      */    
-    public WorksheetException(String title, String message)
+    public WorksheetException(String message)
     {
-        super(title + ": " + message);
-        this.exceptionTitle = title;
+        super(message);
     }
     
     

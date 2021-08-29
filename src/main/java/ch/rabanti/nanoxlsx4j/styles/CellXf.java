@@ -360,7 +360,7 @@ public class CellXf extends AbstractStyle {
         if (indent >= 0) {
             this.indent = indent;
         } else {
-            throw new StyleException(StyleException.GENERAL, "The indent value '" + indent + "' is not valid. It must be >= 0");
+            throw new StyleException("The indent value '" + indent + "' is not valid. It must be >= 0");
         }
     }
 
@@ -388,7 +388,7 @@ public class CellXf extends AbstractStyle {
      */
     public int calculateInternalRotation() {
         if (this.textRotation < -90 || this.textRotation > 90) {
-            throw new FormatException("RotationRangeException", "The rotation value (" + this.textRotation + "°) is out of range. Range is form -90° to +90°");
+            throw new FormatException("The rotation value (" + this.textRotation + "°) is out of range. Range is form -90° to +90°");
         }
         if (this.textDirection == TextDirectionValue.vertical) {
             this.textRotation = 255;

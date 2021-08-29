@@ -44,7 +44,7 @@ public class Column {
      */
     public void setColumnAddress(String columnAddress) {
         if (Helper.isNullOrEmpty(columnAddress)) {
-            throw new RangeException(RangeException.GENERAL, "The passed address was null or empty");
+            throw new RangeException("The passed address was null or empty");
         }
         this.number = Cell.resolveColumn(columnAddress);
         this.columnAddress = columnAddress.toUpperCase();
@@ -80,7 +80,7 @@ public class Column {
     public void setWidth(float width) {
         if (width < Worksheet.MIN_COLUMN_WIDTH || width > Worksheet.MAX_COLUMN_WIDTH)
         {
-            throw new RangeException(RangeException.GENERAL, "The passed column width is out of range (" + Worksheet.MIN_COLUMN_WIDTH + " to " + Worksheet.MAX_COLUMN_WIDTH + ")");
+            throw new RangeException("The passed column width is out of range (" + Worksheet.MIN_COLUMN_WIDTH + " to " + Worksheet.MAX_COLUMN_WIDTH + ")");
         }
         this.width = width;
     }
