@@ -294,7 +294,7 @@ public class Workbook {
         Worksheet newWs = new Worksheet(name, number, this);
         this.currentWorksheet = newWs;
         this.worksheets.add(newWs);
-        this.WS.setCurrentWorksheet(this.currentWorksheet);
+        this.WS.setCurrentWorksheetInternal(this.currentWorksheet);
     }
 
     /**
@@ -503,7 +503,7 @@ public class Workbook {
         }
         else{
             this.currentWorksheet = worksheet.get();
-            this.WS.setCurrentWorksheet(worksheet.get());
+            this.WS.setCurrentWorksheetInternal(worksheet.get());
         }
         return this.currentWorksheet;
     }
@@ -521,10 +521,15 @@ public class Workbook {
             throw new RangeException("The worksheet index " + worksheetIndex + " is out of range");
         }
         currentWorksheet = worksheets.get(worksheetIndex);
-        this.WS.setCurrentWorksheet(currentWorksheet);
+        this.WS.setCurrentWorksheetInternal(currentWorksheet);
         return currentWorksheet;
     }
 
+    /**
+     * Sets the current worksheet
+     * @param worksheet Worksheet object (must be in the collection of worksheets)
+     * @throws WorksheetException Thrown if the worksheet was not found in the worksheet collection
+     */
     public void setCurrentWorksheet(Worksheet worksheet)
     {
         int index = worksheets.indexOf(worksheet);
@@ -533,7 +538,7 @@ public class Workbook {
             throw new WorksheetException("The passed worksheet object is not in the worksheet collection.");
         }
         currentWorksheet = worksheets.get(index);
-        this.WS.setCurrentWorksheet(worksheet);
+        this.WS.setCurrentWorksheetInternal(worksheet);
     }
 
     /**
@@ -643,10 +648,8 @@ public class Workbook {
      */
     private void init() {
         this.worksheets = new ArrayList<>();
-
-
         this.workbookMetadata = new Metadata();
-        this.WS = new Shortener();
+        this.WS = new Shortener(this);
     }
 
     /** --------------- NANO - PART --------------- (PICO part is above) */

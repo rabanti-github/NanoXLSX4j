@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ConvertArrayTest {
 
-    @DisplayName("Test of the convertArrayTest method on boolean")
+    @DisplayName("Test of the convertArray method on boolean")
     @Test()
     void convertBooleanArrayTest()
     {
@@ -23,7 +23,7 @@ class ConvertArrayTest {
         assertArray(array, Boolean.class);
     }
 
-    @DisplayName("Test of the convertArrayTest method on byte")
+    @DisplayName("Test of the convertArray method on byte")
     @Test()
     void convertByteArrayTest()
     {
@@ -31,7 +31,7 @@ class ConvertArrayTest {
         assertArray(array, Byte.class);
     }
 
-    @DisplayName("Test of the convertArrayTest method on BigDecimal")
+    @DisplayName("Test of the convertArray method on BigDecimal")
     @Test()
     void convertBigDecimalArrayTest()
     {
@@ -43,7 +43,7 @@ class ConvertArrayTest {
         assertArray(array, BigDecimal.class);
     }
 
-    @DisplayName("Test of the convertArrayTest method on double")
+    @DisplayName("Test of the convertArray method on double")
     @Test()
     void convertDoubleArrayTest()
     {
@@ -51,7 +51,7 @@ class ConvertArrayTest {
         assertArray(array, Double.class);
     }
 
-    @DisplayName("Test of the convertArrayTest method on float")
+    @DisplayName("Test of the convertArray method on float")
     @Test()
     void convertFloatArrayTest()
     {
@@ -59,7 +59,7 @@ class ConvertArrayTest {
         assertArray(array, Float.class);
     }
 
-    @DisplayName("Test of the convertArrayTest method on int")
+    @DisplayName("Test of the convertArray method on int")
     @Test()
     void convertIntArrayTest()
     {
@@ -67,7 +67,7 @@ class ConvertArrayTest {
         assertArray(array, Integer.class);
     }
 
-    @DisplayName("Test of the convertArrayTest method on long")
+    @DisplayName("Test of the convertArray method on long")
     @Test()
     void convertLongArrayTest()
     {
@@ -75,7 +75,7 @@ class ConvertArrayTest {
         assertArray(array, Long.class);
     }
 
-    @DisplayName("Test of the convertArrayTest method on short")
+    @DisplayName("Test of the convertArray method on short")
     @Test()
     void convertShortArrayTest()
     {
@@ -83,7 +83,7 @@ class ConvertArrayTest {
         assertArray(array, Short.class);
     }
 
-    @DisplayName("Test of the convertArrayTest method on Date")
+    @DisplayName("Test of the convertArray method on Date")
     @Test()
     void convertDateArrayTest()
     {
@@ -100,7 +100,7 @@ class ConvertArrayTest {
         assertArray(array, Date.class);
     }
 
-    @DisplayName("Test of the convertArrayTest method on LocalTime")
+    @DisplayName("Test of the convertArray method on LocalTime")
     @Test()
     void convertLocalTimeArrayTest()
     {
@@ -112,7 +112,19 @@ class ConvertArrayTest {
         assertArray(array, LocalTime.class);
     }
 
-    @DisplayName("Test of the ConvertArrayTest method on string")
+    @DisplayName("Test of the convertArray method on nested Cell objects")
+    @Test()
+    void convertCellArrayTest()
+    {
+        Cell[] array = new Cell[4];
+        array[0] = new Cell("", Cell.CellType.STRING);
+        array[1] = new Cell("test", Cell.CellType.STRING);
+        array[2] = new Cell("x", Cell.CellType.STRING);
+        array[3] = new Cell(" ", Cell.CellType.STRING);
+        assertArray(array, String.class, new String[] { "", "test", "x", " " });
+    }
+
+    @DisplayName("Test of the convertArray method on string")
     @Test()
     void convertStringArrayTest()
     {
@@ -120,7 +132,7 @@ class ConvertArrayTest {
         assertArray(array, String.class);
     }
 
-    @DisplayName("Test of the ConvertArrayTest method on other object types")
+    @DisplayName("Test of the convertArray method on other object types")
     @Test()
     void convertObjectArrayTest()
     {
@@ -137,7 +149,7 @@ class ConvertArrayTest {
         assertArray(array, String.class, actualValues);
     }
 
-    @DisplayName("Test of the ConvertArrayTest method on null and empty lists")
+    @DisplayName("Test of the convertArray method on null and empty lists")
     @Test()
     void convertObjectArrayEmptyTest()
     {

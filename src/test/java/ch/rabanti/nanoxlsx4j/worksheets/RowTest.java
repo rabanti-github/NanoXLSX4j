@@ -1,5 +1,6 @@
 package ch.rabanti.nanoxlsx4j.worksheets;
 
+import ch.rabanti.nanoxlsx4j.Address;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 import org.junit.jupiter.api.DisplayName;
@@ -264,17 +265,47 @@ public class RowTest {
     }
 
     @DisplayName("Test of the goToNextRow function")
-    @Test()
-    void goToNextColumnTest()
+    @ParameterizedTest(name = "Given initial row number {0} and number {1} should lead to the row {2}")
+    @CsvSource({
+            "0, 0, 0",
+            "0, 1, 1",
+            "1, 1, 2",
+            "3, 10, 13",
+            "3, -1, 2",
+            "3, -3, 0",
+    })
+    void goToNextRowTest(int initialRowNumber, int number, int expectedRowNumber)
     {
         Worksheet worksheet = new Worksheet();
-        assertEquals(0, worksheet.getCurrentRowNumber());
-        worksheet.goToNextRow();
-        assertEquals(1, worksheet.getCurrentRowNumber());
-        worksheet.goToNextRow(5);
-        assertEquals(6, worksheet.getCurrentRowNumber());
-        worksheet.goToNextRow(-2);
-        assertEquals(4, worksheet.getCurrentRowNumber());
+        worksheet.setCurrentRowNumber(initialRowNumber);
+        worksheet.goToNextRow(number);
+        assertEquals(expectedRowNumber, worksheet.getCurrentRowNumber());
+    }
+
+    @DisplayName("Test of the goToNextRow function with the option to keep the column")
+    @ParameterizedTest(name = "Given start address {0} and number {1} with the option to keep the column: {2} should lead to the address {3}")
+    @CsvSource({
+            "A1, 0, false, A1",
+            "A1, 0, true, A1",
+            "A1, 1, false, A2",
+            "A1, 1, true, A2",
+            "C10, 1, false, A11",
+            "C10, 1, true, C11",
+            "R5, 5, false, A10",
+            "R5, 5, true, R10",
+            "F5, -3, false, A2",
+            "F5, -3, true, F2",
+            "F5, -4, false, A1",
+            "F5, -4, true, F1",
+    })
+    void goToNextRowTest2(String initialAddress, int number, boolean keepColumnPosition, String expectedAddress)
+    {
+        Worksheet worksheet = new Worksheet();
+        worksheet.setCurrentCellAddress(initialAddress);
+        worksheet.goToNextRow(number, keepColumnPosition);
+        Address expected = new Address(expectedAddress);
+        assertEquals(expected.Column, worksheet.getCurrentColumnNumber());
+        assertEquals(expected.Row, worksheet.getCurrentRowNumber());
     }
 
     @DisplayName("Test of the failing goToNextRow function on invalid values")
@@ -285,7 +316,7 @@ public class RowTest {
             "0, 1048576",
             "0, 1248575",
     })
-    void goToNextRowTest2(int initialValue, int value)
+    void goToNextRowFailTest(int initialValue, int value)
     {
         Worksheet worksheet = new Worksheet();
         worksheet.setCurrentRowNumber(initialValue);

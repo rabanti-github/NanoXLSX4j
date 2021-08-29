@@ -1561,6 +1561,21 @@ public class Worksheet {
     }
 
     /**
+     * Moves the current position to the next column with the number of cells to move and the option to keep the row position
+     *
+     * @param numberOfColumns Number of columns to move
+     * @param keepRowPosition If true, the row position is preserved, otherwise set to 0
+     * @apiNote The value can also be negative. However, resulting column numbers below 0 or above 16383 will cause an exception
+     */
+    public void goToNextColumn(int numberOfColumns, boolean keepRowPosition) {
+        currentColumnNumber += numberOfColumns;
+        if (!keepRowPosition){
+            currentRowNumber = 0;
+        }
+        Cell.validateColumnNumber(currentColumnNumber);
+    }
+
+    /**
      * Moves the current position to the next row (use for a new line)
      */
     public void goToNextRow() {
@@ -1578,6 +1593,21 @@ public class Worksheet {
     public void goToNextRow(int numberOfRows) {
         currentRowNumber += numberOfRows;
         currentColumnNumber = 0;
+        Cell.validateRowNumber(currentRowNumber);
+    }
+
+    /**
+     * Moves the current position to the next row with the number of cells to move and the option to keep the row position (use for a new line)
+     *
+     * @param numberOfRows Number of rows to move
+     * @param keepColumnPosition If true, the column position is preserved, otherwise set to 0
+     * @apiNote The value can also be negative. However, resulting row numbers below 0 or above 1048575 will cause an exception
+     */
+    public void goToNextRow(int numberOfRows, boolean keepColumnPosition) {
+        currentRowNumber += numberOfRows;
+        if (!keepColumnPosition){
+            currentColumnNumber = 0;
+        }
         Cell.validateRowNumber(currentRowNumber);
     }
 
@@ -1858,7 +1888,7 @@ public class Worksheet {
      * Sets the column auto filter within the defined column range
      *
      * @param range Range to apply auto filter on. The range could be 'A1:C10' for instance. The end row will be recalculated automatically when saving the file
-     * @throws RangeException  Throws an RangeException if the passed range out of range
+     * @throws RangeException  Throws a RangeException if the passed range out of range
      * @throws FormatException Throws an FormatException if the passed range is malformed
      */
     public void setAutoFilter(String range) {

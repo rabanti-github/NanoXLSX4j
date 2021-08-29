@@ -543,7 +543,7 @@ public class Cell implements Comparable<Cell> {
      * @param range Range to process
      * @return List of cell addresses
      * @throws FormatException Throws a FormatException if a part of the passed range is malformed
-     * @throws RangeException  Throws an RangeException if the range is out of range (A-XFD and 1 to 1048576)
+     * @throws RangeException  Throws a RangeException if the range is out of range (A-XFD and 1 to 1048576)
      */
     public static List<Address> getCellRange(String range) {
         Range range2 = resolveCellRange(range);
@@ -557,7 +557,7 @@ public class Cell implements Comparable<Cell> {
      * @param endAddress   End address as string in the format A1 - XFD1048576
      * @return List of cell addresses
      * @throws FormatException Throws a FormatException if a part of the passed range is malformed
-     * @throws RangeException  Throws an RangeException if the range is out of range (A-XFD and 1 to 1048576)
+     * @throws RangeException  Throws a RangeException if the range is out of range (A-XFD and 1 to 1048576)
      */
     public static List<Address> getCellRange(String startAddress, String endAddress) {
         Address start = resolveCellCoordinate(startAddress);
@@ -573,7 +573,7 @@ public class Cell implements Comparable<Cell> {
      * @param endColumn   End column (zero based)
      * @param endRow      End row (zero based)
      * @return List of cell addresses
-     * @throws RangeException Throws an RangeException if the value of one passed address parts is out of range (A-XFD and 1 to 1048576)
+     * @throws RangeException Throws a RangeException if the value of one passed address parts is out of range (A-XFD and 1 to 1048576)
      */
     public static List<Address> getCellRange(int startColumn, int startRow, int endColumn, int endRow) {
         Address start = new Address(startColumn, startRow);
@@ -588,7 +588,7 @@ public class Cell implements Comparable<Cell> {
      * @param endAddress   End address
      * @return List of cell addresses
      * @throws FormatException Throws a FormatException if a part of the passed addresses is malformed
-     * @throws RangeException  Throws an RangeException if the value of one passed address is out of range (A-XFD and 1 to 1048576)
+     * @throws RangeException  Throws a RangeException if the value of one passed address is out of range (A-XFD and 1 to 1048576)
      */
     public static List<Address> getCellRange(Address startAddress, Address endAddress) {
         int startColumn, endColumn, startRow, endRow;
@@ -621,7 +621,7 @@ public class Cell implements Comparable<Cell> {
      * @param column Column address of the cell (zero-based)
      * @param row    Row address of the cell (zero-based)
      * @return Cell Address as string in the format A1 - XFD1048576
-     * @throws RangeException Throws an RangeException if the start or end address was out of range
+     * @throws RangeException Throws a RangeException if the start or end address was out of range
      */
     public static String resolveCellAddress(int column, int row) {
         return resolveCellAddress(column, row, AddressType.Default);
@@ -634,7 +634,7 @@ public class Cell implements Comparable<Cell> {
      * @param row    Row address of the cell (zero-based)
      * @param type   Referencing type of the address
      * @return Cell Address as string in the format A1 - XFD1048576. Depending on the type, Addresses like '$A55', 'B$2' or '$A$5' are possible outputs
-     * @throws RangeException >Throws an RangeException if the start or end address was out of range
+     * @throws RangeException >Throws a RangeException if the start or end address was out of range
      */
     public static String resolveCellAddress(int column, int row, AddressType type) {
         validateColumnNumber(column);
@@ -657,7 +657,7 @@ public class Cell implements Comparable<Cell> {
      * @param address Address as string in the format A1 - XFD1048576. '$' signs indicating fixed rows and / or columns are considered
      * @return Address object of the passed string
      * @throws FormatException Throws a FormatException if the passed address is malformed
-     * @throws RangeException  Throws an RangeException if the value of the passed address is out of range (A-XFD and 1 to 1048576)
+     * @throws RangeException  Throws a RangeException if the value of the passed address is out of range (A-XFD and 1 to 1048576)
      */
     public static Address resolveCellCoordinate(String address) {
         int row, column;
