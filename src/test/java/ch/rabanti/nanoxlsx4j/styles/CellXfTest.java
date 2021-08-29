@@ -145,7 +145,7 @@ public class CellXfTest {
         assertEquals(value, cellXf.getTextRotation());
     }
 
-    @DisplayName("Test of the failing get and set function of the TextRotation property on out-of-range values")
+    @DisplayName("Test of the failing get and set function of the textRotation field on out-of-range values")
     @ParameterizedTest(name = "GGiven value {0} should lead to an exception")
     @CsvSource({
             "91",
@@ -192,7 +192,7 @@ public class CellXfTest {
         assertEquals(value, cellXf.getIndent());
     }
 
-    @DisplayName("Test of the failing set function of the Indent property when an invalid value was passed")
+    @DisplayName("Test of the failing set function of the indent field when an invalid value was passed")
     @ParameterizedTest(name = "Given value {0} should lead to the defined field")
     @CsvSource({
             "-1",
@@ -318,7 +318,7 @@ public class CellXfTest {
     }
 
     @DisplayName("Test of the equals method when the origin object is null or not of the same type")
-    @ParameterizedTest(name = "Given value {1} should lead to ")
+    @ParameterizedTest(name = "Given value {1} should lead to a non-equal result")
     @CsvSource({
             "NULL ,''",
             "BOOLEAN ,'true'",
@@ -332,7 +332,7 @@ public class CellXfTest {
 
     @DisplayName("Test of the hashCode method (equality of two identical objects)")
     @Test()
-    void getHashCodeTest()
+    void hashCodeTest()
     {
         CellXf copy = (CellXf)exampleStyle.copy();
         copy.setInternalID(99);  // Should not influence
@@ -342,7 +342,7 @@ public class CellXfTest {
 
     @DisplayName("Test of the hashCode method (inequality of two different objects)")
     @Test()
-    void getHashCodeTest2()
+    void hashCodeTest2()
     {
         CellXf copy = (CellXf)exampleStyle.copy();
         copy.setHidden(false);

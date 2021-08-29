@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StyleTest {
 
-    @DisplayName("Test of the get and set function of the CurrentBorder property")
+    @DisplayName("Test of the get and set function of the Border field")
     @Test()
     void currentBorderTest()
     {
@@ -24,7 +24,7 @@ public class StyleTest {
     }
 
 
-    @DisplayName("Test of the get and set function of the CurrentCellXf property")
+    @DisplayName("Test of the get and set function of the cellXf field")
     @Test()
     void currentCellXfTest()
     {
@@ -38,7 +38,7 @@ public class StyleTest {
     }
 
 
-    @DisplayName("Test of the get and set function of the CurrentFill property")
+    @DisplayName("Test of the get and set function of the fill field")
     @Test()
     void currentFillTest()
     {
@@ -52,7 +52,7 @@ public class StyleTest {
     }
 
 
-    @DisplayName("Test of the get and set function of the CurrentFont property")
+    @DisplayName("Test of the get and set function of the font field")
     @Test()
     void currentFontTest()
     {
@@ -66,7 +66,7 @@ public class StyleTest {
     }
 
 
-    @DisplayName("Test of the get and set function of the CurrentNumberFormat property")
+    @DisplayName("Test of the get and set function of the numberFormat field")
     @Test()
     void currentNumberFormatTest()
     {
@@ -80,7 +80,7 @@ public class StyleTest {
     }
 
 
-    @DisplayName("Test of the get and set function of the Name property")
+    @DisplayName("Test of the get and set function of the name field")
     @Test()
     void nameTest()
     {
@@ -91,7 +91,7 @@ public class StyleTest {
     }
 
 
-    @DisplayName("Test of the get function of the IsInternalStyle property")
+    @DisplayName("Test of the get function of the ssInternalStyle field")
     @Test()
     void isInternalStyleTest()
     {
@@ -102,7 +102,7 @@ public class StyleTest {
     }
 
 
-    @DisplayName("Test of the get and set function of the InternalID property")
+    @DisplayName("Test of the get and set function of the internalID field")
     @Test()
     void internalIDTest()
     {
@@ -144,7 +144,7 @@ public class StyleTest {
 
 
     @DisplayName("Test of the constructor for internal styles")
-    @ParameterizedTest(name = "Given... should lead to ")
+    @ParameterizedTest(name = "Given name {0}, forced order {1} and internal flag {2} should lead to a valid style")
     @CsvSource({
             "test, 0, false",
             "test2, 777, false",
@@ -344,9 +344,9 @@ public class StyleTest {
 
 
 
-    @DisplayName("Test of the failing GetHashCode function on a invalid style component (null instance)")
+    @DisplayName("Test of the failing hashCode function on a invalid style component (null instance)")
     @Test()
-    void getHashCodeFailTest()
+    void hashCodeFailTest()
     {
         final Style styleA= new Style();
         styleA.setBorder(null);
@@ -388,7 +388,7 @@ public class StyleTest {
     }
 
     // For code coverage
-    @DisplayName("Test of the ToString function")
+    @DisplayName("Test of the toString function")
     @Test()
     void toStringTest()
     {

@@ -242,7 +242,7 @@ public class FontTest {
     }
 
     @DisplayName("Test of the get and set function of the colorValue field")
-    @ParameterizedTest(name = "Given value {0} should lead to ")
+    @ParameterizedTest(name = "Given value {0} should lead to the defined filed")
     @CsvSource({
             "STRING, ''",
             "NULL, ''",
@@ -487,7 +487,7 @@ public class FontTest {
 
     @DisplayName("Test of the hashCode method (equality of two identical objects)")
     @Test()
-    void getHashCodeTest()
+    void hashCodeTest()
     {
         Font copy = (Font)exampleStyle.copy();
         copy.setInternalID(99);  // Should not influence
@@ -497,7 +497,7 @@ public class FontTest {
 
     @DisplayName("Test of the hashCode method (inequality of two different objects)")
     @Test()
-    void getHashCodeTest2()
+    void hashCodeTest2()
     {
         Font copy = (Font)exampleStyle.copy();
         copy.setBold(false);

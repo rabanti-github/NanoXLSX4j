@@ -112,7 +112,7 @@ public class FillTest {
         assertThrows(StyleException.class, () -> new Fill(color, fillType));
     }
 
-    @DisplayName("Test of the get and set function of the BackgroundColor property")
+    @DisplayName("Test of the get and set function of the backgroundColor field")
     @ParameterizedTest(name = "Given value {0} should lead to the defined field")
     @CsvSource({
             "77CCBB00",
@@ -126,7 +126,7 @@ public class FillTest {
         assertEquals(value, fill.getBackgroundColor());
     }
 
-    @DisplayName("Test of the failing set function of the BackgroundColor property with invalid values")
+    @DisplayName("Test of the failing set function of the backgroundColor field with invalid values")
     @ParameterizedTest(name = "Given value {0} should lead to an exception")
     @CsvSource({
             "STRING, '77BB00'",
@@ -142,7 +142,7 @@ public class FillTest {
         assertThrows(Exception.class, () -> fill.setBackgroundColor(value));
     }
 
-    @DisplayName("Test of the get and set function of the ForegroundColor property")
+    @DisplayName("Test of the get and set function of the foregroundColor field")
     @ParameterizedTest(name = "Given value {0} should lead to the defined field")
     @CsvSource({
             "77CCBB00",
@@ -156,7 +156,7 @@ public class FillTest {
         assertEquals(value, fill.getForegroundColor());
     }
 
-    @DisplayName("Test of the failing set function of the ForegroundColor property with invalid values")
+    @DisplayName("Test of the failing set function of the foregroundColor field with invalid values")
     @ParameterizedTest(name = "Given value {0} should lead to an exception")
     @CsvSource({
             "STRING, '77BB00'",
@@ -172,7 +172,7 @@ public class FillTest {
         assertThrows(Exception.class, () -> fill.setForegroundColor(value));
     }
 
-    @DisplayName("Test of the get and set function of the IndexedColor property")
+    @DisplayName("Test of the get and set function of the indexedColor field")
     @ParameterizedTest(name = "Given value {0} should lead to the defined field")
     @CsvSource({
             "0",
@@ -187,7 +187,7 @@ public class FillTest {
         assertEquals(value, fill.getIndexedColor());
     }
 
-    @DisplayName("Test of the get and set function of the PatternFill property")
+    @DisplayName("Test of the get and set function of the patternFill field")
     @ParameterizedTest(name = "Given value {0} should lead to the defined field")
     @CsvSource({
             "darkGray",
@@ -206,7 +206,7 @@ public class FillTest {
         assertEquals(value, fill.getPatternFill());
     }
 
-    @DisplayName("Test of the SetColor function")
+    @DisplayName("Test of the setColor function")
     @ParameterizedTest(name = "Given color {0} and fill type {1} should lead to a fill with background color {2} and foreground color {3}")
     @CsvSource({
             "FFAABBCC, fillColor, FFAABBCC, FF000000",
@@ -225,7 +225,7 @@ public class FillTest {
         assertEquals(expectedBackground, fill.getBackgroundColor());
     }
 
-    @DisplayName("Test of the CopyFill function")
+    @DisplayName("Test of the copyFill function")
     @Test()
     void copyFillTest()
     {
@@ -275,7 +275,7 @@ public class FillTest {
 
 
 
-    @DisplayName("Test of the Equals method")
+    @DisplayName("Test of the equals method")
     @Test()
     void equalsTest()
     {
@@ -283,7 +283,7 @@ public class FillTest {
         assertTrue(exampleStyle.equals(style2));
     }
 
-    @DisplayName("Test of the Equals method (inequality of BackgroundColor)")
+    @DisplayName("Test of the equals method (inequality of backgroundColor)")
     @Test()
     void equalsTest2a()
     {
@@ -292,7 +292,7 @@ public class FillTest {
         assertFalse(exampleStyle.equals(style2));
     }
 
-    @DisplayName("Test of the Equals method (inequality of ForegroundColor)")
+    @DisplayName("Test of the equals method (inequality of foregroundColor)")
     @Test()
     void equalsTest2b()
     {
@@ -301,7 +301,7 @@ public class FillTest {
         assertFalse(exampleStyle.equals(style2));
     }
 
-    @DisplayName("Test of the Equals method (inequality of IndexedColor)")
+    @DisplayName("Test of the equals method (inequality of indexedColor)")
     @Test()
     void equalsTest2c()
     {
@@ -310,7 +310,7 @@ public class FillTest {
         assertFalse(exampleStyle.equals(style2));
     }
 
-    @DisplayName("Test of the Equals method (inequality of PatternFill)")
+    @DisplayName("Test of the equals method (inequality of patternFill)")
     @Test()
     void equalsTest2d()
     {
@@ -319,7 +319,7 @@ public class FillTest {
         assertFalse(exampleStyle.equals(style2));
     }
 
-    @DisplayName("Test of the Equals method (inequality on null or different objects)")
+    @DisplayName("Test of the equals method (inequality on null or different objects)")
     @ParameterizedTest(name = "Given value {1} should lead to an equal object")
     @CsvSource({
             "NULL, ''",
@@ -332,7 +332,7 @@ public class FillTest {
         assertFalse(exampleStyle.equals(obj));
     }
 
-    @DisplayName("Test of the Equals method when the origin object is null or not of the same type")
+    @DisplayName("Test of the equals method when the origin object is null or not of the same type")
     @ParameterizedTest(name = "Given value {1} should lead to an equal object")
     @CsvSource({
             "NULL, ''",
@@ -346,9 +346,9 @@ public class FillTest {
         assertFalse(copy.equals(origin));
     }
 
-    @DisplayName("Test of the GetHashCode method (equality of two identical objects)")
+    @DisplayName("Test of the hashCode method (equality of two identical objects)")
     @Test()
-    void getHashCodeTest()
+    void hashCodeTest()
     {
         Fill copy = (Fill)exampleStyle.copy();
         copy.setInternalID(99);  // Should not influence
@@ -356,9 +356,9 @@ public class FillTest {
         assertEquals(exampleStyle.hashCode(), copy.hashCode()); // For code coverage
     }
 
-    @DisplayName("Test of the GetHashCode method (inequality of two different objects)")
+    @DisplayName("Test of the hashCode method (inequality of two different objects)")
     @Test()
-    void getHashCodeTest2()
+    void hashCodeTest2()
     {
         Fill copy = (Fill)exampleStyle.copy();
         copy.setBackgroundColor("778800FF");

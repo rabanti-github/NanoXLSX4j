@@ -279,7 +279,7 @@ public class NumberFormatTest {
 
     @DisplayName("Test of the hashCode method (equality of two identical objects)")
     @Test()
-    void getHashCodeTest() {
+    void hashCodeTest() {
         NumberFormat copy = (NumberFormat) exampleStyle.copy();
         copy.setInternalID(99);  // Should not influence
         assertEquals(exampleStyle.hashCode(), copy.hashCode());
@@ -288,7 +288,7 @@ public class NumberFormatTest {
 
     @DisplayName("Test of the hashCode method (inequality of two different objects)")
     @Test()
-    void getHashCodeTest2() {
+    void hashCodeTest2() {
         NumberFormat copy = (NumberFormat) exampleStyle.copy();
         copy.setNumber(NumberFormat.FormatNumber.format_14);
         assertNotEquals(exampleStyle.hashCode(), copy.hashCode());
@@ -323,7 +323,7 @@ public class NumberFormatTest {
 
     // For code coverage
 
-    @DisplayName("Test of the ToString function")
+    @DisplayName("Test of the toString function")
     @Test()
     void toStringTest() {
         NumberFormat numberFormat = new NumberFormat();
