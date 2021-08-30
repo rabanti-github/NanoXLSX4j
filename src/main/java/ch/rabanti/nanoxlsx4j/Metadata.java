@@ -56,6 +56,7 @@ public class Metadata {
      * Sets the version of the creation application. Default is the library version of PicoXLSX4j. Use the format xxxxx.yyyyy (e.g. 1.0 or 55.9875) in case of a custom value.
      * @param applicationVersion Version of the creation application
      * @throws FormatException Thrown if the passed version results in a higher major or minor number of 99999
+     * @apiNote Allowed values are null, empty and fractions from 0.0  to 99999.99999 (max. number of digits before and after the period is 5)
      */
     public void setApplicationVersion(String applicationVersion) {
         this.applicationVersion = applicationVersion;
@@ -236,13 +237,13 @@ public class Metadata {
     
 // ### M E T H O D S ###    
     /**
-     * Checks the format of the passed version string
+     * Checks the format of the passed version string. Allowed values are null, empty and fractions from 0.0  to 99999.99999 (max. number of digits before and after the period is 5)
      * @throws FormatException Thrown if the version string is malformed
      */
     private void checkVersion()
     {
         if (Helper.isNullOrEmpty(this.applicationVersion)) { return; }
-        String[] split = this.applicationVersion.split(".");
+        String[] split = this.applicationVersion.split("\\.");
         boolean state = true;
         if (split.length != 2) { state = false; }
         else

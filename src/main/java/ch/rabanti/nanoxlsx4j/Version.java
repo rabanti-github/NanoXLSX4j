@@ -7,7 +7,7 @@
 package ch.rabanti.nanoxlsx4j;
 
 /**
- * Final class to provide meta data for the library 
+ * Final class to provide metadata for the library
  * @author Raphael Stoeckli
  */
 public final class Version {
