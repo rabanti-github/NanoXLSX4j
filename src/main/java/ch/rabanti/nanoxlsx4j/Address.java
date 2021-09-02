@@ -142,8 +142,8 @@ public class Address implements Comparable<Address> {
      */
     @Override
     public int compareTo(Address other) {
-        long thisCoordinate = (long) Column * Worksheet.MAX_ROW_NUMBER + Row;
-        long otherCoordinate = (long) other.Column * Worksheet.MAX_ROW_NUMBER + other.Row;
+        long thisCoordinate = (long) Column * (long) Worksheet.MAX_ROW_NUMBER + Row;
+        long otherCoordinate = (long) other.Column * (long) Worksheet.MAX_ROW_NUMBER + other.Row;
         return Long.compare(thisCoordinate, otherCoordinate);
     }
 

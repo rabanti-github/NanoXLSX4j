@@ -198,9 +198,10 @@ public final class BasicFormulas {
      *
      * @param number      Numeric value for the lookup. Valid types are int, long, float and double
      * @param range       Matrix of the lookup
-     * @param columnIndex Column index of the target column (1 based)
+     * @param columnIndex Column index of the target column within the range (1 based)
      * @param exactMatch  If true, an exact match is applied to the lookup
      * @return Prepared Cell Object, ready to be added to a worksheet
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.RangeException is thrown  if the value or column index is invalid
      */
     public static Cell VLookup(Object number, Range range, int columnIndex, boolean exactMatch) {
         return VLookup(number, null, range, columnIndex, exactMatch);
@@ -212,9 +213,10 @@ public final class BasicFormulas {
      * @param number      Numeric value for the lookup. Valid types are int, long, float and double
      * @param rangeTarget Target worksheet of the matrix. Can be null if on the same worksheet
      * @param range       Matrix of the lookup
-     * @param columnIndex Column index of the target column (1 based)
+     * @param columnIndex Column index of the target column within the range (1 based)
      * @param exactMatch  If true, an exact match is applied to the lookup
      * @return Prepared Cell Object, ready to be added to a worksheet
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.RangeException is thrown  if the value or column index is invalid
      */
     public static Cell VLookup(Object number, Worksheet rangeTarget, Range range, int columnIndex, boolean exactMatch) {
         return getVLookup(null, null, number, rangeTarget, range, columnIndex, exactMatch, true);
@@ -225,9 +227,10 @@ public final class BasicFormulas {
      *
      * @param address     Query address of a cell as string as source of the lookup
      * @param range       Matrix of the lookup
-     * @param columnIndex Column index of the target column (1 based)
+     * @param columnIndex Column index of the target column within the range (1 based)
      * @param exactMatch  If true, an exact match is applied to the lookup
      * @return Prepared Cell Object, ready to be added to a worksheet
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.RangeException is thrown  if the column index is invalid
      */
     public static Cell VLookup(Address address, Range range, int columnIndex, boolean exactMatch) {
         return VLookup(null, address, null, range, columnIndex, exactMatch);
@@ -240,9 +243,10 @@ public final class BasicFormulas {
      * @param address     Query address of a cell as string as source of the lookup
      * @param rangeTarget Target worksheet of the matrix. Can be null if on the same worksheet
      * @param range       Matrix of the lookup
-     * @param columnIndex Column index of the target column (1 based)
+     * @param columnIndex Column index of the target column within the range (1 based)
      * @param exactMatch  If true, an exact match is applied to the lookup
      * @return Prepared Cell Object, ready to be added to a worksheet
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.RangeException is thrown  if the column index is invalid
      */
     public static Cell VLookup(Worksheet queryTarget, Address address, Worksheet rangeTarget, Range range, int columnIndex, boolean exactMatch) {
         return getVLookup(queryTarget, address, 0, rangeTarget, range, columnIndex, exactMatch, false);
@@ -256,22 +260,47 @@ public final class BasicFormulas {
      * @param number        In case of a numeric lookup, number for the lookup
      * @param rangeTarget   Target worksheet of the matrix. Can be null if on the same worksheet
      * @param range         Matrix of the lookup
-     * @param columnIndex   Column index of the target column (1 based)
+     * @param columnIndex   Column index of the target column within the range (1 based)
      * @param exactMatch    If true, an exact match is applied to the lookup
      * @param numericLookup If true, the lookup is a numeric lookup, otherwise a reference lookup
      * @return Prepared Cell Object, ready to be added to a worksheet
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.RangeException is thrown  if the value or column index is invalid
+     * @apiNote Valid numeric values are: Byte, BigDecimal, Double, Float, Integer, Long, Short and the corresponding primitive data types.<br>
+     * Note: BigDecimal may lead to unexpected decimal places. They are truncated 18 digits after the decimal point. Consider instantiate BigDecimals wit string values to avoid such decimal places.
      */
     private static Cell getVLookup(Worksheet queryTarget, Address address, Object number, Worksheet rangeTarget, Range range, int columnIndex, boolean exactMatch, boolean numericLookup) {
+        int rangeWidth = range.EndAddress.Column - range.StartAddress.Column + 1;
+        if (columnIndex < 1 || columnIndex > rangeWidth) {
+            throw new FormatException("The column index on range " + range.toString() + " can only be between 1 and " + rangeWidth);
+        }
         String arg1, arg2, arg3, arg4;
         if (numericLookup == true) {
+            if (number == null) {
+                throw new FormatException("The lookup variable can only be a cell address or a numeric value. The passed value was null.");
+            }
             if (number instanceof Byte) {
                 arg1 = Byte.toString((byte) number);
             } else if (number instanceof BigDecimal) {
-                arg1 = number.toString();
+                if (((BigDecimal)number).compareTo(BigDecimal.ZERO) == 0){
+                    arg1 = "0";
+                }
+                else{
+                    arg1 = number.toString();
+                }
             } else if (number instanceof Double) {
-                arg1 = Double.toString((double) number);
+                if ((double)number == 0){
+                    arg1 = "0";
+                }
+                else{
+                    arg1 = Double.toString((double) number);
+                }
             } else if (number instanceof Float) {
-                arg1 = Float.toString((float) number);
+                if ((float)number == 0){
+                    arg1 = "0";
+                }
+                else{
+                    arg1 = Float.toString((float) number);
+                }
             } else if (number instanceof Integer) {
                 arg1 = Integer.toString((int) number);
             } else if (number instanceof Long) {
@@ -282,12 +311,16 @@ public final class BasicFormulas {
                 throw new FormatException("The lookup variable can only be a cell address or a numeric value. The value '" + number + "' is invalid.");
             }
         } else {
+            if (address == null){
+                throw new FormatException("The lookup variable can only be a cell address or a numeric value. The value '" + number + "' is invalid.");
+            }
             if (queryTarget != null) {
                 arg1 = queryTarget.getSheetName() + "!" + address.toString();
             } else {
                 arg1 = address.toString();
             }
         }
+        arg1 = cutoffDecimals(arg1);
         if (rangeTarget != null) {
             arg2 = rangeTarget.getSheetName() + "!" + range.toString();
         } else {
@@ -302,6 +335,21 @@ public final class BasicFormulas {
         return new Cell("VLOOKUP(" + arg1 + "," + arg2 + "," + arg3 + "," + arg4 + ")", CellType.FORMULA);
     }
 
+    /**
+     * Cuts off decimals after the 18th digit
+     * @param value
+     * @return
+     */
+    private static String cutoffDecimals(String value){
+        if (!value.contains(".")){
+            return value;
+        }
+        String[] parts = value.split("\\.");
+        if (parts[1].length() > 18){
+          value = parts[0] + "." + parts[1].substring(0,18);
+        }
+        return !value.contains(".") ? value : value.replaceAll("0*$", "").replaceAll("\\.$", "");
+    }
 
     /**
      * Function to generate a basic Excel function with one cell range as parameter and an optional post argument
