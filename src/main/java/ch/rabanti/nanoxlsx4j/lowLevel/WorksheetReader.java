@@ -306,6 +306,13 @@ public class WorksheetReader {
             return autoResolveCellData(address, type, value, styleNumber, formula); // Skip enforcing
         }
         if (importOptions.getEnforcedColumnTypes().containsKey(address.Column)) {
+            if (Helper.isNullOrEmpty(value)) {
+                if (importOptions.isEnforceEmptyValuesAsString()) {
+                    return new Cell("", Cell.CellType.STRING, address);
+                } else {
+                    return new Cell(null, Cell.CellType.EMPTY, address);
+                }
+            }
             ImportOptions.ColumnType importType = importOptions.getEnforcedColumnTypes().get(address.Column);
             switch (importType) {
                 case bool:
@@ -359,6 +366,9 @@ public class WorksheetReader {
             return getDateTimeValue(value, address, TIME);
         } else if (Helper.isNullOrEmpty(type) || type.equals("n")) // try numeric if not parsed as date or time, before numeric
         {
+            if (Helper.isNullOrEmpty(value)) {
+                return new Cell(null, Cell.CellType.EMPTY, address);
+            }
             return getNumericValue(value, address);
         } else if (formula != null) // formula before string
         {
@@ -398,7 +408,6 @@ public class WorksheetReader {
             return new Cell(raw, Cell.CellType.STRING, address);
         }
     }
-
 
 
     /**

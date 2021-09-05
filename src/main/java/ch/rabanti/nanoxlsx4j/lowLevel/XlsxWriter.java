@@ -421,7 +421,7 @@ public class XlsxWriter {
             // Time parsing
             else if (item.getDataType() == Cell.CellType.TIME) {
                 typeAttribute = "d";
-                 LocalTime ltVal = (LocalTime) item.getValue();
+                LocalTime ltVal = (LocalTime) item.getValue();
                 value = Helper.getOATimeString(ltVal);
             }
             // String parsing
@@ -488,6 +488,36 @@ public class XlsxWriter {
         }
         sb.append("</sst>");
         return createXMLDocument(sb.toString(), "SHAREDSTRINGS");
+    }
+
+    private void AppendSharedString(StringBuilder sb, String value) {
+        int len = value.length();
+        sb.append("<si>");
+        if (len == 0) {
+            sb.append("<t></t>");
+        } else {
+            if (Character.isWhitespace(value.charAt(0)) || Character.isWhitespace(value.charAt(len - 1))) {
+                sb.append("<t xml:space=\"preserve\">");
+            } else {
+                sb.append("<t>");
+            }
+            sb.append(normalizeNewLines(value)).append("</t>");
+        }
+        sb.append("</si>");
+    }
+
+    /**
+     * Method to normalize all newlines to CR+LF
+     *
+     * @param value Input value
+     * @return Normalized value
+     */
+    private String normalizeNewLines(String value) {
+        if (value == null || (value.indexOf('\n') == -1 && value.indexOf('\r') == -1)) {
+            return value;
+        }
+        String normalized = value.replace("\r\n", "\n").replace("\r", "\n");
+        return normalized.replace("\n", "\r\n");
     }
 
     /**

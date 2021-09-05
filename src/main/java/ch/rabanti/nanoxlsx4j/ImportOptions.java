@@ -42,6 +42,7 @@ public class ImportOptions {
     }
 
     private boolean enforceDateTimesAsNumbers = false;
+    private boolean enforceEmptyValuesAsString = false;
     private Map<Integer, ColumnType> enforcedColumnTypes = new HashMap<>();
     private  int EnforcingStartRowNumber = 0;
 
@@ -105,5 +106,19 @@ public class ImportOptions {
         this.enforcedColumnTypes.put(columnNumber, type);
     }
 
+    /**
+     *  Gets whether empty cells are of the type Empty or String
+     * @return If true, empty cells will be interpreted as type of string with an empty value. If false, the type will be Empty and the value null
+     */
+    public boolean isEnforceEmptyValuesAsString() {
+        return enforceEmptyValuesAsString;
+    }
 
+    /**
+     * Sets whether empty cells are of the type Empty or String
+     * @param enforceEmptyValuesAsString If true, empty cells will be interpreted as type of string with an empty value. If false, the type will be Empty and the value null
+     */
+    public void setEnforceEmptyValuesAsString(boolean enforceEmptyValuesAsString) {
+        this.enforceEmptyValuesAsString = enforceEmptyValuesAsString;
+    }
 }
