@@ -32,13 +32,22 @@ public class Helper {
     private static final float ROW_HEIGHT_POINT_MULTIPLIER = 1f / 3f + 1f;
 
     /**
-     * Minimum valid OAdate value (1900-01-01)
+     * Minimum valid OAdate value (1900-01-01). However, Excel displays this value as 1900-01-00 (day zero)
      */
     public static final double MIN_OADATE_VALUE = 0;
     /**
      * Maximum valid OAdate value (9999-12-31)
      */
     public static final double MAX_OADATE_VALUE = 2958465.9999d;
+    /**
+     * First date that can be displayed by Excel. Values before this date cannot be processed.
+     */
+    public static final Date FIRST_ALLOWED_EXCEL_DATE;
+
+    /**
+     * Last date that can be displayed by Excel. Values after this date cannot be processed.
+     */
+    public static final Date LAST_ALLOWED_EXCEL_DATE;
 
     /**
      * All dates before this date are shifted in Excel by -1.0, since Excel assumes wrongly that the year 1900 is a leap year.<br/>
@@ -50,9 +59,14 @@ public class Helper {
     static {
         Calendar rootCalendar = Calendar.getInstance();
         rootCalendar.set(1899, Calendar.DECEMBER, 30, 0, 0, 0);
+        rootCalendar.set(Calendar.MILLISECOND, 0);
         ROOT_TICKS = rootCalendar.getTimeInMillis();
-        rootCalendar.set(1900, 3, 1);
+        rootCalendar.set(1900, Calendar.MARCH, 1);
         FIRST_VALID_EXCEL_DATE = rootCalendar.getTime();
+        rootCalendar.set(1900, Calendar.JANUARY, 1, 0, 0, 0);
+        FIRST_ALLOWED_EXCEL_DATE = rootCalendar.getTime();
+        rootCalendar.set(9999, Calendar.DECEMBER, 31, 23, 59, 59);
+        LAST_ALLOWED_EXCEL_DATE = rootCalendar.getTime();
     }
 
     private double d;
@@ -74,7 +88,12 @@ public class Helper {
      * @throws FormatException Throws a FormatException if the passed date cannot be translated to the OADate format
      */
     public static String getOADateString(Date date) {
-        Date dateValue = date;
+        if (date == null) {
+            throw new FormatException("The date cannot be null");
+        }
+        if (date.before(FIRST_ALLOWED_EXCEL_DATE) || date.after(LAST_ALLOWED_EXCEL_DATE)) {
+            throw new FormatException("The date is not in a valid range for Excel. Dates before 1900-01-01 are not allowed.");
+        }
         Calendar dateCal = Calendar.getInstance();
         dateCal.setTime(date);
         if (date.before(FIRST_VALID_EXCEL_DATE)) {
@@ -82,9 +101,6 @@ public class Helper {
         }
         long currentTicks = dateCal.getTimeInMillis();
         double d = ((double) (dateCal.get(Calendar.SECOND) + (dateCal.get(Calendar.MINUTE) * 60) + (dateCal.get(Calendar.HOUR_OF_DAY) * 3600)) / 86400) + Math.floor((currentTicks - ROOT_TICKS) / (86400000));
-        if (d < MIN_OADATE_VALUE || d > MAX_OADATE_VALUE) {
-            throw new FormatException("The date is not in a valid range for Excel. Dates before 1900-01-01 are not allowed.");
-        }
         return Double.toString(d);
     }
 
@@ -109,21 +125,28 @@ public class Helper {
     /**
      * Method to calculate a common Date from the OA date (OLE automation) format<br>
      * OA Date format starts at January 1st 1900 (actually 00.01.1900). Dates beyond this date cannot be handled by Excel under normal circumstances and will throw a FormatException
-     *
+     * @implNote Numbers that represents dates before 1900-03-01 (number of days since 1900-01-01 = 60) are automatically modified.
+     * Until 1900-03-01 is 1.0 added to the number to get the same date, as displayed in Excel. The reason for this is a bug in Excel.
+     * See also: <a href="https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br/>
+     * https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year</a>
      * @param oaDate OA date number
      * @return Converted date
      */
     public static Date getDateFromOA(double oaDate) {
+        if (oaDate < 60){
+            oaDate = oaDate + 1;
+        }
         double remainder = oaDate - (long) oaDate;
         double hours = remainder * 24;
         double minutes = (hours - (long) hours) * 60;
         double seconds = (minutes - (long) minutes) * 60;
+        seconds = Math.round(seconds);
         Calendar dateCal = Calendar.getInstance();
         dateCal.setTimeInMillis(ROOT_TICKS);
         dateCal.add(Calendar.DATE, (int) oaDate);
         dateCal.add(Calendar.HOUR, (int) hours);
         dateCal.add(Calendar.MINUTE, (int) minutes);
-        dateCal.add(Calendar.SECOND, (int) seconds + 1); // Rounding error
+        dateCal.add(Calendar.SECOND, (int) seconds);
         return dateCal.getTime();
     }
 
@@ -151,6 +174,7 @@ public class Helper {
      * @param maxDigitWidth Maximum digit with of the default font (default is 7.0 for Calibri, size 11)
      * @param textPadding   Text padding of the default font (default is 5.0 for Calibri, size 11)
      * @return The internal column width in characters, used in worksheet XML documents
+     * @throws FormatException thrown if the column width is out of range
      * @apiNote The internal width deviates slightly from the column width, entered in Excel. Although internal, the default column width of 10 characters is visible in Excel as 10.71.
      * The deviation depends on the maximum digit width of the default font, as well as its text padding and various constants.<br/>
      * In case of the width 10.0 and the default digit width 7.0, as well as the padding 5.0 of the default font Calibri (size 11),
@@ -160,6 +184,9 @@ public class Helper {
      * See also: <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-376/">ECMA-376, Part 1, Chapter 18.3.1.13</a>
      */
     public static float getInternalColumnWidth(float columnWidth, float maxDigitWidth, float textPadding) {
+        if (columnWidth < Worksheet.MIN_COLUMN_WIDTH || columnWidth > Worksheet.MAX_COLUMN_WIDTH) {
+            throw new FormatException("The column width " + columnWidth + " is not valid. The valid range is between " + Worksheet.MIN_COLUMN_WIDTH + " and " + Worksheet.MAX_COLUMN_WIDTH);
+        }
         if (columnWidth <= 0f || maxDigitWidth <= 0f) {
             return 0f;
         } else if (columnWidth <= 1f) {
@@ -174,12 +201,16 @@ public class Helper {
      *
      * @param rowHeight Target row height (displayed in Excel)
      * @return The internal row height which snaps to the nearest pixel
+     * @throws FormatException thrown if the row height is out of range
      * @apiNote The height is based on the calculated amount of pixels. One point are ~1.333 (1+1/3) pixels.
      * After the conversion, the number of pixels is rounded to the nearest integer and calculated back to points.<br/>
      * Therefore, the originally defined row height will slightly deviate, based on this pixel snap
      */
     public static float getInternalRowHeight(float rowHeight) {
-        if (rowHeight <= 0f) {
+        if (rowHeight < Worksheet.MIN_ROW_HEIGHT || rowHeight > Worksheet.MAX_ROW_HEIGHT) {
+            throw new FormatException("The row height " + rowHeight + " is not valid. The valid range is between " + Worksheet.MIN_ROW_HEIGHT + " and " + Worksheet.MAX_ROW_HEIGHT);
+        }
+        if (rowHeight == 0f) {
             return 0f;
         }
         double heightInPixel = Math.round(rowHeight * ROW_HEIGHT_POINT_MULTIPLIER);
@@ -217,6 +248,9 @@ public class Helper {
      */
     public static float getInternalPaneSplitWidth(float width, float maxDigitWidth, float textPadding) {
         float pixels;
+        if (width < 0) {
+            width = 0;
+        }
         if (width <= 1f) {
             pixels = (float) Math.floor(width / SPLIT_WIDTH_MULTIPLIER + SPLIT_WIDTH_OFFSET);
         } else {
@@ -232,9 +266,13 @@ public class Helper {
      * @param height Target row(s) height (one or more rows, displayed in Excel)
      * @return The internal pane height, used in worksheet XML documents in case of worksheet splitting
      * @apiNote The internal split height is based on the height of one or more rows. It also depends on various constants.<br/>
-     * This method is derived from the Perl implementation by John McNamara (<a href="https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>)
+     * This method is derived from the Perl implementation by John McNamara (<a href="https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>).<br/>
+     * Negative row heights are automatically transformed to 0.
      */
     public static float getInternalPaneSplitHeight(float height) {
+        if (height < 0) {
+            height = 0f;
+        }
         return (float) Math.floor(SPLIT_POINT_DIVIDER * height + SPLIT_HEIGHT_POINT_OFFSET);
     }
 
