@@ -38,7 +38,7 @@ public class Helper {
     /**
      * Maximum valid OAdate value (9999-12-31)
      */
-    public static final double MAX_OADATE_VALUE = 2958465.9999d;
+    public static final double MAX_OADATE_VALUE = 2958465.999988426d;
     /**
      * First date that can be displayed by Excel. Values before this date cannot be processed.
      */
