@@ -402,8 +402,8 @@ public class WorkbookTest {
         workbook.addWorksheet("test3");
         assertEquals(2, workbook.getWorksheets().get(1).getSheetID());
         workbook.removeWorksheet("test2");
-        workbook.removeWorksheet("test3");
         workbook.addWorksheet("test4");
+        workbook.removeWorksheet("test3");
         assertEquals(1, workbook.getWorksheets().get(0).getSheetID());
     }
 
@@ -425,7 +425,6 @@ public class WorkbookTest {
         workbook.addWorksheet(worksheet3, true);
         assertEquals(2, workbook.getWorksheets().get(1).getSheetID());
         workbook.removeWorksheet("test2");
-        workbook.removeWorksheet("test3");
         Worksheet worksheet4 = new Worksheet();
         workbook.addWorksheet(worksheet4, true);
         assertEquals(1, workbook.getWorksheets().get(0).getSheetID());
@@ -434,15 +433,14 @@ public class WorkbookTest {
     @DisplayName("Test of the RemoveWorksheet function by name")
     @ParameterizedTest(name = "Given worksheet count {0} with current worksheet {1} and selected worksheet {2} on removal of {3} should lead to a current worksheet {4}  and selected worksheet {5}")
     @CsvSource({
-            "2, 0, 1, 1, '0', 0",
-            "2, 1, 0, 1, '0', 0",
-            "2, 1, 1, 1, '0', 0",
-            "2, 0, 0, 1, '0', 0",
-            "1, 0, 0, 0, '', 0",
-            "5, 2, 2, 2, '4', 3",
-            "5, 0, 0, 4, '0', 0",
-            "4, 3, 1, 3, '2', 1",
-            "4, 3, 3, 3, '2', 2",
+            "2, 0, 1, 1, 0, 0",
+            "2, 1, 0, 1, 0, 0",
+            "2, 1, 1, 1, 0, 0",
+            "2, 0, 0, 1, 0, 0",
+            "5, 2, 2, 2, 4, 3",
+            "5, 0, 0, 4, 0, 0",
+            "4, 3, 1, 3, 2, 1",
+            "4, 3, 3, 3, 2, 2",
     })
     void removeWorksheetTest(int worksheetCount, int currentWorksheetIndex, int selectedWorksheetIndex, int worksheetToRemoveIndex, String expectedCurrentWorksheetIndex, int expectedSelectedWorksheetIndex) {
         Workbook workbook = new Workbook();
@@ -468,15 +466,14 @@ public class WorkbookTest {
     @DisplayName("Test of the RemoveWorksheet function by index")
     @ParameterizedTest(name = "Given worksheet count {0} with current worksheet {1} and selected worksheet {2} on removal of {3} should lead to a current worksheet {4}  and selected worksheet {5}")
     @CsvSource({
-            "2, 0, 1, 1, '0', 0",
-            "2, 1, 0, 1, '0', 0",
-            "2, 1, 1, 1, '0', 0",
-            "2, 0, 0, 1, '0', 0",
-            "1, 0, 0, 0, '', 0",
-            "5, 2, 2, 2, '4', 3",
-            "5, 0, 0, 4, '0', 0",
-            "4, 3, 1, 3, '2', 1",
-            "4, 3, 3, 3, '2', 2",
+            "2, 0, 1, 1, 0, 0",
+            "2, 1, 0, 1, 0, 0",
+            "2, 1, 1, 1, 0, 0",
+            "2, 0, 0, 1, 0, 0",
+            "5, 2, 2, 2, 4, 3",
+            "5, 0, 0, 4, 0, 0",
+            "4, 3, 1, 3, 2, 1",
+            "4, 3, 3, 3, 2, 2",
     })
     void removeWorksheetTest2(int worksheetCount, int currentWorksheetIndex, int selectedWorksheetIndex, int worksheetToRemoveIndex, String expectedCurrentWorksheetIndex, int expectedSelectedWorksheetIndex) {
         Workbook workbook = new Workbook();

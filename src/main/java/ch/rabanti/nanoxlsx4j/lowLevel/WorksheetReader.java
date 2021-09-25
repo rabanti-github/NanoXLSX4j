@@ -352,10 +352,10 @@ public class WorksheetReader {
      * @return The resolved Cell
      */
     private Cell autoResolveCellData(Address address, String type, String value, String styleNumber, String formula) {
-        if (type.equals("s")) // string (declared)
+        if (type != null && type.equals("s")) // string (declared)
         {
             return getStringValue(value, address);
-        } else if (type.equals("b")) // boolean
+        } else if (type != null && type.equals("b")) // boolean
         {
             return getBooleanValue(value, address);
         } else if (dateStyles.contains(styleNumber))  // date (priority)

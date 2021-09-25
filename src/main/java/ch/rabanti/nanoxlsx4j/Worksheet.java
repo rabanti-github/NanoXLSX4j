@@ -202,9 +202,9 @@ public class Worksheet {
     private List<SheetProtectionValue> sheetProtectionValues;
     private boolean useSheetProtection;
     private boolean useActiveStyle;
-    private Workbook workbookReference;
     private WorksheetPane activePane = null;
     private boolean hidden;
+    private Workbook workbookReference;
     private Float paneSplitTopHeight;
     private Float paneSplitLeftWidth;
     private Boolean freezeSplitPanes;
@@ -535,6 +535,9 @@ public class Worksheet {
      */
     public void setWorkbookReference(Workbook workbookReference) {
         this.workbookReference = workbookReference;
+        if (workbookReference != null){
+            workbookReference.validateWorksheets();
+        }
     }
 
     /**
@@ -547,12 +550,16 @@ public class Worksheet {
     }
 
     /**
-     * Sets whether the worksheet is hidden
-     *
-     * @param hidden If true, the worksheet is not listed in the worksheet tabs of the workbook
+     * Sets whether the worksheet is hidden<br/>
+     * If the worksheet is not part of a workbook, or the only one in the workbook, an exception will be thrown
+     * If the worksheet is the selected one, and attempted to set hidden, an exception will be thrown. Define another selected worksheet prior to this call, in this case.
+     * @param hidden If true, the worksheet is not listed as tab in the workbook's worksheet selection
      */
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+        if (hidden && workbookReference != null){
+            workbookReference.validateWorksheets();
+        }
     }
 
     /**

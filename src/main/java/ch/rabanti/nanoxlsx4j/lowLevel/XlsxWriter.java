@@ -28,6 +28,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -336,12 +337,153 @@ public class XlsxWriter {
     /**
      * Method to create a row string
      *
-     * @param columnFields List of cells
+     * @param dynamicRow Dynamic row with List of cells, heights and hidden states
      * @param worksheet    Worksheet to process
      * @return Formatted row string
      */
-    private String createRowString(List<Cell> columnFields, Worksheet worksheet) {
-        int rowNumber = columnFields.get(0).getRowNumber();
+    private String createRowString(DynamicRow dynamicRow, Worksheet worksheet)
+    {
+        int rowNumber = dynamicRow.getRowNumber();
+        String height = "";
+        String hidden = "";
+        if (worksheet.getRowHeights().containsKey(rowNumber))
+        {
+            if (worksheet.getRowHeights().get(rowNumber) != worksheet.getDefaultRowHeight())
+            {
+                height = " x14ac:dyDescent=\"0.25\" customHeight=\"1\" ht=\"" + Helper.getInternalRowHeight(worksheet.getRowHeights().get(rowNumber)) + "\"";
+            }
+        }
+        if (worksheet.getHiddenRows().containsKey(rowNumber))
+        {
+            if (worksheet.getHiddenRows().get(rowNumber))
+            {
+                hidden = " hidden=\"1\"";
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("<row r=\"").append((rowNumber + 1)).append("\"").append(height).append(hidden).append(">");
+        String typeAttribute;
+        String styleDef = "";
+        String typeDef = "";
+        String value = "";
+        String tValue = "";
+        boolean boolValue;
+
+        int col = 0;
+        for (Cell item : dynamicRow.getCellDefinitions())
+        {
+            typeDef = " ";
+            if (item.getCellStyle() != null)
+            {
+                styleDef = " s=\"" + item.getCellStyle().getInternalID() + "\" ";
+            }
+            else
+            {
+                styleDef = "";
+            }
+            item.resolveCellType(); // Recalculate the type (for handling DEFAULT)
+            if (item.getDataType().equals(Cell.CellType.BOOL))
+            {
+                typeAttribute = "b";
+                typeDef = " t=\"" + typeAttribute + "\" ";
+                boolValue = (boolean)item.getValue();
+                if (boolValue) { value = "1"; }
+                else { value = "0"; }
+
+            }
+            // Number casting
+            else if (item.getDataType() == Cell.CellType.NUMBER) {
+                typeAttribute = "n";
+                tValue = " t=\"" + typeAttribute + "\" ";
+                Object o = item.getValue();
+                if (o instanceof Byte) {
+                    value = Byte.toString((byte) item.getValue());
+                } else if (o instanceof BigDecimal) {
+                    value = item.getValue().toString();
+                } else if (o instanceof Double) {
+                    value = Double.toString((double) item.getValue());
+                } else if (o instanceof Float) {
+                    value = Float.toString((float) item.getValue());
+                } else if (o instanceof Integer) {
+                    value = Integer.toString((int) item.getValue());
+                } else if (o instanceof Long) {
+                    value = Long.toString((long) item.getValue());
+                } else if (o instanceof Short) {
+                    value = Short.toString((short) item.getValue());
+                }
+            }
+            // Date parsing
+            else if (item.getDataType().equals(Cell.CellType.DATE))
+            {
+                typeAttribute = "d";
+                Date date = (Date)item.getValue();
+                value = Helper.getOADateString(date);
+            }
+            // Time parsing
+            else if (item.getDataType().equals(Cell.CellType.TIME))
+            {
+                typeAttribute = "d";
+                // TODO: 'd' is probably an outdated attribute (to be checked for dates and times)
+                LocalTime time = (LocalTime)item.getValue();
+                value = Helper.getOATimeString(time);
+            }
+            else
+            {
+                if (item.getValue() == null)
+                {
+                    typeAttribute = null;
+                    value = null;
+                }
+                else // Handle sharedStrings
+                {
+                    if (item.getDataType().equals(Cell.CellType.FORMULA))
+                    {
+                        typeAttribute = "str";
+                        value = item.getValue().toString();
+                    }
+                    else
+                    {
+                        typeAttribute = "s";
+                        value = item.getValue().toString();
+                        if (!sharedStrings.containsKey(value))
+                        {
+                            sharedStrings.add(value, Integer.toString(sharedStrings.size()));
+                        }
+                        value = sharedStrings.get(value);
+                        sharedStringsTotalCount++;
+                    }
+                }
+                typeDef = " t=\"" + typeAttribute + "\" ";
+            }
+            if (!item.getDataType().equals(Cell.CellType.EMPTY))
+            {
+                sb.append("<c").append(typeDef).append("r=\"").append(item.getCellAddress()).append("\"").append(styleDef).append(">");
+                if (item.getDataType().equals(Cell.CellType.FORMULA))
+                {
+                    sb.append("<f>").append(XlsxWriter.escapeXMLChars(item.getValue().toString())).append("</f>");
+                }
+                else
+                {
+                    sb.append("<v>").append(XlsxWriter.escapeXMLChars(value)).append("</v>");
+                }
+                sb.append("</c>");
+            }
+            else if (value == null || item.getDataType().equals(Cell.CellType.EMPTY)) // Empty cell
+            {
+                sb.append("<c r=\"").append(item.getCellAddress()).append("\"").append(styleDef).append("/>");
+            }
+            else // All other, unexpected cases
+            {
+                sb.append("<c").append(typeDef).append("r=\"").append(item.getCellAddress()).append("\"").append(styleDef).append("/>");
+            }
+            col++;
+        }
+        sb.append("</row>");
+        return sb.toString();
+    }
+    /*
+    private String createRowString(DynamicRow dynamicRow, Worksheet worksheet) {
+        int rowNumber = dynamicRow.getRowNumber();
         String height = "";
         String hidden = "";
         if (worksheet.getRowHeights().containsKey(rowNumber)) {
@@ -464,6 +606,8 @@ public class XlsxWriter {
         sb.append("</row>");
         return sb.toString();
     }
+
+     */
 
     /**
      * Method to create shared strings as XML document
@@ -1025,21 +1169,12 @@ public class XlsxWriter {
     private Document createWorksheetPart(Worksheet worksheet) throws IOException {
         worksheet.recalculateAutoFilter();
         worksheet.recalculateColumns();
-        List<List<Cell>> celldata = getSortedSheetData(worksheet);
+        List<DynamicRow> celldata = getSortedSheetData(worksheet);
         StringBuilder sb = new StringBuilder();
-        String line;
         sb.append("<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac\" xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\">");
 
-        if (worksheet.getSelectedCells() != null) {
-            sb.append("<sheetViews><sheetView workbookViewId=\"0\"");
-            if (this.workbook.getSelectedWorksheet() == worksheet.getSheetID() - 1) {
-                sb.append(" tabSelected=\"1\"");
-            }
-            sb.append("><selection sqref=\"");
-            sb.append(worksheet.getSelectedCells().toString());
-            sb.append("\" activeCell=\"");
-            sb.append(worksheet.getSelectedCells().StartAddress.toString());
-            sb.append("\"/></sheetView></sheetViews>");
+        if (worksheet.getSelectedCells() != null || worksheet.getPaneSplitTopHeight() != null || worksheet.getPaneSplitLeftWidth() != null || worksheet.getPaneSplitAddress() != null || worksheet.isHidden()) {
+            createSheetViewString(worksheet, sb);
         }
 
         sb.append("<sheetFormatPr x14ac:dyDescent=\"0.25\" defaultRowHeight=\"");
@@ -1047,6 +1182,7 @@ public class XlsxWriter {
         sb.append("\" baseColWidth=\"");
         sb.append(worksheet.getDefaultColumnWidth());
         sb.append("\"/>");
+
         String colWidths = createColsString(worksheet);
         if (!Helper.isNullOrEmpty(colWidths)) {
             sb.append("<cols>");
@@ -1054,10 +1190,14 @@ public class XlsxWriter {
             sb.append("</cols>");
         }
         sb.append("<sheetData>");
+        createRowsString(worksheet, sb);
+        /*
         for (int i = 0; i < celldata.size(); i++) {
             line = createRowString(celldata.get(i), worksheet);
             sb.append(line);
         }
+
+         */
         sb.append("</sheetData>");
 
         sb.append(createMergedCellsString(worksheet));
@@ -1068,6 +1208,184 @@ public class XlsxWriter {
         sb.append("</worksheet>");
         //testing.Performance.SaveLoggedValues("LineLength.xlsx");
         return createXMLDocument(sb.toString(), "WORKSHEET: " + worksheet.getSheetName());
+    }
+
+    private void createRowsString(Worksheet worksheet, StringBuilder sb)
+    {
+        List<DynamicRow> cellData = getSortedSheetData(worksheet);
+        String line;
+        for(DynamicRow row : cellData)
+        {
+            line = createRowString(row, worksheet);
+            sb.append(line);
+        }
+    }
+
+    /**
+     * Method to create the (sub) part of the sheet view (selected cells and panes) within the worksheet XML document
+     * @param worksheet worksheet object to process
+     * @param sb reference to the stringbuilder
+     */
+    private void createSheetViewString(Worksheet worksheet, StringBuilder sb)
+    {
+        sb.append("<sheetViews><sheetView workbookViewId=\"0\"");
+        if (workbook.getSelectedWorksheet() == worksheet.getSheetID() - 1 && !worksheet.isHidden())
+        {
+            sb.append(" tabSelected=\"1\"");
+        }
+        sb.append(">");
+        createPaneString(worksheet, sb);
+        if (worksheet.getSelectedCells() != null)
+        {
+            sb.append("<selection sqref=\"");
+            sb.append(worksheet.getSelectedCells().toString());
+            sb.append("\" activeCell=\"");
+            sb.append(worksheet.getSelectedCells().StartAddress.toString());
+            sb.append("\"/>");
+        }
+        sb.append("</sheetView></sheetViews>");
+    }
+    
+    /**
+     * Method to create the (sub) part of the pane (splitting and freezing) within the worksheet XML document
+     * @param worksheet worksheet">worksheet object to process
+     * @param sb reference to the stringbuilder
+     */
+    private void createPaneString(Worksheet worksheet, StringBuilder sb)
+    {
+        if (worksheet.getPaneSplitLeftWidth() == null && worksheet.getPaneSplitTopHeight() == null && worksheet.getPaneSplitAddress() == null)
+        {
+            return;
+        }
+        sb.append("<pane");
+        boolean applyXSplit = false;
+        boolean applyYSplit = false;
+        if (worksheet.getPaneSplitAddress() != null)
+        {
+            boolean freeze = worksheet.getFreezeSplitPanes() != null && worksheet.getFreezeSplitPanes();
+            int xSplit = worksheet.getPaneSplitAddress().Column;
+            int ySplit = worksheet.getPaneSplitAddress().Row;
+            if (xSplit > 0 )
+            {
+                if (freeze)
+                {
+                    sb.append(" xSplit=\"").append(Integer.toString(xSplit)).append("\"");
+                }
+                else
+                {
+                    sb.append(" xSplit=\"").append(calculatePaneWidth(worksheet, xSplit)).append("\"");
+                }
+                applyXSplit = true;
+            }
+            if (ySplit > 0)
+            {
+                if (freeze)
+                {
+                    sb.append(" ySplit=\"").append(Integer.toString(ySplit)).append("\"");
+                }
+                else
+                {
+                    sb.append(" ySplit=\"").append(calculatePaneHeight(worksheet, ySplit)).append("\"");
+                }
+                applyYSplit = true;
+            }
+            if (freeze && applyXSplit && applyYSplit)
+            {
+                sb.append(" state=\"frozenSplit\"");
+            }
+            else if (freeze)
+            {
+                sb.append(" state=\"frozen\"");
+            }
+        }
+        else
+        {
+            if (worksheet.getPaneSplitLeftWidth() != null)
+            {
+                sb.append(" xSplit=\"").append(Helper.getInternalPaneSplitWidth(worksheet.getPaneSplitLeftWidth())).append("\"");
+                applyXSplit = true;
+            }
+            if (worksheet.getPaneSplitTopHeight() != null)
+            {
+                sb.append(" ySplit=\"").append(Helper.getInternalPaneSplitHeight(worksheet.getPaneSplitTopHeight())).append("\"");
+                applyYSplit = true;
+            }
+        }
+        if (applyXSplit && applyYSplit)
+        {
+            switch (worksheet.getActivePane())
+            {
+                case bottomLeft:
+                    sb.append(" activePane=\"bottomLeft\"");
+                    break;
+                case bottomRight:
+                    sb.append(" activePane=\"bottomRight\"");
+                    break;
+                case topLeft:
+                    sb.append(" activePane=\"topLeft\"");
+                    break;
+                case topRight:
+                    sb.append(" activePane=\"topRight\"");
+                    break;
+            }
+        }
+        String topLeftCell = worksheet.getPaneSplitTopLeftCell().getAddress();
+        sb.append(" topLeftCell=\"").append(topLeftCell).append("\" ");
+        sb.append("/>");
+        if (applyXSplit && !applyYSplit)
+        {
+            sb.append("<selection pane=\"topRight\" activeCell=\"" + topLeftCell + "\"  sqref=\"" + topLeftCell + "\" />");
+        }
+        else if (applyYSplit && !applyXSplit)
+        {
+            sb.append("<selection pane=\"bottomLeft\" activeCell=\""+ topLeftCell + "\"  sqref=\"" + topLeftCell + "\" />");
+        }
+        else if (applyYSplit && applyXSplit)
+        {
+            sb.append("<selection activeCell=\"" + topLeftCell + "\"  sqref=\"" + topLeftCell + "\" />");
+        }
+    }
+
+    /**
+     * Method to calculate the pane height, based on the number of rows
+     * @param worksheet worksheet object to get the row definitions from
+     * @param numberOfRows Number of rows from the top to the split position
+     * @return Internal height from the top of the worksheet to the pane split position
+     */
+    private float calculatePaneHeight(Worksheet worksheet, int numberOfRows) {
+        float height = 0;
+        for (int i = 0; i < numberOfRows; i++) {
+            if (worksheet.getRowHeights().containsKey(i)) {
+                height += Helper.getInternalRowHeight(worksheet.getRowHeights().get(i));
+            } else {
+                height += Helper.getInternalRowHeight(Worksheet.DEFAULT_ROW_HEIGHT);
+            }
+        }
+        return Helper.getInternalPaneSplitHeight(height);
+    }
+
+    /**
+     * Method to calculate the pane width, based on the number of columns
+     * @param worksheet worksheet object to get the column definitions from
+     * @param numberOfColumns Number of columns from the left to the split position
+     * @return Internal width from the left of the worksheet to the pane split position
+     */
+    private float calculatePaneWidth(Worksheet worksheet, int numberOfColumns)
+    {
+        float width = 0;
+        for (int i = 0; i < numberOfColumns; i++)
+        {
+            if (worksheet.getColumns().containsKey(i))
+            {
+                width += Helper.getInternalColumnWidth(worksheet.getColumns().get(i).getWidth());
+            }
+            else
+            {
+                width += Helper.getInternalColumnWidth(Worksheet.DEFAULT_COLUMN_WIDTH);
+            }
+        }
+        // Add padding of 75 per column
+        return Helper.getInternalPaneSplitWidth(width) + ((numberOfColumns - 1) * 0f);
     }
 
     /**
@@ -1106,44 +1424,69 @@ public class XlsxWriter {
         NumberFormat[] numberFormatStyles = this.styles.getNumberFormats();
         int counter = 0;
         for (NumberFormat numberFormatStyle : numberFormatStyles) {
-            if (numberFormatStyle.isCustomFormat() == true) {
+            if (numberFormatStyle.isCustomFormat()) {
                 counter++;
             }
         }
         return counter;
     }
 
+
     /**
      * Method to sort the cells of a worksheet as preparation for the XML document
-     *
      * @param sheet Worksheet to process
-     * @return Two dimensional array of Cell object
+     * @return Sorted list of dynamic rows that are either defined by cells or row widths / hidden states. The list is sorted by row numbers (zero-based)
      */
-    private List<List<Cell>> getSortedSheetData(Worksheet sheet) {
+    private List<DynamicRow> getSortedSheetData(Worksheet sheet) {
         List<Cell> temp = new ArrayList<>();
-        Map.Entry<String, Cell> entry;
-        Iterator<Map.Entry<String, Cell>> itr = sheet.getCells().entrySet().iterator();
-        while (itr.hasNext()) {
-            entry = itr.next();
-            temp.add(entry.getValue());
+        for (Map.Entry<String, Cell> item : sheet.getCells().entrySet())
+        {
+            temp.add(item.getValue());
         }
         Collections.sort(temp);
-        List<Cell> line = new ArrayList<>();
-        List<List<Cell>> output = new ArrayList<>();
-        if (temp.size() > 0) {
-            int rowNumber = temp.get(0).getRowNumber();
-            for (int i = 0; i < temp.size(); i++) {
-                if (temp.get(i).getRowNumber() != rowNumber) {
-                    output.add(line);
-                    line = new ArrayList<>();
-                    rowNumber = temp.get(i).getRowNumber();
+        DynamicRow row = new DynamicRow();
+        Map<Integer, DynamicRow> rows = new HashMap<>();
+        int rowNumber;
+        if (!temp.isEmpty())
+        {
+            rowNumber = temp.get(0).getRowNumber();
+            row.setRowNumber(rowNumber);
+            for (Cell cell : temp)
+            {
+                if (cell.getRowNumber() != rowNumber)
+                {
+                    rows.put(rowNumber, row);
+                    row = new DynamicRow();
+                    row.setRowNumber(cell.getRowNumber());
+                    rowNumber = cell.getRowNumber();
                 }
-                line.add(temp.get(i));
+                row.getCellDefinitions().add(cell);
             }
-            if (line.size() > 0) {
-                output.add(line);
+            if (!row.getCellDefinitions().isEmpty())
+            {
+                rows.put(rowNumber, row);
             }
         }
+        for (Map.Entry<Integer, Float> rowHeight : sheet.getRowHeights().entrySet())
+        {
+            if (!rows.containsKey(rowHeight.getKey()))
+            {
+                row = new DynamicRow();
+                row.setRowNumber(rowHeight.getKey());
+                rows.put(rowHeight.getKey(), row);
+            }
+        }
+        for(Map.Entry<Integer, Boolean> hiddenRow : sheet.getHiddenRows().entrySet())
+        {
+            if (!rows.containsKey(hiddenRow.getKey()))
+            {
+                row = new DynamicRow();
+                row.setRowNumber(hiddenRow.getKey());
+                rows.put(hiddenRow.getKey(), row);
+            }
+        }
+        List<DynamicRow> output = new ArrayList<>(rows.values());
+        output.sort((r1, r2) -> (Integer.compare(r1.getRowNumber(), r2.getRowNumber()))); // Lambda sort
         return output;
     }
 
@@ -1324,6 +1667,50 @@ public class XlsxWriter {
         passwordHash ^= (0x8000 | ('N' << 8) | 'K');
         passwordHash ^= passwordLength;
         return Integer.toHexString(passwordHash).toUpperCase();
+    }
+
+    // ### H E L P E R   C L A S S E S ###
+
+    /**
+     * Class representing a row that is either empty or containing cells. Empty rows can also carry information about height or visibility
+     */
+    private static class DynamicRow{
+
+        private final List<Cell> cellDefinitions;
+        private int rowNumber;
+
+        /**
+         * Gets the List of cells if not empty
+         * @return List of cells
+         */
+        public List<Cell> getCellDefinitions() {
+            return cellDefinitions;
+        }
+
+        /**
+         * Gets the row number (zero-based)
+         * @return Row number
+         */
+        public int getRowNumber() {
+            return rowNumber;
+        }
+
+        /**
+         * Sets the row number (zero-based)
+         * @param rowNumber Row number
+         */
+        public void setRowNumber(int rowNumber) {
+            this.rowNumber = rowNumber;
+        }
+
+        /**
+         * Default constructor. Defines an empty row if no additional operations are made on the object
+         */
+        public DynamicRow(){
+            this.cellDefinitions = new ArrayList<>();
+        }
+
+
     }
 
 }

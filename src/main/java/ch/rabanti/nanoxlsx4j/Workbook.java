@@ -16,9 +16,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
-
-import static java.util.function.Predicate.not;
 
 /**
  * Class representing a workbook
@@ -348,9 +345,9 @@ public class Workbook {
         }
         int number = getNextWorksheetId();
         worksheet.setSheetID(number);
-        worksheet.setWorkbookReference(this);
         this.currentWorksheet = worksheet;
         this.worksheets.add(worksheet);
+        worksheet.setWorkbookReference(this);
     }
 
     /**
@@ -411,7 +408,7 @@ public class Workbook {
 
     /**
      * Removes the defined worksheet based on its name. If the worksheet is the current or selected worksheet, the current and / or the selected worksheet will be set to the last worksheet of the workbook.
-     *  If the last worksheet is removed, the selected worksheet will be set to 0 and the current worksheet to null.
+     * If the last worksheet is removed, the selected worksheet will be set to 0 and the current worksheet to null.
      *
      * @param name Name of the worksheet
      * @throws WorksheetException thrown if the name of the worksheet is unknown
@@ -498,10 +495,9 @@ public class Workbook {
      */
     public Worksheet setCurrentWorksheet(String name) {
         Optional<Worksheet> worksheet = worksheets.stream().filter(w -> w.getSheetName().equals(name)).findFirst();
-        if (worksheet.isEmpty()){
+        if (worksheet.isEmpty()) {
             throw new WorksheetException("The worksheet with the name '" + name + "' does not exist.");
-        }
-        else{
+        } else {
             this.currentWorksheet = worksheet.get();
             this.WS.setCurrentWorksheetInternal(worksheet.get());
         }
@@ -516,8 +512,7 @@ public class Workbook {
      * @throws WorksheetException Thrown if the name of the worksheet is unknown
      */
     public Worksheet setCurrentWorksheet(int worksheetIndex) {
-        if (worksheetIndex < 0 || worksheetIndex > worksheets.size() - 1)
-        {
+        if (worksheetIndex < 0 || worksheetIndex > worksheets.size() - 1) {
             throw new RangeException("The worksheet index " + worksheetIndex + " is out of range");
         }
         currentWorksheet = worksheets.get(worksheetIndex);
@@ -527,14 +522,13 @@ public class Workbook {
 
     /**
      * Sets the current worksheet
+     *
      * @param worksheet Worksheet object (must be in the collection of worksheets)
      * @throws WorksheetException Thrown if the worksheet was not found in the worksheet collection
      */
-    public void setCurrentWorksheet(Worksheet worksheet)
-    {
+    public void setCurrentWorksheet(Worksheet worksheet) {
         int index = worksheets.indexOf(worksheet);
-        if (index < 0)
-        {
+        if (index < 0) {
             throw new WorksheetException("The passed worksheet object is not in the worksheet collection.");
         }
         currentWorksheet = worksheets.get(index);
@@ -543,36 +537,40 @@ public class Workbook {
 
     /**
      * Sets the selected worksheet in the output workbook
+     *
      * @param name Name of the worksheet
-     * @throws WorksheetException Throws a WorksheetException if the name of the worksheet is unknown
+     * @throws WorksheetException Throws a WorksheetException if the name of the worksheet is unknown or if it is hidden
+     * @throws RangeException     Throws a RangeException if the index of the worksheet is out of range
      */
-    public void setSelectedWorksheet(String name)
-    {
+    public void setSelectedWorksheet(String name) {
         Optional<Worksheet> worksheet = worksheets.stream().filter(w -> w.getSheetName().equals(name)).findFirst();
-        if (worksheet.isEmpty()){
+        if (worksheet.isEmpty()) {
             throw new WorksheetException("The worksheet with the name '" + name + "' does not exist.");
         }
         this.selectedWorksheet = worksheets.indexOf(worksheet.get());
+        validateWorksheets();
     }
 
     /**
      * Sets the selected worksheet in the output workbook<br>Note: This method does not set the current worksheet while design time. Use SetCurrentWorksheet instead for this
      *
      * @param worksheetIndex Zero-based worksheet index
-     * @throws RangeException Throws a RangeException if the index of the worksheet is out of range
+     * @throws RangeException     Throws a RangeException if the index of the worksheet is out of range
+     * @throws WorksheetException Throws a WorksheetException if the worksheet is hidden
      */
     public void setSelectedWorksheet(int worksheetIndex) {
         if (worksheetIndex < 0 || worksheetIndex > this.worksheets.size() - 1) {
             throw new RangeException("The worksheet index " + worksheetIndex + " is out of range");
         }
         this.selectedWorksheet = worksheetIndex;
+        validateWorksheets();
     }
 
     /**
      * Sets the selected worksheet in the output workbook<br>Note: This method does not set the current worksheet while design time. Use SetCurrentWorksheet instead for this
      *
      * @param worksheet Worksheet object (must be in the collection of worksheets)
-     * @throws WorksheetException Throws a WorksheetException if the worksheet was not found in the worksheet collection
+     * @throws WorksheetException Throws a WorksheetException if the worksheet was not found in the worksheet collection or if it is hidden
      */
     public void setSelectedWorksheet(Worksheet worksheet) {
         boolean check = false;
@@ -586,6 +584,7 @@ public class Workbook {
         if (!check) {
             throw new WorksheetException("The passed worksheet object is not in the worksheet collection.");
         }
+        validateWorksheets();
     }
 
     /**
@@ -609,7 +608,8 @@ public class Workbook {
 
     /**
      * Removes the worksheet at the defined index and relocates current and selected worksheet references
-     * @param index Index within the worksheets list
+     *
+     * @param index                 Index within the worksheets list
      * @param resetCurrentWorksheet If true, the current worksheet will be relocated to the last worksheet in the list
      */
     private void removeWorksheet(int index, boolean resetCurrentWorksheet) {
@@ -621,13 +621,39 @@ public class Workbook {
             if (resetCurrentWorksheet) {
                 currentWorksheet = worksheets.get(worksheets.size() - 1);
             }
-            if (selectedWorksheet == index || selectedWorksheet > worksheets.size() - 1)
-            {
+            if (selectedWorksheet == index || selectedWorksheet > worksheets.size() - 1) {
                 selectedWorksheet = worksheets.size() - 1;
             }
         } else {
             currentWorksheet = null;
             selectedWorksheet = 0;
+        }
+        validateWorksheets();
+    }
+
+    /**
+     * Validates the worksheets regarding several conditions that must be met:<br/>
+     * - At least one worksheet must be defined<br/>
+     * - A hidden worksheet cannot be the selected one<br/>
+     * - At least one worksheet must be visible<br/>
+     * If one of the conditions is not met, an exception is thrown
+     */
+    public void validateWorksheets() {
+        int worksheetCount = worksheets.size();
+        int hiddenCount = 0;
+        if (worksheetCount == 0) {
+            throw new WorksheetException("The workbook must contain at least one worksheet");
+        }
+        for (int i = 0; i < worksheetCount; i++) {
+            if (worksheets.get(i).isHidden()) {
+                hiddenCount++;
+                if (i == selectedWorksheet) {
+                    throw new WorksheetException("The worksheet with the index " + selectedWorksheet + " cannot be set as selected, since it is set hidden");
+                }
+            }
+        }
+        if (hiddenCount >= worksheetCount) {
+            throw new WorksheetException("At least one worksheet in the workbook must be visible");
         }
     }
 
