@@ -1374,6 +1374,54 @@ public class Worksheet {
         return max;
     }
 
+    /**
+     * Gets a row as list of cell objects
+     * @param rowNumber Row number (zero-based)
+     * @return List of cell objects. If the row doesn't exist, an empty list is returned
+     */
+    public List<Cell> getRow(int rowNumber)
+    {
+        List<Cell> list = new ArrayList<>();
+        for (Map.Entry<String, Cell> cell : cells.entrySet())
+        {
+            if (cell.getValue().getRowNumber() == rowNumber)
+            {
+                list.add(cell.getValue());
+            }
+        }
+        list.sort(Comparator.comparingInt(Cell::getColumnNumber));
+        return list;
+    }
+
+    /**
+     * Gets a column as list of cell objects
+     * @param columnAddress Column address
+     * @throws RangeException is thrown if the address is not valid
+     * @return List of cell objects. If the column doesn't exist, an empty list is returned
+     */
+    public List<Cell> getColumn(String columnAddress) {
+        int column = Cell.resolveColumn(columnAddress);
+        return getColumn(column);
+    }
+
+        /**
+         * Gets a column as list of cell objects
+         * @param columnNumber Column number (zero-based)
+         * @return List of cell objects. If the column doesn't exist, an empty list is returned
+         */
+    public List<Cell> getColumn(int columnNumber)
+    {
+        List<Cell> list = new ArrayList<>();
+        for (Map.Entry<String, Cell> cell : cells.entrySet())
+        {
+            if (cell.getValue().getColumnNumber() == columnNumber)
+            {
+                list.add(cell.getValue());
+            }
+        }
+        list.sort(Comparator.comparingInt(Cell::getRowNumber));
+        return list;
+    }
 
     /**
      * Set the current cell address

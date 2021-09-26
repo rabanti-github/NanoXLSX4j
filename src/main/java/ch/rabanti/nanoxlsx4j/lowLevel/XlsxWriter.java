@@ -48,7 +48,7 @@ public class XlsxWriter {
     /**
      * Maximum valid OAdate value (9999-12-31)
      */
-    public static final double MAX_OADATE_VALUE = 2958465.9999d;
+    public static final double MAX_OADATE_VALUE = 2958465.999988426d;
 
     // ### P R I V A T E  F I E L D S ###
     private final SortedMap sharedStrings;
@@ -623,19 +623,16 @@ public class XlsxWriter {
         sb.append(this.sharedStrings.size());
         sb.append("\">");
         List<String> keys = this.sharedStrings.getKeys();
-        //for (Map.Entry<String, String> str : sharedStrings.entrySet())
         for (int i = 0; i < keys.size(); i++) {
-            sb.append("<si><t>");
-            //sb.append(escapeXMLChars(str.getKey()));
-            sb.append(escapeXMLChars(keys.get(i)));
-            sb.append("</t></si>");
+            appendSharedString(sb, keys.get(i));
         }
         sb.append("</sst>");
         return createXMLDocument(sb.toString(), "SHAREDSTRINGS");
     }
 
-    private void AppendSharedString(StringBuilder sb, String value) {
+    private void appendSharedString(StringBuilder sb, String value) {
         int len = value.length();
+        value = escapeXMLChars(value);
         sb.append("<si>");
         if (len == 0) {
             sb.append("<t></t>");

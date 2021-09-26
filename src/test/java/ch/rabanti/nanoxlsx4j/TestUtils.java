@@ -2,6 +2,7 @@ package ch.rabanti.nanoxlsx4j;
 
 import org.junit.jupiter.api.Assertions;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +116,11 @@ public class TestUtils {
                 after.accept(l, r, s);
             };
         }
+    }
+
+    public static InputStream getResource(String resourceName){
+        ClassLoader classLoader = TestUtils.class.getClassLoader();
+        return ClassLoader.getSystemResourceAsStream(resourceName);
     }
 
     public interface QuadConsumer<T1, T2, T3, T4> {

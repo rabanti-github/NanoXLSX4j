@@ -95,7 +95,9 @@ public class SharedStringsReader {
      */
     private void getTextToken(XmlDocument.XmlNode node, StringBuilder sb) {
         if (node.getName().equalsIgnoreCase("t") && !Helper.isNullOrEmpty(node.getInnerText())) {
-            sb.append(node.getInnerText());
+            // Reproduces the new line behavior of Excel
+            String text = node.getInnerText().replace("\r\n", "\n").replace("\n", "\r\n");
+            sb.append(text);
         }
         if (node.hasChildNodes()) {
             for (XmlDocument.XmlNode childNode : node.getChildNodes()) {

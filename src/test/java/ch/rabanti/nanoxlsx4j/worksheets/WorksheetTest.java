@@ -364,7 +364,44 @@ public class WorksheetTest {
         assertTrue(worksheet.isHidden());
     }
 
+    @DisplayName("Test of the failing set function of the hidden field when trying to hide all worksheets")
+    @Test()
+    void hiddenFailTest()
+    {
+        Workbook workbook = new Workbook("test1");
+        workbook.addWorksheet("test2");
+        workbook.getWorksheets().get(1).setHidden(true);
+        assertFalse(workbook.getWorksheets().get(0).isHidden());
+        assertTrue(workbook.getWorksheets().get(1).isHidden());
+        assertThrows(WorksheetException.class, () -> workbook.getWorksheets().get(0).setHidden(true));
+    }
 
+    @DisplayName("Test of the failing set function of the hidden field when trying to hide all worksheets (scenario with 3 worksheets)")
+    @Test()
+    void hiddenFailTest2()
+    {
+        Workbook workbook = new Workbook("test1");
+        workbook.addWorksheet("test2");
+        workbook.addWorksheet("test3");
+        workbook.setSelectedWorksheet(1);
+        workbook.getWorksheets().get(0).setHidden(true);
+        workbook.getWorksheets().get(2).setHidden(true);
+        assertTrue(workbook.getWorksheets().get(0).isHidden());
+        assertFalse(workbook.getWorksheets().get(1).isHidden());
+        assertTrue(workbook.getWorksheets().get(2).isHidden());
+        assertThrows(WorksheetException.class, () -> workbook.getWorksheets().get(1).setHidden(true));
+    }
+
+    @DisplayName("Test of the failing set function of the hidden field when trying to hide all worksheets by adding hidden worksheets to a workbook")
+    @Test()
+    void hiddenFailTest3()
+    {
+        Worksheet hidden = new Worksheet("test1");
+        hidden.setHidden(true);
+        Workbook workbook = new Workbook();
+        assertEquals(0, workbook.getWorksheets().size());
+        assertThrows(WorksheetException.class, () -> workbook.addWorksheet(hidden));
+    }
 
     @DisplayName("Test of the get function of the activeStyle field")
     @Test()

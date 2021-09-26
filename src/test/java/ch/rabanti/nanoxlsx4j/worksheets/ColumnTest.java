@@ -1,6 +1,7 @@
 package ch.rabanti.nanoxlsx4j.worksheets;
 
 import ch.rabanti.nanoxlsx4j.Address;
+import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
@@ -9,6 +10,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -467,5 +471,62 @@ public class ColumnTest {
         Worksheet worksheet = new Worksheet();
         assertThrows(RangeException.class, () -> worksheet.setCurrentColumnNumber(column));
     }
+
+    @DisplayName("Test of the getColumn function")
+    @Test()
+    void getColumnTest()
+    {
+        Worksheet worksheet = new Worksheet();
+        List<Object> values = getCellValues(worksheet);
+        List<Cell> column = worksheet.getColumn(1);
+        AssertColumnValues(column, values);
+    }
+
+
+    @DisplayName("Test of the getColumn function with a column address")
+    @Test()
+    void getColumnTest2()
+    {
+        Worksheet worksheet = new Worksheet();
+        List<Object> values = getCellValues(worksheet);
+        List<Cell> column = worksheet.getColumn("B");
+        AssertColumnValues(column, values);
+    }
+
+
+    @DisplayName("Test of the getColumn function when no values are applying")
+    @Test()
+    void getColumnTest3()
+    {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addCell(22, "A1");
+        worksheet.addCell(false, "C3");
+        List<Cell> column = worksheet.getColumn(1);
+        assertEquals(0,column.size());
+    }
+
+    private void AssertColumnValues(List<Cell> givenList, List<Object> expectedValues)
+    {
+        assertEquals(expectedValues.size(), givenList.size());
+        for(int i = 0; i < expectedValues.size(); i++)
+        {
+            assertEquals(expectedValues.get(i), givenList.get(i).getValue());
+        }
+    }
+
+    private static List<Object> getCellValues(Worksheet worksheet)
+    {
+        List<Object> expectedList = new ArrayList<Object>();
+        expectedList.add(23);
+        expectedList.add("test");
+        expectedList.add(true);
+        worksheet.addCell(22, "A1");
+        worksheet.addCell(expectedList.get(0), "B1");
+        worksheet.addCell(expectedList.get(1), "B2");
+        worksheet.addCell(expectedList.get(2), "B3");
+        worksheet.addCell(false, "C2");
+        return expectedList;
+    }
+
 
 }

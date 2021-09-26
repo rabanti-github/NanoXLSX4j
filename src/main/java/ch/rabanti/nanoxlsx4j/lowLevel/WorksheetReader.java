@@ -11,6 +11,7 @@ import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.ImportOptions;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalTime;
 import java.util.*;
@@ -133,92 +134,8 @@ public class WorksheetReader {
     }
 
     /**
-     * Gets whether the specified column exists in the data
-     *
-     * @param columnAddress Column address as string
-     * @return Column address as string
-     */
-    public boolean hasColumn(String columnAddress) {
-        if (Helper.isNullOrEmpty(columnAddress)) {
-            return false;
-        }
-        int columnNumber = Cell.resolveColumn(columnAddress);
-        for (Map.Entry<String, Cell> cell : data.entrySet()) {
-            if (cell.getValue().getColumnNumber() == columnNumber) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Gets whether the passed row (represented as list of cell objects) contains the specified column numbers
-     *
-     * @param cells         List of cell objects to check
-     * @param columnNumbers Array of column numbers
-     * @return True if all column numbers were found, otherwise false
-     */
-    public boolean rowHasColumns(List<Cell> cells, int[] columnNumbers) {
-        if (columnNumbers == null || cells == null) {
-            return false;
-        }
-        int len = columnNumbers.length;
-        int len2 = cells.size();
-        int j;
-        boolean match;
-        if (len < 1 || len2 < 1) {
-            return false;
-        }
-        for (int columnNumber : columnNumbers) {
-            match = false;
-            for (j = 0; j < len2; j++) {
-                if (cells.get(j).getColumnNumber() == columnNumber) {
-                    match = true;
-                    break;
-                }
-            }
-            if (!match) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Gets the number of rows
-     *
-     * @return Number of rows
-     */
-    public int getRowCount() {
-        int count = -1;
-        for (Map.Entry<String, Cell> cell : data.entrySet()) {
-            if (cell.getValue().getRowNumber() > count) {
-                count = cell.getValue().getRowNumber();
-            }
-        }
-        return count + 1;
-    }
-
-    /**
-     * Gets a row as list of cell objects
-     *
-     * @param rowNumber Row number
-     * @return List of cell objects
-     */
-    public List<Cell> getRow(int rowNumber) {
-        List<Cell> list = new ArrayList<>();
-        for (Map.Entry<String, Cell> cell : data.entrySet()) {
-            if (cell.getValue().getRowNumber() == rowNumber) {
-                list.add(cell.getValue());
-            }
-        }
-        list.sort(Comparator.comparingInt(Cell::getColumnNumber));
-        return list;
-    }
-
-    /**
      * Reads the XML file form the passed stream and processes the worksheet data
-     *
+     * @throws IOException thrown if the document could not be read
      * @param stream Stream of the XML file
      */
     public void read(InputStream stream) throws java.io.IOException {
@@ -236,10 +153,13 @@ public class WorksheetReader {
                 }
             }
         } catch (Exception ex) {
-            if (stream != null) {
-                stream.close();
-            }
+            throw  new IOException("The XML entry could not be read from the input stream. Please see the inner exception:", ex);
         }
+        finally {
+        if (stream != null) {
+            stream.close();
+        }
+    }
     }
 
     /**
@@ -397,14 +317,17 @@ public class WorksheetReader {
         } catch (Exception ignored) {
         }
         try {
-            float f = Float.parseFloat(raw);
-            return new Cell(f, Cell.CellType.NUMBER, address);
-        } catch (Exception ignored) {
-        }
-        try {
             double d = Double.parseDouble(raw);
+            try{
+                float f = Float.parseFloat(raw);
+                if (Float.isFinite(f) && (f != 0.0 || (double)(float)d == d)){
+                    return new Cell(f, Cell.CellType.NUMBER, address);
+                }
+            }
+            catch (Exception ignored2){
+            }
             return new Cell(d, Cell.CellType.NUMBER, address);
-        } catch (Exception dummy) {
+        } catch (Exception ignored) {
             return new Cell(raw, Cell.CellType.STRING, address);
         }
     }
@@ -431,7 +354,6 @@ public class WorksheetReader {
         }
     }
 
-
     /**
      * Parses the boolean value of a raw cell
      *
@@ -440,18 +362,19 @@ public class WorksheetReader {
      * @return Cell of the type boolean or the defined fall-back type
      */
     private static Cell getBooleanValue(String raw, Address address) {
-        if (raw.equals("0")) {
-            return new Cell(false, Cell.CellType.BOOL, address);
-        } else if (raw.equals("1")) {
-            return new Cell(true, Cell.CellType.BOOL, address);
-        } else {
-            try {
-                boolean bool = Boolean.parseBoolean(raw);
-                return new Cell(bool, Cell.CellType.BOOL, address);
-            } catch (Exception ex) {
-                return new Cell(raw, Cell.CellType.STRING, address);
-            }
+        if (raw == null || raw.isBlank()){
+            return new Cell(raw, Cell.CellType.STRING, address);
         }
+        String str = raw.toLowerCase();
+        if (str.equals("1") || str.equals("true"))
+        {
+            return new Cell(true, Cell.CellType.BOOL, address);
+        }
+        else if (str.equals("0") || str.equals("false"))
+        {
+            return new Cell(false, Cell.CellType.BOOL, address);
+        }
+        return new Cell(raw, Cell.CellType.STRING, address);
     }
 
     /**

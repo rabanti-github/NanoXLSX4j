@@ -1,12 +1,15 @@
 package ch.rabanti.nanoxlsx4j.worksheets;
 
 import ch.rabanti.nanoxlsx4j.Address;
+import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -403,5 +406,32 @@ public class RowTest {
         assertThrows(RangeException.class, () -> worksheet.setRowHeight(rowNumber, height));
     }
 
+    @DisplayName("Test of the getRow function")
+    @Test()
+    void getRowTest()
+    {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addCell(22, "B1");
+        worksheet.addCell(23, "B2");
+        worksheet.addCell("test", "C2");
+        worksheet.addCell(true, "D2");
+        worksheet.addCell(false, "B3");
+        List<Cell> row = worksheet.getRow(1);
+        assertEquals(3, row.size());
+        assertEquals(23, row.get(0).getValue());
+        assertEquals("test", row.get(1).getValue());
+        assertEquals(true, row.get(2).getValue());
+    }
+
+    @DisplayName("Test of the getRow function when no values are applying")
+    @Test()
+    void getRowTest2()
+    {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addCell(22, "B1");
+        worksheet.addCell(false, "B3");
+        List<Cell> row = worksheet.getRow(1);
+        assertEquals(0,row.size());
+    }
 
 }
