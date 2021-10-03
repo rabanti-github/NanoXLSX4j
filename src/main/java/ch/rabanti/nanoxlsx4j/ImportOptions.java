@@ -7,6 +7,8 @@
 
 package ch.rabanti.nanoxlsx4j;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +16,38 @@ import java.util.Map;
  * The import options define global rules to import worksheets. The options are mainly to override particular cell types (e.g. interpretation of dates as numbers)
  */
 public class ImportOptions {
+
+    /**
+     * Default format if Date values are cast to strings
+     */
+    public static final String DEFAULT_DATE_FORMAT = "yyy-MM-dd hh:mm:ss";
+
+    /**
+     * Default format if LocalTime values are cast to strings
+     */
+    public static final String DEFAULT_LOCALTIME_FORMAT = "hh:mm:ss";
+
+    /**
+     *  Global conversion types to enforce during the import. All types other than {@link GlobalType#Default} will override defined {@link ColumnType}s
+     */
+    public enum GlobalType{
+        /**
+         * No global strategy. All numbers are tried to be cast to the most suitable types
+         */
+        Default,
+        /**
+         * ll numbers are cast to doubles
+         */
+        AllNumbersToDouble,
+        /**
+         * All numbers are cast to integers. Floating point numbers will be rounded (commercial rounding) to the nearest int
+         */
+        AllNumbersToInt,
+        /**
+         * Every cell is cast to a string
+         */
+        EverythingToString
+    }
 
     /**
      * Column types to enforce during the import
@@ -45,6 +79,11 @@ public class ImportOptions {
     private boolean enforceEmptyValuesAsString = false;
     private Map<Integer, ColumnType> enforcedColumnTypes = new HashMap<>();
     private  int EnforcingStartRowNumber = 0;
+    private GlobalType globalEnforcingType = GlobalType.Default;
+    private String dateFormat;
+    private String localTimeFormat;
+    private SimpleDateFormat dateFormatter;
+    private DateTimeFormatter localTimeFormatter;
 
     /**
      * Gets whether date or time values in the workbook are interpreted as numbers
@@ -120,5 +159,78 @@ public class ImportOptions {
      */
     public void setEnforceEmptyValuesAsString(boolean enforceEmptyValuesAsString) {
         this.enforceEmptyValuesAsString = enforceEmptyValuesAsString;
+    }
+
+    /**
+     * Gets the global strategy to handle cell values. The default will not enforce any casting, besides {@link ImportOptions#setEnforceDateTimesAsNumbers(boolean)}, {@link ImportOptions#setEnforceEmptyValuesAsString(boolean)} and {@link ImportOptions#addEnforcedColumn(int, ColumnType)}
+     * @return Global cast strategy on import
+     */
+    public GlobalType getGlobalEnforcingType() {
+        return globalEnforcingType;
+    }
+
+    /**
+     * Sets the global strategy to handle cell values. The default will not enforce any casting, besides {@link ImportOptions#setEnforceDateTimesAsNumbers(boolean)}, {@link ImportOptions#setEnforceEmptyValuesAsString(boolean)} and {@link ImportOptions#addEnforcedColumn(int, ColumnType)}
+     * @param globalEnforcingType Global cast strategy on import
+     */
+    public void setGlobalEnforcingType(GlobalType globalEnforcingType) {
+        this.globalEnforcingType = globalEnforcingType;
+    }
+
+    /**
+     * Gets the format if Date values are cast to Strings
+     * @return String format pattern
+     */
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    /**
+     * Sets the format if Date values are cast to Strings
+     * @param dateFormat String format pattern
+     */
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+        this.dateFormatter = new SimpleDateFormat(dateFormat);
+    }
+
+    /**
+     * Gets the Date formatter, set by the string of {@link ImportOptions#setDateFormat(String)}
+     * @return SimpleDateFormat instance
+     */
+    public SimpleDateFormat getDateFormatter(){
+        return this.dateFormatter;
+    }
+
+    /**
+     * Gets the format if LocalTime values are cast to Strings
+     * @return String format pattern
+     */
+    public String getLocalTimeFormat() {
+        return localTimeFormat;
+    }
+
+    /**
+     * Sets the format if LocalTime values are cast to Strings
+     * @param localTimeFormat String format pattern
+     */
+    public void setLocalTimeFormat(String localTimeFormat) {
+        this.localTimeFormat = localTimeFormat;
+        this.localTimeFormatter = DateTimeFormatter.ofPattern(localTimeFormat);
+    }
+
+    /**
+     * Gets the LocalTime formatter, set by the string of {@link ImportOptions#setLocalTimeFormat(String)}
+     * @return DateTimeFormatter instance
+     */
+    public DateTimeFormatter getLocalTimeFormatter(){
+        return this.localTimeFormatter;
+    }
+
+    public ImportOptions() {
+        this.dateFormat = DEFAULT_DATE_FORMAT;
+        this.localTimeFormat = DEFAULT_LOCALTIME_FORMAT;
+        this.dateFormatter = new SimpleDateFormat(this.dateFormat);
+        this.localTimeFormatter = DateTimeFormatter.ofPattern(this.localTimeFormat);
     }
 }

@@ -652,9 +652,6 @@ public class Workbook {
                 }
             }
         }
-        if (hiddenCount >= worksheetCount) {
-            throw new WorksheetException("At least one worksheet in the workbook must be visible");
-        }
     }
 
     /**
@@ -688,20 +685,42 @@ public class Workbook {
      * @throws IOException Throws IOException in case of an error
      */
     public static Workbook load(String filename) throws IOException, java.io.IOException {
-        XlsxReader r = new XlsxReader(filename);
+        return load(filename, null);
+    }
+
+    /**
+     * Loads a workbook from a file with import options
+     * @param filename Filename of the workbook
+     * @param importOptions Import options to override the data types of columns or cells. These options can be used to cope with wrong interpreted data, caused by irregular styles
+     * @return Workbook object
+     * @throws IOException Throws IOException in case of an error
+     */
+    public static Workbook load(String filename, ImportOptions importOptions) throws IOException, java.io.IOException {
+        XlsxReader r = new XlsxReader(filename, importOptions);
         r.read();
         return r.getWorkbook();
     }
 
     /**
-     * Loads a workbook from a input stream
+     * Loads a workbook from an input stream
      *
      * @param stream Stream containing the workbook
      * @return Workbook object
      * @throws IOException Throws IOException in case of an error
      */
     public static Workbook load(InputStream stream) throws IOException, java.io.IOException {
-        XlsxReader r = new XlsxReader(stream);
+        return  load(stream, null);
+    }
+
+    /**
+     * Loads a workbook from an input stream with import options
+     * @param stream Stream containing the workbook
+     * @param importOptions Import options to override the data types of columns or cells. These options can be used to cope with wrong interpreted data, caused by irregular styles
+     * @return Workbook object
+     * @throws IOException Throws IOException in case of an error
+     */
+    public static Workbook load(InputStream stream, ImportOptions importOptions) throws IOException, java.io.IOException {
+        XlsxReader r = new XlsxReader(stream, importOptions);
         r.read();
         return r.getWorkbook();
     }

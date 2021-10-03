@@ -523,6 +523,14 @@ public class WorkbookTest {
         assertThrows(WorksheetException.class, () -> workbook.removeWorksheet(absentIndex));
     }
 
+    @DisplayName("Test of the failing removeWorksheet function when the last worksheet is removed from a workbook")
+    @Test()
+    void removeWorksheetFailTest3()
+    {
+        Workbook workbook = new Workbook("worksheet1");
+        assertThrows(WorksheetException.class, () -> workbook.removeWorksheet(0));
+    }
+
     @DisplayName("Test of the SetWorkbookProtection function")
     @ParameterizedTest(name = "Given state {0}, protectWindow {1}, protectStructure {2} and password {3} should lead to a locked widows state {4}, a locked structure state {5} and a protection state {6}")
     @CsvSource({

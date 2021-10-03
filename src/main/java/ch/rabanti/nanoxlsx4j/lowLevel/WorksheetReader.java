@@ -135,8 +135,9 @@ public class WorksheetReader {
 
     /**
      * Reads the XML file form the passed stream and processes the worksheet data
-     * @throws IOException thrown if the document could not be read
+     *
      * @param stream Stream of the XML file
+     * @throws IOException thrown if the document could not be read
      */
     public void read(InputStream stream) throws java.io.IOException {
         data.clear();
@@ -153,13 +154,12 @@ public class WorksheetReader {
                 }
             }
         } catch (Exception ex) {
-            throw  new IOException("The XML entry could not be read from the input stream. Please see the inner exception:", ex);
+            throw new IOException("The XML entry could not be read from the input stream. Please see the inner exception:", ex);
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
         }
-        finally {
-        if (stream != null) {
-            stream.close();
-        }
-    }
     }
 
     /**
@@ -222,6 +222,29 @@ public class WorksheetReader {
      * @return The resolved Cell
      */
     private Cell resolveCellDataConditionally(Address address, String type, String value, String styleNumber, String formula) {
+        if (importOptions.getGlobalEnforcingType() != ImportOptions.GlobalType.Default) {
+            Cell tempCell = autoResolveCellData(address, type, value, styleNumber, formula);
+            switch (importOptions.getGlobalEnforcingType()) {
+                case AllNumbersToDouble:
+                    if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
+                        Number number = (Number) tempCell.getValue();
+                        return new Cell(number.doubleValue(), tempCell.getDataType(), address);
+                    } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
+                        return new Cell(Double.valueOf(value), Cell.CellType.NUMBER, address);
+                    }
+                    return tempCell;
+                case AllNumbersToInt:
+                    if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
+                        Number number = (Number) tempCell.getValue();
+                        return new Cell((int) Math.round(number.doubleValue()), tempCell.getDataType(), address);
+                    } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
+                        return new Cell((int) Math.round(Double.parseDouble(value)), Cell.CellType.NUMBER, address);
+                    }
+                    return tempCell;
+                case EverythingToString:
+                    return getEnforcedStingValue(address, type, value, styleNumber, formula, importOptions);
+            }
+        }
         if (address.Row < importOptions.getEnforcingStartRowNumber()) {
             return autoResolveCellData(address, type, value, styleNumber, formula); // Skip enforcing
         }
@@ -300,38 +323,149 @@ public class WorksheetReader {
     }
 
     /**
+     * Handles the value of a raw cell as string. An appropriate formatting is applied to Date and LocalTime values
+     * @param address Address of the cell
+     * @param type Expected data type
+     * @param value Raw value as string
+     * @param styleNumber Style number as string (can be null)
+     * @param formula Formula as string (can be null; data type determines whether value or formula is used)
+     * @param options Options instance to determine appropriate formatting information
+     * @return Cell of the type string
+     */
+    private Cell getEnforcedStingValue(Address address, String type, String value, String styleNumber, String formula, ImportOptions options) {
+        Cell parsed = autoResolveCellData(address, type, value, styleNumber, formula);
+        if (parsed.getDataType().equals(Cell.CellType.EMPTY)) {
+            return parsed;
+        } else if (parsed.getDataType().equals(Cell.CellType.DATE)) {
+            return getStringValue(options.getDateFormatter().format((Date) parsed.getValue()), address);
+        } else if (parsed.getDataType().equals(Cell.CellType.TIME)) {
+            return getStringValue(options.getLocalTimeFormatter().format((LocalTime) parsed.getValue()), address);
+        } else {
+            return getStringValue(parsed.getValue().toString(), address);
+        }
+    }
+
+    /**
      * Parses the numeric value of a raw cell. The order of possible number types are: int, float double. If nothing applies, a string is returned
      *
      * @param raw Raw value as string
      * @return Cell of the type int, float, double or string as fall-back type<
      */
     private static Cell getNumericValue(String raw, Address address) {
-        try {
-            int i = Integer.parseInt(raw);
+        Integer i = tryParseInt(raw);
+        if (i != null) {
             return new Cell(i, Cell.CellType.NUMBER, address);
-        } catch (Exception ignored) {
         }
-        try {
-            long l = Long.parseLong(raw);
+        Long l = tryParseLong(raw);
+        if (l != null) {
             return new Cell(l, Cell.CellType.NUMBER, address);
-        } catch (Exception ignored) {
         }
+
+        Number n = tryParseDecimal(raw);
+        if (n != null && n instanceof Double) {
+            return new Cell(n.doubleValue(), Cell.CellType.NUMBER, address);
+        } else if (n != null && n instanceof Float) {
+            return new Cell(n.floatValue(), Cell.CellType.NUMBER, address);
+        }
+        return new Cell(raw, Cell.CellType.STRING, address);
+/*
         try {
             double d = Double.parseDouble(raw);
-            try{
+            try {
                 float f = Float.parseFloat(raw);
-                if (Float.isFinite(f) && (f != 0.0 || (double)(float)d == d)){
+                if (Float.isFinite(f) && (f != 0.0 || (double) (float) d == d)) {
                     return new Cell(f, Cell.CellType.NUMBER, address);
                 }
-            }
-            catch (Exception ignored2){
+            } catch (Exception ignored2) {
             }
             return new Cell(d, Cell.CellType.NUMBER, address);
         } catch (Exception ignored) {
             return new Cell(raw, Cell.CellType.STRING, address);
         }
+        */
     }
 
+    private static Number tryParseDecimal(String value) {
+        try {
+            double d = Double.parseDouble(value);
+            try {
+                Float f = Float.parseFloat(value);
+                if (Float.isFinite(f) && (f != 0.0 || (double) (float) d == d)) {
+                    return f;
+                }
+            } catch (Exception ignore) {
+            }
+            return d;
+        } catch (Exception ignore) {
+            return null;
+        }
+    }
+
+    /**
+     * Tries to parse a string to an int
+     *
+     * @param value Raw input string
+     * @return Parsed int or null if not a valid integer32
+     */
+    private static Integer tryParseInt(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (Exception ignore) {
+            return null;
+        }
+    }
+
+    /**
+     * Tries to parse a string to an long
+     *
+     * @param value Raw input string
+     * @return Parsed long or null if not a valid integer64
+     */
+    private static Long tryParseLong(String value) {
+        try {
+            return Long.parseLong(value);
+        } catch (Exception ignore) {
+            return null;
+        }
+    }
+
+    /**
+     * Tries to parse a string to a float
+     *
+     * @param value Raw input string
+     * @return Parsed float or null if not a valid decimal32
+     */
+    private static Float tryParseFloat(String value) {
+        try {
+            Float f = Float.parseFloat(value);
+            if (!f.isInfinite() && !f.isNaN()) {
+                return f;
+            } else {
+                return null;
+            }
+        } catch (Exception ignore) {
+            return null;
+        }
+    }
+
+    /**
+     * Tries to parse a string to a double
+     *
+     * @param value Raw input string
+     * @return Parsed double or null if not a valid decimal64
+     */
+    private static Double tryParseDouble(String value) {
+        try {
+            Double d = Double.parseDouble(value);
+            if (!d.isInfinite() && !d.isNaN()) {
+                return d;
+            } else {
+                return null;
+            }
+        } catch (Exception ignore) {
+            return null;
+        }
+    }
 
     /**
      * Parses the string value of a raw cell. May take the value from the shared string table, if available
@@ -362,16 +496,13 @@ public class WorksheetReader {
      * @return Cell of the type boolean or the defined fall-back type
      */
     private static Cell getBooleanValue(String raw, Address address) {
-        if (raw == null || raw.isBlank()){
+        if (raw == null || raw.isBlank()) {
             return new Cell(raw, Cell.CellType.STRING, address);
         }
         String str = raw.toLowerCase();
-        if (str.equals("1") || str.equals("true"))
-        {
+        if (str.equals("1") || str.equals("true")) {
             return new Cell(true, Cell.CellType.BOOL, address);
-        }
-        else if (str.equals("0") || str.equals("false"))
-        {
+        } else if (str.equals("0") || str.equals("false")) {
             return new Cell(false, Cell.CellType.BOOL, address);
         }
         return new Cell(raw, Cell.CellType.STRING, address);

@@ -283,7 +283,7 @@ public class Style extends AbstractStyle {
     }
 
     /**
-     * Copies the current object as casted style
+     * Copies the current object as cast style
      *
      * @return Copy of the current object without the internal ID
      */
