@@ -28,6 +28,8 @@ public class ImportOptionTest {
         cells.put("A5", 0.55f);
         cells.put("A6", -0.111d);
         cells.put("A7",getDate(2020, 10, 10, 9, 8, 7)); // month -1
+        cells.put("A8", LocalTime.of(18,15,12));
+        cells.put("A9", null);
         Map<String, String> expectedCells = new HashMap<String, String>();
         expectedCells.put("A1", "test");
         expectedCells.put("A2", "true");
@@ -36,6 +38,8 @@ public class ImportOptionTest {
         expectedCells.put("A5", "0.55");
         expectedCells.put("A6", "-0.111");
         expectedCells.put("A7", "2020-11-10 09:08:07");
+        expectedCells.put("A8", "18:15:12");
+        expectedCells.put("A9", null);
         ImportOptions options = new ImportOptions();
         options.setGlobalEnforcingType(ImportOptions.GlobalType.EverythingToString);
         assertValues(cells, options, ImportOptionTest::assertEqualsFunction, expectedCells);
@@ -53,6 +57,8 @@ public class ImportOptionTest {
         cells.put("A5", 0.55f);
         cells.put("A6", -0.111d);
         cells.put("A7", getDate(2020, 11, 10, 9, 8, 7));
+        cells.put("A8", LocalTime.of(18,15,12));
+        cells.put("A9", null);
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", "test");
         expectedCells.put("A2", true);
@@ -61,6 +67,8 @@ public class ImportOptionTest {
         expectedCells.put("A5", 0.55d);
         expectedCells.put("A6", -0.111d);
         expectedCells.put("A7", Double.valueOf(Helper.getOADateString(getDate(2020,11,10,9,8,7))));
+        expectedCells.put("A8", Double.valueOf(Helper.getOATimeString(LocalTime.of(18,15,12))));
+        expectedCells.put("A9", null);
         ImportOptions options = new ImportOptions();
         options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToDouble);
         assertValues(cells, options,ImportOptionTest::assertApproximateFunction, expectedCells);
@@ -81,6 +89,7 @@ public class ImportOptionTest {
         cells.put("A8", LocalTime.of(18,15,12));
         cells.put("A9", -4.9f);
         cells.put("A10", 0.49d);
+        cells.put("A11", null);
         Map<String, Object> expectedCells = new HashMap<String, Object>();
         expectedCells.put("A1", "test");
         expectedCells.put("A2", true);
@@ -88,10 +97,11 @@ public class ImportOptionTest {
         expectedCells.put("A4", 42);
         expectedCells.put("A5", 1);
         expectedCells.put("A6", -3);
-        expectedCells.put("A7", (int)Math.round(Double.valueOf(Helper.getOADateString(getDate(2020, 11, 10, 9, 8, 7)))));
-        expectedCells.put("A8", (int)Math.round(Double.valueOf(Helper.getOATimeString(LocalTime.of(18,15,12)))));
+        expectedCells.put("A7", (int)Math.round(Double.parseDouble(Helper.getOADateString(getDate(2020, 11, 10, 9, 8, 7)))));
+        expectedCells.put("A8", (int)Math.round(Double.parseDouble(Helper.getOATimeString(LocalTime.of(18,15,12)))));
         expectedCells.put("A9", -5);
         expectedCells.put("A10", 0);
+        expectedCells.put("A11", null);
         ImportOptions options = new ImportOptions();
         options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToInt);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);

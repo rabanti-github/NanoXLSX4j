@@ -323,13 +323,14 @@ public class WorksheetReader {
     }
 
     /**
-     * Handles the value of a raw cell as string. An appropriate formatting is applied to Date and LocalTime values
-     * @param address Address of the cell
-     * @param type Expected data type
-     * @param value Raw value as string
+     * Handles the value of a raw cell as string. An appropriate formatting is applied to Date and LocalTime values. Null values are left on type EMPTY
+     *
+     * @param address     Address of the cell
+     * @param type        Expected data type
+     * @param value       Raw value as string
      * @param styleNumber Style number as string (can be null)
-     * @param formula Formula as string (can be null; data type determines whether value or formula is used)
-     * @param options Options instance to determine appropriate formatting information
+     * @param formula     Formula as string (can be null; data type determines whether value or formula is used)
+     * @param options     Options instance to determine appropriate formatting information
      * @return Cell of the type string
      */
     private Cell getEnforcedStingValue(Address address, String type, String value, String styleNumber, String formula, ImportOptions options) {
@@ -362,38 +363,26 @@ public class WorksheetReader {
         }
 
         Number n = tryParseDecimal(raw);
-        if (n != null && n instanceof Double) {
+        if (n instanceof Double) {
             return new Cell(n.doubleValue(), Cell.CellType.NUMBER, address);
-        } else if (n != null && n instanceof Float) {
+        } else if (n instanceof Float) {
             return new Cell(n.floatValue(), Cell.CellType.NUMBER, address);
         }
         return new Cell(raw, Cell.CellType.STRING, address);
-/*
-        try {
-            double d = Double.parseDouble(raw);
-            try {
-                float f = Float.parseFloat(raw);
-                if (Float.isFinite(f) && (f != 0.0 || (double) (float) d == d)) {
-                    return new Cell(f, Cell.CellType.NUMBER, address);
-                }
-            } catch (Exception ignored2) {
-            }
-            return new Cell(d, Cell.CellType.NUMBER, address);
-        } catch (Exception ignored) {
-            return new Cell(raw, Cell.CellType.STRING, address);
-        }
-        */
     }
 
+    /**
+     * Tries to parse a string to a decimal (either float or double, if aou of range for float)
+     *
+     * @param value Raw string value
+     * @return Decimal with either a float or double value
+     */
     private static Number tryParseDecimal(String value) {
         try {
             double d = Double.parseDouble(value);
-            try {
-                Float f = Float.parseFloat(value);
-                if (Float.isFinite(f) && (f != 0.0 || (double) (float) d == d)) {
-                    return f;
-                }
-            } catch (Exception ignore) {
+            float f = Float.parseFloat(value);
+            if (Float.isFinite(f) && (f != 0.0 || (float) d == d)) {
+                return f;
             }
             return d;
         } catch (Exception ignore) {
@@ -424,44 +413,6 @@ public class WorksheetReader {
     private static Long tryParseLong(String value) {
         try {
             return Long.parseLong(value);
-        } catch (Exception ignore) {
-            return null;
-        }
-    }
-
-    /**
-     * Tries to parse a string to a float
-     *
-     * @param value Raw input string
-     * @return Parsed float or null if not a valid decimal32
-     */
-    private static Float tryParseFloat(String value) {
-        try {
-            Float f = Float.parseFloat(value);
-            if (!f.isInfinite() && !f.isNaN()) {
-                return f;
-            } else {
-                return null;
-            }
-        } catch (Exception ignore) {
-            return null;
-        }
-    }
-
-    /**
-     * Tries to parse a string to a double
-     *
-     * @param value Raw input string
-     * @return Parsed double or null if not a valid decimal64
-     */
-    private static Double tryParseDouble(String value) {
-        try {
-            Double d = Double.parseDouble(value);
-            if (!d.isInfinite() && !d.isNaN()) {
-                return d;
-            } else {
-                return null;
-            }
         } catch (Exception ignore) {
             return null;
         }

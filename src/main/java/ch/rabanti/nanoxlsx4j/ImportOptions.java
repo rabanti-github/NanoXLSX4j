@@ -20,12 +20,12 @@ public class ImportOptions {
     /**
      * Default format if Date values are cast to strings
      */
-    public static final String DEFAULT_DATE_FORMAT = "yyy-MM-dd hh:mm:ss";
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * Default format if LocalTime values are cast to strings
      */
-    public static final String DEFAULT_LOCALTIME_FORMAT = "hh:mm:ss";
+    public static final String DEFAULT_LOCALTIME_FORMAT = "HH:mm:ss";
 
     /**
      *  Global conversion types to enforce during the import. All types other than {@link GlobalType#Default} will override defined {@link ColumnType}s
