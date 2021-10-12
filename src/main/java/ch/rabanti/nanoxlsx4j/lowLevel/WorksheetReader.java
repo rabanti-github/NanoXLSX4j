@@ -222,6 +222,9 @@ public class WorksheetReader {
      * @return The resolved Cell
      */
     private Cell resolveCellDataConditionally(Address address, String type, String value, String styleNumber, String formula) {
+        if (address.Row < importOptions.getEnforcingStartRowNumber()) {
+            return autoResolveCellData(address, type, value, styleNumber, formula); // Skip enforcing
+        }
         if (importOptions.getGlobalEnforcingType() != ImportOptions.GlobalType.Default) {
             Cell tempCell = autoResolveCellData(address, type, value, styleNumber, formula);
             switch (importOptions.getGlobalEnforcingType()) {
@@ -245,36 +248,34 @@ public class WorksheetReader {
                     return getEnforcedStingValue(address, type, value, styleNumber, formula, importOptions);
             }
         }
-        if (address.Row < importOptions.getEnforcingStartRowNumber()) {
-            return autoResolveCellData(address, type, value, styleNumber, formula); // Skip enforcing
+        if (Helper.isNullOrEmpty(value)) {
+            if (importOptions.isEnforceEmptyValuesAsString()) {
+                return new Cell("", Cell.CellType.STRING, address);
+            } else {
+                return new Cell(null, Cell.CellType.EMPTY, address);
+            }
         }
         if (importOptions.getEnforcedColumnTypes().containsKey(address.Column)) {
-            if (Helper.isNullOrEmpty(value)) {
-                if (importOptions.isEnforceEmptyValuesAsString()) {
-                    return new Cell("", Cell.CellType.STRING, address);
-                } else {
-                    return new Cell(null, Cell.CellType.EMPTY, address);
-                }
-            }
+
             ImportOptions.ColumnType importType = importOptions.getEnforcedColumnTypes().get(address.Column);
             switch (importType) {
-                case bool:
+                case Bool:
                     return getBooleanValue(value, address);
-                case date:
+                case Date:
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
                         return getNumericValue(value, address);
                     } else {
                         return getDateTimeValue(value, address, DATE);
                     }
-                case time:
+                case Time:
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
                         return getNumericValue(value, address);
                     } else {
                         return getDateTimeValue(value, address, TIME);
                     }
-                case numeric:
+                case Numeric:
                     return getNumericValue(value, address);
-                case string:
+                case String:
                     return getStringValue(value, address);
                 default:
                     return autoResolveCellData(address, type, value, styleNumber, formula);

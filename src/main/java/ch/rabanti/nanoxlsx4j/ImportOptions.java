@@ -40,7 +40,7 @@ public class ImportOptions {
          */
         AllNumbersToDouble,
         /**
-         * All numbers are cast to integers. Floating point numbers will be rounded (commercial rounding) to the nearest int
+         * All numbers are cast to integers. Floating point numbers will be rounded (commercial rounding) to the nearest integer
          */
         AllNumbersToInt,
         /**
@@ -56,29 +56,29 @@ public class ImportOptions {
         /**
          * Cells are tried to be imported as numbers (double)
          */
-        numeric,
+        Numeric,
         /**
          * Cells are tried to be imported as dates (Date)
          */
-        date,
+        Date,
         /**
          * Cells are tried to be imported as times (LocalTime)
          */
-        time,
+        Time,
         /**
          * Cells are tried to be imported as booleans
          */
-        bool,
+        Bool,
         /**
          * Cells are all imported as strings, using the ToString() method
          */
-        string
+        String
     }
 
     private boolean enforceDateTimesAsNumbers = false;
     private boolean enforceEmptyValuesAsString = false;
-    private Map<Integer, ColumnType> enforcedColumnTypes = new HashMap<>();
-    private  int EnforcingStartRowNumber = 0;
+    private final Map<Integer, ColumnType> enforcedColumnTypes = new HashMap<>();
+    private  int enforcingStartRowNumber = 0;
     private GlobalType globalEnforcingType = GlobalType.Default;
     private String dateFormat;
     private String localTimeFormat;
@@ -106,7 +106,7 @@ public class ImportOptions {
      * @return Row number
      */
     public int getEnforcingStartRowNumber() {
-        return EnforcingStartRowNumber;
+        return enforcingStartRowNumber;
     }
 
     /**
@@ -118,11 +118,11 @@ public class ImportOptions {
     }
 
     /**
-     * Sets the row number (zero-based) where enforcing rules are started to be applied. This is, for instance, to prevent enforcing in a header row
+     * Sets the row number (zero-based) where enforcing rules are started to be applied. This is, for instance, to prevent enforcing types in a header row. Any enforcing rule is skipped until this row number is reached
      * @param enforcingStartRowNumber Row number
      */
     public void setEnforcingStartRowNumber(int enforcingStartRowNumber) {
-        EnforcingStartRowNumber = enforcingStartRowNumber;
+        this.enforcingStartRowNumber = enforcingStartRowNumber;
     }
 
     /**
@@ -162,7 +162,7 @@ public class ImportOptions {
     }
 
     /**
-     * Gets the global strategy to handle cell values. The default will not enforce any casting, besides {@link ImportOptions#setEnforceDateTimesAsNumbers(boolean)}, {@link ImportOptions#setEnforceEmptyValuesAsString(boolean)} and {@link ImportOptions#addEnforcedColumn(int, ColumnType)}
+     * Gets the global strategy to handle cell values. The default will not enforce any general casting, besides {@link ImportOptions#setEnforceDateTimesAsNumbers(boolean)}, {@link ImportOptions#setEnforceEmptyValuesAsString(boolean)} and {@link ImportOptions#addEnforcedColumn(int, ColumnType)}
      * @return Global cast strategy on import
      */
     public GlobalType getGlobalEnforcingType() {

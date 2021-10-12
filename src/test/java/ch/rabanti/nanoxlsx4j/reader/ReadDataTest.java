@@ -232,6 +232,8 @@ public class ReadDataTest {
             "H1, STRING, STRING, 'y'",
             "I1, BOOL, BOOLEAN,'true'",
             "J1, BOOL, BOOLEAN,'false'",
+            "K1, STRING, STRING,'z'",
+            "L1, STRING, STRING,'z'",
     })
     void readInvalidDataTest(String cellAddress, Cell.CellType expectedType, String sourceType, String sourceValue) throws Exception {
         // Note: Cell A1 is a valid String
@@ -244,6 +246,8 @@ public class ReadDataTest {
         //       Cell H1 is defined as the unknown type 'z'
         //       Cell I1 is defined as boolean but has 'true' instead of 1 as XML value
         //       Cell J1 is defined as boolean but has 'FALSE' instead of 0 as XML value
+        //       Cell K1 is defined as date but has an invalid value of 'z'
+        //       Cell L1 is defined as time but has an invalid value of 'z'
 
         Object expectedValue = TestUtils.createInstance(sourceType, sourceValue);
         InputStream stream = TestUtils.getResource("tampered.xlsx");

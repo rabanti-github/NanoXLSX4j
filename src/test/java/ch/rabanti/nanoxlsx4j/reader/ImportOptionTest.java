@@ -107,6 +107,26 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
+    @DisplayName("Test of the enforcingStartRowNumber functionality on global enforcing rules")
+    @Test()
+    void enforcingStartRowNumberTest() throws Exception {
+        Map<String, Object> cells = new HashMap<String, Object>();
+        cells.put("A1", 22);
+        cells.put("A2", true);
+        cells.put("A3", 22);
+        cells.put("A4", true);
+        cells.put("A5", 22.5d);
+        Map<String, Object> expectedCells = new HashMap<String, Object>();
+        expectedCells.put("A1", 22);
+        expectedCells.put("A2", true);
+        expectedCells.put("A3", "22");
+        expectedCells.put("A4", "true");
+        expectedCells.put("A5", "22.5");
+        ImportOptions options = new ImportOptions();
+        options.setEnforcingStartRowNumber(2);
+        options.setGlobalEnforcingType(ImportOptions.GlobalType.EverythingToString);
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
 
     private static Date getDate(int year, int month, int day, int hour, int minute, int second){
         Calendar calendar = Calendar.getInstance();
