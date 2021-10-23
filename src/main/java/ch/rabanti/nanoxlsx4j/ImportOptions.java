@@ -54,9 +54,13 @@ public class ImportOptions {
      */
     public enum ColumnType{
         /**
-         * Cells are tried to be imported as numbers (double)
+         * Cells are tried to be imported as numbers (automatic determination of numeric type)
          */
         Numeric,
+        /**
+         * Cells are tried to be imported as numbers (enforcing double)
+         */
+        Double,
         /**
          * Cells are tried to be imported as dates (Date)
          */

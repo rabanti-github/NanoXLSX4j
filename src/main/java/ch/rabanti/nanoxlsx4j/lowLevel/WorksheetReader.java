@@ -232,16 +232,38 @@ public class WorksheetReader {
                     if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
                         Number number = (Number) tempCell.getValue();
                         return new Cell(number.doubleValue(), tempCell.getDataType(), address);
-                    } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
+                    }
+                    else if (tempCell.getDataType().equals(Cell.CellType.BOOL)){
+                        double tempDouble = ((boolean)tempCell.getValue()) ? 1d : 0d;
+                        return new Cell(tempDouble, Cell.CellType.NUMBER, address);
+                    }
+                    else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
                         return new Cell(Double.valueOf(value), Cell.CellType.NUMBER, address);
+                    }
+                    else if (tempCell.getDataType().equals(Cell.CellType.STRING)){
+                        Number number = tryParseDecimal(tempCell.getValue().toString());
+                        if (number != null){
+                            return new Cell(number.doubleValue(), Cell.CellType.NUMBER, address);
+                        }
                     }
                     return tempCell;
                 case AllNumbersToInt:
                     if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
                         Number number = (Number) tempCell.getValue();
                         return new Cell((int) Math.round(number.doubleValue()), tempCell.getDataType(), address);
-                    } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
+                    }
+                    else if (tempCell.getDataType().equals(Cell.CellType.BOOL)){
+                        int tempInt = ((boolean)tempCell.getValue()) ? 1 : 0;
+                        return new Cell(tempInt, Cell.CellType.NUMBER, address);
+                    }
+                    else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
                         return new Cell((int) Math.round(Double.parseDouble(value)), Cell.CellType.NUMBER, address);
+                    }
+                    else if (tempCell.getDataType().equals(Cell.CellType.STRING)){
+                        Number number = tryParseDecimal(tempCell.getValue().toString());
+                        if (number != null){
+                            return new Cell(number.intValue(), Cell.CellType.NUMBER, address);
+                        }
                     }
                     return tempCell;
                 case EverythingToString:
@@ -258,6 +280,10 @@ public class WorksheetReader {
         if (importOptions.getEnforcedColumnTypes().containsKey(address.Column)) {
 
             ImportOptions.ColumnType importType = importOptions.getEnforcedColumnTypes().get(address.Column);
+            if (type != null && type.equals("s")){
+                // Resolve shared string first
+                value = resolveSharedString(value);
+            }
             switch (importType) {
                 case Bool:
                     return getBooleanValue(value, address);
@@ -275,6 +301,8 @@ public class WorksheetReader {
                     }
                 case Numeric:
                     return getNumericValue(value, address);
+                case Double:
+                    return getDoubleValue(value, address);
                 case String:
                     return getStringValue(value, address);
                 default:
@@ -364,16 +392,31 @@ public class WorksheetReader {
         }
 
         Number n = tryParseDecimal(raw);
-        if (n instanceof Double) {
-            return new Cell(n.doubleValue(), Cell.CellType.NUMBER, address);
-        } else if (n instanceof Float) {
+        if (n instanceof Float) {
             return new Cell(n.floatValue(), Cell.CellType.NUMBER, address);
         }
-        return new Cell(raw, Cell.CellType.STRING, address);
+        return getDoubleValue(raw, address);
     }
 
     /**
-     * Tries to parse a string to a decimal (either float or double, if aou of range for float)
+     * Parses a raw value as double
+     *
+     * @param raw     Raw value as string
+     * @param address Address of the cell
+     * @return Cell of the type double or string as fall-back type
+     */
+    private static Cell getDoubleValue(String raw, Address address) {
+        try {
+            double d = Double.parseDouble(raw);
+            return new Cell(d, Cell.CellType.NUMBER, address);
+        }
+        catch(Exception ex){
+            return new Cell(raw, Cell.CellType.STRING, address);
+        }
+    }
+
+    /**
+     * Tries to parse a string to a decimal (either float or double, if out of range for float)
      *
      * @param value Raw string value
      * @return Decimal with either a float or double value
@@ -427,16 +470,25 @@ public class WorksheetReader {
      * @return Cell of the type string
      */
     private Cell getStringValue(String raw, Address address) {
+        return new Cell(resolveSharedString(raw), Cell.CellType.STRING, address);
+    }
+
+    /**
+     * Tries to resolve a shared string from its ID
+     * @param raw Raw value that can be either an ID of a shared string or an actual string value
+     * @return Resolved string or the raw value if no shared string could be determined
+     */
+    private String resolveSharedString(String raw) {
         try {
             int stringId = Integer.parseInt(raw);
             String resolvedString = sharedStrings.getString(stringId);
             if (resolvedString == null) {
-                return new Cell(raw, Cell.CellType.STRING, address);
+                return raw;
             } else {
-                return new Cell(resolvedString, Cell.CellType.STRING, address);
+                return resolvedString;
             }
         } catch (Exception ex) {
-            return new Cell(raw, Cell.CellType.STRING, address);
+            return raw;
         }
     }
 
