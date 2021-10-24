@@ -286,7 +286,11 @@ public class WorksheetReader {
             }
             switch (importType) {
                 case Bool:
-                    return getBooleanValue(value, address);
+                    Cell tempCell = getBooleanValue(value, address);
+                    if (tempCell == null){
+                        return autoResolveCellData(address, type, value, styleNumber, formula);
+                    }
+                    return tempCell;
                 case Date:
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
                         return getNumericValue(value, address);
@@ -329,7 +333,11 @@ public class WorksheetReader {
             return getStringValue(value, address);
         } else if (type != null && type.equals("b")) // boolean
         {
-            return getBooleanValue(value, address);
+            Cell tempCell = getBooleanValue(value, address);
+            if (tempCell == null){
+                return autoResolveCellData(address, null, value, styleNumber, formula);
+            }
+            return tempCell;
         } else if (dateStyles.contains(styleNumber))  // date (priority)
         {
             return getDateTimeValue(value, address, DATE);
@@ -497,7 +505,7 @@ public class WorksheetReader {
      *
      * @param raw     Raw value as string
      * @param address Address of the cell
-     * @return Cell of the type boolean or the defined fall-back type
+     * @return Cell of the type boolean or null if not able to parse
      */
     private static Cell getBooleanValue(String raw, Address address) {
         if (raw == null || raw.isBlank()) {
@@ -509,7 +517,7 @@ public class WorksheetReader {
         } else if (str.equals("0") || str.equals("false")) {
             return new Cell(false, Cell.CellType.BOOL, address);
         }
-        return new Cell(raw, Cell.CellType.STRING, address);
+        return null;
     }
 
     /**

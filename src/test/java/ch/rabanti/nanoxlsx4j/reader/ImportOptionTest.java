@@ -164,7 +164,37 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
-
+    @DisplayName("Test of the import options for the import column type: Numeric")
+    @Test()
+    void enforcingColumnAsNumberTest2() throws Exception {
+        LocalTime time = LocalTime.of(11, 12, 13);
+        Date date = getDate(2021, 8, 14, 18, 22, 13);
+        Map<String, Object> cells = new HashMap<>();
+        cells.put("A1", 22);
+        cells.put("A2", "21");
+        cells.put("A3", true);
+        cells.put("B1", 23);
+        cells.put("B2", "20.1");
+        cells.put("B3", true);
+        cells.put("B4", time);
+        cells.put("B5", date);
+        cells.put("C1", "2");
+        cells.put("C2", LocalTime.of(12, 14, 16));
+        Map<String, Object> expectedCells = new HashMap<>();
+        expectedCells.put("A1", 22);
+        expectedCells.put("A2", "21");
+        expectedCells.put("A3", true);
+        expectedCells.put("B1", 23);
+        expectedCells.put("B2", 20.1f);
+        expectedCells.put("B3", 1);
+        expectedCells.put("B4", Float.parseFloat(Helper.getOATimeString(time)));
+        expectedCells.put("B5", Float.parseFloat(Helper.getOADateString(date)));
+        expectedCells.put("C1", "2");
+        expectedCells.put("C2", LocalTime.of(12, 14, 16));
+        ImportOptions options = new ImportOptions();
+        options.addEnforcedColumn(1, ImportOptions.ColumnType.Numeric);
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
 
     private static Date getDate(int year, int month, int day, int hour, int minute, int second){
         Calendar calendar = Calendar.getInstance();

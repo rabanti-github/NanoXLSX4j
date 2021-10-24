@@ -226,7 +226,7 @@ public class ReadDataTest {
             "A1, STRING, STRING, 'Test'",
             "B1, STRING, STRING, 'x'",
             "C1, NUMBER, DOUBLE, '-1.8538541667'",
-            "D1, STRING, STRING, '2'", // Could be number but fallback is string, anyway
+            "D1, NUMBER, INTEGER, 2",
             "E1, STRING, STRING, 'x'",
             "F1, STRING, STRING, '1'", // Reference 1 is cast to string '1'  "G1, Cell.CellType.NUMBER, -1.5",
             "H1, STRING, STRING, 'y'",
