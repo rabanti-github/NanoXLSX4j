@@ -47,7 +47,7 @@ public class SharedStringsReader {
      * @return Determined shared string value. Returns null in case of a invalid index
      */
     public String getString(int index) {
-        if (!hasElements() || index > sharedStrings.size() - 1) {
+        if (!hasElements() || index > sharedStrings.size() - 1 || index < 0) {
             return null;
         }
         return sharedStrings.get(index);

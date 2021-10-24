@@ -8,10 +8,11 @@ package ch.rabanti.nanoxlsx4j;
 
 /**
  * Final class to provide metadata for the library
+ *
  * @author Raphael Stoeckli
  */
 public final class Version {
-    
+
 // ### C O N S T A N T S ###    
     /**
      * Application name of the library
@@ -21,5 +22,5 @@ public final class Version {
      * Version of the library
      */
     public static final String VERSION = "1.3000"; // 1.3.0
-    
+
 }

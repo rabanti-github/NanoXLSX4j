@@ -12,8 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SetWorksheetTest {
     @DisplayName("Test of the setCurrentWorksheet function by index")
     @Test()
-    void setCurrentWorksheetTest()
-    {
+    void setCurrentWorksheetTest() {
         Workbook workbook = new Workbook();
         assertNull(workbook.getCurrentWorksheet());
         workbook.addWorksheet("test1");
@@ -27,8 +26,7 @@ public class SetWorksheetTest {
 
     @DisplayName("Test of the setCurrentWorksheet function by index")
     @Test()
-    void setCurrentWorksheetTest2()
-    {
+    void setCurrentWorksheetTest2() {
         Workbook workbook = new Workbook();
         assertNull(workbook.getCurrentWorksheet());
         workbook.addWorksheet("test1");
@@ -42,8 +40,7 @@ public class SetWorksheetTest {
 
     @DisplayName("Test of the SetCurrentWorksheet function by reference")
     @Test()
-    void setCurrentWorksheetTest3()
-    {
+    void setCurrentWorksheetTest3() {
         Workbook workbook = new Workbook();
         assertNull(workbook.getCurrentWorksheet());
         workbook.addWorksheet("test1");
@@ -59,8 +56,7 @@ public class SetWorksheetTest {
 
     @DisplayName("Test of the failing setCurrentWorksheet function on an invalid name")
     @Test()
-    void setCurrentWorksheetFailTest()
-    {
+    void setCurrentWorksheetFailTest() {
         Workbook workbook = new Workbook();
         assertNull(workbook.getCurrentWorksheet());
         workbook.addWorksheet("test1");
@@ -72,8 +68,7 @@ public class SetWorksheetTest {
 
     @DisplayName("Test of the failing setCurrentWorksheet function on an invalid index")
     @Test()
-    void setCurrentWorksheetFailTest2()
-    {
+    void setCurrentWorksheetFailTest2() {
         Workbook workbook = new Workbook();
         assertNull(workbook.getCurrentWorksheet());
         workbook.addWorksheet("test1");
@@ -83,8 +78,7 @@ public class SetWorksheetTest {
 
     @DisplayName("Test of the failing setCurrentWorksheet function on an invalid reference")
     @Test()
-    void setCurrentWorksheetFailTest3()
-    {
+    void setCurrentWorksheetFailTest3() {
         Workbook workbook = new Workbook();
         assertNull(workbook.getCurrentWorksheet());
         workbook.addWorksheet("test1");
@@ -97,8 +91,7 @@ public class SetWorksheetTest {
 
     @DisplayName("Test of the setSelectedWorksheet function by name")
     @Test()
-    void setSelectedWorksheetTest()
-    {
+    void setSelectedWorksheetTest() {
         Workbook workbook = new Workbook();
         workbook.addWorksheet("test1");
         workbook.addWorksheet("test2");
@@ -110,8 +103,7 @@ public class SetWorksheetTest {
 
     @DisplayName("Test of the setSelectedWorksheet function by index")
     @Test()
-    void setSelectedWorksheetTest2()
-    {
+    void setSelectedWorksheetTest2() {
         Workbook workbook = new Workbook();
         workbook.addWorksheet("test1");
         workbook.addWorksheet("test2");
@@ -123,8 +115,7 @@ public class SetWorksheetTest {
 
     @DisplayName("Test of the setSelectedWorksheet function by reference")
     @Test()
-    void setSelectedWorksheetTest3()
-    {
+    void setSelectedWorksheetTest3() {
         Workbook workbook = new Workbook();
         workbook.addWorksheet("test1");
         Worksheet worksheet = new Worksheet();
@@ -138,8 +129,7 @@ public class SetWorksheetTest {
 
     @DisplayName("Test of the failing setSelectedWorksheet function on an invalid name")
     @Test()
-    void setSelectedWorksheetFailTest()
-    {
+    void setSelectedWorksheetFailTest() {
         Workbook workbook = new Workbook();
         assertEquals(0, workbook.getSelectedWorksheet());
         workbook.addWorksheet("test1");
@@ -151,8 +141,7 @@ public class SetWorksheetTest {
 
     @DisplayName("Test of the failing setSelectedWorksheet function on an invalid index")
     @Test()
-    void setSelectedWorksheetFailTest2()
-    {
+    void setSelectedWorksheetFailTest2() {
         Workbook workbook = new Workbook();
         assertEquals(0, workbook.getSelectedWorksheet());
         workbook.addWorksheet("test1");
@@ -162,8 +151,7 @@ public class SetWorksheetTest {
 
     @DisplayName("Test of the failing setSelectedWorksheet function on an invalid reference")
     @Test()
-    void setSelectedWorksheetFailTest3()
-    {
+    void setSelectedWorksheetFailTest3() {
         Workbook workbook = new Workbook();
         assertEquals(0, workbook.getSelectedWorksheet());
         workbook.addWorksheet("test1");

@@ -60,6 +60,7 @@ public class LoadTest {
         workbook.saveAs(name);
         return name;
     }
+
     private static Map<String, Object> createSampleData() {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("A1", "test");

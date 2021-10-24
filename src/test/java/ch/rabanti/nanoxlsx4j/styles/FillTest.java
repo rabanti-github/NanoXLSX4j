@@ -13,19 +13,17 @@ public class FillTest {
 
     private final Fill exampleStyle;
 
-    public FillTest()
-    {
+    public FillTest() {
         exampleStyle = new Fill();
         exampleStyle.setBackgroundColor("FFAABB00");
         exampleStyle.setForegroundColor("1188FF00");
         exampleStyle.setIndexedColor(99);
         exampleStyle.setPatternFill(Fill.PatternValue.darkGray);
     }
-    
+
     @DisplayName("Test of the default values")
     @Test()
-    void defaultValuesTest()
-    {
+    void defaultValuesTest() {
         assertEquals("FF000000", Fill.DEFAULT_COLOR);
         assertEquals(64, Fill.DEFAULT_INDEXED_COLOR);
         assertEquals(Fill.PatternValue.none, Fill.DEFAULT_PATTERN_FILL);
@@ -33,8 +31,7 @@ public class FillTest {
 
     @DisplayName("Test of the constructor with colors")
     @Test()
-    void constructorTest()
-    {
+    void constructorTest() {
         Fill fill = new Fill();
         assertEquals(Fill.DEFAULT_INDEXED_COLOR, fill.getIndexedColor());
         assertEquals(Fill.DEFAULT_PATTERN_FILL, fill.getPatternFill());
@@ -44,8 +41,7 @@ public class FillTest {
 
     @DisplayName("Test of the constructor")
     @Test()
-    void constructorTest2()
-    {
+    void constructorTest2() {
         Fill fill = new Fill("FFAABBCC", "FF001122");
         assertEquals(Fill.DEFAULT_INDEXED_COLOR, fill.getIndexedColor());
         assertEquals(Fill.PatternValue.solid, fill.getPatternFill());
@@ -59,8 +55,7 @@ public class FillTest {
             "FFAABBCC, fillColor, FFAABBCC, FF000000",
             "FF112233, patternColor, FF000000, FF112233",
     })
-    void constructorTest3(String color, Fill.FillType fillType, String expectedForeground, String expectedBackground)
-    {
+    void constructorTest3(String color, Fill.FillType fillType, String expectedForeground, String expectedBackground) {
         Fill fill = new Fill(color, fillType);
         assertEquals(Fill.DEFAULT_INDEXED_COLOR, fill.getIndexedColor());
         assertEquals(Fill.PatternValue.solid, fill.getPatternFill());
@@ -85,10 +80,9 @@ public class FillTest {
             "STRING, 'FF000000', STRING , 'x'",
             "STRING, 'x', STRING , 'y'",
     })
-    void constructorFailTest(String foregroundSourceType, String foregroundSourceValue, String backgroundSourceType, String backgroundSourceValue)
-    {
-        String foreground = (String)TestUtils.createInstance(foregroundSourceType, foregroundSourceValue);
-        String background = (String)TestUtils.createInstance(backgroundSourceType, backgroundSourceValue);
+    void constructorFailTest(String foregroundSourceType, String foregroundSourceValue, String backgroundSourceType, String backgroundSourceValue) {
+        String foreground = (String) TestUtils.createInstance(foregroundSourceType, foregroundSourceValue);
+        String background = (String) TestUtils.createInstance(backgroundSourceType, backgroundSourceValue);
         assertThrows(StyleException.class, () -> new Fill(foreground, background));
     }
 
@@ -106,9 +100,8 @@ public class FillTest {
             "STRING, 'FFAABBCCDD', patternColor",
             "STRING, 'FFAABB', patternColor",
     })
-    void constructorFailTest2(String sourceType, String sourceValue, Fill.FillType fillType)
-    {
-        String color = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void constructorFailTest2(String sourceType, String sourceValue, Fill.FillType fillType) {
+        String color = (String) TestUtils.createInstance(sourceType, sourceValue);
         assertThrows(StyleException.class, () -> new Fill(color, fillType));
     }
 
@@ -118,8 +111,7 @@ public class FillTest {
             "77CCBB00",
             "00000000",
     })
-    void backgroundColorTest(String value)
-    {
+    void backgroundColorTest(String value) {
         Fill fill = new Fill();
         assertEquals(Fill.DEFAULT_COLOR, fill.getBackgroundColor());
         fill.setBackgroundColor(value);
@@ -135,9 +127,8 @@ public class FillTest {
             "NULL, ''",
             "STRING, 'XXXXXXXX'",
     })
-    void backgroundColorFailTest(String sourceType, String sourceValue)
-    {
-        String value = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void backgroundColorFailTest(String sourceType, String sourceValue) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Fill fill = new Fill();
         assertThrows(Exception.class, () -> fill.setBackgroundColor(value));
     }
@@ -148,8 +139,7 @@ public class FillTest {
             "77CCBB00",
             "FFFFFFFF",
     })
-    void foregroundColorTest(String value)
-    {
+    void foregroundColorTest(String value) {
         Fill fill = new Fill();
         assertEquals(Fill.DEFAULT_COLOR, fill.getForegroundColor());
         fill.setForegroundColor(value);
@@ -165,9 +155,8 @@ public class FillTest {
             "NULL, ''",
             "STRING, 'XXXXXXXX'",
     })
-    void foregroundColorFailTest(String sourceType, String sourceValue)
-    {
-        String value = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void foregroundColorFailTest(String sourceType, String sourceValue) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Fill fill = new Fill();
         assertThrows(Exception.class, () -> fill.setForegroundColor(value));
     }
@@ -179,8 +168,7 @@ public class FillTest {
             "256",
             "-10",
     })
-    void indexedColorTest(int value)
-    {
+    void indexedColorTest(int value) {
         Fill fill = new Fill();
         assertEquals(Fill.DEFAULT_INDEXED_COLOR, fill.getIndexedColor()); // 64 is default
         fill.setIndexedColor(value);
@@ -198,8 +186,7 @@ public class FillTest {
             "none",
             "solid",
     })
-    void patternFillTest(Fill.PatternValue value)
-    {
+    void patternFillTest(Fill.PatternValue value) {
         Fill fill = new Fill();
         assertEquals(Fill.DEFAULT_PATTERN_FILL, fill.getPatternFill()); // default is none
         fill.setPatternFill(value);
@@ -212,8 +199,7 @@ public class FillTest {
             "FFAABBCC, fillColor, FFAABBCC, FF000000",
             "FF112233, patternColor, FF000000, FF112233",
     })
-    void setColorTest(String color, Fill.FillType fillType, String expectedForeground, String expectedBackground)
-    {
+    void setColorTest(String color, Fill.FillType fillType, String expectedForeground, String expectedBackground) {
         Fill fill = new Fill();
         assertEquals(Fill.DEFAULT_COLOR, fill.getForegroundColor());
         assertEquals(Fill.DEFAULT_COLOR, fill.getBackgroundColor());
@@ -227,8 +213,7 @@ public class FillTest {
 
     @DisplayName("Test of the copyFill function")
     @Test()
-    void copyFillTest()
-    {
+    void copyFillTest() {
         Fill copy = exampleStyle.copy();
         assertEquals(exampleStyle.hashCode(), copy.hashCode());
     }
@@ -258,63 +243,53 @@ public class FillTest {
             "STRING, FFAACCDDDD, true, true, false",
             "STRING, FFAACCDDDD, true, true, false",
     })
-    void validateColorTest(String sourceType, String sourceValue, boolean useAlpha, boolean allowEmpty, boolean expectedValid)
-    {
-        String color = (String)TestUtils.createInstance(sourceType, sourceValue);
-        if (expectedValid)
-        {
+    void validateColorTest(String sourceType, String sourceValue, boolean useAlpha, boolean allowEmpty, boolean expectedValid) {
+        String color = (String) TestUtils.createInstance(sourceType, sourceValue);
+        if (expectedValid) {
             // Should not throw
             Fill.validateColor(color, useAlpha, allowEmpty);
-        }
-        else
-        {
+        } else {
             assertThrows(StyleException.class, () -> Fill.validateColor(color, useAlpha, allowEmpty));
         }
 
     }
 
 
-
     @DisplayName("Test of the equals method")
     @Test()
-    void equalsTest()
-    {
-        Fill style2 = (Fill)exampleStyle.copy();
+    void equalsTest() {
+        Fill style2 = (Fill) exampleStyle.copy();
         assertTrue(exampleStyle.equals(style2));
     }
 
     @DisplayName("Test of the equals method (inequality of backgroundColor)")
     @Test()
-    void equalsTest2a()
-    {
-        Fill style2 = (Fill)exampleStyle.copy();
+    void equalsTest2a() {
+        Fill style2 = (Fill) exampleStyle.copy();
         style2.setBackgroundColor("66880000");
         assertFalse(exampleStyle.equals(style2));
     }
 
     @DisplayName("Test of the equals method (inequality of foregroundColor)")
     @Test()
-    void equalsTest2b()
-    {
-        Fill style2 = (Fill)exampleStyle.copy();
+    void equalsTest2b() {
+        Fill style2 = (Fill) exampleStyle.copy();
         style2.setForegroundColor("AA330000");
         assertFalse(exampleStyle.equals(style2));
     }
 
     @DisplayName("Test of the equals method (inequality of indexedColor)")
     @Test()
-    void equalsTest2c()
-    {
-        Fill style2 = (Fill)exampleStyle.copy();
+    void equalsTest2c() {
+        Fill style2 = (Fill) exampleStyle.copy();
         style2.setIndexedColor(78);
         assertFalse(exampleStyle.equals(style2));
     }
 
     @DisplayName("Test of the equals method (inequality of patternFill)")
     @Test()
-    void equalsTest2d()
-    {
-        Fill style2 = (Fill)exampleStyle.copy();
+    void equalsTest2d() {
+        Fill style2 = (Fill) exampleStyle.copy();
         style2.setPatternFill(Fill.PatternValue.solid);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -326,8 +301,7 @@ public class FillTest {
             "STRING, 'text'",
             "BOOLEAN, 'true'",
     })
-    void equalsTest3(String sourceType, String sourceValue)
-    {
+    void equalsTest3(String sourceType, String sourceValue) {
         Object obj = TestUtils.createInstance(sourceType, sourceValue);
         assertFalse(exampleStyle.equals(obj));
     }
@@ -339,18 +313,16 @@ public class FillTest {
             "BOOLEAN, 'true'",
             "STRING, 'origin'",
     })
-    void equalsTest5(String sourceType, String sourceValue)
-    {
+    void equalsTest5(String sourceType, String sourceValue) {
         Object origin = TestUtils.createInstance(sourceType, sourceValue);
-        Fill copy = (Fill)exampleStyle.copy();
+        Fill copy = (Fill) exampleStyle.copy();
         assertFalse(copy.equals(origin));
     }
 
     @DisplayName("Test of the hashCode method (equality of two identical objects)")
     @Test()
-    void hashCodeTest()
-    {
-        Fill copy = (Fill)exampleStyle.copy();
+    void hashCodeTest() {
+        Fill copy = (Fill) exampleStyle.copy();
         copy.setInternalID(99);  // Should not influence
         assertEquals(exampleStyle.hashCode(), copy.hashCode());
         assertEquals(exampleStyle.hashCode(), copy.hashCode()); // For code coverage
@@ -358,9 +330,8 @@ public class FillTest {
 
     @DisplayName("Test of the hashCode method (inequality of two different objects)")
     @Test()
-    void hashCodeTest2()
-    {
-        Fill copy = (Fill)exampleStyle.copy();
+    void hashCodeTest2() {
+        Fill copy = (Fill) exampleStyle.copy();
         copy.setBackgroundColor("778800FF");
         assertNotEquals(exampleStyle.hashCode(), copy.hashCode());
         assertNotEquals(exampleStyle.hashCode(), copy.hashCode()); // For code coverage
@@ -368,8 +339,7 @@ public class FillTest {
 
     @DisplayName("Test of the compareTo method")
     @Test()
-    void compareToTest()
-    {
+    void compareToTest() {
         Fill fill = new Fill();
         Fill other = new Fill();
         fill.setInternalID(null);
@@ -387,12 +357,10 @@ public class FillTest {
     }
 
 
-
     // For code coverage
     @DisplayName("Test of the ToString function")
     @Test()
-    void toStringTest()
-    {
+    void toStringTest() {
         Fill fill = new Fill();
         String s1 = fill.toString();
         fill.setForegroundColor("FFAABBCC");
@@ -401,19 +369,19 @@ public class FillTest {
 
     @DisplayName("Test of the getValue function of the PatternValue enum")
     @Test()
-    void patternValueTest(){
+    void patternValueTest() {
         assertEquals(0, Fill.PatternValue.none.getValue());
         assertEquals(1, Fill.PatternValue.solid.getValue());
-        assertEquals(2,  Fill.PatternValue.darkGray.getValue());
-        assertEquals(3,  Fill.PatternValue.mediumGray.getValue());
-        assertEquals(4,  Fill.PatternValue.lightGray.getValue());
-        assertEquals(5,  Fill.PatternValue.gray0625.getValue());
-        assertEquals(6,  Fill.PatternValue.gray125.getValue());
+        assertEquals(2, Fill.PatternValue.darkGray.getValue());
+        assertEquals(3, Fill.PatternValue.mediumGray.getValue());
+        assertEquals(4, Fill.PatternValue.lightGray.getValue());
+        assertEquals(5, Fill.PatternValue.gray0625.getValue());
+        assertEquals(6, Fill.PatternValue.gray125.getValue());
     }
 
     @DisplayName("Test of the getValue function of the FillType enum")
     @Test()
-    void fillTypeValueTest(){
+    void fillTypeValueTest() {
         assertEquals(0, Fill.FillType.patternColor.getValue());
         assertEquals(1, Fill.FillType.fillColor.getValue());
     }

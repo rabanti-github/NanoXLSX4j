@@ -14,8 +14,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the get and set function of the application field ")
     @Test()
-    void applicationTest()
-    {
+    void applicationTest() {
         Metadata metadata = new Metadata();
         assertNotNull(metadata.getApplication());
         assertNotEquals("", metadata.getApplication());
@@ -32,9 +31,8 @@ public class MetadataTest {
             "STRING, '0.1'",
             "STRING, '99999.99999'",
     })
-    void applicationVersionTest(String sourceType, String sourceValue)
-    {
-        String version = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void applicationVersionTest(String sourceType, String sourceValue) {
+        String version = (String) TestUtils.createInstance(sourceType, sourceValue);
         Metadata metadata = new Metadata();
         assertNotNull(metadata.getApplicationVersion());
         assertNotEquals("", metadata.getApplicationVersion());
@@ -53,16 +51,14 @@ public class MetadataTest {
             "'1.222222'",
             "'333333.333333'",
     })
-    void applicationVersionFailTest(String version)
-    {
+    void applicationVersionFailTest(String version) {
         Metadata metadata = new Metadata();
         assertThrows(FormatException.class, () -> metadata.setApplicationVersion(version));
     }
 
     @DisplayName("Test of the get and set function of the category field ")
     @Test()
-    void categoryTest()
-    {
+    void categoryTest() {
         Metadata metadata = new Metadata();
         assertNull(metadata.getCategory());
         metadata.setCategory("test");
@@ -72,8 +68,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the get and set function of the company field ")
     @Test()
-    void companyTest()
-    {
+    void companyTest() {
         Metadata metadata = new Metadata();
         assertNull(metadata.getCompany());
         metadata.setCompany("test");
@@ -83,8 +78,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the get and set function of the contentStatus field ")
     @Test()
-    void contentStatusTest()
-    {
+    void contentStatusTest() {
         Metadata metadata = new Metadata();
         assertNull(metadata.getContentStatus());
         metadata.setContentStatus("test");
@@ -94,8 +88,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the get and set function of the creator field ")
     @Test()
-    void creatorTest()
-    {
+    void creatorTest() {
         Metadata metadata = new Metadata();
         assertNull(metadata.getCreator());
         metadata.setCreator("test");
@@ -105,8 +98,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the get and set function of the description field ")
     @Test()
-    void descriptionTest()
-    {
+    void descriptionTest() {
         Metadata metadata = new Metadata();
         assertNull(metadata.getDescription());
         metadata.setDescription("test");
@@ -116,8 +108,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the get and set function of the hyperlinkBase field ")
     @Test()
-    void hyperlinkBaseTest()
-    {
+    void hyperlinkBaseTest() {
         Metadata metadata = new Metadata();
         assertNull(metadata.getHyperlinkBase());
         metadata.setHyperlinkBase("test");
@@ -127,8 +118,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the get and set function of the keywords field ")
     @Test()
-    void keywordsTest()
-    {
+    void keywordsTest() {
         Metadata metadata = new Metadata();
         assertNull(metadata.getKeywords());
         metadata.setKeywords("test");
@@ -138,8 +128,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the get and set function of the manager field ")
     @Test()
-    void managerTest()
-    {
+    void managerTest() {
         Metadata metadata = new Metadata();
         assertNull(metadata.getManager());
         metadata.setManager("test");
@@ -149,8 +138,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the get and set function of the subject field ")
     @Test()
-    void subjectTest()
-    {
+    void subjectTest() {
         Metadata metadata = new Metadata();
         assertNull(metadata.getSubject());
         metadata.setSubject("test");
@@ -160,8 +148,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the get and set function of the title field ")
     @Test()
-    void titleTest()
-    {
+    void titleTest() {
         Metadata metadata = new Metadata();
         assertNull(metadata.getTitle());
         metadata.setTitle("test");
@@ -171,8 +158,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the get and set function of the useColorMRU field ")
     @Test()
-    void useColorMRUTest()
-    {
+    void useColorMRUTest() {
         Metadata metadata = new Metadata();
         assertFalse(metadata.isUseColorMRU());
         metadata.setUseColorMRU(true);
@@ -182,8 +168,7 @@ public class MetadataTest {
 
     @DisplayName("Test of the Constructor")
     @Test()
-    void constructorTest()
-    {
+    void constructorTest() {
         Metadata metadata = new Metadata();
         assertNotNull(metadata);
         assertNotEquals("", metadata.getApplication());
@@ -205,8 +190,7 @@ public class MetadataTest {
             "9999, 666, 555, 444, 9999.66655",
             "99999, 0, 0, 1234567, 99999.00123",
     })
-    void parseVersionTest(int major, int minor, int build, int revision, String expectedVersion)
-    {
+    void parseVersionTest(int major, int minor, int build, int revision, String expectedVersion) {
         String version = Metadata.parseVersion(major, minor, build, revision);
         assertEquals(expectedVersion, version);
     }
@@ -220,8 +204,7 @@ public class MetadataTest {
             "1, 1, -1, 1",
             "1, 1, 1, -1",
     })
-    void parseVersionFailTest(int major, int minor, int build, int revision)
-    {
+    void parseVersionFailTest(int major, int minor, int build, int revision) {
         assertThrows(FormatException.class, () -> Metadata.parseVersion(major, minor, build, revision));
     }
 

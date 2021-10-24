@@ -13,8 +13,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static Bold style")
     @Test()
-    void boldTest()
-    {
+    void boldTest() {
         Style style = BasicStyles.Bold();
         assertNotNull(style);
         assertTrue(style.getFont().isBold());
@@ -22,8 +21,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static Italic style")
     @Test()
-    void italicTest()
-    {
+    void italicTest() {
         Style style = BasicStyles.Italic();
         assertNotNull(style);
         assertTrue(style.getFont().isItalic());
@@ -31,8 +29,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static BoldItalic style")
     @Test()
-    void boldItalicTest()
-    {
+    void boldItalicTest() {
         Style style = BasicStyles.BoldItalic();
         assertNotNull(style);
         assertTrue(style.getFont().isItalic());
@@ -41,8 +38,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static Underline style")
     @Test()
-    void underlineTest()
-    {
+    void underlineTest() {
         Style style = BasicStyles.Underline();
         assertNotNull(style);
         assertTrue(style.getFont().isUnderline());
@@ -50,8 +46,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static DoubleUnderline style")
     @Test()
-    void doubleUnderlineTest()
-    {
+    void doubleUnderlineTest() {
         Style style = BasicStyles.DoubleUnderline();
         assertNotNull(style);
         assertTrue(style.getFont().isDoubleUnderline());
@@ -59,8 +54,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static Strike style")
     @Test()
-    void strikeTest()
-    {
+    void strikeTest() {
         Style style = BasicStyles.Strike();
         assertNotNull(style);
         assertTrue(style.getFont().isStrike());
@@ -68,8 +62,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static TimeFormat style")
     @Test()
-    void timeFormatTest()
-    {
+    void timeFormatTest() {
         Style style = BasicStyles.TimeFormat();
         assertNotNull(style);
         assertEquals(NumberFormat.FormatNumber.format_21, style.getNumberFormat().getNumber());
@@ -77,8 +70,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static DateFormat style")
     @Test()
-    void dateFormatTest()
-    {
+    void dateFormatTest() {
         Style style = BasicStyles.DateFormat();
         assertNotNull(style);
         assertEquals(NumberFormat.FormatNumber.format_14, style.getNumberFormat().getNumber());
@@ -86,8 +78,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static RoundFormat style")
     @Test()
-    void roundFormatTest()
-    {
+    void roundFormatTest() {
         Style style = BasicStyles.RoundFormat();
         assertNotNull(style);
         assertEquals(NumberFormat.FormatNumber.format_1, style.getNumberFormat().getNumber());
@@ -95,8 +86,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static MergeCell style")
     @Test()
-    void mergeCellStyleTest()
-    {
+    void mergeCellStyleTest() {
         Style style = BasicStyles.MergeCellStyle();
         assertNotNull(style);
         assertTrue(style.getCellXf().isForceApplyAlignment());
@@ -104,8 +94,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static DottedFill_0_125 style")
     @Test()
-    void dottedFill_0_125Test()
-    {
+    void dottedFill_0_125Test() {
         Style style = BasicStyles.DottedFill_0_125();
         assertNotNull(style);
         assertEquals(Fill.PatternValue.gray125, style.getFill().getPatternFill());
@@ -113,8 +102,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static BorderFrame style")
     @Test()
-    void borderFrameTest()
-    {
+    void borderFrameTest() {
         Style style = BasicStyles.BorderFrame();
         assertNotNull(style);
         assertEquals(Border.StyleValue.thin, style.getBorder().getTopStyle());
@@ -125,8 +113,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the static BorderFrameHeader style")
     @Test()
-    void borderFrameHeaderTest()
-    {
+    void borderFrameHeaderTest() {
         Style style = BasicStyles.BorderFrameHeader();
         assertNotNull(style);
         assertEquals(Border.StyleValue.thin, style.getBorder().getTopStyle());
@@ -144,8 +131,7 @@ public class BasicStylesTest {
             "af3cd1, FFAF3CD1",
             "FFFFFF, FFFFFFFF",
     })
-    void colorizedTextTest(String hexCode, String expectedHexCode)
-    {
+    void colorizedTextTest(String hexCode, String expectedHexCode) {
         Style style = BasicStyles.colorizedText(hexCode);
         assertNotNull(style);
         assertEquals(expectedHexCode, style.getFont().getColorValue());
@@ -161,9 +147,8 @@ public class BasicStylesTest {
             "STRING, 'AAFFCC22'",
             "STRING, 'XXXXVV'",
     })
-    void colorizedTextFailTest(String sourceType, String sourceValue)
-    {
-        String hexCode = (String)TestUtils.createInstance(sourceType,sourceValue);
+    void colorizedTextFailTest(String sourceType, String sourceValue) {
+        String hexCode = (String) TestUtils.createInstance(sourceType, sourceValue);
         assertThrows(StyleException.class, () -> BasicStyles.colorizedText(hexCode));
     }
 
@@ -175,8 +160,7 @@ public class BasicStylesTest {
             "af3cd1, FFAF3CD1",
             "FFFFFF, FFFFFFFF",
     })
-    void colorizedBackgroundTest(String hexCode, String expectedHexCode)
-    {
+    void colorizedBackgroundTest(String hexCode, String expectedHexCode) {
         Style style = BasicStyles.colorizedBackground(hexCode);
         assertNotNull(style);
         assertEquals(expectedHexCode, style.getFill().getForegroundColor());
@@ -194,9 +178,8 @@ public class BasicStylesTest {
             "STRING, 'AAFFCC22'",
             "STRING, 'XXXXVV'",
     })
-    void colorizedBackgroundFailTest(String sourceType, String sourceValue)
-    {
-        String hexCode = (String)TestUtils.createInstance(sourceType,sourceValue);
+    void colorizedBackgroundFailTest(String sourceType, String sourceValue) {
+        String hexCode = (String) TestUtils.createInstance(sourceType, sourceValue);
         assertThrows(StyleException.class, () -> BasicStyles.colorizedBackground(hexCode));
     }
 
@@ -209,8 +192,7 @@ public class BasicStylesTest {
             "Sans Serif",
             "Tahoma",
     })
-    void fontTest3(String name)
-    {
+    void fontTest3(String name) {
         Style style = BasicStyles.font(name);
         assertEquals(name, style.getFont().getName());
         assertEquals(Font.DEFAULT_FONT_SIZE, style.getFont().getSize());
@@ -227,8 +209,7 @@ public class BasicStylesTest {
             "Sans Serif, 50f",
             "Tahoma, 11f",
     })
-    void fontTest3(String name, float size)
-    {
+    void fontTest3(String name, float size) {
         Style style = BasicStyles.font(name, size);
         assertEquals(name, style.getFont().getName());
         assertEquals(size, style.getFont().getSize());
@@ -245,8 +226,7 @@ public class BasicStylesTest {
             "Sans Serif, 50f, false",
             "Tahoma, 11f, true",
     })
-    void fontTest3(String name, float size, boolean bold)
-    {
+    void fontTest3(String name, float size, boolean bold) {
         Style style = BasicStyles.font(name, size, bold);
         assertEquals(name, style.getFont().getName());
         assertEquals(size, style.getFont().getSize());
@@ -263,8 +243,7 @@ public class BasicStylesTest {
             "Sans Serif, 50f, false, true",
             "Tahoma, 11f, true, true",
     })
-    void fontTest3(String name, float size, boolean bold, boolean italic)
-    {
+    void fontTest3(String name, float size, boolean bold, boolean italic) {
         Style style = BasicStyles.font(name, size, bold, italic);
         assertEquals(name, style.getFont().getName());
         assertEquals(size, style.getFont().getSize());
@@ -274,8 +253,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the Font function for the auto adjustment of invalid font sizes")
     @Test()
-    void fontTest4()
-    {
+    void fontTest4() {
         Style style = BasicStyles.font("Arial", -1f);
         assertEquals(Font.MIN_FONT_SIZE, style.getFont().getSize());
         style = BasicStyles.font("Arial", 0.5f);
@@ -288,8 +266,7 @@ public class BasicStylesTest {
 
     @DisplayName("Test of the failing font function on a invalid font name")
     @Test()
-    void fontFailTest()
-    {
+    void fontFailTest() {
         assertThrows(StyleException.class, () -> BasicStyles.font(null));
         assertThrows(StyleException.class, () -> BasicStyles.font(""));
     }

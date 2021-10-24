@@ -13,7 +13,7 @@ import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
  *
  * @author Raphael Stoeckli
  */
-public class Font extends AbstractStyle{
+public class Font extends AbstractStyle {
 // ### E N U M S ###
     /**
      * Default font family as constant
@@ -139,7 +139,7 @@ public class Font extends AbstractStyle{
      * @param size Font size
      */
     public void setSize(float size) {
-        if (size < MIN_FONT_SIZE ) {
+        if (size < MIN_FONT_SIZE) {
             this.size = MIN_FONT_SIZE;
         } else if (size > MAX_FONT_SIZE) {
             this.size = MAX_FONT_SIZE;
@@ -165,7 +165,7 @@ public class Font extends AbstractStyle{
      * @apiNote Note that the font name is not validated whether it is a valid or existing font
      */
     public void setName(String name) {
-        if (name == null || name.isEmpty()){
+        if (name == null || name.isEmpty()) {
             throw new StyleException("The font name was null or empty");
         }
         this.name = name;
@@ -205,8 +205,7 @@ public class Font extends AbstractStyle{
      * @throws StyleException thrown if the number is below 1
      */
     public void setColorTheme(int colorTheme) {
-        if (colorTheme < 1)
-        {
+        if (colorTheme < 1) {
             throw new StyleException("The color theme number " + colorTheme + " is invalid. Should be >0");
         }
         this.colorTheme = colorTheme;

@@ -281,24 +281,21 @@ public final class BasicFormulas {
             if (number instanceof Byte) {
                 arg1 = Byte.toString((byte) number);
             } else if (number instanceof BigDecimal) {
-                if (((BigDecimal)number).compareTo(BigDecimal.ZERO) == 0){
+                if (((BigDecimal) number).compareTo(BigDecimal.ZERO) == 0) {
                     arg1 = "0";
-                }
-                else{
+                } else {
                     arg1 = number.toString();
                 }
             } else if (number instanceof Double) {
-                if ((double)number == 0){
+                if ((double) number == 0) {
                     arg1 = "0";
-                }
-                else{
+                } else {
                     arg1 = Double.toString((double) number);
                 }
             } else if (number instanceof Float) {
-                if ((float)number == 0){
+                if ((float) number == 0) {
                     arg1 = "0";
-                }
-                else{
+                } else {
                     arg1 = Float.toString((float) number);
                 }
             } else if (number instanceof Integer) {
@@ -311,7 +308,7 @@ public final class BasicFormulas {
                 throw new FormatException("The lookup variable can only be a cell address or a numeric value. The value '" + number + "' is invalid.");
             }
         } else {
-            if (address == null){
+            if (address == null) {
                 throw new FormatException("The lookup variable can only be a cell address or a numeric value. The value '" + number + "' is invalid.");
             }
             if (queryTarget != null) {
@@ -337,16 +334,17 @@ public final class BasicFormulas {
 
     /**
      * Cuts off decimals after the 18th digit
+     *
      * @param value
      * @return
      */
-    private static String cutoffDecimals(String value){
-        if (!value.contains(".")){
+    private static String cutoffDecimals(String value) {
+        if (!value.contains(".")) {
             return value;
         }
         String[] parts = value.split("\\.");
-        if (parts[1].length() > 18){
-          value = parts[0] + "." + parts[1].substring(0,18);
+        if (parts[1].length() > 18) {
+            value = parts[0] + "." + parts[1].substring(0, 18);
         }
         return !value.contains(".") ? value : value.replaceAll("0*$", "").replaceAll("\\.$", "");
     }

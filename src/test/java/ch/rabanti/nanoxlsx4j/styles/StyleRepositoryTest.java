@@ -10,14 +10,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class StyleRepositoryTest {
 
     @BeforeEach
-    private void flush(){
+    private void flush() {
         StyleRepository.getInstance().getStyles().clear();
     }
 
     @DisplayName("Test of the addStyle method")
     @Test()
-    void addStyleTest()
-    {
+    void addStyleTest() {
         StyleRepository repository = StyleRepository.getInstance();
         assertEquals(0, repository.getStyles().size());
         Style style = new Style();
@@ -31,20 +30,18 @@ public class StyleRepositoryTest {
 
     @DisplayName("Test of the AddStyle method on a null object")
     @Test()
-    void addStyleTest2()
-    {
+    void addStyleTest2() {
         StyleRepository repository = StyleRepository.getInstance();
         assertEquals(0, repository.getStyles().size());
         Style result = repository.addStyle(null);
         assertEquals(0, repository.getStyles().size());
-        assertNull( result);
+        assertNull(result);
     }
 
 
     @DisplayName("Test of the flush method")
     @Test()
-    void flushTest()
-    {
+    void flushTest() {
         StyleRepository repository = StyleRepository.getInstance();
         assertEquals(0, repository.getStyles().size());
         Style style = new Style();

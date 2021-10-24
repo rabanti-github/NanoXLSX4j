@@ -1,14 +1,10 @@
 package ch.rabanti.nanoxlsx4j;
 
-import org.junit.jupiter.api.Assertions;
-
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,13 +54,13 @@ public class TestUtils {
     }
 
     public static List<String> splitValuesAsList(String valueString) {
-        if (valueString == null || valueString.isEmpty()){
+        if (valueString == null || valueString.isEmpty()) {
             return new ArrayList<>();
         }
         String[] valueStrings = valueString.split(",|\\s");
         List<String> output = new ArrayList<>();
-        for(String value : valueStrings){
-            if (value != null && !value.isEmpty()){
+        for (String value : valueStrings) {
+            if (value != null && !value.isEmpty()) {
                 output.add(value);
             }
         }
@@ -79,28 +75,27 @@ public class TestUtils {
         assertFalse(cell1.equals(cell3));
     }
 
-    public static <K,V> void assertMapEntry(K expectedKey, V expectedValue, Map<K,V> map){
+    public static <K, V> void assertMapEntry(K expectedKey, V expectedValue, Map<K, V> map) {
         assertNotNull(map);
         assertNotEquals(0, map.size());
         assertTrue(map.containsKey(expectedKey));
         assertTrue(map.get(expectedKey).equals(expectedValue));
     }
 
-    public static <K, MV, V> void assertMapEntry(K expectedKey, V expectedValue, Map<K,MV> map, Function<MV, V> method){
+    public static <K, MV, V> void assertMapEntry(K expectedKey, V expectedValue, Map<K, MV> map, Function<MV, V> method) {
         assertNotNull(map);
         assertNotEquals(0, map.size());
         assertTrue(map.containsKey(expectedKey));
         MV mapValue = map.get(expectedKey);
         V actualValue = method.apply(mapValue);
-        if (actualValue == null){
+        if (actualValue == null) {
             assertNull(expectedValue);
-        }
-        else{
+        } else {
             assertTrue(actualValue.equals(expectedValue));
         }
     }
 
-    public static <T> void assertListEntry(T expectedEntry, List<T> list){
+    public static <T> void assertListEntry(T expectedEntry, List<T> list) {
         assertNotNull(list);
         assertNotEquals(0, list.size());
         assertTrue(list.contains(expectedEntry));
@@ -118,7 +113,7 @@ public class TestUtils {
         }
     }
 
-    public static InputStream getResource(String resourceName){
+    public static InputStream getResource(String resourceName) {
         ClassLoader classLoader = TestUtils.class.getClassLoader();
         return ClassLoader.getSystemResourceAsStream(resourceName);
     }

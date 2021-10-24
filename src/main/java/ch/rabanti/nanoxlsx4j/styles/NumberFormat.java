@@ -229,8 +229,7 @@ public class NumberFormat extends AbstractStyle {
      */
     public void setCustomFormatID(int customFormatID) {
 
-        if (customFormatID < CUSTOMFORMAT_START_NUMBER)
-        {
+        if (customFormatID < CUSTOMFORMAT_START_NUMBER) {
             throw new StyleException("The number '" + customFormatID + "' is not a valid custom format ID. Must be at least " + CUSTOMFORMAT_START_NUMBER);
         }
         this.customFormatID = customFormatID;

@@ -8,14 +8,16 @@ package ch.rabanti.nanoxlsx4j.exceptions;
 
 /**
  * Class for exceptions regarding format error incidents
+ *
  * @author Raphael Stoeckli
  */
-public class FormatException extends RuntimeException{
+public class FormatException extends RuntimeException {
 
     private final Exception innerException;
 
     /**
      * Gets the inner exception
+     *
      * @return Inner exception
      */
     public Exception getInnerException() {
@@ -25,32 +27,31 @@ public class FormatException extends RuntimeException{
     /**
      * Default constructor
      */
-    public FormatException()
-    {
+    public FormatException() {
         super();
         this.innerException = null;
     }
-    
+
     /**
      * Constructor with passed message
+     *
      * @param message Message of the exception
      */
-    public FormatException(String message)
-    {
+    public FormatException(String message) {
         super(message);
         this.innerException = null;
     }
-    
+
     /**
      * Constructor with passed message and inner
+     *
      * @param message Message of the exception
-     * @param inner Inner exception
+     * @param inner   Inner exception
      */
-    public  FormatException(String message, Exception inner)
-    {
+    public FormatException(String message, Exception inner) {
         super(message);
         this.innerException = inner;
     }
-    
-    
+
+
 }

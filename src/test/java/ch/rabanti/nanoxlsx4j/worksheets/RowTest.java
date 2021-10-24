@@ -15,16 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RowTest {
 
-    public enum RowProperty
-    {
+    public enum RowProperty {
         Hidden,
         Height
     }
 
     @DisplayName("Test of the addHiddenRow function with a row number")
     @Test()
-    void addHiddenRowTest()
-    {
+    void addHiddenRowTest() {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getHiddenRows().size());
         worksheet.addHiddenRow(2);
@@ -42,16 +40,14 @@ public class RowTest {
             "-100",
             "1048576",
     })
-    void addHiddenRowFailTest(int value)
-    {
+    void addHiddenRowFailTest(int value) {
         Worksheet worksheet = new Worksheet();
         assertThrows(RangeException.class, () -> worksheet.addHiddenRow(value));
     }
 
     @DisplayName("Test of the getLastRowNumber function with an empty worksheet")
     @Test()
-    void getLastRowNumberTest()
-    {
+    void getLastRowNumberTest() {
         Worksheet worksheet = new Worksheet();
         int row = worksheet.getLastRowNumber();
         assertEquals(-1, row);
@@ -63,17 +59,13 @@ public class RowTest {
             "Height",
             "Hidden",
     })
-    void getLastRowNumberTest2(RowProperty rowProperty)
-    {
+    void getLastRowNumberTest2(RowProperty rowProperty) {
         Worksheet worksheet = new Worksheet();
-        if (rowProperty == RowProperty.Hidden)
-        {
+        if (rowProperty == RowProperty.Hidden) {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
-        }
-        else
-        {
+        } else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(2, 44.4f);
@@ -88,17 +80,13 @@ public class RowTest {
             "Height",
             "Hidden",
     })
-    void getLastRowNumberTest3(RowProperty rowProperty)
-    {
+    void getLastRowNumberTest3(RowProperty rowProperty) {
         Worksheet worksheet = new Worksheet();
-        if (rowProperty == RowProperty.Hidden)
-        {
+        if (rowProperty == RowProperty.Hidden) {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(10);
-        }
-        else
-        {
+        } else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(10, 44.4f);
@@ -113,17 +101,13 @@ public class RowTest {
             "Height",
             "Hidden",
     })
-    void getLastRowNumberTest4(RowProperty rowProperty)
-    {
+    void getLastRowNumberTest4(RowProperty rowProperty) {
         Worksheet worksheet = new Worksheet();
-        if (rowProperty == RowProperty.Hidden)
-        {
+        if (rowProperty == RowProperty.Hidden) {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(10);
-        }
-        else
-        {
+        } else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(10, 44.4f);
@@ -139,17 +123,13 @@ public class RowTest {
             "Height",
             "Hidden",
     })
-    void getLastRowNumberTest5(RowProperty rowProperty)
-    {
+    void getLastRowNumberTest5(RowProperty rowProperty) {
         Worksheet worksheet = new Worksheet();
-        if (rowProperty == RowProperty.Hidden)
-        {
+        if (rowProperty == RowProperty.Hidden) {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
-        }
-        else
-        {
+        } else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(2, 44.4f);
@@ -161,8 +141,7 @@ public class RowTest {
 
     @DisplayName("Test of the GetLastDataRowNumber function with an empty worksheet")
     @Test()
-    void getLastDataRowNumberTest()
-    {
+    void getLastDataRowNumberTest() {
         Worksheet worksheet = new Worksheet();
         int row = worksheet.getLastDataRowNumber();
         assertEquals(-1, row);
@@ -174,17 +153,13 @@ public class RowTest {
             "Height",
             "Hidden",
     })
-    void getLastDataRowNumberTest2(RowProperty rowProperty)
-    {
+    void getLastDataRowNumberTest2(RowProperty rowProperty) {
         Worksheet worksheet = new Worksheet();
-        if (rowProperty == RowProperty.Hidden)
-        {
+        if (rowProperty == RowProperty.Hidden) {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
-        }
-        else
-        {
+        } else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(2, 44.4f);
@@ -199,17 +174,13 @@ public class RowTest {
             "Height",
             "Hidden",
     })
-    void getLastDataRowNumberTest3(RowProperty rowProperty)
-    {
+    void getLastDataRowNumberTest3(RowProperty rowProperty) {
         Worksheet worksheet = new Worksheet();
-        if (rowProperty == RowProperty.Hidden)
-        {
+        if (rowProperty == RowProperty.Hidden) {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(10);
-        }
-        else
-        {
+        } else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(10, 44.4f);
@@ -225,17 +196,13 @@ public class RowTest {
             "Height",
             "Hidden",
     })
-    void getLastDataRowNumberTest4(RowProperty rowProperty)
-    {
+    void getLastDataRowNumberTest4(RowProperty rowProperty) {
         Worksheet worksheet = new Worksheet();
-        if (rowProperty == RowProperty.Hidden)
-        {
+        if (rowProperty == RowProperty.Hidden) {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
-        }
-        else
-        {
+        } else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(3, 44.4f);
@@ -247,8 +214,7 @@ public class RowTest {
 
     @DisplayName("Test of the getCurrentRowNumber function")
     @Test()
-    void getCurrentRowNumberTest()
-    {
+    void getCurrentRowNumberTest() {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getCurrentRowNumber());
         worksheet.setCurrentCellDirection(Worksheet.CellDirection.RowToRow);
@@ -277,8 +243,7 @@ public class RowTest {
             "3, -1, 2",
             "3, -3, 0",
     })
-    void goToNextRowTest(int initialRowNumber, int number, int expectedRowNumber)
-    {
+    void goToNextRowTest(int initialRowNumber, int number, int expectedRowNumber) {
         Worksheet worksheet = new Worksheet();
         worksheet.setCurrentRowNumber(initialRowNumber);
         worksheet.goToNextRow(number);
@@ -301,8 +266,7 @@ public class RowTest {
             "F5, -4, false, A1",
             "F5, -4, true, F1",
     })
-    void goToNextRowTest2(String initialAddress, int number, boolean keepColumnPosition, String expectedAddress)
-    {
+    void goToNextRowTest2(String initialAddress, int number, boolean keepColumnPosition, String expectedAddress) {
         Worksheet worksheet = new Worksheet();
         worksheet.setCurrentCellAddress(initialAddress);
         worksheet.goToNextRow(number, keepColumnPosition);
@@ -319,8 +283,7 @@ public class RowTest {
             "0, 1048576",
             "0, 1248575",
     })
-    void goToNextRowFailTest(int initialValue, int value)
-    {
+    void goToNextRowFailTest(int initialValue, int value) {
         Worksheet worksheet = new Worksheet();
         worksheet.setCurrentRowNumber(initialValue);
         assertEquals(initialValue, worksheet.getCurrentRowNumber());
@@ -329,8 +292,7 @@ public class RowTest {
 
     @DisplayName("Test of the removeRowHeight function")
     @Test()
-    void removeRowHeightTest()
-    {
+    void removeRowHeightTest() {
         Worksheet worksheet = new Worksheet();
         worksheet.setRowHeight(2, 22.2f);
         worksheet.setRowHeight(4, 33.3f);
@@ -349,8 +311,7 @@ public class RowTest {
             "3",
             "1048575",
     })
-    void setCurrentRowNumberTest(int row)
-    {
+    void setCurrentRowNumberTest(int row) {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getCurrentRowNumber());
         worksheet.goToNextRow();
@@ -365,8 +326,7 @@ public class RowTest {
             "-10",
             "1048576",
     })
-    void setCurrentRowNumberFailTest(int row)
-    {
+    void setCurrentRowNumberFailTest(int row) {
         Worksheet worksheet = new Worksheet();
         assertThrows(RangeException.class, () -> worksheet.setCurrentRowNumber(row));
     }
@@ -379,8 +339,7 @@ public class RowTest {
             "10f",
             "255f",
     })
-    void setRowHeightTest(float height)
-    {
+    void setRowHeightTest(float height) {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getRowHeights().size());
         worksheet.setRowHeight(0, height);
@@ -400,16 +359,14 @@ public class RowTest {
             "0, 409.51f",
             "0, 500f",
     })
-    void setRowHeightFailTest(int rowNumber, float height)
-    {
+    void setRowHeightFailTest(int rowNumber, float height) {
         Worksheet worksheet = new Worksheet();
         assertThrows(RangeException.class, () -> worksheet.setRowHeight(rowNumber, height));
     }
 
     @DisplayName("Test of the getRow function")
     @Test()
-    void getRowTest()
-    {
+    void getRowTest() {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "B1");
         worksheet.addCell(23, "B2");
@@ -425,13 +382,12 @@ public class RowTest {
 
     @DisplayName("Test of the getRow function when no values are applying")
     @Test()
-    void getRowTest2()
-    {
+    void getRowTest2() {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "B1");
         worksheet.addCell(false, "B3");
         List<Cell> row = worksheet.getRow(1);
-        assertEquals(0,row.size());
+        assertEquals(0, row.size());
     }
 
 }

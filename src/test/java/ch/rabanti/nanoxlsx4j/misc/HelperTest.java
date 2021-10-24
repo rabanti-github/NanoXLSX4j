@@ -9,10 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -61,8 +58,7 @@ public class HelperTest {
 
     @DisplayName("Test of the failing getOADateString function on a null Date")
     @Test()
-    void getOADateStringFailTest2()
-    {
+    void getOADateStringFailTest2() {
         assertThrows(FormatException.class, () -> Helper.getOADateString(null));
     }
 
@@ -75,8 +71,7 @@ public class HelperTest {
             "13:11:10, 0.549421296296296",
             "18:00:00, 0.75",
     })
-    void getOATimeStringTest(String timeString, String expectedOaTime) throws ParseException
-    {
+    void getOATimeStringTest(String timeString, String expectedOaTime) throws ParseException {
         LocalTime time = LocalTime.parse(timeString);
         String oaDate = Helper.getOATimeString(time);
         float expected = Float.parseFloat(expectedOaTime);
@@ -87,8 +82,7 @@ public class HelperTest {
 
     @DisplayName("Test of the failing getOATimeString function on a null LocalTime")
     @Test()
-    void getOATimeStringFailTest2()
-    {
+    void getOATimeStringFailTest2() {
         assertThrows(FormatException.class, () -> Helper.getOATimeString(null));
     }
 
@@ -104,8 +98,7 @@ public class HelperTest {
             "255, 255.7109375",
             "0, 0f",
     })
-    void getInternalColumnWidthTest(float width, float expectedInternalWidth)
-    {
+    void getInternalColumnWidthTest(float width, float expectedInternalWidth) {
         float internalWidth = Helper.getInternalColumnWidth(width);
         assertEquals(expectedInternalWidth, internalWidth);
     }
@@ -118,8 +111,7 @@ public class HelperTest {
             "255.01",
             "10000",
     })
-    void getInternalColumnWidthFailTest(float width)
-    {
+    void getInternalColumnWidthFailTest(float width) {
         assertThrows(FormatException.class, () -> Helper.getInternalColumnWidth(width));
     }
 
@@ -135,8 +127,7 @@ public class HelperTest {
             "409.5, 409.5",
             "0, 0f",
     })
-    void getInternalRowHeightTest(float height, float expectedInternalHeight)
-    {
+    void getInternalRowHeightTest(float height, float expectedInternalHeight) {
         float internalHeight = Helper.getInternalRowHeight(height);
         assertEquals(expectedInternalHeight, internalHeight);
     }
@@ -149,8 +140,7 @@ public class HelperTest {
             "409.6",
             "10000",
     })
-    void getInternalRowHeightFailTest(float height)
-    {
+    void getInternalRowHeightFailTest(float height) {
         assertThrows(FormatException.class, () -> Helper.getInternalRowHeight(height));
     }
 
@@ -168,8 +158,7 @@ public class HelperTest {
             "-1, 390f",
             "-10, 390f",
     })
-    void getInternalPaneSplitWidthTest(float width, float expectedSplitWidth)
-    {
+    void getInternalPaneSplitWidthTest(float width, float expectedSplitWidth) {
         float splitWidth = Helper.getInternalPaneSplitWidth(width);
         assertEquals(expectedSplitWidth, splitWidth);
     }
@@ -187,8 +176,7 @@ public class HelperTest {
             "-1, 300f",
             "-10, 300f",
     })
-    void getInternalPaneSplitHeightTest(float height, float expectedSplitHeight)
-    {
+    void getInternalPaneSplitHeightTest(float height, float expectedSplitHeight) {
         float splitHeight = Helper.getInternalPaneSplitHeight(height);
         assertEquals(expectedSplitHeight, splitHeight);
     }
@@ -213,7 +201,6 @@ public class HelperTest {
         Date date = Helper.getDateFromOA(givenValue);
         assertEquals(expectedDate, date);
     }
-
 
 
 }

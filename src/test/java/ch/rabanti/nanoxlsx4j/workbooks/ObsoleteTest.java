@@ -17,8 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ObsoleteTest {
     @DisplayName("Test of the addStyle function (only for code coverage)")
     @Test()
-    void addStyleTest()
-    {
+    void addStyleTest() {
         Workbook workbook = new Workbook();
         workbook.addStyle(BasicStyles.Bold());
         assertTrue(StyleRepository.getInstance().getStyles().containsKey(BasicStyles.Bold().hashCode()));
@@ -33,12 +32,10 @@ public class ObsoleteTest {
             "Font",
             "NumberFormat",
     })
-    void addStyleComponentTest(String type)
-    {
+    void addStyleComponentTest(String type) {
         Workbook workbook = new Workbook();
         AbstractStyle style = null;
-        switch (type)
-        {
+        switch (type) {
             case "Border":
                 style = new Border();
                 break;
@@ -62,8 +59,7 @@ public class ObsoleteTest {
 
     @DisplayName("Test of the RemoveStyle function with an object (only for code coverage)")
     @Test()
-    void removeStyleTest()
-    {
+    void removeStyleTest() {
         Workbook workbook = new Workbook();
         Style style = BasicStyles.Bold();
         workbook.addStyle(style);
@@ -77,8 +73,7 @@ public class ObsoleteTest {
 
     @DisplayName("Test of the RemoveStyle function with a name (only for code coverage)")
     @Test()
-    void removeStyleTest2()
-    {
+    void removeStyleTest2() {
         Workbook workbook = new Workbook();
         Style style = BasicStyles.Bold();
         workbook.addStyle(style);

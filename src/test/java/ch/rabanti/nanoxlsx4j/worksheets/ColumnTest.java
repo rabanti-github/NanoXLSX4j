@@ -15,13 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ColumnTest {
     @DisplayName("Test of the addHiddenColumn function with a column number")
     @Test()
-    void addHiddenColumnTest()
-    {
+    void addHiddenColumnTest() {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getColumns().size());
         worksheet.addHiddenColumn(2);
@@ -34,8 +32,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the addHiddenColumn function with a column as String")
     @Test()
-    void addHiddenColumnTest2()
-    {
+    void addHiddenColumnTest2() {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getColumns().size());
         worksheet.addHiddenColumn("C");
@@ -53,8 +50,7 @@ public class ColumnTest {
             "-100",
             "16384",
     })
-    void addHiddenColumnFailTest(int value)
-    {
+    void addHiddenColumnFailTest(int value) {
         Worksheet worksheet = new Worksheet();
         assertThrows(RangeException.class, () -> worksheet.addHiddenColumn(value));
     }
@@ -67,8 +63,7 @@ public class ColumnTest {
             "STRING,'#'",
             "STRING,'XFE'",
     })
-    void addHiddenColumnFailTest2(String sourceType, String sourceValue)
-    {
+    void addHiddenColumnFailTest2(String sourceType, String sourceValue) {
         String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         assertThrows(RangeException.class, () -> worksheet.addHiddenColumn(value));
@@ -76,8 +71,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the resetColumn function with an empty worksheet")
     @Test()
-    void resetColumnTest()
-    {
+    void resetColumnTest() {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getColumns().size());
         worksheet.resetColumn(0); // Should do nothing and not fail
@@ -86,8 +80,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the resetColumn function with defined columns but a not defined columns")
     @Test()
-    void resetColumnTest2()
-    {
+    void resetColumnTest2() {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getColumns().size());
         worksheet.addHiddenColumn(0);
@@ -98,8 +91,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the resetColumn function with defined columns and an existing column")
     @Test()
-    void resetColumnTest3()
-    {
+    void resetColumnTest3() {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getColumns().size());
         worksheet.addHiddenColumn(0);
@@ -113,8 +105,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the resetColumn function with defined columns and a AutoFilter definition")
     @Test()
-    void resetColumnTest4()
-    {
+    void resetColumnTest4() {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getColumns().size());
         worksheet.addHiddenColumn(0);
@@ -127,14 +118,13 @@ public class ColumnTest {
         assertEquals(3, worksheet.getColumns().size());
         assertTrue(worksheet.getColumns().containsKey(1));
         assertFalse(worksheet.getColumns().get(1).isHidden());
-         assertTrue(worksheet.getColumns().get(1).hasAutoFilter());
+        assertTrue(worksheet.getColumns().get(1).hasAutoFilter());
         assertEquals(Worksheet.DEFAULT_COLUMN_WIDTH, worksheet.getColumns().get(1).getWidth());
     }
 
     @DisplayName("Test of the getLastColumnNumber function with an empty worksheet")
     @Test()
-    void getLastColumnNumberTest()
-    {
+    void getLastColumnNumberTest() {
         Worksheet worksheet = new Worksheet();
         int column = worksheet.getLastColumnNumber();
         assertEquals(-1, column);
@@ -142,8 +132,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the getLastColumnNumber function with defined columns on an empty worksheet")
     @Test()
-    void getLastColumnNumberTest2()
-    {
+    void getLastColumnNumberTest2() {
         Worksheet worksheet = new Worksheet();
         worksheet.addHiddenColumn(0);
         worksheet.addHiddenColumn(1);
@@ -154,8 +143,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the getLastColumnNumber function with defined columns on an empty worksheet, where the column definition has gaps")
     @Test()
-    void getLastColumnNumberTest3()
-    {
+    void getLastColumnNumberTest3() {
         Worksheet worksheet = new Worksheet();
         worksheet.addHiddenColumn(0);
         worksheet.addHiddenColumn(1);
@@ -166,8 +154,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the getLastColumnNumber function with defined columns where cells are defined below the last column")
     @Test()
-    void getLastColumnNumberTest4()
-    {
+    void getLastColumnNumberTest4() {
         Worksheet worksheet = new Worksheet();
         worksheet.addHiddenColumn(0);
         worksheet.addHiddenColumn(1);
@@ -179,8 +166,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the getLastColumnNumber function with defined columns where cells are defined above the last column")
     @Test()
-    void getLastColumnNumberTest5()
-    {
+    void getLastColumnNumberTest5() {
         Worksheet worksheet = new Worksheet();
         worksheet.addHiddenColumn(0);
         worksheet.addHiddenColumn(1);
@@ -192,8 +178,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the getLastDataColumnNumber function with an empty worksheet")
     @Test()
-    void getLastDataColumnNumberTest()
-    {
+    void getLastDataColumnNumberTest() {
         Worksheet worksheet = new Worksheet();
         int column = worksheet.getLastDataColumnNumber();
         assertEquals(-1, column);
@@ -201,8 +186,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the getLastDataColumnNumber function with defined columns on an empty worksheet")
     @Test()
-    void getLastDataColumnNumberTest2()
-    {
+    void getLastDataColumnNumberTest2() {
         Worksheet worksheet = new Worksheet();
         worksheet.addHiddenColumn(0);
         worksheet.addHiddenColumn(1);
@@ -213,8 +197,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the getLastDataColumnNumber function with defined columns where cells are defined below the last column")
     @Test()
-    void getLastDataColumnNumberTest4()
-    {
+    void getLastDataColumnNumberTest4() {
         Worksheet worksheet = new Worksheet();
         worksheet.addHiddenColumn(0);
         worksheet.addHiddenColumn(1);
@@ -226,8 +209,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the getLastDataColumnNumber function with defined columns where cells are defined above the last column")
     @Test()
-    void getLastDataColumnNumberTest5()
-    {
+    void getLastDataColumnNumberTest5() {
         Worksheet worksheet = new Worksheet();
         worksheet.addHiddenColumn(0);
         worksheet.addHiddenColumn(1);
@@ -239,8 +221,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the getCurrentColumnNumber function")
     @Test()
-    void getCurrentColumnNumberTest()
-    {
+    void getCurrentColumnNumberTest() {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getCurrentColumnNumber());
         worksheet.setCurrentCellDirection(Worksheet.CellDirection.ColumnToColumn);
@@ -269,8 +250,7 @@ public class ColumnTest {
             "3, -1, 2",
             "3, -3, 0",
     })
-    void goToNextColumnTest(int initialColumnNumber, int number, int expectedColumnNumber)
-    {
+    void goToNextColumnTest(int initialColumnNumber, int number, int expectedColumnNumber) {
         Worksheet worksheet = new Worksheet();
         worksheet.setCurrentColumnNumber(initialColumnNumber);
         worksheet.goToNextColumn(number);
@@ -293,8 +273,7 @@ public class ColumnTest {
             "F5, -5, false, A1",
             "F5, -5, true, A5",
     })
-    void goToNextColumnTest2(String initialAddress, int number, boolean keepRowPosition, String expectedAddress)
-    {
+    void goToNextColumnTest2(String initialAddress, int number, boolean keepRowPosition, String expectedAddress) {
         Worksheet worksheet = new Worksheet();
         worksheet.setCurrentCellAddress(initialAddress);
         worksheet.goToNextColumn(number, keepRowPosition);
@@ -311,8 +290,7 @@ public class ColumnTest {
             "0, 16384",
             "0, 20383",
     })
-    void goToNextColumnFailTest(int initialValue, int value)
-    {
+    void goToNextColumnFailTest(int initialValue, int value) {
         Worksheet worksheet = new Worksheet();
         worksheet.setCurrentColumnNumber(initialValue);
         assertEquals(initialValue, worksheet.getCurrentColumnNumber());
@@ -327,8 +305,7 @@ public class ColumnTest {
             "1, 5, B1:F1",
             "5, 1, B1:F1",
     })
-    void setAutoFilterTest(int startColumn, int endColumn, String expectedRange)
-    {
+    void setAutoFilterTest(int startColumn, int endColumn, String expectedRange) {
         Worksheet worksheet = new Worksheet();
         assertNull(worksheet.getAutoFilterRange());
         worksheet.setAutoFilter(startColumn, endColumn);
@@ -345,8 +322,7 @@ public class ColumnTest {
             "F1:B1, B1:F1",
             "$B$1:$F$1, B1:F1",
     })
-    void setAutoFilterTest2(String givenRange, String expectedRange)
-    {
+    void setAutoFilterTest2(String givenRange, String expectedRange) {
         Worksheet worksheet = new Worksheet();
         assertNull(worksheet.getAutoFilterRange());
         worksheet.setAutoFilter(givenRange);
@@ -364,8 +340,7 @@ public class ColumnTest {
             "16384, 2",
             "16384, 16384",
     })
-    void setAutoFilterFailingTest(int startColumn, int endColumn)
-    {
+    void setAutoFilterFailingTest(int startColumn, int endColumn) {
         Worksheet worksheet = new Worksheet();
         assertThrows(RangeException.class, () -> worksheet.setAutoFilter(startColumn, endColumn));
     }
@@ -378,9 +353,8 @@ public class ColumnTest {
             "STRING, 'A1'",
             "STRING, ':'",
     })
-    void setAutoFilterFailingTest2(String sourceType, String sourceValue)
-    {
-        String range = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void setAutoFilterFailingTest2(String sourceType, String sourceValue) {
+        String range = (String) TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         assertThrows(FormatException.class, () -> worksheet.setAutoFilter(range));
     }
@@ -393,8 +367,7 @@ public class ColumnTest {
             "10f",
             "255f",
     })
-    void setColumnWidthTest(float width)
-    {
+    void setColumnWidthTest(float width) {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getColumns().size());
         worksheet.setColumnWidth(0, width);
@@ -404,7 +377,7 @@ public class ColumnTest {
         assertEquals(width, worksheet.getColumns().get(1).getWidth());
         worksheet.setColumnWidth(0, Worksheet.DEFAULT_COLUMN_WIDTH);
         worksheet.setColumnWidth("B", Worksheet.DEFAULT_COLUMN_WIDTH);
-        assertEquals(2,worksheet.getColumns().size()); // No removal so far
+        assertEquals(2, worksheet.getColumns().size()); // No removal so far
         assertEquals(Worksheet.DEFAULT_COLUMN_WIDTH, worksheet.getColumns().get(0).getWidth());
         assertEquals(Worksheet.DEFAULT_COLUMN_WIDTH, worksheet.getColumns().get(1).getWidth());
     }
@@ -418,8 +391,7 @@ public class ColumnTest {
             "0, 255.01f",
             "0, 500f",
     })
-    void setColumnWidthFailTest(int columnNumber, float width)
-    {
+    void setColumnWidthFailTest(int columnNumber, float width) {
         Worksheet worksheet = new Worksheet();
         assertThrows(Exception.class, () -> worksheet.setColumnWidth(columnNumber, width));
     }
@@ -436,9 +408,8 @@ public class ColumnTest {
             "STRING, 'XFD', 255.01f",
             "STRING, 'A', 500f",
     })
-    void setColumnWidthFailTest2(String sourceType, String sourceValue, float width)
-    {
-        String address = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void setColumnWidthFailTest2(String sourceType, String sourceValue, float width) {
+        String address = (String) TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         assertThrows(Exception.class, () -> worksheet.setColumnWidth(address, width));
     }
@@ -450,8 +421,7 @@ public class ColumnTest {
             "5",
             "16383",
     })
-    void setCurrentColumnNumberTest(int column)
-    {
+    void setCurrentColumnNumberTest(int column) {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getCurrentColumnNumber());
         worksheet.goToNextColumn();
@@ -466,16 +436,14 @@ public class ColumnTest {
             "-10",
             "16384",
     })
-    void setCurrentColumnNumberFailTest(int column)
-    {
+    void setCurrentColumnNumberFailTest(int column) {
         Worksheet worksheet = new Worksheet();
         assertThrows(RangeException.class, () -> worksheet.setCurrentColumnNumber(column));
     }
 
     @DisplayName("Test of the getColumn function")
     @Test()
-    void getColumnTest()
-    {
+    void getColumnTest() {
         Worksheet worksheet = new Worksheet();
         List<Object> values = getCellValues(worksheet);
         List<Cell> column = worksheet.getColumn(1);
@@ -485,8 +453,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the getColumn function with a column address")
     @Test()
-    void getColumnTest2()
-    {
+    void getColumnTest2() {
         Worksheet worksheet = new Worksheet();
         List<Object> values = getCellValues(worksheet);
         List<Cell> column = worksheet.getColumn("B");
@@ -496,26 +463,22 @@ public class ColumnTest {
 
     @DisplayName("Test of the getColumn function when no values are applying")
     @Test()
-    void getColumnTest3()
-    {
+    void getColumnTest3() {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "A1");
         worksheet.addCell(false, "C3");
         List<Cell> column = worksheet.getColumn(1);
-        assertEquals(0,column.size());
+        assertEquals(0, column.size());
     }
 
-    private void AssertColumnValues(List<Cell> givenList, List<Object> expectedValues)
-    {
+    private void AssertColumnValues(List<Cell> givenList, List<Object> expectedValues) {
         assertEquals(expectedValues.size(), givenList.size());
-        for(int i = 0; i < expectedValues.size(); i++)
-        {
+        for (int i = 0; i < expectedValues.size(); i++) {
             assertEquals(expectedValues.get(i), givenList.get(i).getValue());
         }
     }
 
-    private static List<Object> getCellValues(Worksheet worksheet)
-    {
+    private static List<Object> getCellValues(Worksheet worksheet) {
         List<Object> expectedList = new ArrayList<Object>();
         expectedList.add(23);
         expectedList.add("test");

@@ -394,11 +394,11 @@ public class StyleManager {
 
     /**
      * Method to gather all styles of the cells in all worksheets
+     *
      * @param workbook Workbook to get all cells with possible style definitions
      * @return StyleManager object, to be processed by the save methods
      */
-    public static StyleManager getManagedStyles(Workbook workbook)
-    {
+    public static StyleManager getManagedStyles(Workbook workbook) {
         StyleManager styleManager = new StyleManager();
         styleManager.addStyle(new Style("default", 0, true));
         Style borderStyle = new Style("default_border_style", 1, true);
@@ -406,12 +406,9 @@ public class StyleManager {
         borderStyle.setFill(BasicStyles.DottedFill_0_125().getFill());
         styleManager.addStyle(borderStyle);
 
-        for (int i = 0; i < workbook.getWorksheets().size(); i++)
-        {
-            for (Map.Entry<String, Cell> cell : workbook.getWorksheets().get(i).getCells().entrySet())
-            {
-                if (cell.getValue().getCellStyle() != null)
-                {
+        for (int i = 0; i < workbook.getWorksheets().size(); i++) {
+            for (Map.Entry<String, Cell> cell : workbook.getWorksheets().get(i).getCells().entrySet()) {
+                if (cell.getValue().getCellStyle() != null) {
                     Style resolvedStyle = styleManager.addStyle(cell.getValue().getCellStyle());
                     workbook.getWorksheets().get(i).getCells().get(cell.getKey()).setStyle(resolvedStyle, true);
                 }
@@ -444,7 +441,7 @@ public class StyleManager {
         Fill fill;
         Font font;
         NumberFormat numberFormat;
-        int len = this.borders.size() -1;
+        int len = this.borders.size() - 1;
         int i;
         for (i = len; i >= 0; i--) {
             border = (Border) this.borders.get(i);
@@ -452,28 +449,28 @@ public class StyleManager {
                 this.borders.remove(i);
             }
         }
-        len = this.cellXfs.size()- 1;
+        len = this.cellXfs.size() - 1;
         for (i = len; i >= 0; i--) {
             cellXf = (CellXf) this.cellXfs.get(i);
             if (!isUsedByStyle(cellXf)) {
                 this.cellXfs.remove(i);
             }
         }
-        len = this.fills.size()- 1;
+        len = this.fills.size() - 1;
         for (i = len; i >= 0; i--) {
             fill = (Fill) this.fills.get(i);
             if (!isUsedByStyle(fill)) {
                 this.fills.remove(i);
             }
         }
-        len = this.fonts.size()- 1;
+        len = this.fonts.size() - 1;
         for (i = len; i >= 0; i--) {
             font = (Font) this.fonts.get(i);
             if (!isUsedByStyle(font)) {
                 this.fonts.remove(i);
             }
         }
-        len = this.numberFormats.size()- 1;
+        len = this.numberFormats.size() - 1;
         for (i = len; i >= 0; i--) {
             numberFormat = (NumberFormat) this.numberFormats.get(i);
             if (!isUsedByStyle(numberFormat)) {

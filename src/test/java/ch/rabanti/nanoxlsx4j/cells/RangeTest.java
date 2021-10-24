@@ -24,8 +24,7 @@ public class RangeTest {
             "A$1, C$4, A$1:C$4",
             "$C$3, $A1, $A1:$C$3",
     })
-    void constructorTest(String startAddress, String endAddress, String expectedRange)
-    {
+    void constructorTest(String startAddress, String endAddress, String expectedRange) {
         Address start = new Address(startAddress);
         Address end = new Address(endAddress);
         Range range = new Range(start, end);
@@ -40,8 +39,7 @@ public class RangeTest {
             "$A1:$F10, $A1:$F10",
             "$r$1:$b$2, $B$2:$R$1",
     })
-    void constructorTest2(String rangeExpression, String expectedRange)
-    {
+    void constructorTest2(String rangeExpression, String expectedRange) {
         Range range = new Range(rangeExpression);
         assertEquals(expectedRange, range.toString());
     }
@@ -54,8 +52,7 @@ public class RangeTest {
             "A1:B3, 'A1,A2,A3,B1,B2,B3'",
             "B3:A2, 'A2,A3,B2,B3'",
     })
-    void resolveEnclosedAddressesTest(String rangeExpression, String expectedAddresses)
-    {
+    void resolveEnclosedAddressesTest(String rangeExpression, String expectedAddresses) {
         Range range = new Range(rangeExpression);
         List<Address> addresses = range.resolveEnclosedAddresses();
         TestUtils.assertCellRange(expectedAddresses, addresses);
@@ -70,8 +67,7 @@ public class RangeTest {
             "B3:A2, A2:B3, true",
             "B$3:A2, A2:B$3, true",
     })
-    void equalsTest(String rangeExpression1, String rangeExpression2, boolean expectedEquality)
-    {
+    void equalsTest(String rangeExpression1, String rangeExpression2, boolean expectedEquality) {
         Range range1 = new Range(rangeExpression1);
         Range range2 = new Range(rangeExpression2);
         boolean result = range1.equals(range2);
@@ -81,8 +77,7 @@ public class RangeTest {
 
     @DisplayName("Test of the Equals method returning false on invalid values")
     @Test()
-    void equalsTest2()
-    {
+    void equalsTest2() {
         Range range1 = new Range("A1:A7");
         boolean result = range1.equals(null);
         assertFalse(result);

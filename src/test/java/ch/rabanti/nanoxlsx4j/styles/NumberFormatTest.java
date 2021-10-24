@@ -303,8 +303,7 @@ public class NumberFormatTest {
 
     @DisplayName("Test of the CompareTo method")
     @Test()
-    void compareToTest()
-    {
+    void compareToTest() {
         NumberFormat numberFormat = new NumberFormat();
         NumberFormat other = new NumberFormat();
         numberFormat.setInternalID(null);

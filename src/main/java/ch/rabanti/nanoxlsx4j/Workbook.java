@@ -690,7 +690,8 @@ public class Workbook {
 
     /**
      * Loads a workbook from a file with import options
-     * @param filename Filename of the workbook
+     *
+     * @param filename      Filename of the workbook
      * @param importOptions Import options to override the data types of columns or cells. These options can be used to cope with wrong interpreted data, caused by irregular styles
      * @return Workbook object
      * @throws IOException Throws IOException in case of an error
@@ -709,12 +710,13 @@ public class Workbook {
      * @throws IOException Throws IOException in case of an error
      */
     public static Workbook load(InputStream stream) throws IOException, java.io.IOException {
-        return  load(stream, null);
+        return load(stream, null);
     }
 
     /**
      * Loads a workbook from an input stream with import options
-     * @param stream Stream containing the workbook
+     *
+     * @param stream        Stream containing the workbook
      * @param importOptions Import options to override the data types of columns or cells. These options can be used to cope with wrong interpreted data, caused by irregular styles
      * @return Workbook object
      * @throws IOException Throws IOException in case of an error

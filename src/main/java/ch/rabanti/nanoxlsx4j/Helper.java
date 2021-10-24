@@ -125,15 +125,16 @@ public class Helper {
     /**
      * Method to calculate a common Date from the OA date (OLE automation) format<br>
      * OA Date format starts at January 1st 1900 (actually 00.01.1900). Dates beyond this date cannot be handled by Excel under normal circumstances and will throw a FormatException
+     *
+     * @param oaDate OA date number
+     * @return Converted date
      * @implNote Numbers that represents dates before 1900-03-01 (number of days since 1900-01-01 = 60) are automatically modified.
      * Until 1900-03-01 is 1.0 added to the number to get the same date, as displayed in Excel. The reason for this is a bug in Excel.
      * See also: <a href="https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br/>
      * https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year</a>
-     * @param oaDate OA date number
-     * @return Converted date
      */
     public static Date getDateFromOA(double oaDate) {
-        if (oaDate < 60){
+        if (oaDate < 60) {
             oaDate = oaDate + 1;
         }
         double remainder = oaDate - (long) oaDate;

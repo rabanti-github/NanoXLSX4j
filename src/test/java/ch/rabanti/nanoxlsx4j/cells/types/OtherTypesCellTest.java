@@ -16,8 +16,7 @@ class OtherTypesCellTest {
 
     @DisplayName("Unknown value cell test: Test of the cell values, as well as proper modification")
     @Test()
-    void unknownClassesCellTest()
-    {
+    void unknownClassesCellTest() {
         DummyClass obj1 = new DummyClass(1);
         Cell actualCell = new Cell(obj1, Cell.CellType.DEFAULT, utils.getCellAddress());
         assertEquals(DummyClass.PREFIX + "1", actualCell.getValue().toString());

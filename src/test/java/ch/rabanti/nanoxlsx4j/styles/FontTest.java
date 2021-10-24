@@ -13,8 +13,7 @@ public class FontTest {
 
     private Font exampleStyle;
 
-    public FontTest()
-    {
+    public FontTest() {
         exampleStyle = new Font();
         exampleStyle.setBold(true);
         exampleStyle.setItalic(true);
@@ -33,8 +32,7 @@ public class FontTest {
 
     @DisplayName("Test of the default values")
     @Test()
-    void defaultValuesTest()
-    {
+    void defaultValuesTest() {
         assertEquals(11f, Font.DEFAULT_FONT_SIZE);
         assertEquals("2", Font.DEFAULT_FONT_FAMILY);
         assertEquals(Font.SchemeValue.minor, Font.DEFAULT_FONT_SCHEME);
@@ -44,8 +42,7 @@ public class FontTest {
 
     @DisplayName("Test of the constructor")
     @Test()
-    void constructorTest()
-    {
+    void constructorTest() {
         Font font = new Font();
         assertEquals(Font.DEFAULT_FONT_SIZE, font.getSize());
         assertEquals(Font.DEFAULT_FONT_NAME, font.getName());
@@ -63,8 +60,7 @@ public class FontTest {
             "true",
             "false",
     })
-    void boldTest(boolean value)
-    {
+    void boldTest(boolean value) {
         Font font = new Font();
         assertFalse(font.isBold());
         font.setBold(value);
@@ -77,8 +73,7 @@ public class FontTest {
             "true",
             "false",
     })
-    void italicTest(boolean value)
-    {
+    void italicTest(boolean value) {
         Font font = new Font();
         assertFalse(font.isItalic());
         font.setItalic(value);
@@ -91,8 +86,7 @@ public class FontTest {
             "true",
             "false",
     })
-    void underlineTest(boolean value)
-    {
+    void underlineTest(boolean value) {
         Font font = new Font();
         assertFalse(font.isUnderline());
         font.setUnderline(value);
@@ -105,8 +99,7 @@ public class FontTest {
             "true",
             "false",
     })
-    void doubleUnderlineTest(boolean value)
-    {
+    void doubleUnderlineTest(boolean value) {
         Font font = new Font();
         assertFalse(font.isDoubleUnderline());
         font.setDoubleUnderline(value);
@@ -119,8 +112,7 @@ public class FontTest {
             "true",
             "false",
     })
-    void strikeTest(boolean value)
-    {
+    void strikeTest(boolean value) {
         Font font = new Font();
         assertFalse(font.isStrike());
         font.setStrike(value);
@@ -133,9 +125,8 @@ public class FontTest {
             "NULL, ''",
             "STRING, 'ASCII'",
     })
-    void charsetTest(String sourceType, String sourceValue)
-    {
-        String value = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void charsetTest(String sourceType, String sourceValue) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Font font = new Font();
         assertEquals("", font.getCharset());
         font.setCharset(value);
@@ -149,8 +140,7 @@ public class FontTest {
             "75",
             "11",
     })
-    void sizeTest(int value)
-    {
+    void sizeTest(int value) {
         Font font = new Font();
         assertEquals(Font.DEFAULT_FONT_SIZE, font.getSize()); // 11 is default
         font.setSize(value);
@@ -168,8 +158,7 @@ public class FontTest {
             "500f, 409f",
             "409.05f, 409f",
     })
-    void sizeFailTest(float givenValue, float expectedValue)
-    {
+    void sizeFailTest(float givenValue, float expectedValue) {
         Font font = new Font();
         font.setSize(givenValue);
         assertEquals(expectedValue, font.getSize());
@@ -182,8 +171,7 @@ public class FontTest {
             "Arial",
             "---", // Not a font but a valid string
     })
-    void nameTest(String value)
-    {
+    void nameTest(String value) {
         Font font = new Font();
         assertEquals(Font.DEFAULT_FONT_NAME, font.getName()); // Default is 'Calibri'
         font.setName(value);
@@ -192,8 +180,7 @@ public class FontTest {
 
     @DisplayName("Test of the failing set function of the name field")
     @Test()
-    void nameFailTest()
-    {
+    void nameFailTest() {
         Font font = new Font();
         assertThrows(StyleException.class, () -> font.setName(null));
         assertThrows(StyleException.class, () -> font.setName(""));
@@ -206,8 +193,7 @@ public class FontTest {
             "NULL, ''",
             "STRING, '4'",
     })
-    void familyTest(String sourceType, String sourceValue)
-    {
+    void familyTest(String sourceType, String sourceValue) {
         String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Font font = new Font();
         assertEquals(Font.DEFAULT_FONT_FAMILY, font.getFamily());
@@ -221,8 +207,7 @@ public class FontTest {
             "1",
             "10",
     })
-    void colorThemeTest(int value)
-    {
+    void colorThemeTest(int value) {
         Font font = new Font();
         assertEquals(1, font.getColorTheme()); // 1 is default
         font.setColorTheme(value);
@@ -235,8 +220,7 @@ public class FontTest {
             "0",
             "-100",
     })
-    void colorThemeFailTest(int value)
-    {
+    void colorThemeFailTest(int value) {
         Font font = new Font();
         assertThrows(Exception.class, () -> font.setColorTheme(value));
     }
@@ -248,9 +232,8 @@ public class FontTest {
             "NULL, ''",
             "STRING, 'FFAA22CC'",
     })
-    void colorValueTest(String sourceType, String sourceValue)
-    {
-        String value = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void colorValueTest(String sourceType, String sourceValue) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Font font = new Font();
         assertEquals("", font.getColorValue()); // default is empty
         font.setColorValue(value);
@@ -264,8 +247,7 @@ public class FontTest {
             "0002200000",
             "XXXXXXXX",
     })
-    void colorValueFailTest(String value)
-    {
+    void colorValueFailTest(String value) {
         Font font = new Font();
         assertThrows(Exception.class, () -> font.setColorValue(value));
     }
@@ -277,8 +259,7 @@ public class FontTest {
             "minor",
             "none",
     })
-    void schmeTest(Font.SchemeValue value)
-    {
+    void schmeTest(Font.SchemeValue value) {
         Font font = new Font();
         assertEquals(Font.DEFAULT_FONT_SCHEME, font.getScheme()); // default is minor
         font.setScheme(value);
@@ -292,8 +273,7 @@ public class FontTest {
             "subscript",
             "superscript",
     })
-    void verticalAlignTest(Font.VerticalAlignValue value)
-    {
+    void verticalAlignTest(Font.VerticalAlignValue value) {
         Font font = new Font();
         assertEquals(Font.DEFAULT_VERTICAL_ALIGN, font.getVerticalAlign()); // default is none
         font.setVerticalAlign(value);
@@ -302,8 +282,7 @@ public class FontTest {
 
     @DisplayName("Test of the get function of the isDefaultFont field")
     @Test()
-    void isDefaultFontTest()
-    {
+    void isDefaultFontTest() {
         Font font = new Font();
         assertTrue(font.isDefaultFont());
         font.setItalic(true);
@@ -313,26 +292,23 @@ public class FontTest {
 
     @DisplayName("Test of the copy function")
     @Test()
-    void copyTest()
-    {
+    void copyTest() {
         Font copy = exampleStyle.copy();
         assertEquals(exampleStyle.hashCode(), copy.hashCode());
     }
 
     @DisplayName("Test of the equals method")
     @Test()
-    void equalsTest()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest() {
+        Font style2 = (Font) exampleStyle.copy();
         assertTrue(exampleStyle.equals(style2));
     }
 
 
     @DisplayName("Test of the equals method (inequality of bold)")
     @Test()
-    void equalsTest2a()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2a() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setBold(false);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -340,9 +316,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of italic)")
     @Test()
-    void equalsTest2b()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2b() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setItalic(false);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -350,9 +325,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of underline)")
     @Test()
-    void equalsTest2c()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2c() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setUnderline(false);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -360,9 +334,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of doubleUnderline)")
     @Test()
-    void equalsTest2d()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2d() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setDoubleUnderline(false);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -370,9 +343,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of strike)")
     @Test()
-    void equalsTest2e()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2e() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setStrike(false);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -380,9 +352,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of charset)")
     @Test()
-    void equalsTest2f()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2f() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setCharset("XYZ");
         assertFalse(exampleStyle.equals(style2));
     }
@@ -390,9 +361,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of size)")
     @Test()
-    void equalsTest2g()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2g() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setSize(33);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -400,9 +370,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of name)")
     @Test()
-    void equalsTest2h()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2h() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setName("Comic Sans");
         assertFalse(exampleStyle.equals(style2));
     }
@@ -410,9 +379,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of family)")
     @Test()
-    void equalsTest2i()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2i() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setFamily("999");
         assertFalse(exampleStyle.equals(style2));
     }
@@ -420,9 +388,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of colorTheme)")
     @Test()
-    void equalsTest2j()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2j() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setColorTheme(22);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -430,9 +397,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of colorValue)")
     @Test()
-    void equalsTest2k()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2k() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setColorValue("FF9988AA");
         assertFalse(exampleStyle.equals(style2));
     }
@@ -440,9 +406,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of scheme)")
     @Test()
-    void equalsTest2l()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2l() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setScheme(Font.SchemeValue.none);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -450,9 +415,8 @@ public class FontTest {
 
     @DisplayName("Test of the equals method (inequality of verticalAlign)")
     @Test()
-    void equalsTest2m()
-    {
-        Font style2 = (Font)exampleStyle.copy();
+    void equalsTest2m() {
+        Font style2 = (Font) exampleStyle.copy();
         style2.setVerticalAlign(Font.VerticalAlignValue.none);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -465,8 +429,7 @@ public class FontTest {
             "STRING, 'text'",
             "BOOLEAN, 'true'",
     })
-    void equalsTest3(String sourceType, String sourceValue)
-    {
+    void equalsTest3(String sourceType, String sourceValue) {
         Object obj = TestUtils.createInstance(sourceType, sourceValue);
         assertFalse(exampleStyle.equals(obj));
     }
@@ -478,18 +441,16 @@ public class FontTest {
             "STRING, 'origin'",
             "BOOLEAN, 'true'",
     })
-    void equalsTest5(String sourceType, String sourceValue)
-    {
+    void equalsTest5(String sourceType, String sourceValue) {
         Object origin = TestUtils.createInstance(sourceType, sourceValue);
-        Font copy = (Font)exampleStyle.copy();
+        Font copy = (Font) exampleStyle.copy();
         assertFalse(copy.equals(origin));
     }
 
     @DisplayName("Test of the hashCode method (equality of two identical objects)")
     @Test()
-    void hashCodeTest()
-    {
-        Font copy = (Font)exampleStyle.copy();
+    void hashCodeTest() {
+        Font copy = (Font) exampleStyle.copy();
         copy.setInternalID(99);  // Should not influence
         assertEquals(exampleStyle.hashCode(), copy.hashCode());
     }
@@ -497,17 +458,15 @@ public class FontTest {
 
     @DisplayName("Test of the hashCode method (inequality of two different objects)")
     @Test()
-    void hashCodeTest2()
-    {
-        Font copy = (Font)exampleStyle.copy();
+    void hashCodeTest2() {
+        Font copy = (Font) exampleStyle.copy();
         copy.setBold(false);
         assertNotEquals(exampleStyle.hashCode(), copy.hashCode());
     }
 
     @DisplayName("Test of the CompareTo method")
     @Test()
-    void compareToTest()
-    {
+    void compareToTest() {
         Font font = new Font();
         Font other = new Font();
         font.setInternalID(null);
@@ -527,8 +486,7 @@ public class FontTest {
     // For code coverage
     @DisplayName("Test of the toString function")
     @Test()
-    void toStringTest()
-    {
+    void toStringTest() {
         Font font = new Font();
         String s1 = font.toString();
         font.setName("YXZ");
@@ -537,7 +495,7 @@ public class FontTest {
 
     @DisplayName("Test of the getValue function of the VerticalAlignValue enum")
     @Test()
-    void verticalAlignValueTest(){
+    void verticalAlignValueTest() {
         assertEquals(0, Font.VerticalAlignValue.none.getValue());
         assertEquals(1, Font.VerticalAlignValue.subscript.getValue());
         assertEquals(2, Font.VerticalAlignValue.superscript.getValue());

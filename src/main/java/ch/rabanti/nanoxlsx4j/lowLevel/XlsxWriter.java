@@ -28,7 +28,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -338,25 +337,20 @@ public class XlsxWriter {
      * Method to create a row string
      *
      * @param dynamicRow Dynamic row with List of cells, heights and hidden states
-     * @param worksheet    Worksheet to process
+     * @param worksheet  Worksheet to process
      * @return Formatted row string
      */
-    private String createRowString(DynamicRow dynamicRow, Worksheet worksheet)
-    {
+    private String createRowString(DynamicRow dynamicRow, Worksheet worksheet) {
         int rowNumber = dynamicRow.getRowNumber();
         String height = "";
         String hidden = "";
-        if (worksheet.getRowHeights().containsKey(rowNumber))
-        {
-            if (worksheet.getRowHeights().get(rowNumber) != worksheet.getDefaultRowHeight())
-            {
+        if (worksheet.getRowHeights().containsKey(rowNumber)) {
+            if (worksheet.getRowHeights().get(rowNumber) != worksheet.getDefaultRowHeight()) {
                 height = " x14ac:dyDescent=\"0.25\" customHeight=\"1\" ht=\"" + Helper.getInternalRowHeight(worksheet.getRowHeights().get(rowNumber)) + "\"";
             }
         }
-        if (worksheet.getHiddenRows().containsKey(rowNumber))
-        {
-            if (worksheet.getHiddenRows().get(rowNumber))
-            {
+        if (worksheet.getHiddenRows().containsKey(rowNumber)) {
+            if (worksheet.getHiddenRows().get(rowNumber)) {
                 hidden = " hidden=\"1\"";
             }
         }
@@ -370,25 +364,23 @@ public class XlsxWriter {
         boolean boolValue;
 
         int col = 0;
-        for (Cell item : dynamicRow.getCellDefinitions())
-        {
+        for (Cell item : dynamicRow.getCellDefinitions()) {
             typeDef = " ";
-            if (item.getCellStyle() != null)
-            {
+            if (item.getCellStyle() != null) {
                 styleDef = " s=\"" + item.getCellStyle().getInternalID() + "\" ";
-            }
-            else
-            {
+            } else {
                 styleDef = "";
             }
             item.resolveCellType(); // Recalculate the type (for handling DEFAULT)
-            if (item.getDataType().equals(Cell.CellType.BOOL))
-            {
+            if (item.getDataType().equals(Cell.CellType.BOOL)) {
                 typeAttribute = "b";
                 typeDef = " t=\"" + typeAttribute + "\" ";
-                boolValue = (boolean)item.getValue();
-                if (boolValue) { value = "1"; }
-                else { value = "0"; }
+                boolValue = (boolean) item.getValue();
+                if (boolValue) {
+                    value = "1";
+                } else {
+                    value = "0";
+                }
 
             }
             // Number casting
@@ -413,40 +405,30 @@ public class XlsxWriter {
                 }
             }
             // Date parsing
-            else if (item.getDataType().equals(Cell.CellType.DATE))
-            {
+            else if (item.getDataType().equals(Cell.CellType.DATE)) {
                 typeAttribute = "d";
-                Date date = (Date)item.getValue();
+                Date date = (Date) item.getValue();
                 value = Helper.getOADateString(date);
             }
             // Time parsing
-            else if (item.getDataType().equals(Cell.CellType.TIME))
-            {
+            else if (item.getDataType().equals(Cell.CellType.TIME)) {
                 typeAttribute = "d";
                 // TODO: 'd' is probably an outdated attribute (to be checked for dates and times)
-                LocalTime time = (LocalTime)item.getValue();
+                LocalTime time = (LocalTime) item.getValue();
                 value = Helper.getOATimeString(time);
-            }
-            else
-            {
-                if (item.getValue() == null)
-                {
+            } else {
+                if (item.getValue() == null) {
                     typeAttribute = null;
                     value = null;
-                }
-                else // Handle sharedStrings
+                } else // Handle sharedStrings
                 {
-                    if (item.getDataType().equals(Cell.CellType.FORMULA))
-                    {
+                    if (item.getDataType().equals(Cell.CellType.FORMULA)) {
                         typeAttribute = "str";
                         value = item.getValue().toString();
-                    }
-                    else
-                    {
+                    } else {
                         typeAttribute = "s";
                         value = item.getValue().toString();
-                        if (!sharedStrings.containsKey(value))
-                        {
+                        if (!sharedStrings.containsKey(value)) {
                             sharedStrings.add(value, Integer.toString(sharedStrings.size()));
                         }
                         value = sharedStrings.get(value);
@@ -455,24 +437,18 @@ public class XlsxWriter {
                 }
                 typeDef = " t=\"" + typeAttribute + "\" ";
             }
-            if (!item.getDataType().equals(Cell.CellType.EMPTY))
-            {
+            if (!item.getDataType().equals(Cell.CellType.EMPTY)) {
                 sb.append("<c").append(typeDef).append("r=\"").append(item.getCellAddress()).append("\"").append(styleDef).append(">");
-                if (item.getDataType().equals(Cell.CellType.FORMULA))
-                {
+                if (item.getDataType().equals(Cell.CellType.FORMULA)) {
                     sb.append("<f>").append(XlsxWriter.escapeXMLChars(item.getValue().toString())).append("</f>");
-                }
-                else
-                {
+                } else {
                     sb.append("<v>").append(XlsxWriter.escapeXMLChars(value)).append("</v>");
                 }
                 sb.append("</c>");
-            }
-            else if (value == null || item.getDataType().equals(Cell.CellType.EMPTY)) // Empty cell
+            } else if (value == null || item.getDataType().equals(Cell.CellType.EMPTY)) // Empty cell
             {
                 sb.append("<c r=\"").append(item.getCellAddress()).append("\"").append(styleDef).append("/>");
-            }
-            else // All other, unexpected cases
+            } else // All other, unexpected cases
             {
                 sb.append("<c").append(typeDef).append("r=\"").append(item.getCellAddress()).append("\"").append(styleDef).append("/>");
             }
@@ -1207,12 +1183,10 @@ public class XlsxWriter {
         return createXMLDocument(sb.toString(), "WORKSHEET: " + worksheet.getSheetName());
     }
 
-    private void createRowsString(Worksheet worksheet, StringBuilder sb)
-    {
+    private void createRowsString(Worksheet worksheet, StringBuilder sb) {
         List<DynamicRow> cellData = getSortedSheetData(worksheet);
         String line;
-        for(DynamicRow row : cellData)
-        {
+        for (DynamicRow row : cellData) {
             line = createRowString(row, worksheet);
             sb.append(line);
         }
@@ -1220,20 +1194,18 @@ public class XlsxWriter {
 
     /**
      * Method to create the (sub) part of the sheet view (selected cells and panes) within the worksheet XML document
+     *
      * @param worksheet worksheet object to process
-     * @param sb reference to the stringbuilder
+     * @param sb        reference to the stringbuilder
      */
-    private void createSheetViewString(Worksheet worksheet, StringBuilder sb)
-    {
+    private void createSheetViewString(Worksheet worksheet, StringBuilder sb) {
         sb.append("<sheetViews><sheetView workbookViewId=\"0\"");
-        if (workbook.getSelectedWorksheet() == worksheet.getSheetID() - 1 && !worksheet.isHidden())
-        {
+        if (workbook.getSelectedWorksheet() == worksheet.getSheetID() - 1 && !worksheet.isHidden()) {
             sb.append(" tabSelected=\"1\"");
         }
         sb.append(">");
         createPaneString(worksheet, sb);
-        if (worksheet.getSelectedCells() != null)
-        {
+        if (worksheet.getSelectedCells() != null) {
             sb.append("<selection sqref=\"");
             sb.append(worksheet.getSelectedCells().toString());
             sb.append("\" activeCell=\"");
@@ -1242,76 +1214,57 @@ public class XlsxWriter {
         }
         sb.append("</sheetView></sheetViews>");
     }
-    
+
     /**
      * Method to create the (sub) part of the pane (splitting and freezing) within the worksheet XML document
+     *
      * @param worksheet worksheet">worksheet object to process
-     * @param sb reference to the stringbuilder
+     * @param sb        reference to the stringbuilder
      */
-    private void createPaneString(Worksheet worksheet, StringBuilder sb)
-    {
-        if (worksheet.getPaneSplitLeftWidth() == null && worksheet.getPaneSplitTopHeight() == null && worksheet.getPaneSplitAddress() == null)
-        {
+    private void createPaneString(Worksheet worksheet, StringBuilder sb) {
+        if (worksheet.getPaneSplitLeftWidth() == null && worksheet.getPaneSplitTopHeight() == null && worksheet.getPaneSplitAddress() == null) {
             return;
         }
         sb.append("<pane");
         boolean applyXSplit = false;
         boolean applyYSplit = false;
-        if (worksheet.getPaneSplitAddress() != null)
-        {
+        if (worksheet.getPaneSplitAddress() != null) {
             boolean freeze = worksheet.getFreezeSplitPanes() != null && worksheet.getFreezeSplitPanes();
             int xSplit = worksheet.getPaneSplitAddress().Column;
             int ySplit = worksheet.getPaneSplitAddress().Row;
-            if (xSplit > 0 )
-            {
-                if (freeze)
-                {
+            if (xSplit > 0) {
+                if (freeze) {
                     sb.append(" xSplit=\"").append(Integer.toString(xSplit)).append("\"");
-                }
-                else
-                {
+                } else {
                     sb.append(" xSplit=\"").append(calculatePaneWidth(worksheet, xSplit)).append("\"");
                 }
                 applyXSplit = true;
             }
-            if (ySplit > 0)
-            {
-                if (freeze)
-                {
+            if (ySplit > 0) {
+                if (freeze) {
                     sb.append(" ySplit=\"").append(Integer.toString(ySplit)).append("\"");
-                }
-                else
-                {
+                } else {
                     sb.append(" ySplit=\"").append(calculatePaneHeight(worksheet, ySplit)).append("\"");
                 }
                 applyYSplit = true;
             }
-            if (freeze && applyXSplit && applyYSplit)
-            {
+            if (freeze && applyXSplit && applyYSplit) {
                 sb.append(" state=\"frozenSplit\"");
-            }
-            else if (freeze)
-            {
+            } else if (freeze) {
                 sb.append(" state=\"frozen\"");
             }
-        }
-        else
-        {
-            if (worksheet.getPaneSplitLeftWidth() != null)
-            {
+        } else {
+            if (worksheet.getPaneSplitLeftWidth() != null) {
                 sb.append(" xSplit=\"").append(Helper.getInternalPaneSplitWidth(worksheet.getPaneSplitLeftWidth())).append("\"");
                 applyXSplit = true;
             }
-            if (worksheet.getPaneSplitTopHeight() != null)
-            {
+            if (worksheet.getPaneSplitTopHeight() != null) {
                 sb.append(" ySplit=\"").append(Helper.getInternalPaneSplitHeight(worksheet.getPaneSplitTopHeight())).append("\"");
                 applyYSplit = true;
             }
         }
-        if (applyXSplit && applyYSplit)
-        {
-            switch (worksheet.getActivePane())
-            {
+        if (applyXSplit && applyYSplit) {
+            switch (worksheet.getActivePane()) {
                 case bottomLeft:
                     sb.append(" activePane=\"bottomLeft\"");
                     break;
@@ -1329,23 +1282,19 @@ public class XlsxWriter {
         String topLeftCell = worksheet.getPaneSplitTopLeftCell().getAddress();
         sb.append(" topLeftCell=\"").append(topLeftCell).append("\" ");
         sb.append("/>");
-        if (applyXSplit && !applyYSplit)
-        {
+        if (applyXSplit && !applyYSplit) {
             sb.append("<selection pane=\"topRight\" activeCell=\"" + topLeftCell + "\"  sqref=\"" + topLeftCell + "\" />");
-        }
-        else if (applyYSplit && !applyXSplit)
-        {
-            sb.append("<selection pane=\"bottomLeft\" activeCell=\""+ topLeftCell + "\"  sqref=\"" + topLeftCell + "\" />");
-        }
-        else if (applyYSplit && applyXSplit)
-        {
+        } else if (applyYSplit && !applyXSplit) {
+            sb.append("<selection pane=\"bottomLeft\" activeCell=\"" + topLeftCell + "\"  sqref=\"" + topLeftCell + "\" />");
+        } else if (applyYSplit && applyXSplit) {
             sb.append("<selection activeCell=\"" + topLeftCell + "\"  sqref=\"" + topLeftCell + "\" />");
         }
     }
 
     /**
      * Method to calculate the pane height, based on the number of rows
-     * @param worksheet worksheet object to get the row definitions from
+     *
+     * @param worksheet    worksheet object to get the row definitions from
      * @param numberOfRows Number of rows from the top to the split position
      * @return Internal height from the top of the worksheet to the pane split position
      */
@@ -1363,21 +1312,17 @@ public class XlsxWriter {
 
     /**
      * Method to calculate the pane width, based on the number of columns
-     * @param worksheet worksheet object to get the column definitions from
+     *
+     * @param worksheet       worksheet object to get the column definitions from
      * @param numberOfColumns Number of columns from the left to the split position
      * @return Internal width from the left of the worksheet to the pane split position
      */
-    private float calculatePaneWidth(Worksheet worksheet, int numberOfColumns)
-    {
+    private float calculatePaneWidth(Worksheet worksheet, int numberOfColumns) {
         float width = 0;
-        for (int i = 0; i < numberOfColumns; i++)
-        {
-            if (worksheet.getColumns().containsKey(i))
-            {
+        for (int i = 0; i < numberOfColumns; i++) {
+            if (worksheet.getColumns().containsKey(i)) {
                 width += Helper.getInternalColumnWidth(worksheet.getColumns().get(i).getWidth());
-            }
-            else
-            {
+            } else {
                 width += Helper.getInternalColumnWidth(Worksheet.DEFAULT_COLUMN_WIDTH);
             }
         }
@@ -1431,27 +1376,24 @@ public class XlsxWriter {
 
     /**
      * Method to sort the cells of a worksheet as preparation for the XML document
+     *
      * @param sheet Worksheet to process
      * @return Sorted list of dynamic rows that are either defined by cells or row widths / hidden states. The list is sorted by row numbers (zero-based)
      */
     private List<DynamicRow> getSortedSheetData(Worksheet sheet) {
         List<Cell> temp = new ArrayList<>();
-        for (Map.Entry<String, Cell> item : sheet.getCells().entrySet())
-        {
+        for (Map.Entry<String, Cell> item : sheet.getCells().entrySet()) {
             temp.add(item.getValue());
         }
         Collections.sort(temp);
         DynamicRow row = new DynamicRow();
         Map<Integer, DynamicRow> rows = new HashMap<>();
         int rowNumber;
-        if (!temp.isEmpty())
-        {
+        if (!temp.isEmpty()) {
             rowNumber = temp.get(0).getRowNumber();
             row.setRowNumber(rowNumber);
-            for (Cell cell : temp)
-            {
-                if (cell.getRowNumber() != rowNumber)
-                {
+            for (Cell cell : temp) {
+                if (cell.getRowNumber() != rowNumber) {
                     rows.put(rowNumber, row);
                     row = new DynamicRow();
                     row.setRowNumber(cell.getRowNumber());
@@ -1459,24 +1401,19 @@ public class XlsxWriter {
                 }
                 row.getCellDefinitions().add(cell);
             }
-            if (!row.getCellDefinitions().isEmpty())
-            {
+            if (!row.getCellDefinitions().isEmpty()) {
                 rows.put(rowNumber, row);
             }
         }
-        for (Map.Entry<Integer, Float> rowHeight : sheet.getRowHeights().entrySet())
-        {
-            if (!rows.containsKey(rowHeight.getKey()))
-            {
+        for (Map.Entry<Integer, Float> rowHeight : sheet.getRowHeights().entrySet()) {
+            if (!rows.containsKey(rowHeight.getKey())) {
                 row = new DynamicRow();
                 row.setRowNumber(rowHeight.getKey());
                 rows.put(rowHeight.getKey(), row);
             }
         }
-        for(Map.Entry<Integer, Boolean> hiddenRow : sheet.getHiddenRows().entrySet())
-        {
-            if (!rows.containsKey(hiddenRow.getKey()))
-            {
+        for (Map.Entry<Integer, Boolean> hiddenRow : sheet.getHiddenRows().entrySet()) {
+            if (!rows.containsKey(hiddenRow.getKey())) {
                 row = new DynamicRow();
                 row.setRowNumber(hiddenRow.getKey());
                 rows.put(hiddenRow.getKey(), row);
@@ -1671,13 +1608,14 @@ public class XlsxWriter {
     /**
      * Class representing a row that is either empty or containing cells. Empty rows can also carry information about height or visibility
      */
-    private static class DynamicRow{
+    private static class DynamicRow {
 
         private final List<Cell> cellDefinitions;
         private int rowNumber;
 
         /**
          * Gets the List of cells if not empty
+         *
          * @return List of cells
          */
         public List<Cell> getCellDefinitions() {
@@ -1686,6 +1624,7 @@ public class XlsxWriter {
 
         /**
          * Gets the row number (zero-based)
+         *
          * @return Row number
          */
         public int getRowNumber() {
@@ -1694,6 +1633,7 @@ public class XlsxWriter {
 
         /**
          * Sets the row number (zero-based)
+         *
          * @param rowNumber Row number
          */
         public void setRowNumber(int rowNumber) {
@@ -1703,7 +1643,7 @@ public class XlsxWriter {
         /**
          * Default constructor. Defines an empty row if no additional operations are made on the object
          */
-        public DynamicRow(){
+        public DynamicRow() {
             this.cellDefinitions = new ArrayList<>();
         }
 

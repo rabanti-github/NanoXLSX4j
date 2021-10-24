@@ -24,8 +24,7 @@ public class BasicFormulasTest {
             "'$A$1:$C2', 'AVERAGE($A$1:$C2)'",
             "'$A$1:$C$2', 'AVERAGE($A$1:$C$2)'",
     })
-    void averageTest(String rangeExpression, String expectedFormula)
-    {
+    void averageTest(String rangeExpression, String expectedFormula) {
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.Average(range);
         assertEquals(expectedFormula, formula.getValue().toString());
@@ -42,8 +41,7 @@ public class BasicFormulasTest {
             "'worksheet1', '$A$1:$C2', 'AVERAGE(worksheet1!$A$1:$C2)'",
             "'worksheet1', '$A$1:$C$2', 'AVERAGE(worksheet1!$A$1:$C$2)'",
     })
-    void averageTest2(String worksheetName, String rangeExpression, String expectedFormula)
-    {
+    void averageTest2(String worksheetName, String rangeExpression, String expectedFormula) {
         Worksheet worksheet = new Worksheet(worksheetName);
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.Average(worksheet, range);
@@ -61,8 +59,7 @@ public class BasicFormulasTest {
             "'A1', -2, 'ROUNDUP(A1,-2)'",
             // This seems to be valid
     })
-    void ceilTest(String addressExpression, int numberOfDecimals, String expectedFormula)
-    {
+    void ceilTest(String addressExpression, int numberOfDecimals, String expectedFormula) {
         Address address = new Address(addressExpression);
         Cell formula = BasicFormulas.Ceil(address, numberOfDecimals);
         assertEquals(expectedFormula, formula.getValue().toString());
@@ -79,8 +76,7 @@ public class BasicFormulasTest {
             "'worksheet3', 'A1', -2, 'ROUNDUP(worksheet3!A1,-2)'",
             // This seems to be valid
     })
-    void ceilTest2(String worksheetName, String addressExpression, int numberOfDecimals, String expectedFormula)
-    {
+    void ceilTest2(String worksheetName, String addressExpression, int numberOfDecimals, String expectedFormula) {
         Worksheet worksheet = new Worksheet(worksheetName);
         Address address = new Address(addressExpression);
         Cell formula = BasicFormulas.Ceil(worksheet, address, numberOfDecimals);
@@ -98,8 +94,7 @@ public class BasicFormulasTest {
             "'A1', -2, 'ROUNDDOWN(A1,-2)'",
             // This seems to be valid
     })
-    void floorTest(String addressExpression, int numberOfDecimals, String expectedFormula)
-    {
+    void floorTest(String addressExpression, int numberOfDecimals, String expectedFormula) {
         Address address = new Address(addressExpression);
         Cell formula = BasicFormulas.Floor(address, numberOfDecimals);
         assertEquals(expectedFormula, formula.getValue().toString());
@@ -116,8 +111,7 @@ public class BasicFormulasTest {
             "'worksheet3', 'A1', -2, 'ROUNDDOWN(worksheet3!A1,-2)'",
             // This seems to be valid
     })
-    void floorTest2(String worksheetName, String addressExpression, int numberOfDecimals, String expectedFormula)
-    {
+    void floorTest2(String worksheetName, String addressExpression, int numberOfDecimals, String expectedFormula) {
         Worksheet worksheet = new Worksheet(worksheetName);
         Address address = new Address(addressExpression);
         Cell formula = BasicFormulas.Floor(worksheet, address, numberOfDecimals);
@@ -135,8 +129,7 @@ public class BasicFormulasTest {
             "'$A$1:$C2', 'MAX($A$1:$C2)'",
             "'$A$1:$C$2', 'MAX($A$1:$C$2)'",
     })
-    void maxTest(String rangeExpression, String expectedFormula)
-    {
+    void maxTest(String rangeExpression, String expectedFormula) {
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.Max(range);
         assertEquals(expectedFormula, formula.getValue().toString());
@@ -153,8 +146,7 @@ public class BasicFormulasTest {
             "'worksheet1', '$A$1:$C2', 'MAX(worksheet1!$A$1:$C2)'",
             "'worksheet1', '$A$1:$C$2', 'MAX(worksheet1!$A$1:$C$2)'",
     })
-    void maxTest2(String worksheetName, String rangeExpression, String expectedFormula)
-    {
+    void maxTest2(String worksheetName, String rangeExpression, String expectedFormula) {
         Worksheet worksheet = new Worksheet(worksheetName);
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.Max(worksheet, range);
@@ -172,8 +164,7 @@ public class BasicFormulasTest {
             "'$A$1:$C2', 'MIN($A$1:$C2)'",
             "'$A$1:$C$2', 'MIN($A$1:$C$2)'",
     })
-    void minTest(String rangeExpression, String expectedFormula)
-    {
+    void minTest(String rangeExpression, String expectedFormula) {
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.Min(range);
         assertEquals(expectedFormula, formula.getValue().toString());
@@ -190,8 +181,7 @@ public class BasicFormulasTest {
             "'worksheet1', '$A$1:$C2', 'MIN(worksheet1!$A$1:$C2)'",
             "'worksheet1', '$A$1:$C$2', 'MIN(worksheet1!$A$1:$C$2)'",
     })
-    void minTest2(String worksheetName, String rangeExpression, String expectedFormula)
-    {
+    void minTest2(String worksheetName, String rangeExpression, String expectedFormula) {
         Worksheet worksheet = new Worksheet(worksheetName);
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.Min(worksheet, range);
@@ -209,8 +199,7 @@ public class BasicFormulasTest {
             "'$A$1:$C2', 'MEDIAN($A$1:$C2)'",
             "'$A$1:$C$2', 'MEDIAN($A$1:$C$2)'",
     })
-    void medianTest(String rangeExpression, String expectedFormula)
-    {
+    void medianTest(String rangeExpression, String expectedFormula) {
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.Median(range);
         assertEquals(expectedFormula, formula.getValue().toString());
@@ -227,8 +216,7 @@ public class BasicFormulasTest {
             "'worksheet1', '$A$1:$C2', 'MEDIAN(worksheet1!$A$1:$C2)'",
             "'worksheet1', '$A$1:$C$2', 'MEDIAN(worksheet1!$A$1:$C$2)'",
     })
-    void medianTest2(String worksheetName, String rangeExpression, String expectedFormula)
-    {
+    void medianTest2(String worksheetName, String rangeExpression, String expectedFormula) {
         Worksheet worksheet = new Worksheet(worksheetName);
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.Median(worksheet, range);
@@ -245,8 +233,7 @@ public class BasicFormulasTest {
             "'$A$1', 5, 'ROUND($A$1,5)'",
             "'A1', -2, 'ROUND(A1,-2)'", // This seems to be valid
     })
-    void roundTest(String addressExpression, int numberOfDecimals, String expectedFormula)
-    {
+    void roundTest(String addressExpression, int numberOfDecimals, String expectedFormula) {
         Address address = new Address(addressExpression);
         Cell formula = BasicFormulas.Round(address, numberOfDecimals);
         assertEquals(expectedFormula, formula.getValue().toString());
@@ -262,8 +249,7 @@ public class BasicFormulasTest {
             "'worksheet3', '$A$1', 5, 'ROUND(worksheet3!$A$1,5)'",
             "'worksheet3', 'A1', -2, 'ROUND(worksheet3!A1,-2)'", // This seems to be valid
     })
-    void roundTest2(String worksheetName, String addressExpression, int numberOfDecimals, String expectedFormula)
-    {
+    void roundTest2(String worksheetName, String addressExpression, int numberOfDecimals, String expectedFormula) {
         Worksheet worksheet = new Worksheet(worksheetName);
         Address address = new Address(addressExpression);
         Cell formula = BasicFormulas.Round(worksheet, address, numberOfDecimals);
@@ -281,8 +267,7 @@ public class BasicFormulasTest {
             "'$A$1:$C2', 'SUM($A$1:$C2)'",
             "'$A$1:$C$2', 'SUM($A$1:$C$2)'",
     })
-    void sumTest(String rangeExpression, String expectedFormula)
-    {
+    void sumTest(String rangeExpression, String expectedFormula) {
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.Sum(range);
         assertEquals(expectedFormula, formula.getValue().toString());
@@ -299,8 +284,7 @@ public class BasicFormulasTest {
             "'worksheet1', '$A$1:$C2', 'SUM(worksheet1!$A$1:$C2)'",
             "'worksheet1', '$A$1:$C$2', 'SUM(worksheet1!$A$1:$C$2)'",
     })
-    void sumTest2(String worksheetName, String rangeExpression, String expectedFormula)
-    {
+    void sumTest2(String worksheetName, String rangeExpression, String expectedFormula) {
         Worksheet worksheet = new Worksheet(worksheetName);
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.Sum(worksheet, range);
@@ -316,8 +300,7 @@ public class BasicFormulasTest {
             "'LONG', '-800', 'A10:XFD999999', 200, true, 'VLOOKUP(-800,A10:XFD999999,200,TRUE)'",
             "'BYTE', '0', 'X100:A1', 5, true, 'VLOOKUP(0,A1:X100,5,TRUE)'",
     })
-    void vLookupTest(String sourceType, String sourceValue, String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula)
-    {
+    void vLookupTest(String sourceType, String sourceValue, String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula) {
         Object number = TestUtils.createInstance(sourceType, sourceValue);
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.VLookup(number, range, columnIndex, exactMatch);
@@ -333,8 +316,7 @@ public class BasicFormulasTest {
             "'worksheet1', 'DOUBLE', '2.22', '$A10:XFD999999', 200, true, 'VLOOKUP(2.22,worksheet1!$A10:XFD999999,200,TRUE)'",
             "'worksheet1', 'BYTE', '0', 'X100:A1', 5, true, 'VLOOKUP(0,worksheet1!A1:X100,5,TRUE)'",
     })
-    void vLookupTest2(String worksheetName, String sourceType, String sourceValue, String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula)
-    {
+    void vLookupTest2(String worksheetName, String sourceType, String sourceValue, String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula) {
         Object number = TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet(worksheetName);
         Range range = new Range(rangeExpression);
@@ -351,8 +333,7 @@ public class BasicFormulasTest {
             "'$F4', 'A10:XFD999999', 200, true, 'VLOOKUP($F4,A10:XFD999999,200,TRUE)'",
             "'$XFD$99999', 'X100:A1', 5, true,'VLOOKUP($XFD$99999,A1:X100,5,TRUE)'",
     })
-    void vLookupTest3(String addressExpression, String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula)
-    {
+    void vLookupTest3(String addressExpression, String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula) {
         Address address = new Address(addressExpression);
         Range range = new Range(rangeExpression);
         Cell formula = BasicFormulas.VLookup(address, range, columnIndex, exactMatch);
@@ -368,8 +349,7 @@ public class BasicFormulasTest {
             "'worksheet1','$F4', 'worksheet2', 'A10:XFD999999', 200, true, 'VLOOKUP(worksheet1!$F4,worksheet2!A10:XFD999999,200,TRUE)'",
             "'worksheet2','$XFD$99999', 'worksheet2',  'X100:A1', 5, true, 'VLOOKUP(worksheet2!$XFD$99999,worksheet2!A1:X100,5,TRUE)'",
     })
-    void vLookupTest4(String valueWorksheetName, String addressExpression, String rangesWorksheetName,  String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula)
-    {
+    void vLookupTest4(String valueWorksheetName, String addressExpression, String rangesWorksheetName, String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula) {
         Worksheet valueWorksheet = new Worksheet(valueWorksheetName);
         Worksheet rangeWorksheet = new Worksheet(rangesWorksheetName);
         Address address = new Address(addressExpression);
@@ -381,19 +361,17 @@ public class BasicFormulasTest {
 
     @DisplayName("Test of the vLookup function for byte / Byte as value")
     @Test()
-    void vLookupByteTest()
-    {
-        assertVlookup((byte)0b0, "0");
-        assertVlookup((byte)-13, "-13");
-        assertVlookup((byte)15, "15");
-        assertVlookup(Byte.valueOf((byte)0), "0");
-        assertVlookup(Byte.valueOf((byte)15), "15");
+    void vLookupByteTest() {
+        assertVlookup((byte) 0b0, "0");
+        assertVlookup((byte) -13, "-13");
+        assertVlookup((byte) 15, "15");
+        assertVlookup(Byte.valueOf((byte) 0), "0");
+        assertVlookup(Byte.valueOf((byte) 15), "15");
     }
 
     @DisplayName("Test of the vLookup function for BigDecimal as value")
     @Test()
-    void vLookupDecimalTest()
-    {
+    void vLookupDecimalTest() {
         BigDecimal d1 = new BigDecimal("0");
         BigDecimal d2 = new BigDecimal("-0.0052");
         BigDecimal d3 = new BigDecimal("22.78");
@@ -406,19 +384,17 @@ public class BasicFormulasTest {
 
     @DisplayName("Test of the vLookup function for double / Double as value")
     @Test()
-    void vLookupDoubleTest()
-    {
+    void vLookupDoubleTest() {
         assertVlookup(0.00d, "0");
         assertVlookup(222.5d, "222.5");
         assertVlookup(-0.101d, "-0.101");
-        assertVlookup( Double.valueOf(222.5d), "222.5");
+        assertVlookup(Double.valueOf(222.5d), "222.5");
         assertVlookup(Double.valueOf(-0.101d), "-0.101");
     }
 
     @DisplayName("Test of the vLookup function for float / Float as value")
     @Test()
-    void vLookupFloatTest()
-    {
+    void vLookupFloatTest() {
         assertVlookup(0.0f, "0");
         assertVlookup(22.5f, "22.5");
         assertVlookup(-0.01f, "-0.01");
@@ -428,19 +404,17 @@ public class BasicFormulasTest {
 
     @DisplayName("Test of the vLookup function for int / Integer as value")
     @Test()
-    void vLookupIntTest()
-    {
-        assertVlookup((int)0, "0");
-        assertVlookup((int)-77, "-77");
-        assertVlookup((int)77, "77");
+    void vLookupIntTest() {
+        assertVlookup((int) 0, "0");
+        assertVlookup((int) -77, "-77");
+        assertVlookup((int) 77, "77");
         assertVlookup(Integer.valueOf(-77), "-77");
         assertVlookup(Integer.valueOf(77), "77");
     }
 
     @DisplayName("Test of the vLookup function for long / Long as value")
     @Test()
-    void vLookupLongTest()
-    {
+    void vLookupLongTest() {
         assertVlookup(0L, "0");
         assertVlookup(-999999L, "-999999");
         assertVlookup(999999L, "999999");
@@ -450,19 +424,17 @@ public class BasicFormulasTest {
 
     @DisplayName("Test of the vLookup function for short / Short as value")
     @Test()
-    void vLookupShortTest()
-    {
-        assertVlookup((short)0, "0");
-        assertVlookup((short)-128, "-128");
-        assertVlookup((short)255, "255");
-        assertVlookup(Short.valueOf((short)-128), "-128");
-        assertVlookup(Short.valueOf((short)255), "255");
+    void vLookupShortTest() {
+        assertVlookup((short) 0, "0");
+        assertVlookup((short) -128, "-128");
+        assertVlookup((short) 255, "255");
+        assertVlookup(Short.valueOf((short) -128), "-128");
+        assertVlookup(Short.valueOf((short) 255), "255");
     }
 
     @DisplayName("Test of the failing vLookup function on an invalid value type")
     @Test()
-    void vLookupFailTest()
-    {
+    void vLookupFailTest() {
         Range range = new Range("A1:D100");
         int column = 2;
         boolean exactMatch = true;
@@ -477,8 +449,7 @@ public class BasicFormulasTest {
 
     @DisplayName("Test of the failing vLookup function on an invalid index column")
     @Test()
-    void vLookupFailTest2()
-    {
+    void vLookupFailTest2() {
         Range range = new Range("A1:D100");
         Range range2 = new Range("C1:D100");
         assertThrows(FormatException.class, () -> BasicFormulas.VLookup(22, range, 0, true));
@@ -488,8 +459,7 @@ public class BasicFormulasTest {
         assertThrows(FormatException.class, () -> BasicFormulas.VLookup(22, range2, 4, false));
     }
 
-    private void assertVlookup(Object number, String expectedLookupValue)
-    {
+    private void assertVlookup(Object number, String expectedLookupValue) {
         Range range = new Range("A1:D100");
         int column = 2;
         boolean exactMatch = true;

@@ -21,11 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SetStyleTest {
 
-    public enum RangeRepresentation{
+    public enum RangeRepresentation {
         StringExpression,
         RangeObject
     }
-    
+
     @DisplayName("Test of the setStyle function on an empty worksheet with a Range object or its string representation")
     @ParameterizedTest(name = "Given range {0} as {1} should lead to the encoded number of empty cells with a style")
     @CsvSource({
@@ -40,16 +40,13 @@ public class SetStyleTest {
             "A1:C3, StringExpression",
             "R17:N22, StringExpression",
     })
-    void setStyleTest1(String rangeString, RangeRepresentation rangeRepresentation)
-    {
+    void setStyleTest1(String rangeString, RangeRepresentation rangeRepresentation) {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getCells().size());
         Range range = new Range(rangeString);
-        if (rangeRepresentation == RangeRepresentation.RangeObject)
-        {
+        if (rangeRepresentation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, BasicStyles.BoldItalic());
-        }
-        else{
+        } else {
             worksheet.setStyle(rangeString, BasicStyles.BoldItalic());
         }
         List<String> emptyCells = range.resolveEnclosedAddresses().stream().map(i -> i.getAddress()).collect(Collectors.toList());
@@ -70,16 +67,13 @@ public class SetStyleTest {
             "A1:C3, StringExpression",
             "R17:N22, StringExpression",
     })
-    void setStyleTest1b(String rangeString, RangeRepresentation rangeRepresentation)
-    {
+    void setStyleTest1b(String rangeString, RangeRepresentation rangeRepresentation) {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getCells().size());
         Range range = new Range(rangeString);
-        if (rangeRepresentation == RangeRepresentation.RangeObject)
-        {
+        if (rangeRepresentation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, null);
-        }
-        else{
+        } else {
             worksheet.setStyle(rangeString, null);
         }
         assertEquals(0, worksheet.getCells().size()); // Should not create empty cells
@@ -99,19 +93,16 @@ public class SetStyleTest {
             "A1:C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3', StringExpression",
             "R17:T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21', StringExpression",
     })
-    void setStyleTest2(String rangeString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells, RangeRepresentation representation)
-    {
+    void setStyleTest2(String rangeString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells, RangeRepresentation representation) {
         Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         addCells(worksheet, cellValue, definedCells);
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         Range range = new Range(rangeString);
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, BasicStyles.Bold());
-        }
-        else
-        {
+        } else {
             worksheet.setStyle(rangeString, BasicStyles.Bold());
         }
         List<String> emptyCells = TestUtils.splitValuesAsList(expectedEmptyCells);
@@ -132,19 +123,16 @@ public class SetStyleTest {
             "A1:C3, B2, FLOAT, '-0.25',  StringExpression",
             "R17:T21, 'R18,R19,R20,S19', LONG, '99999', StringExpression",
     })
-    void setStyleTest2b(String rangeString, String definedCells, String sourceType, String sourceValue, RangeRepresentation representation)
-    {
+    void setStyleTest2b(String rangeString, String definedCells, String sourceType, String sourceValue, RangeRepresentation representation) {
         Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         addCells(worksheet, cellValue, definedCells);
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         Range range = new Range(rangeString);
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, null);
-        }
-        else
-        {
+        } else {
             worksheet.setStyle(rangeString, null);
         }
         assertRemovedStyles(worksheet, cellCount);
@@ -174,18 +162,16 @@ public class SetStyleTest {
             "A1:C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3', StringExpression",
             "R17:T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21', StringExpression",
     })
-    void setStyleTest3(String rangeString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells, RangeRepresentation representation)
-    {
+    void setStyleTest3(String rangeString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells, RangeRepresentation representation) {
         Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         addCells(worksheet, cellValue, definedCells, BasicStyles.Italic());
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         Range range = new Range(rangeString);
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, BasicStyles.BoldItalic());
-        }
-        else{
+        } else {
             worksheet.setStyle(rangeString, BasicStyles.BoldItalic());
         }
 
@@ -217,18 +203,16 @@ public class SetStyleTest {
             "A1:C3, B2, FLOAT, '-0.25', StringExpression",
             "R17:T21, 'R18,R19,R20,S19', LONG, '99999', StringExpression",
     })
-    void setStyleTest3b(String rangeString, String definedCells, String sourceType, String sourceValue, RangeRepresentation representation)
-    {
+    void setStyleTest3b(String rangeString, String definedCells, String sourceType, String sourceValue, RangeRepresentation representation) {
         Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         addCells(worksheet, cellValue, definedCells, BasicStyles.Italic());
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         Range range = new Range(rangeString);
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, null);
-        }
-        else{
+        } else {
             worksheet.setStyle(rangeString, null);
         }
         assertRemovedStyles(worksheet, cellCount);
@@ -240,21 +224,18 @@ public class SetStyleTest {
             "RangeObject",
             "StringExpression",
     })
-    void setStyleTest4(RangeRepresentation representation)
-    {
+    void setStyleTest4(RangeRepresentation representation) {
         Worksheet worksheet = new Worksheet();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2020,11,10,9,8,7);
+        calendar.set(2020, 11, 10, 9, 8, 7);
         addCells(worksheet, calendar.getTime(), "B2");
-        addCells(worksheet, LocalTime.of(10,11,12), "B3");
+        addCells(worksheet, LocalTime.of(10, 11, 12), "B3");
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         Range range = new Range("A1:C3");
-        if (representation == RangeRepresentation.RangeObject)
-        {
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, BasicStyles.BorderFrame());
-        }
-        else{
+        } else {
             worksheet.setStyle("A1:C3", BasicStyles.BorderFrame());
         }
 
@@ -268,21 +249,18 @@ public class SetStyleTest {
             "RangeObject",
             "StringExpression",
     })
-    void setStyleTest4b(RangeRepresentation representation)
-    {
+    void setStyleTest4b(RangeRepresentation representation) {
         Worksheet worksheet = new Worksheet();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2020,11,10,9,8,7);
+        calendar.set(2020, 11, 10, 9, 8, 7);
         addCells(worksheet, calendar.getTime(), "B2");
-        addCells(worksheet, LocalTime.of(10,11,12), "B3");
+        addCells(worksheet, LocalTime.of(10, 11, 12), "B3");
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         Range range = new Range("A1:C3");
-        if (representation == RangeRepresentation.RangeObject)
-        {
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, null);
-        }
-        else{
+        } else {
             worksheet.setStyle("A1:C3", null);
         }
         assertRemovedStyles(worksheet, cellCount);
@@ -297,8 +275,7 @@ public class SetStyleTest {
             "A1, C3",
             "R17, N22",
     })
-    void setStyleTest5(String startAddressString, String endAddressString)
-    {
+    void setStyleTest5(String startAddressString, String endAddressString) {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getCells().size());
         Address startAddress = new Address(startAddressString);
@@ -318,8 +295,7 @@ public class SetStyleTest {
             "A1, C3",
             "R17, N22",
     })
-    void setStyleTest5b(String startAddressString, String endAddressString)
-    {
+    void setStyleTest5b(String startAddressString, String endAddressString) {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getCells().size());
         Address startAddress = new Address(startAddressString);
@@ -337,8 +313,7 @@ public class SetStyleTest {
             "A1, C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3'",
             "R17, T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21'",
     })
-    void setStyleTest6(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells)
-    {
+    void setStyleTest6(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells) {
         Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         addCells(worksheet, cellValue, definedCells);
@@ -361,8 +336,7 @@ public class SetStyleTest {
             "A1, C3, B2, FLOAT, '-0.25'",
             "R17, T21, 'R18,R19,R20,S19', LONG, '99999'",
     })
-    void setStyleTest6b(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue )
-    {
+    void setStyleTest6b(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue) {
         Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         addCells(worksheet, cellValue, definedCells);
@@ -383,8 +357,7 @@ public class SetStyleTest {
             "A1, C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3'",
             "R17, T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21'",
     })
-    void setStyleTest7(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells)
-    {
+    void setStyleTest7(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells) {
         Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         addCells(worksheet, cellValue, definedCells, BasicStyles.Italic());
@@ -407,8 +380,7 @@ public class SetStyleTest {
             "A1, C3, B2, FLOAT, '-0.25'",
             "R17, T21, 'R18,R19,R20,S19', LONG, '99999'",
     })
-    void setStyleTest7b(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue)
-    {
+    void setStyleTest7b(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue) {
         Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         addCells(worksheet, cellValue, definedCells, BasicStyles.Italic());
@@ -423,13 +395,12 @@ public class SetStyleTest {
 
     @DisplayName("Test of the setStyle function on a worksheet with existing date and time cells, and a start and end address")
     @Test()
-    void setStyleTest8()
-    {
+    void setStyleTest8() {
         Worksheet worksheet = new Worksheet();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2020,11,10,9,8,7);
+        calendar.set(2020, 11, 10, 9, 8, 7);
         addCells(worksheet, calendar.getTime(), "B2");
-        addCells(worksheet, LocalTime.of(10,11,12), "B3");
+        addCells(worksheet, LocalTime.of(10, 11, 12), "B3");
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         Address startAddress = new Address("A1");
@@ -441,13 +412,12 @@ public class SetStyleTest {
 
     @DisplayName("Test of the setStyle function on a worksheet with existing date and time cells, and a start and end address with null as style")
     @Test()
-    void setStyleTest8b()
-    {
+    void setStyleTest8b() {
         Worksheet worksheet = new Worksheet();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2020,11,10,9,8,7);
+        calendar.set(2020, 11, 10, 9, 8, 7);
         addCells(worksheet, calendar.getTime(), "B2");
-        addCells(worksheet, LocalTime.of(10,11,12), "B3");
+        addCells(worksheet, LocalTime.of(10, 11, 12), "B3");
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         Address startAddress = new Address("A1");
@@ -462,14 +432,12 @@ public class SetStyleTest {
             "RangeObject",
             "StringExpression",
     })
-    void setStyleTest9(RangeRepresentation representation)
-    {
+    void setStyleTest9(RangeRepresentation representation) {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getCells().size());
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("C2"), BasicStyles.BoldItalic());
-        }
-        else {
+        } else {
             worksheet.setStyle("C2", BasicStyles.BoldItalic());
         }
         Range range = new Range("C2:C2");
@@ -483,14 +451,12 @@ public class SetStyleTest {
             "RangeObject",
             "StringExpression",
     })
-    void setStyleTest9b(RangeRepresentation representation)
-    {
+    void setStyleTest9b(RangeRepresentation representation) {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getCells().size());
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("C2"), null);
-        }
-        else {
+        } else {
             worksheet.setStyle("C2", null);
         }
         assertEquals(0, worksheet.getCells().size());
@@ -502,18 +468,16 @@ public class SetStyleTest {
             "RangeObject",
             "StringExpression",
     })
-    void setStyleTest10(RangeRepresentation representation)
-    {
+    void setStyleTest10(RangeRepresentation representation) {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "B2");
         worksheet.addCell(false, "B3");
         worksheet.addCell("test", "B4");
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), BasicStyles.Bold());
-        }
-        else{
+        } else {
             worksheet.setStyle("B2", BasicStyles.Bold());
         }
         assertCellRange("B2:B2", BasicStyles.Bold(), worksheet, new ArrayList<>(), 3);
@@ -525,18 +489,16 @@ public class SetStyleTest {
             "RangeObject",
             "StringExpression",
     })
-    void setStyleTest10b(RangeRepresentation representation)
-    {
+    void setStyleTest10b(RangeRepresentation representation) {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "B2");
         worksheet.addCell(false, "B3");
         worksheet.addCell("test", "B4");
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), null);
-        }
-        else{
+        } else {
             worksheet.setStyle("B2", null);
         }
         assertRemovedStyles(worksheet, cellCount);
@@ -548,18 +510,16 @@ public class SetStyleTest {
             "RangeObject",
             "StringExpression",
     })
-    void setStyleTest11(RangeRepresentation representation)
-    {
+    void setStyleTest11(RangeRepresentation representation) {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "B2", BasicStyles.Bold());
         worksheet.addCell(false, "B3", BasicStyles.Bold());
         worksheet.addCell("test", "B4", BasicStyles.Bold());
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), BasicStyles.Bold());
-        }
-        else{
+        } else {
             worksheet.setStyle("B2", BasicStyles.Bold());
         }
         assertCellRange("B2:B2", BasicStyles.Bold(), worksheet, new ArrayList<>(), 3);
@@ -571,21 +531,19 @@ public class SetStyleTest {
             "RangeObject",
             "StringExpression",
     })
-    void setStyleTest11b(RangeRepresentation representation)
-    {
+    void setStyleTest11b(RangeRepresentation representation) {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "B2", BasicStyles.Bold());
         worksheet.addCell(false, "B3", BasicStyles.Bold());
         worksheet.addCell("test", "B4", BasicStyles.Bold());
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), null);
-        }
-        else{
+        } else {
             worksheet.setStyle("B2", null);
         }
-        assertNull(worksheet.getCells().get("B2").getCellStyle() );
+        assertNull(worksheet.getCells().get("B2").getCellStyle());
         assertTrue(worksheet.getCells().get("B3").getCellStyle().equals(BasicStyles.Bold()));
         assertTrue(worksheet.getCells().get("B4").getCellStyle().equals(BasicStyles.Bold()));
     }
@@ -596,21 +554,18 @@ public class SetStyleTest {
             "RangeObject",
             "StringExpression",
     })
-    void setStyleTest12(RangeRepresentation representation)
-    {
+    void setStyleTest12(RangeRepresentation representation) {
         Worksheet worksheet = new Worksheet();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2020,11,10,9,8,7);
+        calendar.set(2020, 11, 10, 9, 8, 7);
         addCells(worksheet, calendar.getTime(), "B2");
-        addCells(worksheet, LocalTime.of(10,11,12), "B3");
+        addCells(worksheet, LocalTime.of(10, 11, 12), "B3");
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), BasicStyles.BorderFrame());
             worksheet.setStyle(new Address("B3"), BasicStyles.BorderFrame());
-        }
-        else
-        {
+        } else {
             worksheet.setStyle("B2", BasicStyles.BorderFrame());
             worksheet.setStyle("B3", BasicStyles.BorderFrame());
         }
@@ -623,21 +578,18 @@ public class SetStyleTest {
             "RangeObject",
             "StringExpression",
     })
-    void setStyleTest12b(RangeRepresentation representation)
-    {
+    void setStyleTest12b(RangeRepresentation representation) {
         Worksheet worksheet = new Worksheet();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2020,11,10,9,8,7);
+        calendar.set(2020, 11, 10, 9, 8, 7);
         addCells(worksheet, calendar.getTime(), "B2");
-        addCells(worksheet, LocalTime.of(10,11,12), "B3");
+        addCells(worksheet, LocalTime.of(10, 11, 12), "B3");
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
-        if (representation == RangeRepresentation.RangeObject){
+        if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), null);
             worksheet.setStyle(new Address("B3"), null);
-        }
-        else
-        {
+        } else {
             worksheet.setStyle("B2", null);
             worksheet.setStyle("B3", null);
         }
@@ -646,7 +598,7 @@ public class SetStyleTest {
 
     @Test()
     @DisplayName("Test of the failing setStyle function, when no range was defined")
-    void setStyleFailTest(){
+    void setStyleFailTest() {
         Worksheet worksheet = new Worksheet();
         Range range = null;
         assertThrows(RangeException.class, () -> worksheet.setStyle(range, BasicStyles.Bold()));
@@ -654,52 +606,42 @@ public class SetStyleTest {
 
     @Test()
     @DisplayName("Test of the failing setStyle function, when no range as string was defined")
-    void setStyleFailTest2(){
+    void setStyleFailTest2() {
         Worksheet worksheet = new Worksheet();
         String range = null;
         assertThrows(FormatException.class, () -> worksheet.setStyle(range, BasicStyles.Bold()));
     }
 
-    private void assertCellRange(String range, Style expectedStyle, Worksheet worksheet, List<String> createdCells, int expectedSize)
-    {
+    private void assertCellRange(String range, Style expectedStyle, Worksheet worksheet, List<String> createdCells, int expectedSize) {
         assertEquals(expectedSize, worksheet.getCells().size());
         Range setRange = new Range(range);
-        for(Address address : setRange.resolveEnclosedAddresses())
-        {
+        for (Address address : setRange.resolveEnclosedAddresses()) {
             assertTrue(worksheet.getCells().containsKey(address.getAddress()));
-            if (expectedStyle == null)
-            {
+            if (expectedStyle == null) {
                 assertNull(worksheet.getCells().get(address.getAddress()).getCellStyle());
-            }
-            else
-            {
+            } else {
                 assertTrue(expectedStyle.equals(worksheet.getCells().get(address.getAddress()).getCellStyle()));
             }
-            if (createdCells != null && createdCells.contains(address.getAddress()))
-            {
+            if (createdCells != null && createdCells.contains(address.getAddress())) {
                 assertEquals(Cell.CellType.EMPTY, worksheet.getCells().get(address.getAddress()).getDataType());
             }
         }
     }
 
-    private void assertRemovedStyles(Worksheet worksheet, int expectedSize)
-    {
+    private void assertRemovedStyles(Worksheet worksheet, int expectedSize) {
         assertEquals(expectedSize, worksheet.getCells().size());
-        for(Map.Entry<String, Cell> cell : worksheet.getCells().entrySet()){
+        for (Map.Entry<String, Cell> cell : worksheet.getCells().entrySet()) {
             assertNull(cell.getValue().getCellStyle());
         }
     }
 
-    private static void addCells(Worksheet worksheet, Object sample, String addressString)
-    {
+    private static void addCells(Worksheet worksheet, Object sample, String addressString) {
         addCells(worksheet, sample, addressString, null);
     }
 
-    private static void addCells(Worksheet worksheet, Object sample, String addressString, Style style)
-    {
+    private static void addCells(Worksheet worksheet, Object sample, String addressString, Style style) {
         List<String> addresses = TestUtils.splitValuesAsList(addressString);
-        for(String address : addresses)
-        {
+        for (String address : addresses) {
             Cell cell = new Cell(sample, Cell.CellType.DEFAULT);
             worksheet.addCell(cell, address, style);
         }

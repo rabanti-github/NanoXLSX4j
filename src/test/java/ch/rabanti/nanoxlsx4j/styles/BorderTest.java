@@ -12,8 +12,7 @@ public class BorderTest {
 
     private Border exampleStyle;
 
-    public BorderTest()
-    {
+    public BorderTest() {
         exampleStyle = new Border();
         exampleStyle.setBottomColor("11001100");
         exampleStyle.setBottomStyle(Border.StyleValue.dashDot);
@@ -36,9 +35,8 @@ public class BorderTest {
             "NULL, ''",
             "STRING, 'FFAA3300'",
     })
-    void bottomColorTest(String sourceType, String sourceValue)
-    {
-        String value = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void bottomColorTest(String sourceType, String sourceValue) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Border border = new Border();
         assertEquals(0, border.getBottomColor().length());
         border.setBottomColor(value);
@@ -52,8 +50,7 @@ public class BorderTest {
             "0002200000",
             "XXXXXXXX",
     })
-    void bottomColorFailTest(String value)
-    {
+    void bottomColorFailTest(String value) {
         Border border = new Border();
         assertThrows(Exception.class, () -> border.setBottomColor(value));
     }
@@ -76,8 +73,7 @@ public class BorderTest {
             "thick",
             "thin",
     })
-    void bottomStyleTest(Border.StyleValue value)
-    {
+    void bottomStyleTest(Border.StyleValue value) {
         Border border = new Border();
         assertEquals(Border.DEFAULT_BORDER_STYLE, border.getBottomStyle()); // none is default
         border.setBottomStyle(value);
@@ -91,9 +87,8 @@ public class BorderTest {
             "NULL, ''",
             "STRING, 'FFAA3300'",
     })
-    void diagonalColorTest(String sourceType, String sourceValue)
-    {
-        String value = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void diagonalColorTest(String sourceType, String sourceValue) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Border border = new Border();
         assertEquals(0, border.getDiagonalColor().length());
         border.setDiagonalColor(value);
@@ -107,8 +102,7 @@ public class BorderTest {
             "0002200000",
             "XXXXXXXX",
     })
-    void diagonalColorFailTest(String value)
-    {
+    void diagonalColorFailTest(String value) {
         Border border = new Border();
         assertThrows(Exception.class, () -> border.setDiagonalColor(value));
     }
@@ -131,8 +125,7 @@ public class BorderTest {
             "thick",
             "thin",
     })
-    void diagonalStyleTest(Border.StyleValue value)
-    {
+    void diagonalStyleTest(Border.StyleValue value) {
         Border border = new Border();
         assertEquals(Border.DEFAULT_BORDER_STYLE, border.getDiagonalStyle()); // none is default
         border.setDiagonalStyle(value);
@@ -146,9 +139,8 @@ public class BorderTest {
             "NULL, ''",
             "STRING, 'FFAA3300'",
     })
-    void leftColorTest(String sourceType, String sourceValue)
-    {
-        String value = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void leftColorTest(String sourceType, String sourceValue) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Border border = new Border();
         assertEquals(0, border.getLeftColor().length());
         border.setLeftColor(value);
@@ -162,8 +154,7 @@ public class BorderTest {
             "0002200000",
             "XXXXXXXX",
     })
-    void leftColorFailTest(String value)
-    {
+    void leftColorFailTest(String value) {
         Border border = new Border();
         assertThrows(Exception.class, () -> border.setLeftColor(value));
     }
@@ -186,8 +177,7 @@ public class BorderTest {
             "thick",
             "thin",
     })
-    void leftStyleTest(Border.StyleValue value)
-    {
+    void leftStyleTest(Border.StyleValue value) {
         Border border = new Border();
         assertEquals(Border.DEFAULT_BORDER_STYLE, border.getLeftStyle()); // none is default
         border.setLeftStyle(value);
@@ -201,9 +191,8 @@ public class BorderTest {
             "NULL, ''",
             "STRING, 'FFAA3300'",
     })
-    void rightColorTest(String sourceType, String sourceValue)
-    {
-        String value = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void rightColorTest(String sourceType, String sourceValue) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Border border = new Border();
         assertEquals(0, border.getRightColor().length());
         border.setRightColor(value);
@@ -217,8 +206,7 @@ public class BorderTest {
             "0002200000",
             "XXXXXXXX",
     })
-    void rightColorFailTest(String value)
-    {
+    void rightColorFailTest(String value) {
         Border border = new Border();
         assertThrows(Exception.class, () -> border.setRightColor(value));
     }
@@ -241,8 +229,7 @@ public class BorderTest {
             "thick",
             "thin",
     })
-    void rightStyleTest(Border.StyleValue value)
-    {
+    void rightStyleTest(Border.StyleValue value) {
         Border border = new Border();
         assertEquals(Border.DEFAULT_BORDER_STYLE, border.getRightStyle()); // none is default
         border.setRightStyle(value);
@@ -256,9 +243,8 @@ public class BorderTest {
             "NULL, ''",
             "STRING, 'FFAA3300'",
     })
-    void topColorTest(String sourceType, String sourceValue)
-    {
-        String value = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void topColorTest(String sourceType, String sourceValue) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Border border = new Border();
         assertEquals(0, border.getTopColor().length());
         border.setTopColor(value);
@@ -272,8 +258,7 @@ public class BorderTest {
             "0002200000",
             "XXXXXXXX",
     })
-    void topColorFailTest(String value)
-    {
+    void topColorFailTest(String value) {
         Border border = new Border();
         assertThrows(Exception.class, () -> border.setTopColor(value));
     }
@@ -296,8 +281,7 @@ public class BorderTest {
             "thick",
             "thin",
     })
-    void topStyleTest(Border.StyleValue value)
-    {
+    void topStyleTest(Border.StyleValue value) {
         Border border = new Border();
         assertEquals(Border.DEFAULT_BORDER_STYLE, border.getTopStyle()); // none is default
         border.setTopStyle(value);
@@ -306,8 +290,7 @@ public class BorderTest {
 
     @DisplayName("Test of the copyBorder function")
     @Test()
-    void copyBorderTest()
-    {
+    void copyBorderTest() {
         Border copy = exampleStyle.copy();
         assertEquals(exampleStyle.hashCode(), copy.hashCode());
     }
@@ -315,18 +298,16 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method")
     @Test()
-    void equalsTest()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest() {
+        Border style2 = (Border) exampleStyle.copy();
         assertTrue(exampleStyle.equals(style2));
     }
 
 
     @DisplayName("Test of the equals method (inequality of bottomColor)")
     @Test()
-    void equalsTest2()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setBottomColor("");
         assertFalse(exampleStyle.equals(style2));
     }
@@ -334,9 +315,8 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method (inequality of bottomStyle)")
     @Test()
-    void equalsTest2b()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2b() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setBottomStyle(Border.StyleValue.s_double);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -344,9 +324,8 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method (inequality of topColor)")
     @Test()
-    void equalsTest2c()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2c() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setTopColor("");
         assertFalse(exampleStyle.equals(style2));
     }
@@ -354,9 +333,8 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method (inequality of topStyle)")
     @Test()
-    void equalsTest2d()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2d() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setTopStyle(Border.StyleValue.s_double);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -364,9 +342,8 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method (inequality of leftColor)")
     @Test()
-    void equalsTest2e()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2e() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setLeftColor("");
         assertFalse(exampleStyle.equals(style2));
     }
@@ -374,9 +351,8 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method (inequality of leftStyle)")
     @Test()
-    void equalsTest2f()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2f() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setLeftStyle(Border.StyleValue.s_double);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -384,9 +360,8 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method (inequality of rightColor)")
     @Test()
-    void equalsTest2g()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2g() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setRightColor("");
         assertFalse(exampleStyle.equals(style2));
     }
@@ -394,9 +369,8 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method (inequality of rightStyle)")
     @Test()
-    void equalsTest2h()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2h() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setRightStyle(Border.StyleValue.s_double);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -404,9 +378,8 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method (inequality of diagonalColor)")
     @Test()
-    void equalsTest2i()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2i() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setDiagonalColor("");
         assertFalse(exampleStyle.equals(style2));
     }
@@ -414,9 +387,8 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method (inequality of diagonalStyle)")
     @Test()
-    void equalsTest2j()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2j() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setDiagonalStyle(Border.StyleValue.s_double);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -424,9 +396,8 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method (inequality of diagonalDown)")
     @Test()
-    void equalsTest2k()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2k() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setDiagonalDown(false);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -434,9 +405,8 @@ public class BorderTest {
 
     @DisplayName("Test of the equals method (inequality of diagonalUp)")
     @Test()
-    void equalsTest2l()
-    {
-        Border style2 = (Border)exampleStyle.copy();
+    void equalsTest2l() {
+        Border style2 = (Border) exampleStyle.copy();
         style2.setDiagonalUp(false);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -449,8 +419,7 @@ public class BorderTest {
             "STRING, 'text'",
             "BOOLEAN, 'true'",
     })
-    void equalsTest3(String sourceType, String sourceValue)
-    {
+    void equalsTest3(String sourceType, String sourceValue) {
         Object obj = TestUtils.createInstance(sourceType, sourceValue);
         assertFalse(exampleStyle.equals(obj));
     }
@@ -462,17 +431,15 @@ public class BorderTest {
             "BOOLEAN, 'true'",
             "STRING, 'origin'",
     })
-    void equalsTest5(String sourceType, String sourceValue)
-    {
+    void equalsTest5(String sourceType, String sourceValue) {
         Object origin = TestUtils.createInstance(sourceType, sourceValue);
         assertFalse(exampleStyle.equals(origin));
     }
 
     @DisplayName("Test of the hashCode method (equality of two identical objects)")
     @Test()
-    void hashCodeTest()
-    {
-        Border copy = (Border)exampleStyle.copy();
+    void hashCodeTest() {
+        Border copy = (Border) exampleStyle.copy();
         copy.setInternalID(99);  // Should not influence
         assertEquals(exampleStyle.hashCode(), copy.hashCode());
     }
@@ -480,17 +447,15 @@ public class BorderTest {
 
     @DisplayName("Test of the hashCode method (inequality of two different objects)")
     @Test()
-    void hashCodeTest2()
-    {
-        Border copy = (Border)exampleStyle.copy();
+    void hashCodeTest2() {
+        Border copy = (Border) exampleStyle.copy();
         copy.setBottomColor("AACCDD00");
         assertNotEquals(exampleStyle.hashCode(), copy.hashCode());
     }
 
     @DisplayName("Test of the compareTo method")
     @Test()
-    void compareToTest()
-    {
+    void compareToTest() {
         Border border = new Border();
         Border other = new Border();
         border.setInternalID(null);
@@ -508,13 +473,11 @@ public class BorderTest {
     }
 
 
-
     // For code coverage
 
     @DisplayName("Test of the toString function")
     @Test()
-    void toStringTest()
-    {
+    void toStringTest() {
         Border border = new Border();
         String s1 = border.toString();
         border.setBottomColor("FFAABBCC");
@@ -523,7 +486,7 @@ public class BorderTest {
 
     @DisplayName("Test of the getValue function of the StyleValue enum")
     @Test()
-    void styleValueTest(){
+    void styleValueTest() {
         assertEquals(0, Border.StyleValue.none.getValue());
         assertEquals(1, Border.StyleValue.hair.getValue());
         assertEquals(2, Border.StyleValue.dotted.getValue());

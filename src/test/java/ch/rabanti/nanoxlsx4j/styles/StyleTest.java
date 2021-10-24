@@ -12,8 +12,7 @@ public class StyleTest {
 
     @DisplayName("Test of the get and set function of the Border field")
     @Test()
-    void currentBorderTest()
-    {
+    void currentBorderTest() {
         Style style = new Style();
         Border border = new Border();
         assertNotNull(style.getBorder());
@@ -26,8 +25,7 @@ public class StyleTest {
 
     @DisplayName("Test of the get and set function of the cellXf field")
     @Test()
-    void currentCellXfTest()
-    {
+    void currentCellXfTest() {
         Style style = new Style();
         CellXf cellXf = new CellXf();
         assertNotNull(style.getCellXf());
@@ -40,8 +38,7 @@ public class StyleTest {
 
     @DisplayName("Test of the get and set function of the fill field")
     @Test()
-    void currentFillTest()
-    {
+    void currentFillTest() {
         Style style = new Style();
         Fill fill = new Fill();
         assertNotNull(style.getFill());
@@ -54,8 +51,7 @@ public class StyleTest {
 
     @DisplayName("Test of the get and set function of the font field")
     @Test()
-    void currentFontTest()
-    {
+    void currentFontTest() {
         Style style = new Style();
         Font font = new Font();
         assertNotNull(style.getFont());
@@ -68,8 +64,7 @@ public class StyleTest {
 
     @DisplayName("Test of the get and set function of the numberFormat field")
     @Test()
-    void currentNumberFormatTest()
-    {
+    void currentNumberFormatTest() {
         Style style = new Style();
         NumberFormat numberFormat = new NumberFormat();
         assertNotNull(style.getFill());
@@ -82,8 +77,7 @@ public class StyleTest {
 
     @DisplayName("Test of the get and set function of the name field")
     @Test()
-    void nameTest()
-    {
+    void nameTest() {
         Style style = new Style();
         assertEquals(Integer.toString(style.hashCode()), style.getName());
         style.setName("Test");
@@ -93,8 +87,7 @@ public class StyleTest {
 
     @DisplayName("Test of the get function of the ssInternalStyle field")
     @Test()
-    void isInternalStyleTest()
-    {
+    void isInternalStyleTest() {
         Style style = new Style();
         assertFalse(style.isInternalStyle());
         Style internalStyle = new Style("test", 0, true);
@@ -104,8 +97,7 @@ public class StyleTest {
 
     @DisplayName("Test of the get and set function of the internalID field")
     @Test()
-    void internalIDTest()
-    {
+    void internalIDTest() {
         Style style = new Style();
         assertNull(style.getInternalID());
         style.setInternalID(962);
@@ -115,8 +107,7 @@ public class StyleTest {
 
     @DisplayName("Test of the default constructor")
     @Test()
-    void constructorTest()
-    {
+    void constructorTest() {
         Style style = new Style();
         assertNotNull(style.getBorder());
         assertNotNull(style.getCellXf());
@@ -130,8 +121,7 @@ public class StyleTest {
 
     @DisplayName("Test of the constructor with a name")
     @Test()
-    void constructorTest2()
-    {
+    void constructorTest2() {
         Style style = new Style("test1");
         assertNotNull(style.getBorder());
         assertNotNull(style.getCellXf());
@@ -150,8 +140,7 @@ public class StyleTest {
             "test2, 777, false",
             "test3, -17, true",
     })
-    void constructorTest3(String name, int forceOrder, boolean isInternal)
-    {
+    void constructorTest3(String name, int forceOrder, boolean isInternal) {
         Style style = new Style(name, forceOrder, isInternal);
         assertNotNull(style.getBorder());
         assertNotNull(style.getCellXf());
@@ -165,8 +154,7 @@ public class StyleTest {
 
     @DisplayName("Test of the Append function on a Border object")
     @Test()
-    void appendTest()
-    {
+    void appendTest() {
         Style style = new Style();
         Border border = new Border();
         assertEquals(border.hashCode(), style.getBorder().hashCode());
@@ -180,8 +168,7 @@ public class StyleTest {
 
     @DisplayName("Test of the Append function on a Font object")
     @Test()
-    void appendTest2()
-    {
+    void appendTest2() {
         Style style = new Style();
         Font font = new Font();
         assertEquals(font.hashCode(), style.getFont().hashCode());
@@ -195,8 +182,7 @@ public class StyleTest {
 
     @DisplayName("Test of the Append function on a Fill object")
     @Test()
-    void appendTest3()
-    {
+    void appendTest3() {
         Style style = new Style();
         Fill fill = new Fill();
         assertEquals(fill.hashCode(), style.getFill().hashCode());
@@ -210,8 +196,7 @@ public class StyleTest {
 
     @DisplayName("Test of the Append function on a CellXf object")
     @Test()
-    void appendTest4()
-    {
+    void appendTest4() {
         Style style = new Style();
         CellXf cellXf = new CellXf();
         assertEquals(cellXf.hashCode(), style.getCellXf().hashCode());
@@ -225,8 +210,7 @@ public class StyleTest {
 
     @DisplayName("Test of the Append function on a NumberFormat object")
     @Test()
-    void appendTest5()
-    {
+    void appendTest5() {
         Style style = new Style();
         NumberFormat numberFormat = new NumberFormat();
         assertEquals(numberFormat.hashCode(), style.getNumberFormat().hashCode());
@@ -239,8 +223,7 @@ public class StyleTest {
 
     @DisplayName("Test of the Append function on a combination of all components")
     @Test()
-    void appendTest6()
-    {
+    void appendTest6() {
         Style style = new Style();
         style.getFont().setSize(18f);
         style.getCellXf().setAlignment(CellXf.TextBreakValue.shrinkToFit);
@@ -278,8 +261,7 @@ public class StyleTest {
 
     @DisplayName("Test of the Append function on a full other style object")
     @Test()
-    void appendTest7()
-    {
+    void appendTest7() {
         Style style = new Style();
         style.getFont().setSize(18f);
         style.getCellXf().setAlignment(CellXf.TextBreakValue.shrinkToFit);
@@ -310,8 +292,7 @@ public class StyleTest {
 
     @DisplayName("Test of the Append function on a null style component")
     @Test()
-    void appendTest8()
-    {
+    void appendTest8() {
         Style style = new Style();
         style.getBorder().setBottomColor("FFAA6677");
         int hashCode = style.hashCode();
@@ -322,8 +303,7 @@ public class StyleTest {
 
     @DisplayName("Test of the failing Append function on a invalid style component (null instance)")
     @Test()
-    void appendFailTest()
-    {
+    void appendFailTest() {
         Style style = new Style();
         final Style style2a = new Style();
         style.setBorder(null);
@@ -343,12 +323,10 @@ public class StyleTest {
     }
 
 
-
     @DisplayName("Test of the failing hashCode function on a invalid style component (null instance)")
     @Test()
-    void hashCodeFailTest()
-    {
-        final Style styleA= new Style();
+    void hashCodeFailTest() {
+        final Style styleA = new Style();
         styleA.setBorder(null);
         assertThrows(StyleException.class, () -> styleA.hashCode());
         final Style styleB = new Style();
@@ -368,8 +346,7 @@ public class StyleTest {
 
     @DisplayName("Test of the failing Copy function on a invalid style component (null instance)")
     @Test()
-    void copyFailTest()
-    {
+    void copyFailTest() {
         final Style styleA = new Style();
         styleA.setBorder(null);
         assertThrows(StyleException.class, () -> styleA.copy());
@@ -390,8 +367,7 @@ public class StyleTest {
     // For code coverage
     @DisplayName("Test of the toString function")
     @Test()
-    void toStringTest()
-    {
+    void toStringTest() {
         Style style = new Style();
         String s1 = style.toString();
         style.setName("Test1");

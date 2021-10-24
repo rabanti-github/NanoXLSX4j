@@ -98,7 +98,7 @@ public class XmlDocument {
 
         @Override
         public XmlNode next() {
-            if (!hasNext()){
+            if (!hasNext()) {
                 throw new NoSuchElementException(NO_SUCH_ELEMENT_MESSAGE);
             }
             return this.items.get(count++);
@@ -116,7 +116,7 @@ public class XmlDocument {
 
                 @Override
                 public XmlNode next() {
-                    if (!hasNext()){
+                    if (!hasNext()) {
                         throw new NoSuchElementException(NO_SUCH_ELEMENT_MESSAGE);
                     }
                     return items.get(index++);
@@ -398,7 +398,7 @@ public class XmlDocument {
 
         @Override
         public XmlAttribute next() {
-            if (!hasNext()){
+            if (!hasNext()) {
                 throw new NoSuchElementException(NO_SUCH_ELEMENT_MESSAGE);
             }
             return this.items.get(count++);
@@ -416,7 +416,7 @@ public class XmlDocument {
 
                 @Override
                 public XmlAttribute next() {
-                    if (!hasNext()){
+                    if (!hasNext()) {
                         throw new NoSuchElementException(NO_SUCH_ELEMENT_MESSAGE);
                     }
                     return items.get(index++);

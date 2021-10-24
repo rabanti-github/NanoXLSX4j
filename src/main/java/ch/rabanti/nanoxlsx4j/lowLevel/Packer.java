@@ -101,7 +101,7 @@ public class Packer {
         sb.append("<Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\" />\r\n");
 
         for (int i = 0; i < this.contentTypeList.size(); i++) {
-            if (Boolean.FALSE.equals(this.includeContentType.get(i))){
+            if (Boolean.FALSE.equals(this.includeContentType.get(i))) {
                 continue;
             }
             sb.append("<Override PartName=\"/");

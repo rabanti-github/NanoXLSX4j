@@ -6,7 +6,6 @@ import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
 import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
 import ch.rabanti.nanoxlsx4j.styles.Style;
-import io.reactivex.exceptions.Exceptions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,8 +41,7 @@ public class WorksheetTest {
             "'Test'",
             "'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'",
     })
-    void constructorTest2(String name)
-    {
+    void constructorTest2(String name) {
         Worksheet worksheet = new Worksheet(name);
         assertConstructorBasics(worksheet);
         assertNull(worksheet.getWorkbookReference());
@@ -75,9 +73,8 @@ public class WorksheetTest {
             "STRING, '['",
             "STRING, '................................'",
     })
-    void constructorFailingTest(String sourceType, String sourceValue)
-    {
-        String name = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void constructorFailingTest(String sourceType, String sourceValue) {
+        String name = (String) TestUtils.createInstance(sourceType, sourceValue);
         assertThrows(FormatException.class, () -> new Worksheet(name));
     }
 
@@ -91,9 +88,8 @@ public class WorksheetTest {
             "STRING, 'Test', 0",
             "STRING, 'Test', -1",
     })
-    void constructorFailingTest2(String sourceType, String sourceValue, int id)
-    {
-        String name = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void constructorFailingTest2(String sourceType, String sourceValue, int id) {
+        String name = (String) TestUtils.createInstance(sourceType, sourceValue);
         Workbook workbook = new Workbook("test.xlsx", "sheet2");
         assertThrows(FormatException.class, () -> new Worksheet(name, id, workbook));
     }
@@ -366,8 +362,7 @@ public class WorksheetTest {
 
     @DisplayName("Test of the failing set function of the hidden field when trying to hide all worksheets")
     @Test()
-    void hiddenFailTest()
-    {
+    void hiddenFailTest() {
         Workbook workbook = new Workbook("test1");
         workbook.addWorksheet("test2");
         workbook.getWorksheets().get(1).setHidden(true);
@@ -378,8 +373,7 @@ public class WorksheetTest {
 
     @DisplayName("Test of the failing set function of the hidden field when trying to hide all worksheets (scenario with 3 worksheets)")
     @Test()
-    void hiddenFailTest2()
-    {
+    void hiddenFailTest2() {
         Workbook workbook = new Workbook("test1");
         workbook.addWorksheet("test2");
         workbook.addWorksheet("test3");
@@ -394,8 +388,7 @@ public class WorksheetTest {
 
     @DisplayName("Test of the failing set function of the hidden field when trying to hide all worksheets by adding hidden worksheets to a workbook")
     @Test()
-    void hiddenFailTest3()
-    {
+    void hiddenFailTest3() {
         Worksheet hidden = new Worksheet("test1");
         hidden.setHidden(true);
         Workbook workbook = new Workbook();
@@ -1237,8 +1230,7 @@ public class WorksheetTest {
 
     @DisplayName("Test of the setSelectedCells functions with null values")
     @Test
-    void setSelectedCellsTest4()
-    {
+    void setSelectedCellsTest4() {
         Worksheet worksheet = new Worksheet();
         assertNull(worksheet.getSelectedCells());
         worksheet.setSelectedCells("R5:X10");
@@ -1261,8 +1253,7 @@ public class WorksheetTest {
 
     @DisplayName("Test of the failing  setSelectedCells function with one null address instead of two")
     @Test
-    void setSelectedCellsTest4b()
-    {
+    void setSelectedCellsTest4b() {
         Worksheet worksheet = new Worksheet();
         Address address = new Address("C5");
         assertThrows(RangeException.class, () -> worksheet.setSelectedCells(null, address));
@@ -1277,8 +1268,7 @@ public class WorksheetTest {
             "STRING, 'x', STRING, 'x', true",
             "STRING, '***', STRING, '***', true",
     })
-    void setSheetProtectionPasswordTest(String sourceType, String sourceValue, String expectedType, String expectedValue, boolean expectedUsage)
-    {
+    void setSheetProtectionPasswordTest(String sourceType, String sourceValue, String expectedType, String expectedValue, boolean expectedUsage) {
         String password = (String) TestUtils.createInstance(sourceType, sourceValue);
         String expectedPassword = (String) TestUtils.createInstance(expectedType, expectedValue);
 
@@ -1310,21 +1300,17 @@ public class WorksheetTest {
             "'STRING', 'a\\b', false, 'NULL', ''",
             "'STRING', '--------------------------------', false, NULL, ''",
     })
-    void setSheetNameTest(String sourceType, String sourceValue, boolean expectedValid, String expectedType, String expectedValue)
-    {
-        String name = (String)TestUtils.createInstance(sourceType, sourceValue);
-        String expectedName = (String)TestUtils.createInstance(expectedType, expectedValue);
+    void setSheetNameTest(String sourceType, String sourceValue, boolean expectedValid, String expectedType, String expectedValue) {
+        String name = (String) TestUtils.createInstance(sourceType, sourceValue);
+        String expectedName = (String) TestUtils.createInstance(expectedType, expectedValue);
 
         Worksheet worksheet = new Worksheet();
         assertNull(worksheet.getSheetName());
-        if (expectedValid)
-        {
+        if (expectedValid) {
             worksheet.setSheetName(name);
             assertEquals(expectedName, worksheet.getSheetName());
-        }
-        else
-        {
-            assertThrows(FormatException.class,() -> worksheet.setSheetName(name));
+        } else {
+            assertThrows(FormatException.class, () -> worksheet.setSheetName(name));
         }
     }
 
@@ -1351,30 +1337,25 @@ public class WorksheetTest {
             "true, 'STRING', 'a\\b', true, 'STRING', 'a_b'",
             "true, 'STRING', '--------------------------------', true, STRING, '-------------------------------'",
     })
-    void setSheetNameTest(boolean useSanitation, String sourceType, String sourceValue, boolean expectedValid, String expectedType, String expectedValue)
-    {
-        String name = (String)TestUtils.createInstance(sourceType, sourceValue);
-        String expectedName = (String)TestUtils.createInstance(expectedType, expectedValue);
+    void setSheetNameTest(boolean useSanitation, String sourceType, String sourceValue, boolean expectedValid, String expectedType, String expectedValue) {
+        String name = (String) TestUtils.createInstance(sourceType, sourceValue);
+        String expectedName = (String) TestUtils.createInstance(expectedType, expectedValue);
 
         Workbook workbook = new Workbook("Sheet1");
         workbook.addWorksheet("test");
         Worksheet worksheet = workbook.getCurrentWorksheet();
         assertEquals("test", worksheet.getSheetName());
-        if (expectedValid)
-        {
+        if (expectedValid) {
             worksheet.setSheetName(name, useSanitation);
             assertEquals(expectedName, worksheet.getSheetName());
-        }
-        else
-        {
-            assertThrows(FormatException.class,() -> worksheet.setSheetName(name, useSanitation));
+        } else {
+            assertThrows(FormatException.class, () -> worksheet.setSheetName(name, useSanitation));
         }
     }
 
     @DisplayName("Test of the failing setSheetName function with sanitizing on a missing Workbook reference")
     @Test()
-    void setSheetNameFailingTest()
-    {
+    void setSheetNameFailingTest() {
         Worksheet worksheet = new Worksheet(); // Worksheet was not created over a workbook
         assertThrows(WorksheetException.class, () -> worksheet.setSheetName("test", true));
     }

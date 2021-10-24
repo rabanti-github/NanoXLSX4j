@@ -164,16 +164,16 @@ public class ReadDataTest {
         Calendar calendarInstance = Calendar.getInstance();
         calendarInstance.set(Calendar.MILLISECOND, 0);
         calendarInstance.set(2021, 4, 11, 15, 7, 2);
-        cells.put("A1",  calendarInstance.getTime());
+        cells.put("A1", calendarInstance.getTime());
         calendarInstance.set(1900, 0, 1, 0, 0, 0);
-        cells.put("A2",  calendarInstance.getTime());
+        cells.put("A2", calendarInstance.getTime());
         calendarInstance.set(Calendar.HOUR_OF_DAY, 0);
         calendarInstance.set(Calendar.MINUTE, 0);
         calendarInstance.set(Calendar.SECOND, 0);
         calendarInstance.set(1960, 11, 12);
-        cells.put("A3",  calendarInstance.getTime());
+        cells.put("A3", calendarInstance.getTime());
         calendarInstance.set(9999, 11, 31, 23, 59, 59);
-        cells.put("A4",  calendarInstance.getTime());
+        cells.put("A4", calendarInstance.getTime());
         assertValues(cells, ReadDataTest::assertEqualsFunction);
     }
 
@@ -181,10 +181,10 @@ public class ReadDataTest {
     @Test()
     void readLocalTimeTest() throws Exception {
         Map<String, LocalTime> cells = new HashMap<>();
-        cells.put("A1", LocalTime.of(0,0,0));
-        cells.put("A2", LocalTime.of(13,18,22));
-        cells.put("A3", LocalTime.of(12,0,0));
-        cells.put("A4", LocalTime.of(23,59,59));
+        cells.put("A1", LocalTime.of(0, 0, 0));
+        cells.put("A2", LocalTime.of(13, 18, 22));
+        cells.put("A3", LocalTime.of(12, 0, 0));
+        cells.put("A4", LocalTime.of(23, 59, 59));
         assertValues(cells, ReadDataTest::assertEqualsFunction);
     }
 
@@ -198,8 +198,7 @@ public class ReadDataTest {
         cells.put("A3", "MAX(worksheet2!A1:worksheet2:A100");
 
         Workbook workbook = new Workbook("worksheet1");
-        for (Map.Entry<String, String> cell : cells.entrySet())
-        {
+        for (Map.Entry<String, String> cell : cells.entrySet()) {
             workbook.getCurrentWorksheet().addCellFormula(cell.getValue(), cell.getKey());
         }
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -212,8 +211,7 @@ public class ReadDataTest {
         assertNotNull(givenWorkbook);
         Worksheet givenWorksheet = givenWorkbook.setCurrentWorksheet(0);
         assertEquals("worksheet1", givenWorksheet.getSheetName());
-        for (String address : cells.keySet())
-        {
+        for (String address : cells.keySet()) {
             Cell givenCell = givenWorksheet.getCell(new Address(address));
             assertEquals(Cell.CellType.FORMULA, givenCell.getDataType());
             assertEquals(cells.get(address), givenCell.getValue());
@@ -265,29 +263,23 @@ public class ReadDataTest {
             "invalid_style.xlsx",
             "invalid_sharedStrings.xlsx",
     })
-    void failingReadInvalidDataTest(String invalidFile)
-    {
+    void failingReadInvalidDataTest(String invalidFile) {
         // Note: all referenced (embedded) files contains invalid XML documents (malformed, missing start or end tags, missing attributes)
         InputStream stream = TestUtils.getResource(invalidFile);
         assertThrows(IOException.class, () -> Workbook.load(stream));
     }
 
 
-
-
-
     private static <T> void assertEqualsFunction(T expected, T given) {
         assertEquals(expected, given);
     }
 
-    private static void assertApproximateDoubleFunction(double expected, double given)
-    {
+    private static void assertApproximateDoubleFunction(double expected, double given) {
         double threshold = 0.00000001d;
         assertTrue(Math.abs(given - expected) < threshold);
     }
 
-    private static void assertApproximateFloatFunction(float expected, float given)
-    {
+    private static void assertApproximateFloatFunction(float expected, float given) {
         float threshold = 0.00000001f;
         assertTrue(Math.abs(given - expected) < threshold);
     }

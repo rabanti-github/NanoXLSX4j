@@ -242,8 +242,7 @@ public class AddCellTest {
 
     @DisplayName("Test of the addCell function where an existing cell is overwritten")
     @Test()
-    void addCellOverwriteTest()
-    {
+    void addCellOverwriteTest() {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell("test", "C2");
         assertEquals(Cell.CellType.STRING, worksheet.getCells().get("C2").getDataType());
@@ -256,8 +255,7 @@ public class AddCellTest {
 
     @DisplayName("Test of the addCell function where existing cells are overwritten and the old cells where dates and times")
     @Test()
-    void addCellOverwriteTest2()
-    {
+    void addCellOverwriteTest2() {
         Worksheet worksheet = new Worksheet();
         Calendar calendar = Calendar.getInstance();
         calendar.set(2020, 10, 5, 4, 11, 12);

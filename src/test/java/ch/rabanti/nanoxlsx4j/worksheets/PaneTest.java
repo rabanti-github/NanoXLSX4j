@@ -96,8 +96,7 @@ public class PaneTest {
             "0f, B2, bottomRight",
             "500f, B2, topLeft",
     })
-    void setHorizontalSplitTest(float height, String topLeftCellAddress, Worksheet.WorksheetPane activePane)
-    {
+    void setHorizontalSplitTest(float height, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         Address address = new Address(topLeftCellAddress);
@@ -121,8 +120,7 @@ public class PaneTest {
             "3, false, F3, topRight",
             "10, true, M11, topRight",
     })
-    void setHorizontalSplitTest2(int rowNumber, boolean freeze, String topLeftCellAddress, Worksheet.WorksheetPane activePane)
-    {
+    void setHorizontalSplitTest2(int rowNumber, boolean freeze, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         Address address = new Address(topLeftCellAddress);
@@ -144,17 +142,13 @@ public class PaneTest {
             "100, false, R100, true",
             "100, true, R100, false",
     })
-    void setHorizontalSplitFailTest(int rowNumber, boolean freeze, String topLeftCellAddress, boolean expectedValid)
-    {
+    void setHorizontalSplitFailTest(int rowNumber, boolean freeze, String topLeftCellAddress, boolean expectedValid) {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         Address address = new Address(topLeftCellAddress);
-        if (expectedValid)
-        {
+        if (expectedValid) {
             worksheet.setHorizontalSplit(rowNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft);
-        }
-        else
-        {
+        } else {
             assertThrows(WorksheetException.class, () -> worksheet.setHorizontalSplit(rowNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft));
         }
     }
@@ -172,8 +166,7 @@ public class PaneTest {
             "0f, B2, bottomRight",
             "500f, B2, topLeft",
     })
-    void setVerticalSplitTest(float width, String topLeftCellAddress, Worksheet.WorksheetPane activePane)
-    {
+    void setVerticalSplitTest(float width, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         Address address = new Address(topLeftCellAddress);
@@ -198,8 +191,7 @@ public class PaneTest {
             "3, false, F3, topRight",
             "10, true, M11, topRight",
     })
-    void setVerticalSplitTest2(int columnNumber, boolean freeze, String topLeftCellAddress, Worksheet.WorksheetPane activePane)
-    {
+    void setVerticalSplitTest2(int columnNumber, boolean freeze, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         Address address = new Address(topLeftCellAddress);
@@ -221,17 +213,13 @@ public class PaneTest {
             "100, false, R100, true",
             "100, true, R100, false",
     })
-    void setVerticalSplitFailTest(int columnNumber, boolean freeze, String topLeftCellAddress, boolean expectedValid)
-    {
+    void setVerticalSplitFailTest(int columnNumber, boolean freeze, String topLeftCellAddress, boolean expectedValid) {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         Address address = new Address(topLeftCellAddress);
-        if (expectedValid)
-        {
+        if (expectedValid) {
             worksheet.setVerticalSplit(columnNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft);
-        }
-        else
-        {
+        } else {
             assertThrows(WorksheetException.class, () -> worksheet.setVerticalSplit(columnNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft));
         }
     }
@@ -249,8 +237,7 @@ public class PaneTest {
             "0f, , B2, bottomRight",
             ", 500f, B2, topLeft",
     })
-    void setSplitTest(Float height, Float width, String topLeftCellAddress, Worksheet.WorksheetPane activePane)
-    {
+    void setSplitTest(Float height, Float width, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         Address address = new Address(topLeftCellAddress);
@@ -276,8 +263,7 @@ public class PaneTest {
             "3, ,  false, F3, topRight",
             ", 10, true, M11, topRight",
     })
-    void setSplitTest2(Integer columnNumber, Integer rowNumber, boolean freeze, String topLeftCellAddress, Worksheet.WorksheetPane activePane)
-    {
+    void setSplitTest2(Integer columnNumber, Integer rowNumber, boolean freeze, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         Address address = new Address(topLeftCellAddress);
@@ -285,11 +271,11 @@ public class PaneTest {
         assertNull(worksheet.getPaneSplitLeftWidth());
         assertNull(worksheet.getPaneSplitTopHeight());
         int column = 0;
-        if (columnNumber != null){
+        if (columnNumber != null) {
             column = columnNumber;
         }
         int row = 0;
-        if (rowNumber != null){
+        if (rowNumber != null) {
             row = rowNumber;
         }
         Address expectedAddress = new Address(column, row);
@@ -317,25 +303,20 @@ public class PaneTest {
             ", , true, A1, true",
 
     })
-    void setSplitFailTest(Integer columnNumber, Integer rowNumber, boolean freeze, String topLeftCellAddress, boolean expectedValid)
-    {
+    void setSplitFailTest(Integer columnNumber, Integer rowNumber, boolean freeze, String topLeftCellAddress, boolean expectedValid) {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         Address address = new Address(topLeftCellAddress);
-        if (expectedValid)
-        {
+        if (expectedValid) {
             worksheet.setSplit(columnNumber, rowNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft);
-        }
-        else
-        {
+        } else {
             assertThrows(WorksheetException.class, () -> worksheet.setSplit(columnNumber, rowNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft));
         }
     }
 
     @DisplayName("Test of the resetSplit function on a horizontal split with a height definition")
     @Test()
-    void resetSplitTest()
-    {
+    void resetSplitTest() {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         worksheet.setHorizontalSplit(22.2f, new Address("A1"), Worksheet.WorksheetPane.bottomLeft);
@@ -345,8 +326,7 @@ public class PaneTest {
 
     @DisplayName("Test of the resetSplit function on a horizontal split with a row definition")
     @Test()
-    void resetSplitTest2()
-    {
+    void resetSplitTest2() {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         worksheet.setHorizontalSplit(5, true, new Address("R6"), Worksheet.WorksheetPane.bottomLeft);
@@ -356,8 +336,7 @@ public class PaneTest {
 
     @DisplayName("Test of the resetSplit function on a vertical split with a width definition")
     @Test()
-    void resetSplitTest3()
-    {
+    void resetSplitTest3() {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         worksheet.setVerticalSplit(22.2f, new Address("A1"), Worksheet.WorksheetPane.bottomLeft);
@@ -367,8 +346,7 @@ public class PaneTest {
 
     @DisplayName("Test of the resetSplit function on a vertical split with a column definition")
     @Test()
-    void resetSplitTest4()
-    {
+    void resetSplitTest4() {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         worksheet.setVerticalSplit(5, true, new Address("R6"), Worksheet.WorksheetPane.bottomLeft);
@@ -378,8 +356,7 @@ public class PaneTest {
 
     @DisplayName("Test of the ResetSplit function on a split with a width and height definition")
     @Test()
-    void resetSplitTest5()
-    {
+    void resetSplitTest5() {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         worksheet.setSplit(22.2f, 22.2f, new Address("A1"), Worksheet.WorksheetPane.bottomLeft);
@@ -389,15 +366,14 @@ public class PaneTest {
 
     @DisplayName("Test of the ResetSplit function on a split with a column and row definition")
     @Test()
-    void resetSplitTest6()
-    {
+    void resetSplitTest6() {
         Worksheet worksheet = new Worksheet();
         assertInitializedPaneSplit(worksheet);
         worksheet.setSplit(5, 5, true, new Address("R6"), Worksheet.WorksheetPane.bottomLeft);
         worksheet.resetSplit();
         assertInitializedPaneSplit(worksheet);
     }
-    
+
     private void assertInitializedPaneSplit(Worksheet worksheet) {
         assertNull(worksheet.getPaneSplitTopHeight());
         assertNull(worksheet.getPaneSplitLeftWidth());

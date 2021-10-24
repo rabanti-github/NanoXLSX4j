@@ -8,26 +8,26 @@ package ch.rabanti.nanoxlsx4j.exceptions;
 
 /**
  * Class for exceptions regarding range incidents (e.g out-of-range)
+ *
  * @author Raphael Stoeckli
  */
-public class RangeException extends RuntimeException{
-    
+public class RangeException extends RuntimeException {
+
     /**
      * Default constructor
-     */    
-    public RangeException()
-    {
+     */
+    public RangeException() {
         super();
     }
-    
+
     /**
      * Constructor with passed message
+     *
      * @param message Message of the exception
-     */    
-    public RangeException(String message)
-    {
+     */
+    public RangeException(String message) {
         super(message);
     }
-    
-    
+
+
 }

@@ -8,14 +8,16 @@ package ch.rabanti.nanoxlsx4j.exceptions;
 
 /**
  * Class for exceptions regarding stream or save error incidents
+ *
  * @author Raphael Stoeckli
  */
-public class IOException extends Exception{
+public class IOException extends Exception {
 
     private final Exception innerException;
 
-     /**
+    /**
      * Gets the inner exception
+     *
      * @return Inner exception
      */
     public Exception getInnerException() {
@@ -24,33 +26,32 @@ public class IOException extends Exception{
 
     /**
      * Default constructor
-     */    
-    public IOException()
-    {
+     */
+    public IOException() {
         super();
         this.innerException = null;
     }
-    
+
     /**
      * Constructor with passed message
+     *
      * @param message Message of the exception
-     */    
-    public IOException(String message)
-    {
+     */
+    public IOException(String message) {
         super(message);
         this.innerException = null;
     }
-    
+
     /**
      * Constructor with passed message and inner exception
+     *
      * @param message Message of the exception
-     * @param inner Inner exception
-     */    
-    public  IOException(String message, Exception inner)
-    {
+     * @param inner   Inner exception
+     */
+    public IOException(String message, Exception inner) {
         super(message);
         this.innerException = inner;
     }
-    
-    
+
+
 }

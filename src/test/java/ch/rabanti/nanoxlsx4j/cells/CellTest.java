@@ -15,7 +15,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -604,8 +603,6 @@ class CellTest {
         Cell.AddressScope scope = Cell.getAddressScope(addressString);
         assertEquals(expectedScope, scope);
     }
-
-
 
 
 }

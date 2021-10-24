@@ -28,9 +28,9 @@ public class ImportOptions {
     public static final String DEFAULT_LOCALTIME_FORMAT = "HH:mm:ss";
 
     /**
-     *  Global conversion types to enforce during the import. All types other than {@link GlobalType#Default} will override defined {@link ColumnType}s
+     * Global conversion types to enforce during the import. All types other than {@link GlobalType#Default} will override defined {@link ColumnType}s
      */
-    public enum GlobalType{
+    public enum GlobalType {
         /**
          * No global strategy. All numbers are tried to be cast to the most suitable types
          */
@@ -52,7 +52,7 @@ public class ImportOptions {
     /**
      * Column types to enforce during the import
      */
-    public enum ColumnType{
+    public enum ColumnType {
         /**
          * Cells are tried to be imported as numbers (automatic determination of numeric type)
          */
@@ -82,7 +82,7 @@ public class ImportOptions {
     private boolean enforceDateTimesAsNumbers = false;
     private boolean enforceEmptyValuesAsString = false;
     private final Map<Integer, ColumnType> enforcedColumnTypes = new HashMap<>();
-    private  int enforcingStartRowNumber = 0;
+    private int enforcingStartRowNumber = 0;
     private GlobalType globalEnforcingType = GlobalType.Default;
     private String dateFormat;
     private String localTimeFormat;
@@ -91,7 +91,8 @@ public class ImportOptions {
 
     /**
      * Gets whether date or time values in the workbook are interpreted as numbers
-     * @return  If true, date or time values (default format number 14 or 21) will be interpreted as numeric values globally. This option overrules possible column options, defined by {@link #addEnforcedColumn(int, ColumnType)}
+     *
+     * @return If true, date or time values (default format number 14 or 21) will be interpreted as numeric values globally. This option overrules possible column options, defined by {@link #addEnforcedColumn(int, ColumnType)}
      */
     public boolean isEnforceDateTimesAsNumbers() {
         return enforceDateTimesAsNumbers;
@@ -99,6 +100,7 @@ public class ImportOptions {
 
     /**
      * gets the type enforcing rules during import for particular columns
+     *
      * @return Map of column numers and enforced types
      */
     public Map<Integer, ColumnType> getEnforcedColumnTypes() {
@@ -107,6 +109,7 @@ public class ImportOptions {
 
     /**
      * gets the row number (zero-based) where enforcing rules are started to be applied. This is, for instance, to prevent enforcing in a header row
+     *
      * @return Row number
      */
     public int getEnforcingStartRowNumber() {
@@ -114,7 +117,8 @@ public class ImportOptions {
     }
 
     /**
-     *  Sets whether date or time values in the workbook are interpreted as numbers
+     * Sets whether date or time values in the workbook are interpreted as numbers
+     *
      * @param enforceDateTimesAsNumbers If true, date or time values (default format number 14 or 21) will be interpreted as numeric values globally. This option overrules possible column options, defined by {@link #addEnforcedColumn(int, ColumnType)}
      */
     public void setEnforceDateTimesAsNumbers(boolean enforceDateTimesAsNumbers) {
@@ -123,6 +127,7 @@ public class ImportOptions {
 
     /**
      * Sets the row number (zero-based) where enforcing rules are started to be applied. This is, for instance, to prevent enforcing types in a header row. Any enforcing rule is skipped until this row number is reached
+     *
      * @param enforcingStartRowNumber Row number
      */
     public void setEnforcingStartRowNumber(int enforcingStartRowNumber) {
@@ -131,26 +136,27 @@ public class ImportOptions {
 
     /**
      * Adds a type enforcing rule to the passed column address
+     *
      * @param columnAddress Column address (A to XFD)
-     * @param type Type to be enforced on the column
+     * @param type          Type to be enforced on the column
      */
-    public void addEnforcedColumn(String columnAddress, ColumnType type)
-    {
+    public void addEnforcedColumn(String columnAddress, ColumnType type) {
         this.enforcedColumnTypes.put(Cell.resolveColumn(columnAddress), type);
     }
 
     /**
      * Adds a type enforcing rule to the passed column number (zero-based)
+     *
      * @param columnNumber >Column number (0-16383)
-     * @param type Type to be enforced on the column
+     * @param type         Type to be enforced on the column
      */
-    public void addEnforcedColumn(int columnNumber, ColumnType type)
-    {
+    public void addEnforcedColumn(int columnNumber, ColumnType type) {
         this.enforcedColumnTypes.put(columnNumber, type);
     }
 
     /**
-     *  Gets whether empty cells are of the type Empty or String
+     * Gets whether empty cells are of the type Empty or String
+     *
      * @return If true, empty cells will be interpreted as type of string with an empty value. If false, the type will be Empty and the value null
      */
     public boolean isEnforceEmptyValuesAsString() {
@@ -159,6 +165,7 @@ public class ImportOptions {
 
     /**
      * Sets whether empty cells are of the type Empty or String
+     *
      * @param enforceEmptyValuesAsString If true, empty cells will be interpreted as type of string with an empty value. If false, the type will be Empty and the value null
      */
     public void setEnforceEmptyValuesAsString(boolean enforceEmptyValuesAsString) {
@@ -167,6 +174,7 @@ public class ImportOptions {
 
     /**
      * Gets the global strategy to handle cell values. The default will not enforce any general casting, besides {@link ImportOptions#setEnforceDateTimesAsNumbers(boolean)}, {@link ImportOptions#setEnforceEmptyValuesAsString(boolean)} and {@link ImportOptions#addEnforcedColumn(int, ColumnType)}
+     *
      * @return Global cast strategy on import
      */
     public GlobalType getGlobalEnforcingType() {
@@ -175,6 +183,7 @@ public class ImportOptions {
 
     /**
      * Sets the global strategy to handle cell values. The default will not enforce any casting, besides {@link ImportOptions#setEnforceDateTimesAsNumbers(boolean)}, {@link ImportOptions#setEnforceEmptyValuesAsString(boolean)} and {@link ImportOptions#addEnforcedColumn(int, ColumnType)}
+     *
      * @param globalEnforcingType Global cast strategy on import
      */
     public void setGlobalEnforcingType(GlobalType globalEnforcingType) {
@@ -183,6 +192,7 @@ public class ImportOptions {
 
     /**
      * Gets the format if Date values are cast to Strings
+     *
      * @return String format pattern
      */
     public String getDateFormat() {
@@ -191,6 +201,7 @@ public class ImportOptions {
 
     /**
      * Sets the format if Date values are cast to Strings
+     *
      * @param dateFormat String format pattern
      */
     public void setDateFormat(String dateFormat) {
@@ -200,14 +211,16 @@ public class ImportOptions {
 
     /**
      * Gets the Date formatter, set by the string of {@link ImportOptions#setDateFormat(String)}
+     *
      * @return SimpleDateFormat instance
      */
-    public SimpleDateFormat getDateFormatter(){
+    public SimpleDateFormat getDateFormatter() {
         return this.dateFormatter;
     }
 
     /**
      * Gets the format if LocalTime values are cast to Strings
+     *
      * @return String format pattern
      */
     public String getLocalTimeFormat() {
@@ -216,6 +229,7 @@ public class ImportOptions {
 
     /**
      * Sets the format if LocalTime values are cast to Strings
+     *
      * @param localTimeFormat String format pattern
      */
     public void setLocalTimeFormat(String localTimeFormat) {
@@ -225,9 +239,10 @@ public class ImportOptions {
 
     /**
      * Gets the LocalTime formatter, set by the string of {@link ImportOptions#setLocalTimeFormat(String)}
+     *
      * @return DateTimeFormatter instance
      */
-    public DateTimeFormatter getLocalTimeFormatter(){
+    public DateTimeFormatter getLocalTimeFormatter() {
         return this.localTimeFormatter;
     }
 

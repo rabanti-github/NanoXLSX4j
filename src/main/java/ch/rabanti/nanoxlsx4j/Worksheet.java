@@ -535,7 +535,7 @@ public class Worksheet {
      */
     public void setWorkbookReference(Workbook workbookReference) {
         this.workbookReference = workbookReference;
-        if (workbookReference != null){
+        if (workbookReference != null) {
             workbookReference.validateWorksheets();
         }
     }
@@ -553,11 +553,12 @@ public class Worksheet {
      * Sets whether the worksheet is hidden<br/>
      * If the worksheet is not part of a workbook, or the only one in the workbook, an exception will be thrown
      * If the worksheet is the selected one, and attempted to set hidden, an exception will be thrown. Define another selected worksheet prior to this call, in this case.
+     *
      * @param hidden If true, the worksheet is not listed as tab in the workbook's worksheet selection
      */
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
-        if (hidden && workbookReference != null){
+        if (hidden && workbookReference != null) {
             workbookReference.validateWorksheets();
         }
     }
@@ -656,10 +657,10 @@ public class Worksheet {
 
     /**
      * Constructor with worksheet name
-     * @apiNote Note that the worksheet name is not checked against other worksheets with this operation. This is later performed when the worksheet is added to the workbook
      *
      * @param name Name of the new worksheet
      * @throws FormatException Thrown if the name contains illegal characters or is too long
+     * @apiNote Note that the worksheet name is not checked against other worksheets with this operation. This is later performed when the worksheet is added to the workbook
      */
     public Worksheet(String name) {
         init();
@@ -1376,16 +1377,14 @@ public class Worksheet {
 
     /**
      * Gets a row as list of cell objects
+     *
      * @param rowNumber Row number (zero-based)
      * @return List of cell objects. If the row doesn't exist, an empty list is returned
      */
-    public List<Cell> getRow(int rowNumber)
-    {
+    public List<Cell> getRow(int rowNumber) {
         List<Cell> list = new ArrayList<>();
-        for (Map.Entry<String, Cell> cell : cells.entrySet())
-        {
-            if (cell.getValue().getRowNumber() == rowNumber)
-            {
+        for (Map.Entry<String, Cell> cell : cells.entrySet()) {
+            if (cell.getValue().getRowNumber() == rowNumber) {
                 list.add(cell.getValue());
             }
         }
@@ -1395,27 +1394,26 @@ public class Worksheet {
 
     /**
      * Gets a column as list of cell objects
+     *
      * @param columnAddress Column address
-     * @throws RangeException is thrown if the address is not valid
      * @return List of cell objects. If the column doesn't exist, an empty list is returned
+     * @throws RangeException is thrown if the address is not valid
      */
     public List<Cell> getColumn(String columnAddress) {
         int column = Cell.resolveColumn(columnAddress);
         return getColumn(column);
     }
 
-        /**
-         * Gets a column as list of cell objects
-         * @param columnNumber Column number (zero-based)
-         * @return List of cell objects. If the column doesn't exist, an empty list is returned
-         */
-    public List<Cell> getColumn(int columnNumber)
-    {
+    /**
+     * Gets a column as list of cell objects
+     *
+     * @param columnNumber Column number (zero-based)
+     * @return List of cell objects. If the column doesn't exist, an empty list is returned
+     */
+    public List<Cell> getColumn(int columnNumber) {
         List<Cell> list = new ArrayList<>();
-        for (Map.Entry<String, Cell> cell : cells.entrySet())
-        {
-            if (cell.getValue().getColumnNumber() == columnNumber)
-            {
+        for (Map.Entry<String, Cell> cell : cells.entrySet()) {
+            if (cell.getValue().getColumnNumber() == columnNumber) {
                 list.add(cell.getValue());
             }
         }
@@ -1624,7 +1622,7 @@ public class Worksheet {
      */
     public void goToNextColumn(int numberOfColumns, boolean keepRowPosition) {
         currentColumnNumber += numberOfColumns;
-        if (!keepRowPosition){
+        if (!keepRowPosition) {
             currentRowNumber = 0;
         }
         Cell.validateColumnNumber(currentColumnNumber);
@@ -1654,13 +1652,13 @@ public class Worksheet {
     /**
      * Moves the current position to the next row with the number of cells to move and the option to keep the row position (use for a new line)
      *
-     * @param numberOfRows Number of rows to move
+     * @param numberOfRows       Number of rows to move
      * @param keepColumnPosition If true, the column position is preserved, otherwise set to 0
      * @apiNote The value can also be negative. However, resulting row numbers below 0 or above 1048575 will cause an exception
      */
     public void goToNextRow(int numberOfRows, boolean keepColumnPosition) {
         currentRowNumber += numberOfRows;
-        if (!keepColumnPosition){
+        if (!keepColumnPosition) {
             currentColumnNumber = 0;
         }
         Cell.validateRowNumber(currentRowNumber);
@@ -2089,18 +2087,18 @@ public class Worksheet {
         if (workbook == null) {
             throw new WorksheetException("The workbook reference is null");
         }
-        if (!worksheetExists(name, workbook))
-        { return name; }
+        if (!worksheetExists(name, workbook)) {
+            return name;
+        }
         Pattern pattern = Pattern.compile("^(.*?)(\\d{1,31})$"); //
         Matcher matcher = pattern.matcher(name);
         String prefix = name;
         int number = 1;
         if (matcher.matches() && matcher.groupCount() > 1) {
             prefix = matcher.group(1);
-            try{
+            try {
                 number = Integer.parseInt(matcher.group(2));
-            }
-            catch (Exception ex){
+            } catch (Exception ex) {
                 number = 0;
                 // if this failed, the start number is 0 (parsed number was >max. int32)
             }

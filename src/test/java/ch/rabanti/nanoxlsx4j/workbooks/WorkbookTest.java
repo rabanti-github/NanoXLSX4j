@@ -1,6 +1,9 @@
 package ch.rabanti.nanoxlsx4j.workbooks;
 
-import ch.rabanti.nanoxlsx4j.*;
+import ch.rabanti.nanoxlsx4j.Address;
+import ch.rabanti.nanoxlsx4j.Metadata;
+import ch.rabanti.nanoxlsx4j.Workbook;
+import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
 import org.junit.jupiter.api.DisplayName;
@@ -9,7 +12,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,8 +86,7 @@ public class WorkbookTest {
 
     @DisplayName("Test of the useWorkbookProtection getter using indirect measures")
     @Test()
-    void useWorkbookProtectionTest2()
-    {
+    void useWorkbookProtectionTest2() {
         Workbook workbook = new Workbook(false);
         assertFalse(workbook.isWorkbookProtectionUsed());
         workbook.setWorkbookProtection(true, true, true, "");
@@ -525,8 +526,7 @@ public class WorkbookTest {
 
     @DisplayName("Test of the failing removeWorksheet function when the last worksheet is removed from a workbook")
     @Test()
-    void removeWorksheetFailTest3()
-    {
+    void removeWorksheetFailTest3() {
         Workbook workbook = new Workbook("worksheet1");
         assertThrows(WorksheetException.class, () -> workbook.removeWorksheet(0));
     }
@@ -544,8 +544,7 @@ public class WorkbookTest {
             "false, true, true, '_-_', true, true, false",
 
     })
-    void setWorkbookProtectionTest(boolean state, boolean protectWindows, boolean protectStructure, String password, boolean expectedLockWindowsState, boolean expectedLockStructureState, boolean expectedProtectionState)
-    {
+    void setWorkbookProtectionTest(boolean state, boolean protectWindows, boolean protectStructure, String password, boolean expectedLockWindowsState, boolean expectedLockStructureState, boolean expectedProtectionState) {
         Workbook workbook = new Workbook();
         workbook.setWorkbookProtection(state, protectWindows, protectStructure, password);
         assertEquals(expectedLockWindowsState, workbook.isWindowsLockedIfProtected());
@@ -584,7 +583,7 @@ public class WorkbookTest {
     public static String getRandomName() throws Exception {
         File tmp = new File(System.getProperty("java.io.tmpdir"));
         File file = File.createTempFile("tmp", ".xlsx", tmp);
-        if (file.exists()){
+        if (file.exists()) {
             file.delete();
         }
         return file.getAbsolutePath();

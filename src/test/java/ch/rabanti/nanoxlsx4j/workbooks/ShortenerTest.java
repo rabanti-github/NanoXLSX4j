@@ -23,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ShortenerTest {
     @DisplayName("Test of the SetCurrentWorksheet function")
     @Test()
-    void setCurrentWorksheetTest()
-    {
+    void setCurrentWorksheetTest() {
         Workbook workbook = new Workbook("Sheet1");
         Worksheet worksheet = new Worksheet("Sheet2");
         workbook.addWorksheet(worksheet);
@@ -37,8 +36,7 @@ public class ShortenerTest {
 
     @DisplayName("Test of the failing SetCurrentWorksheet function on a unreferenced worksheet")
     @Test()
-    void setCurrentWorksheetFailTest()
-    {
+    void setCurrentWorksheetFailTest() {
         Workbook workbook = new Workbook("Sheet1");
         Worksheet worksheet = new Worksheet("Sheet2");
         assertThrows(WorksheetException.class, () -> workbook.WS.setCurrentWorksheet(worksheet));
@@ -47,18 +45,15 @@ public class ShortenerTest {
 
     @DisplayName("Test of the failing SetCurrentWorksheet function on a null object")
     @Test()
-    void setCurrentWorksheetFailTest2()
-    {
+    void setCurrentWorksheetFailTest2() {
         Workbook workbook = new Workbook("Sheet1");
         assertThrows(WorksheetException.class, () -> workbook.WS.setCurrentWorksheet(null));
     }
 
 
-
     @DisplayName("Test of the Value function")
     @Test()
-    void valueTest()
-    {
+    void valueTest() {
         Workbook workbook = new Workbook("Sheet1");
         Map<String, Object> values = new HashMap<String, Object>();
         values.put("A1", "Test");
@@ -74,8 +69,7 @@ public class ShortenerTest {
 
     @DisplayName("Test of the Value function with a style")
     @Test()
-    void valueTest2()
-    {
+    void valueTest2() {
         Workbook workbook = new Workbook("Sheet1");
         Map<String, Object> values = new HashMap<String, Object>();
         values.put("A1", true);
@@ -93,8 +87,7 @@ public class ShortenerTest {
 
     @DisplayName("Test of the Formula function")
     @Test()
-    void formulaTest()
-    {
+    void formulaTest() {
         Workbook workbook = new Workbook("Sheet1");
         Map<String, String> values = new HashMap<String, String>();
         values.put("A1", "=A3");
@@ -110,8 +103,7 @@ public class ShortenerTest {
 
     @DisplayName("Test of the Formula function with a style")
     @Test()
-    void formulaTest2()
-    {
+    void formulaTest2() {
         Workbook workbook = new Workbook("Sheet1");
         Map<String, String> values = new HashMap<String, String>();
         values.put("A1", "=A3");
@@ -129,8 +121,7 @@ public class ShortenerTest {
 
     @DisplayName("Test of the Down function")
     @Test()
-    void downTest()
-    {
+    void downTest() {
         Workbook workbook = new Workbook("Sheet1");
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentColumnNumber());
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentRowNumber());
@@ -149,8 +140,7 @@ public class ShortenerTest {
             "5, 5, -2, 0, 3",
             "5, 5, -5, 0, 0",
     })
-    void downTest2(int startColumn, int startRow, int number, int expectedColumn, int expectedRow)
-    {
+    void downTest2(int startColumn, int startRow, int number, int expectedColumn, int expectedRow) {
         Workbook workbook = new Workbook("Sheet1");
         assertJumpTo(workbook, workbook.WS::down, startColumn, startRow, number, expectedColumn, expectedRow);
     }
@@ -171,16 +161,14 @@ public class ShortenerTest {
             "F5, -4, false, A1",
             "F5, -4, true, F1",
     })
-    void downTest3(String initialAddress, int number, boolean keepColumn, String expectedAdrress)
-    {
+    void downTest3(String initialAddress, int number, boolean keepColumn, String expectedAdrress) {
         Workbook workbook = new Workbook("Sheet1");
         assertJumpKeep(workbook, workbook.WS::down, initialAddress, number, keepColumn, expectedAdrress);
     }
 
     @DisplayName("Test of the failing Down function with a negative row number")
     @Test()
-    void downFailingTest()
-    {
+    void downFailingTest() {
         Workbook workbook = new Workbook("Sheet1");
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentColumnNumber());
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentRowNumber());
@@ -190,8 +178,7 @@ public class ShortenerTest {
 
     @DisplayName("Test of the Up function")
     @Test()
-    void upTest()
-    {
+    void upTest() {
         Workbook workbook = new Workbook("Sheet1");
         workbook.getCurrentWorksheet().setCurrentCellAddress("C4");
         assertEquals(2, workbook.getCurrentWorksheet().getCurrentColumnNumber());
@@ -211,8 +198,7 @@ public class ShortenerTest {
             "5, 5, -2, 0, 7",
             "5, 5, 5, 0, 0",
     })
-    void upTest2(int startColumn, int startRow, int number, int expectedColumn, int expectedRow)
-    {
+    void upTest2(int startColumn, int startRow, int number, int expectedColumn, int expectedRow) {
         Workbook workbook = new Workbook("Sheet1");
         assertJumpTo(workbook, workbook.WS::up, startColumn, startRow, number, expectedColumn, expectedRow);
     }
@@ -233,16 +219,14 @@ public class ShortenerTest {
             "F5, 4, false, A1",
             "F5, 4, true, F1",
     })
-    void upTest3(String initialAddress, int number, boolean keepColumn, String expectedAdrress)
-    {
+    void upTest3(String initialAddress, int number, boolean keepColumn, String expectedAdrress) {
         Workbook workbook = new Workbook("Sheet1");
         assertJumpKeep(workbook, workbook.WS::up, initialAddress, number, keepColumn, expectedAdrress);
     }
 
     @DisplayName("Test of the failing Up function with a negative row number")
     @Test()
-    void upFailingTest()
-    {
+    void upFailingTest() {
         Workbook workbook = new Workbook("Sheet1");
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentColumnNumber());
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentRowNumber());
@@ -252,8 +236,7 @@ public class ShortenerTest {
 
     @DisplayName("Test of the Right function")
     @Test()
-    void rightTest()
-    {
+    void rightTest() {
         Workbook workbook = new Workbook("Sheet1");
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentColumnNumber());
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentRowNumber());
@@ -272,8 +255,7 @@ public class ShortenerTest {
             "5, 5, -2, 3, 0",
             "5, 5, -5, 0, 0",
     })
-    void rightTest2(int startColumn, int startRow, int number, int expectedColumn, int expectedRow)
-    {
+    void rightTest2(int startColumn, int startRow, int number, int expectedColumn, int expectedRow) {
         Workbook workbook = new Workbook("Sheet1");
         assertJumpTo(workbook, workbook.WS::right, startColumn, startRow, number, expectedColumn, expectedRow);
     }
@@ -294,16 +276,14 @@ public class ShortenerTest {
             "F5, -5, false, A1",
             "F5, -5, true, A5",
     })
-    void rightTest3(String initialAddress, int number, boolean keepColumn, String expectedAdrress)
-    {
+    void rightTest3(String initialAddress, int number, boolean keepColumn, String expectedAdrress) {
         Workbook workbook = new Workbook("Sheet1");
         assertJumpKeep(workbook, workbook.WS::right, initialAddress, number, keepColumn, expectedAdrress);
     }
 
     @DisplayName("Test of the failing Right function with a negative row number")
     @Test()
-    void rightFailingTest()
-    {
+    void rightFailingTest() {
         Workbook workbook = new Workbook("Sheet1");
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentColumnNumber());
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentRowNumber());
@@ -313,8 +293,7 @@ public class ShortenerTest {
 
     @DisplayName("Test of the Left function")
     @Test()
-    void leftTest()
-    {
+    void leftTest() {
         Workbook workbook = new Workbook("Sheet1");
         workbook.getCurrentWorksheet().setCurrentCellAddress("D4");
         assertEquals(3, workbook.getCurrentWorksheet().getCurrentColumnNumber());
@@ -334,8 +313,7 @@ public class ShortenerTest {
             "5, 5, -2, 7, 0",
             "5, 5, 5, 0, 0",
     })
-    void leftTest2(int startColumn, int startRow, int number, int expectedColumn, int expectedRow)
-    {
+    void leftTest2(int startColumn, int startRow, int number, int expectedColumn, int expectedRow) {
         Workbook workbook = new Workbook("Sheet1");
         assertJumpTo(workbook, workbook.WS::left, startColumn, startRow, number, expectedColumn, expectedRow);
     }
@@ -356,16 +334,14 @@ public class ShortenerTest {
             "F5, 5, false, A1",
             "F5, 5, true, A5",
     })
-    void leftTest3(String initialAddress, int number, boolean keepColumn, String expectedAdrress)
-    {
+    void leftTest3(String initialAddress, int number, boolean keepColumn, String expectedAdrress) {
         Workbook workbook = new Workbook("Sheet1");
         assertJumpKeep(workbook, workbook.WS::left, initialAddress, number, keepColumn, expectedAdrress);
     }
 
     @DisplayName("Test of the failing Left function with a negative row number")
     @Test()
-    void leftFailingTest()
-    {
+    void leftFailingTest() {
         Workbook workbook = new Workbook("Sheet1");
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentColumnNumber());
         assertEquals(0, workbook.getCurrentWorksheet().getCurrentRowNumber());
@@ -375,14 +351,12 @@ public class ShortenerTest {
     // For code coverage
     @DisplayName("Singular Test of the NullCheck method")
     @Test()
-    void nullCheckTest()
-    {
+    void nullCheckTest() {
         Workbook workbook = new Workbook(); // No worksheet created
         assertThrows(WorksheetException.class, () -> workbook.WS.value(22));
     }
 
-    private void assertJumpTo(Workbook workbook, Consumer<Integer> consumer, int startColumn, int startRow, int number, int expectedColumn, int expectedRow)
-    {
+    private void assertJumpTo(Workbook workbook, Consumer<Integer> consumer, int startColumn, int startRow, int number, int expectedColumn, int expectedRow) {
         workbook.getCurrentWorksheet().setCurrentColumnNumber(startColumn);
         workbook.getCurrentWorksheet().setCurrentRowNumber(startRow);
         assertEquals(startColumn, workbook.getCurrentWorksheet().getCurrentColumnNumber());
@@ -392,8 +366,7 @@ public class ShortenerTest {
         assertEquals(expectedRow, workbook.getCurrentWorksheet().getCurrentRowNumber());
     }
 
-    private void assertJumpKeep(Workbook workbook, BiConsumer<Integer, Boolean> consumer, String initialAddress, int number, boolean keepOther, String expectedAddress)
-    {
+    private void assertJumpKeep(Workbook workbook, BiConsumer<Integer, Boolean> consumer, String initialAddress, int number, boolean keepOther, String expectedAddress) {
         Address initial = new Address(initialAddress);
         workbook.getCurrentWorksheet().setCurrentCellAddress(initial.Column, initial.Row);
 
@@ -405,31 +378,24 @@ public class ShortenerTest {
         assertEquals(expected.Row, workbook.getCurrentWorksheet().getCurrentRowNumber());
     }
 
-    private <T> void assertValue(Workbook workbook, Consumer<T> consumer, BiConsumer<T, Style> styleConsumer, Map<String, T> values, Worksheet.CellDirection direction, int startColumn, int startRow, int expectedEndColumn, int expectedEndRow, Style style)
-    {
+    private <T> void assertValue(Workbook workbook, Consumer<T> consumer, BiConsumer<T, Style> styleConsumer, Map<String, T> values, Worksheet.CellDirection direction, int startColumn, int startRow, int expectedEndColumn, int expectedEndRow, Style style) {
         workbook.getCurrentWorksheet().setCurrentColumnNumber(startColumn);
         workbook.getCurrentWorksheet().setCurrentRowNumber(startRow);
         workbook.getCurrentWorksheet().setCurrentCellDirection(direction);
 
-        for(Map.Entry<String, T>cell : values.entrySet())
-        {
-            if (style == null)
-            {
+        for (Map.Entry<String, T> cell : values.entrySet()) {
+            if (style == null) {
                 consumer.accept(cell.getValue());
-            }
-            else
-            {
+            } else {
                 styleConsumer.accept(cell.getValue(), style);
             }
         }
 
-        for(Map.Entry<String, T>cell : values.entrySet())
-        {
+        for (Map.Entry<String, T> cell : values.entrySet()) {
             Address address = new Address(cell.getKey());
-            T value = (T)workbook.getCurrentWorksheet().getCell(address).getValue();
+            T value = (T) workbook.getCurrentWorksheet().getCell(address).getValue();
             assertEquals(cell.getValue(), value);
-            if (style != null)
-            {
+            if (style != null) {
                 assertEquals(style.hashCode(), workbook.getCurrentWorksheet().getCell(address).getCellStyle().hashCode());
             }
         }

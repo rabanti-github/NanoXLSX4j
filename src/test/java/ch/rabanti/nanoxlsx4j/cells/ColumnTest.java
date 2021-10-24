@@ -1,4 +1,5 @@
 package ch.rabanti.nanoxlsx4j.cells;
+
 import ch.rabanti.nanoxlsx4j.Column;
 import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Worksheet;
@@ -20,8 +21,7 @@ public class ColumnTest {
             "AAB, AAB, A, A",
             "a, A, XFD, XFD",
     })
-    void columnAddressTest(String initialValue, String expectedValue, String changedValue, String expectedChangedValue)
-    {
+    void columnAddressTest(String initialValue, String expectedValue, String changedValue, String expectedChangedValue) {
         Column column = new Column(initialValue);
         assertEquals(expectedValue, column.getColumnAddress());
         column.setColumnAddress(changedValue);
@@ -39,17 +39,15 @@ public class ColumnTest {
             "STRING, $",
             "STRING, XFE",
     })
-    void columnAddressTest2(String sourceType, String sourceValue)
-    {
-        String value = (String)TestUtils.createInstance(sourceType, sourceValue);
+    void columnAddressTest2(String sourceType, String sourceValue) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
         Column column = new Column("A");
         assertThrows(RangeException.class, () -> column.setColumnAddress(value));
     }
 
     @DisplayName("Test of the hasAutoFilter field, as well as proper modification by getter and setter")
     @Test()
-    void hasAutoFilterTest()
-    {
+    void hasAutoFilterTest() {
         Column column = new Column("A");
         assertFalse(column.hasAutoFilter());
         column.setAutoFilter(true);
@@ -60,8 +58,7 @@ public class ColumnTest {
 
     @DisplayName("Test of the isHidden field, as well as proper modification by getter and setter")
     @Test()
-    void isHiddenTest()
-    {
+    void isHiddenTest() {
         Column column = new Column("A");
         assertFalse(column.isHidden());
         column.setHidden(true);
@@ -69,8 +66,6 @@ public class ColumnTest {
         column.setHidden(false);
         assertFalse(column.isHidden());
     }
-
-
 
 
     @DisplayName("Test of the number field, as well as the constructor and proper modification by getter and setter")
@@ -93,9 +88,8 @@ public class ColumnTest {
             "INTEGER, -1",
             "INTEGER, 16384",
     })
-    void numberTest2(String sourceType, String sourceValue)
-    {
-        int value = (int)TestUtils.createInstance(sourceType, sourceValue);
+    void numberTest2(String sourceType, String sourceValue) {
+        int value = (int) TestUtils.createInstance(sourceType, sourceValue);
         Column column = new Column(2);
         assertThrows(RangeException.class, () -> column.setNumber(value));
     }
@@ -108,8 +102,7 @@ public class ColumnTest {
             "0f, 0f",
             "255f, 255f",
     })
-    void widthTest(float initialValue, float expectedValue)
-    {
+    void widthTest(float initialValue, float expectedValue) {
         Column column = new Column(0);
         assertEquals(Worksheet.DEFAULT_COLUMN_WIDTH, column.getWidth());
         column.setWidth(initialValue);
@@ -122,8 +115,7 @@ public class ColumnTest {
             "-1f",
             "255.1f",
     })
-    void widthTest2(float value)
-    {
+    void widthTest2(float value) {
         Column column = new Column(0);
         assertThrows(RangeException.class, () -> column.setWidth(value));
     }

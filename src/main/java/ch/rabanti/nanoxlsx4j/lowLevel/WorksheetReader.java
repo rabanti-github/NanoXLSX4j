@@ -13,7 +13,9 @@ import ch.rabanti.nanoxlsx4j.ImportOptions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static ch.rabanti.nanoxlsx4j.Cell.CellType.DATE;
@@ -25,6 +27,8 @@ import static ch.rabanti.nanoxlsx4j.Cell.CellType.TIME;
  * @author Raphael Stoeckli
  */
 public class WorksheetReader {
+
+    private static final double ZERO_THRESHOLD = 0.000001d;
 
     private int worksheetNumber;
     private final String name;
@@ -232,17 +236,14 @@ public class WorksheetReader {
                     if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
                         Number number = (Number) tempCell.getValue();
                         return new Cell(number.doubleValue(), tempCell.getDataType(), address);
-                    }
-                    else if (tempCell.getDataType().equals(Cell.CellType.BOOL)){
-                        double tempDouble = ((boolean)tempCell.getValue()) ? 1d : 0d;
+                    } else if (tempCell.getDataType().equals(Cell.CellType.BOOL)) {
+                        double tempDouble = ((boolean) tempCell.getValue()) ? 1d : 0d;
                         return new Cell(tempDouble, Cell.CellType.NUMBER, address);
-                    }
-                    else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
+                    } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
                         return new Cell(Double.valueOf(value), Cell.CellType.NUMBER, address);
-                    }
-                    else if (tempCell.getDataType().equals(Cell.CellType.STRING)){
+                    } else if (tempCell.getDataType().equals(Cell.CellType.STRING)) {
                         Number number = tryParseDecimal(tempCell.getValue().toString());
-                        if (number != null){
+                        if (number != null) {
                             return new Cell(number.doubleValue(), Cell.CellType.NUMBER, address);
                         }
                     }
@@ -251,17 +252,14 @@ public class WorksheetReader {
                     if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
                         Number number = (Number) tempCell.getValue();
                         return new Cell((int) Math.round(number.doubleValue()), tempCell.getDataType(), address);
-                    }
-                    else if (tempCell.getDataType().equals(Cell.CellType.BOOL)){
-                        int tempInt = ((boolean)tempCell.getValue()) ? 1 : 0;
+                    } else if (tempCell.getDataType().equals(Cell.CellType.BOOL)) {
+                        int tempInt = ((boolean) tempCell.getValue()) ? 1 : 0;
                         return new Cell(tempInt, Cell.CellType.NUMBER, address);
-                    }
-                    else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
+                    } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
                         return new Cell((int) Math.round(Double.parseDouble(value)), Cell.CellType.NUMBER, address);
-                    }
-                    else if (tempCell.getDataType().equals(Cell.CellType.STRING)){
+                    } else if (tempCell.getDataType().equals(Cell.CellType.STRING)) {
                         Number number = tryParseDecimal(tempCell.getValue().toString());
-                        if (number != null){
+                        if (number != null) {
                             return new Cell(number.intValue(), Cell.CellType.NUMBER, address);
                         }
                     }
@@ -280,14 +278,14 @@ public class WorksheetReader {
         if (importOptions.getEnforcedColumnTypes().containsKey(address.Column)) {
 
             ImportOptions.ColumnType importType = importOptions.getEnforcedColumnTypes().get(address.Column);
-            if (type != null && type.equals("s")){
+            if (type != null && type.equals("s")) {
                 // Resolve shared string first
                 value = resolveSharedString(value);
             }
             switch (importType) {
                 case Bool:
                     Cell tempCell = getBooleanValue(value, address);
-                    if (tempCell == null){
+                    if (tempCell == null) {
                         return autoResolveCellData(address, type, value, styleNumber, formula);
                     }
                     return tempCell;
@@ -308,7 +306,7 @@ public class WorksheetReader {
                 case Double:
                     return getDoubleValue(value, address);
                 case String:
-                    return getStringValue(value, address);
+                    return getStringValue(value, address, type, styleNumber, importOptions);
                 default:
                     return autoResolveCellData(address, type, value, styleNumber, formula);
             }
@@ -330,11 +328,11 @@ public class WorksheetReader {
     private Cell autoResolveCellData(Address address, String type, String value, String styleNumber, String formula) {
         if (type != null && type.equals("s")) // string (declared)
         {
-            return getStringValue(value, address);
+            return getStringValue(value, address, type, null, null);
         } else if (type != null && type.equals("b")) // boolean
         {
             Cell tempCell = getBooleanValue(value, address);
-            if (tempCell == null){
+            if (tempCell == null) {
                 return autoResolveCellData(address, null, value, styleNumber, formula);
             }
             return tempCell;
@@ -417,8 +415,7 @@ public class WorksheetReader {
         try {
             double d = Double.parseDouble(raw);
             return new Cell(d, Cell.CellType.NUMBER, address);
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             return new Cell(raw, Cell.CellType.STRING, address);
         }
     }
@@ -482,7 +479,46 @@ public class WorksheetReader {
     }
 
     /**
+     * Parses the string value of a raw cell. May take the value from the shared string table, if available
+     *
+     * @param raw         Raw value as string
+     * @param address     Address of the cell
+     * @param type        Type to check whether the raw value is already a resolved string
+     * @param styleNumber Optional style number that may indicate a date or time value
+     * @param options     Optional import options to determine the date and time formatting information
+     * @return Cell of the type string
+     */
+    private Cell getStringValue(String raw, Address address, String type, String styleNumber, ImportOptions options) {
+        if (type != null && type.equals("s")) {
+            return new Cell(resolveSharedString(raw), Cell.CellType.STRING, address);
+        } else if (type != null && type.equals("b")) {
+            Cell tempCell = getBooleanValue(raw, address);
+            if (tempCell != null) {
+                return new Cell(tempCell.getValue().toString(), Cell.CellType.STRING, address);
+            }
+        } else if (styleNumber != null) {
+            Cell tempCell = null;
+            if (dateStyles.contains(styleNumber))  // date (priority)
+            {
+                tempCell = getDateTimeValue(raw, address, Cell.CellType.DATE);
+            } else if (timeStyles.contains(styleNumber)) // time
+            {
+                tempCell = getDateTimeValue(raw, address, Cell.CellType.TIME);
+            }
+            if (tempCell != null && tempCell.getDataType().equals(DATE)) {
+                DateFormat format = options.getDateFormatter();
+                return new Cell(format.format((Date) tempCell.getValue()), Cell.CellType.STRING, address);
+            } else if (tempCell != null && tempCell.getDataType().equals(TIME)) {
+                DateTimeFormatter format = options.getLocalTimeFormatter();
+                return new Cell(format.format((LocalTime) tempCell.getValue()), Cell.CellType.STRING, address);
+            }
+        }
+        return new Cell(raw, Cell.CellType.STRING, address);
+    }
+
+    /**
      * Tries to resolve a shared string from its ID
+     *
      * @param raw Raw value that can be either an ID of a shared string or an actual string value
      * @return Resolved string or the raw value if no shared string could be determined
      */
@@ -516,6 +552,17 @@ public class WorksheetReader {
             return new Cell(true, Cell.CellType.BOOL, address);
         } else if (str.equals("0") || str.equals("false")) {
             return new Cell(false, Cell.CellType.BOOL, address);
+        } else {
+            try {
+                double d = Double.parseDouble(raw);
+                if (d >= -ZERO_THRESHOLD && d <= ZERO_THRESHOLD) {
+                    return new Cell(false, Cell.CellType.BOOL, address);
+                } else if (d - 1 >= -ZERO_THRESHOLD && d - 1 <= ZERO_THRESHOLD) {
+                    return new Cell(true, Cell.CellType.BOOL, address);
+                }
+            } catch (Exception ex) {
+                return null;
+            }
         }
         return null;
     }

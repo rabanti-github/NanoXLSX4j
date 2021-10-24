@@ -132,8 +132,7 @@ public class NumericCellTest {
             "-127, 127, -1",
             "-0.00001, 0, -1",
     })
-    void bigDecimalCellComparisonTest(double value1, double value2, int expectedResult)
-    {
+    void bigDecimalCellComparisonTest(double value1, double value2, int expectedResult) {
         BigDecimal v1 = BigDecimal.valueOf(value1);
         BigDecimal v2 = BigDecimal.valueOf(value2);
         assertNumericType(bigDecimalUtils, value1, value2, expectedResult);
@@ -147,8 +146,7 @@ public class NumericCellTest {
             "0, 127, -1",
             "-127, 127, -1",
     })
-    void byteCellComparisonTest(byte value1, byte value2, int expectedResult)
-    {
+    void byteCellComparisonTest(byte value1, byte value2, int expectedResult) {
         assertNumericType(byteUtils, value1, value2, expectedResult);
     }
 
@@ -159,8 +157,7 @@ public class NumericCellTest {
             "9999.1, -0.001, 1",
             "0.23, 18720.0, -1",
     })
-    void doubleCellComparisonTest(double value1, double value2, int expectedResult)
-    {
+    void doubleCellComparisonTest(double value1, double value2, int expectedResult) {
         assertNumericType(doubleUtils, value1, value2, expectedResult);
     }
 
@@ -171,8 +168,7 @@ public class NumericCellTest {
             "9999.1, -0.001, 1",
             "0.23, 18720.0, -1",
     })
-    void floatCellComparisonTest(float value1, float value2, int expectedResult)
-    {
+    void floatCellComparisonTest(float value1, float value2, int expectedResult) {
         assertNumericType(floatUtils, value1, value2, expectedResult);
     }
 
@@ -183,8 +179,7 @@ public class NumericCellTest {
             "9999, -999999, 1",
             "0, 18720, -1",
     })
-    void intCellComparisonTest(int value1, int value2, int expectedResult)
-    {
+    void intCellComparisonTest(int value1, int value2, int expectedResult) {
         assertNumericType(integerUtils, value1, value2, expectedResult);
     }
 
@@ -195,8 +190,7 @@ public class NumericCellTest {
             "9999, -999999, 1",
             "0, 18720, -1",
     })
-    void longCellComparisonTest(long value1, long value2, int expectedResult)
-    {
+    void longCellComparisonTest(long value1, long value2, int expectedResult) {
         assertNumericType(longUtils, value1, value2, expectedResult);
     }
 
@@ -207,13 +201,12 @@ public class NumericCellTest {
             "9999, -9999, 1",
             "0, 18720, -1",
     })
-    void shortCellComparisonTest(short value1, short value2, int expectedResult)
-    {
+    void shortCellComparisonTest(short value1, short value2, int expectedResult) {
         assertNumericType(shortUtils, value1, value2, expectedResult);
     }
 
 
-    private <T> void genericAssertion(CellTypeUtils utilsInstance, String valueString, T initialValue, T min, T max, Function<String, T> parser, BiFunction<T,T, Boolean> comparer) {
+    private <T> void genericAssertion(CellTypeUtils utilsInstance, String valueString, T initialValue, T min, T max, Function<String, T> parser, BiFunction<T, T, Boolean> comparer) {
         T value;
         if (valueString.toUpperCase().contains("MIN_VALUE")) {
             value = min;

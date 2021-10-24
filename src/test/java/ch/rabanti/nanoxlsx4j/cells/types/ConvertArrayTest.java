@@ -11,30 +11,28 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ConvertArrayTest {
 
     @DisplayName("Test of the convertArray method on boolean")
     @Test()
-    void convertBooleanArrayTest()
-    {
-        Boolean[] array = new Boolean[] {   true, true, false, true, false };
+    void convertBooleanArrayTest() {
+        Boolean[] array = new Boolean[]{true, true, false, true, false};
         assertArray(array, Boolean.class);
     }
 
     @DisplayName("Test of the convertArray method on byte")
     @Test()
-    void convertByteArrayTest()
-    {
-        Byte[] array = new Byte[] {  12, 55, 127, -128, -1, 0, Byte.MAX_VALUE, Byte.MIN_VALUE };
+    void convertByteArrayTest() {
+        Byte[] array = new Byte[]{12, 55, 127, -128, -1, 0, Byte.MAX_VALUE, Byte.MIN_VALUE};
         assertArray(array, Byte.class);
     }
 
     @DisplayName("Test of the convertArray method on BigDecimal")
     @Test()
-    void convertBigDecimalArrayTest()
-    {
+    void convertBigDecimalArrayTest() {
         BigDecimal[] array = new BigDecimal[4];
         array[0] = BigDecimal.valueOf(0d);
         array[1] = BigDecimal.valueOf(2222l);
@@ -45,48 +43,42 @@ class ConvertArrayTest {
 
     @DisplayName("Test of the convertArray method on double")
     @Test()
-    void convertDoubleArrayTest()
-    {
-        Double[] array = new Double[] {  0d, 11.7d, 0.00001d, -22.5d, 100d, -99d, Double.MAX_VALUE, Double.MIN_VALUE };
+    void convertDoubleArrayTest() {
+        Double[] array = new Double[]{0d, 11.7d, 0.00001d, -22.5d, 100d, -99d, Double.MAX_VALUE, Double.MIN_VALUE};
         assertArray(array, Double.class);
     }
 
     @DisplayName("Test of the convertArray method on float")
     @Test()
-    void convertFloatArrayTest()
-    {
-        Float[] array = new Float[] {  0f, 11.7f, 0.00001f, -22.5f, 100f, -99f, Float.MAX_VALUE, Float.MIN_VALUE };
+    void convertFloatArrayTest() {
+        Float[] array = new Float[]{0f, 11.7f, 0.00001f, -22.5f, 100f, -99f, Float.MAX_VALUE, Float.MIN_VALUE};
         assertArray(array, Float.class);
     }
 
     @DisplayName("Test of the convertArray method on int")
     @Test()
-    void convertIntArrayTest()
-    {
-        Integer[] array = new Integer[] { 12, 55, -1, 0, Integer.MAX_VALUE, Integer.MIN_VALUE };
+    void convertIntArrayTest() {
+        Integer[] array = new Integer[]{12, 55, -1, 0, Integer.MAX_VALUE, Integer.MIN_VALUE};
         assertArray(array, Integer.class);
     }
 
     @DisplayName("Test of the convertArray method on long")
     @Test()
-    void convertLongArrayTest()
-    {
-        Long[] array = new Long[] { 12l, 55l, -1l, 0l, Long.MAX_VALUE, Long.MIN_VALUE };
+    void convertLongArrayTest() {
+        Long[] array = new Long[]{12l, 55l, -1l, 0l, Long.MAX_VALUE, Long.MIN_VALUE};
         assertArray(array, Long.class);
     }
 
     @DisplayName("Test of the convertArray method on short")
     @Test()
-    void convertShortArrayTest()
-    {
-        Short[] array = new Short[] { 12, 55, -1, 0, Short.MAX_VALUE, Short.MIN_VALUE };
+    void convertShortArrayTest() {
+        Short[] array = new Short[]{12, 55, -1, 0, Short.MAX_VALUE, Short.MIN_VALUE};
         assertArray(array, Short.class);
     }
 
     @DisplayName("Test of the convertArray method on Date")
     @Test()
-    void convertDateArrayTest()
-    {
+    void convertDateArrayTest() {
         Calendar calendarInstance = Calendar.getInstance();
         Date[] array = new Date[4];
         calendarInstance.set(1901, 01, 12, 12, 12, 12);
@@ -102,10 +94,9 @@ class ConvertArrayTest {
 
     @DisplayName("Test of the convertArray method on LocalTime")
     @Test()
-    void convertLocalTimeArrayTest()
-    {
+    void convertLocalTimeArrayTest() {
         LocalTime[] array = new LocalTime[4];
-        array[0] = LocalTime.of(0,0,0);
+        array[0] = LocalTime.of(0, 0, 0);
         array[1] = LocalTime.of(12, 10, 50);
         array[2] = LocalTime.of(23, 59, 59);
         array[3] = LocalTime.of(11, 11, 11);
@@ -114,36 +105,32 @@ class ConvertArrayTest {
 
     @DisplayName("Test of the convertArray method on nested Cell objects")
     @Test()
-    void convertCellArrayTest()
-    {
+    void convertCellArrayTest() {
         Cell[] array = new Cell[4];
         array[0] = new Cell("", Cell.CellType.STRING);
         array[1] = new Cell("test", Cell.CellType.STRING);
         array[2] = new Cell("x", Cell.CellType.STRING);
         array[3] = new Cell(" ", Cell.CellType.STRING);
-        assertArray(array, String.class, new String[] { "", "test", "x", " " });
+        assertArray(array, String.class, new String[]{"", "test", "x", " "});
     }
 
     @DisplayName("Test of the convertArray method on string")
     @Test()
-    void convertStringArrayTest()
-    {
-        String[] array = new String[] { "", "test", "X", "Ø", null, " " };
+    void convertStringArrayTest() {
+        String[] array = new String[]{"", "test", "X", "Ø", null, " "};
         assertArray(array, String.class);
     }
 
     @DisplayName("Test of the convertArray method on other object types")
     @Test()
-    void convertObjectArrayTest()
-    {
+    void convertObjectArrayTest() {
         DummyArrayClass[] array = new DummyArrayClass[4];
         array[0] = new DummyArrayClass("");
         array[1] = new DummyArrayClass(null);
         array[2] = new DummyArrayClass(" ");
         array[3] = new DummyArrayClass("test");
         String[] actualValues = new String[array.length];
-        for (int i = 0; i < actualValues.length; i++)
-        {
+        for (int i = 0; i < actualValues.length; i++) {
             actualValues[i] = array[i].toString();
         }
         assertArray(array, String.class, actualValues);
@@ -151,8 +138,7 @@ class ConvertArrayTest {
 
     @DisplayName("Test of the convertArray method on null and empty lists")
     @Test()
-    void convertObjectArrayEmptyTest()
-    {
+    void convertObjectArrayEmptyTest() {
         List<String> nullList = null;
         List<Cell> cells = Cell.convertArray(nullList);
         assertEquals(0, cells.size());
@@ -163,34 +149,26 @@ class ConvertArrayTest {
     }
 
 
-    private static <T> void assertArray(T[] array, Class<?> expectedValueType)
-    {
+    private static <T> void assertArray(T[] array, Class<?> expectedValueType) {
         assertArray(array, expectedValueType, null);
     }
 
-    private static <T> void assertArray(T[] array, Class<?> expectedValueType, Object[] actualValues)
-    {
+    private static <T> void assertArray(T[] array, Class<?> expectedValueType, Object[] actualValues) {
         List<T> list = new ArrayList<>();
-        for (T obj : array)
-        {
+        for (T obj : array) {
             list.add(obj);
         }
         List<Cell> cells = Cell.convertArray(list);
         assertNotNull(cells);
         assertEquals(array.length, cells.size());
-        for (int i = 0; i < array.length; i++)
-        {
+        for (int i = 0; i < array.length; i++) {
             Cell cell = cells.get(i);
-            if (cell.getValue() != null)
-            {
+            if (cell.getValue() != null) {
                 assertEquals(expectedValueType, cell.getValue().getClass());
             }
-            if (actualValues == null)
-            {
+            if (actualValues == null) {
                 assertEquals(array[i], cell.getValue());
-            }
-            else
-            {
+            } else {
                 assertEquals(actualValues[i], cell.getValue());
             }
 

@@ -105,7 +105,7 @@ class AddressTest {
 
     @DisplayName("Test of equals() if the other object is invalid")
     @Test
-    void addressEqualsTest2(){
+    void addressEqualsTest2() {
         Address address = new Address("A1");
         assertFalse(address.equals(null));
         assertFalse(address.equals("Incompatible type"));
@@ -193,8 +193,7 @@ class AddressTest {
             "A100, A$20, 1",
             "$C$2, $D$4, -1",
     })
-    void compareToTest(String address1, String address2, int expectedResult)
-    {
+    void compareToTest(String address1, String address2, int expectedResult) {
         Address address = new Address(address1);
         Address otherAddress = new Address(address2);
         int result = address.compareTo(otherAddress);

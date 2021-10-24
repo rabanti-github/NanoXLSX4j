@@ -239,7 +239,7 @@ public class StyleReaderContainer {
      * @return Style component or null if parameter returnNullOnFail was set to true and the component could not be retrieved
      * @throws StyleException Thrown if the component was not found and the parameter returnNullOnFail was set to false
      */
-    private <T> AbstractStyle  getComponent(T cls, int index, boolean returnNullOnFail) {
+    private <T> AbstractStyle getComponent(T cls, int index, boolean returnNullOnFail) {
         try {
             if (cls.equals(CellXf.class)) {
                 return this.cellXfs.get(index);

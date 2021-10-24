@@ -29,12 +29,10 @@ public class StaticTest {
             "------------------------------9, 9, ------------------------------, -----------------------------10",
             "'9999999999999999999999999999999', 9, '999999999999999999999999999999', '0'",
     })
-    void sanitizeWorksheetNameTest(String givenName, int numberOfExistingWorksheets, String existingWorksheetPrefix, String expectedName)
-    {
+    void sanitizeWorksheetNameTest(String givenName, int numberOfExistingWorksheets, String existingWorksheetPrefix, String expectedName) {
         Workbook workbook = new Workbook(false);
-        for(int i = 0; i < numberOfExistingWorksheets; i++)
-        {
-            workbook.addWorksheet(existingWorksheetPrefix+ Integer.toString(i + 1));
+        for (int i = 0; i < numberOfExistingWorksheets; i++) {
+            workbook.addWorksheet(existingWorksheetPrefix + Integer.toString(i + 1));
         }
         String name = Worksheet.sanitizeWorksheetName(givenName, workbook);
         assertEquals(expectedName, name);

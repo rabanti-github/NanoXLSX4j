@@ -13,8 +13,7 @@ public class CellXfTest {
 
     private CellXf exampleStyle;
 
-    public CellXfTest()
-    {
+    public CellXfTest() {
         exampleStyle = new CellXf();
         exampleStyle.setHidden(true);
         exampleStyle.setLocked(true);
@@ -33,8 +32,7 @@ public class CellXfTest {
             "true",
             "false",
     })
-    void hiddenTest(boolean value)
-    {
+    void hiddenTest(boolean value) {
         CellXf cellXf = new CellXf();
         assertFalse(cellXf.isHidden());
         cellXf.setHidden(value);
@@ -47,8 +45,7 @@ public class CellXfTest {
             "true",
             "false",
     })
-    void lockedTest(boolean value)
-    {
+    void lockedTest(boolean value) {
         CellXf cellXf = new CellXf();
         assertFalse(cellXf.isLocked());
         cellXf.setLocked(value);
@@ -61,8 +58,7 @@ public class CellXfTest {
             "true",
             "false",
     })
-    void forceApplyAlignmentTest(boolean value)
-    {
+    void forceApplyAlignmentTest(boolean value) {
         CellXf cellXf = new CellXf();
         assertFalse(cellXf.isForceApplyAlignment());
         cellXf.setForceApplyAlignment(value);
@@ -82,8 +78,7 @@ public class CellXfTest {
             "none",
             "right",
     })
-    void horizontalAlignTest(CellXf.HorizontalAlignValue value)
-    {
+    void horizontalAlignTest(CellXf.HorizontalAlignValue value) {
         CellXf cellXf = new CellXf();
         assertEquals(CellXf.DEFAULT_HORIZONTAL_ALIGNMENT, cellXf.getHorizontalAlign()); // none is default
         cellXf.setHorizontalAlign(value);
@@ -100,8 +95,7 @@ public class CellXfTest {
             "none",
             "top",
     })
-    void verticalAlignTest(CellXf.VerticalAlignValue value)
-    {
+    void verticalAlignTest(CellXf.VerticalAlignValue value) {
         CellXf cellXf = new CellXf();
         assertEquals(CellXf.DEFAULT_VERTICAL_ALIGNMENT, cellXf.getVerticalAlign()); // none is default
         cellXf.setVerticalAlign(value);
@@ -115,14 +109,12 @@ public class CellXfTest {
             "horizontal",
             "vertical",
     })
-    void textDirectionTest(CellXf.TextDirectionValue value)
-    {
+    void textDirectionTest(CellXf.TextDirectionValue value) {
         CellXf cellXf = new CellXf();
         assertEquals(CellXf.DEFAULT_TEXT_DIRECTION, cellXf.getTextDirection()); // horizontal is default
         cellXf.setTextDirection(value);
         assertEquals(value, cellXf.getTextDirection());
-        if (value == CellXf.TextDirectionValue.vertical)
-        {
+        if (value == CellXf.TextDirectionValue.vertical) {
             assertEquals(255, cellXf.getTextRotation());
         }
     }
@@ -137,8 +129,7 @@ public class CellXfTest {
             "-33",
             "-90",
     })
-    void textRotationTest(int value)
-    {
+    void textRotationTest(int value) {
         CellXf cellXf = new CellXf();
         assertEquals(0, cellXf.getTextRotation()); // 0 is default
         cellXf.setTextRotation(value);
@@ -154,8 +145,7 @@ public class CellXfTest {
             "360",
             "720",
     })
-    void textRotationFailTest(int value)
-    {
+    void textRotationFailTest(int value) {
         CellXf cellXf = new CellXf();
         assertEquals(0, cellXf.getTextRotation()); // 0 is default
         assertThrows(FormatException.class, () -> cellXf.setTextRotation(value));
@@ -169,8 +159,7 @@ public class CellXfTest {
             "shrinkToFit",
             "wrapText",
     })
-    void alignTest(CellXf.TextBreakValue value)
-    {
+    void alignTest(CellXf.TextBreakValue value) {
         CellXf cellXf = new CellXf();
         assertEquals(CellXf.DEFAULT_ALIGNMENT, cellXf.getAlignment()); // none is default
         cellXf.setAlignment(value);
@@ -184,8 +173,7 @@ public class CellXfTest {
             "1",
             "99",
     })
-    void indentTest(int value)
-    {
+    void indentTest(int value) {
         CellXf cellXf = new CellXf();
         assertEquals(0, cellXf.getIndent()); // 0 is default
         cellXf.setIndent(value);
@@ -198,27 +186,23 @@ public class CellXfTest {
             "-1",
             "-999",
     })
-    void indentFailTest(int value)
-    {
+    void indentFailTest(int value) {
         assertThrows(Exception.class, () -> exampleStyle.setIndent(value));
     }
 
 
-
     @DisplayName("Test of the equals method")
     @Test()
-    void equalsTest()
-    {
-        CellXf style2 = (CellXf)exampleStyle.copy();
+    void equalsTest() {
+        CellXf style2 = (CellXf) exampleStyle.copy();
         assertTrue(exampleStyle.equals(style2));
     }
 
 
     @DisplayName("Test of the equals method (inequality of Locked)")
     @Test()
-    void equalsTest2()
-    {
-        CellXf style2 = (CellXf)exampleStyle.copy();
+    void equalsTest2() {
+        CellXf style2 = (CellXf) exampleStyle.copy();
         style2.setLocked(false);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -226,9 +210,8 @@ public class CellXfTest {
 
     @DisplayName("Test of the equals method (inequality of Hidden)")
     @Test()
-    void equalsTest2b()
-    {
-        CellXf style2 = (CellXf)exampleStyle.copy();
+    void equalsTest2b() {
+        CellXf style2 = (CellXf) exampleStyle.copy();
         style2.setHidden(false);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -236,9 +219,8 @@ public class CellXfTest {
 
     @DisplayName("Test of the equals method (inequality of HorizontalAlign)")
     @Test()
-    void equalsTest2c()
-    {
-        CellXf style2 = (CellXf)exampleStyle.copy();
+    void equalsTest2c() {
+        CellXf style2 = (CellXf) exampleStyle.copy();
         style2.setHorizontalAlign(CellXf.HorizontalAlignValue.right);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -246,9 +228,8 @@ public class CellXfTest {
 
     @DisplayName("Test of the equals method (inequality of VerticalAlign)")
     @Test()
-    void equalsTest2d()
-    {
-        CellXf style2 = (CellXf)exampleStyle.copy();
+    void equalsTest2d() {
+        CellXf style2 = (CellXf) exampleStyle.copy();
         style2.setVerticalAlign(CellXf.VerticalAlignValue.top);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -256,9 +237,8 @@ public class CellXfTest {
 
     @DisplayName("Test of the equals method (inequality of ForceApplyAlignment)")
     @Test()
-    void equalsTest2e()
-    {
-        CellXf style2 = (CellXf)exampleStyle.copy();
+    void equalsTest2e() {
+        CellXf style2 = (CellXf) exampleStyle.copy();
         style2.setForceApplyAlignment(false);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -266,9 +246,8 @@ public class CellXfTest {
 
     @DisplayName("Test of the equals method (inequality of TextDirection)")
     @Test()
-    void equalsTest2f()
-    {
-        CellXf style2 = (CellXf)exampleStyle.copy();
+    void equalsTest2f() {
+        CellXf style2 = (CellXf) exampleStyle.copy();
         style2.setTextDirection(CellXf.TextDirectionValue.vertical);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -276,9 +255,8 @@ public class CellXfTest {
 
     @DisplayName("Test of the equals method (inequality of TextRotation)")
     @Test()
-    void equalsTest2g()
-    {
-        CellXf style2 = (CellXf)exampleStyle.copy();
+    void equalsTest2g() {
+        CellXf style2 = (CellXf) exampleStyle.copy();
         style2.setTextRotation(27);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -286,9 +264,8 @@ public class CellXfTest {
 
     @DisplayName("Test of the equals method (inequality of Alignment)")
     @Test()
-    void equalsTest2h()
-    {
-        CellXf style2 = (CellXf)exampleStyle.copy();
+    void equalsTest2h() {
+        CellXf style2 = (CellXf) exampleStyle.copy();
         style2.setAlignment(CellXf.TextBreakValue.none);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -296,9 +273,8 @@ public class CellXfTest {
 
     @DisplayName("Test of the equals method (inequality of Indent)")
     @Test()
-    void equalsTest2i()
-    {
-        CellXf style2 = (CellXf)exampleStyle.copy();
+    void equalsTest2i() {
+        CellXf style2 = (CellXf) exampleStyle.copy();
         style2.setIndent(77);
         assertFalse(exampleStyle.equals(style2));
     }
@@ -311,8 +287,7 @@ public class CellXfTest {
             "STRING, 'text'",
             "BOOLEAN, 'true'",
     })
-    void equalsTest3(String sourceType, String sourceValue)
-    {
+    void equalsTest3(String sourceType, String sourceValue) {
         Object obj = TestUtils.createInstance(sourceType, sourceValue);
         assertFalse(exampleStyle.equals(obj));
     }
@@ -324,17 +299,15 @@ public class CellXfTest {
             "BOOLEAN ,'true'",
             "STRING ,'origin'",
     })
-    void equalsTest5(String sourceType, String sourceValue)
-    {
+    void equalsTest5(String sourceType, String sourceValue) {
         Object origin = TestUtils.createInstance(sourceType, sourceValue);
         assertFalse(exampleStyle.equals(origin));
     }
 
     @DisplayName("Test of the hashCode method (equality of two identical objects)")
     @Test()
-    void hashCodeTest()
-    {
-        CellXf copy = (CellXf)exampleStyle.copy();
+    void hashCodeTest() {
+        CellXf copy = (CellXf) exampleStyle.copy();
         copy.setInternalID(99);  // Should not influence
         assertEquals(exampleStyle.hashCode(), copy.hashCode());
     }
@@ -342,17 +315,15 @@ public class CellXfTest {
 
     @DisplayName("Test of the hashCode method (inequality of two different objects)")
     @Test()
-    void hashCodeTest2()
-    {
-        CellXf copy = (CellXf)exampleStyle.copy();
+    void hashCodeTest2() {
+        CellXf copy = (CellXf) exampleStyle.copy();
         copy.setHidden(false);
         assertNotEquals(exampleStyle.hashCode(), copy.hashCode());
     }
 
     @DisplayName("Test of the compareTo method")
     @Test()
-    void compareToTest()
-    {
+    void compareToTest() {
         CellXf cellXf = new CellXf();
         CellXf other = new CellXf();
         cellXf.setInternalID(null);
@@ -374,8 +345,7 @@ public class CellXfTest {
 
     @DisplayName("Test of the toString function")
     @Test()
-    void toStringTest()
-    {
+    void toStringTest() {
         CellXf cellXf = new CellXf();
         String s1 = cellXf.toString();
         cellXf.setTextRotation(12);
@@ -384,7 +354,7 @@ public class CellXfTest {
 
     @DisplayName("Test of the getValue function of the HorizontalAlignValue enum")
     @Test()
-    void horizontalAlignValueTest(){
+    void horizontalAlignValueTest() {
         assertEquals(0, CellXf.HorizontalAlignValue.none.getValue());
         assertEquals(1, CellXf.HorizontalAlignValue.left.getValue());
         assertEquals(2, CellXf.HorizontalAlignValue.center.getValue());
@@ -398,7 +368,7 @@ public class CellXfTest {
 
     @DisplayName("Test of the getValue function of the VerticalAlignValue enum")
     @Test()
-    void verticalAlignValueTest(){
+    void verticalAlignValueTest() {
         assertEquals(0, CellXf.VerticalAlignValue.none.getValue());
         assertEquals(1, CellXf.VerticalAlignValue.bottom.getValue());
         assertEquals(2, CellXf.VerticalAlignValue.top.getValue());
@@ -409,7 +379,7 @@ public class CellXfTest {
 
     @DisplayName("Test of the getValue function of the TextBreakValue enum")
     @Test()
-    void TextBreakValueTest(){
+    void TextBreakValueTest() {
         assertEquals(0, CellXf.TextBreakValue.none.getValue());
         assertEquals(1, CellXf.TextBreakValue.wrapText.getValue());
         assertEquals(2, CellXf.TextBreakValue.shrinkToFit.getValue());
@@ -417,7 +387,7 @@ public class CellXfTest {
 
     @DisplayName("Test of the getValue function of the TextDirectionValue enum")
     @Test()
-    void TextDirectionValueTest(){
+    void TextDirectionValueTest() {
         assertEquals(0, CellXf.TextDirectionValue.horizontal.getValue());
         assertEquals(1, CellXf.TextDirectionValue.vertical.getValue());
     }
