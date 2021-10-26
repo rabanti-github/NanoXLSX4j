@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
 import static ch.rabanti.nanoxlsx4j.Cell.CellType.DATE;
@@ -293,13 +294,13 @@ public class WorksheetReader {
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
                         return getNumericValue(value, address);
                     } else {
-                        return getDateTimeValue(value, address, DATE);
+                        return getDateTimeValue(value, address, DATE, importOptions, type);
                     }
                 case Time:
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
                         return getNumericValue(value, address);
                     } else {
-                        return getDateTimeValue(value, address, TIME);
+                        return getDateTimeValue(value, address, TIME, importOptions);
                     }
                 case Numeric:
                     return getNumericValue(value, address);
@@ -338,10 +339,10 @@ public class WorksheetReader {
             return tempCell;
         } else if (dateStyles.contains(styleNumber))  // date (priority)
         {
-            return getDateTimeValue(value, address, DATE);
+            return getDateTimeValue(value, address, DATE, importOptions);
         } else if (timeStyles.contains(styleNumber)) // time
         {
-            return getDateTimeValue(value, address, TIME);
+            return getDateTimeValue(value, address, TIME, importOptions);
         } else if (Helper.isNullOrEmpty(type) || type.equals("n")) // try numeric if not parsed as date or time, before numeric
         {
             if (Helper.isNullOrEmpty(value)) {
@@ -500,10 +501,10 @@ public class WorksheetReader {
             Cell tempCell = null;
             if (dateStyles.contains(styleNumber))  // date (priority)
             {
-                tempCell = getDateTimeValue(raw, address, Cell.CellType.DATE);
+                tempCell = getDateTimeValue(raw, address, Cell.CellType.DATE, options);
             } else if (timeStyles.contains(styleNumber)) // time
             {
-                tempCell = getDateTimeValue(raw, address, Cell.CellType.TIME);
+                tempCell = getDateTimeValue(raw, address, Cell.CellType.TIME, options);
             }
             if (tempCell != null && tempCell.getDataType().equals(DATE)) {
                 DateFormat format = options.getDateFormatter();
@@ -573,19 +574,52 @@ public class WorksheetReader {
      * @param raw     Raw value as string
      * @param address Address of the cell
      * @param type    Type of the value to be converted: Valid values are DATE and TIME
+     * @param options Import options instance to take the Date or LocalTime parser from
      * @return CellResolverTuple with information about the validity and resolved data
      * @throws IllegalArgumentException Thrown if an unsupported type was passed
      */
-    private static Cell getDateTimeValue(String raw, Address address, Cell.CellType type) {
+    private static Cell getDateTimeValue(String raw, Address address, Cell.CellType type, ImportOptions options) {
+        return getDateTimeValue(raw, address, type, options, null);
+    }
+
+    /**
+     * Parses the date (Date) or time (LocalTime) value of a raw cell. If the value is numeric, but out of range of a OAdate, a numeric value will be returned instead. If invalid, the string representation will be returned.
+     *
+     * @param raw       Raw value as string
+     * @param address   Address of the cell
+     * @param valueType Type of the value to be converted: Valid values are DATE and TIME
+     * @param type      Parameter to check whether the raw value should be tried to be parsed as date or time
+     * @param options   Import options instance to take the Date or LocalTime parser from
+     * @return CellResolverTuple with information about the validity and resolved data
+     * @throws IllegalArgumentException Thrown if an unsupported type was passed
+     */
+    private static Cell getDateTimeValue(String raw, Address address, Cell.CellType valueType, ImportOptions options, String type) {
+        if (type != null && type.equals("b")) {
+            return getBooleanValue(raw, address);
+        }
         try {
+            if (type != null && type.equals("s") && valueType.equals(DATE)) {
+                Date date = options.getDateFormatter().parse(raw);
+                if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()) {
+                    return new Cell(date, DATE, address);
+                }
+            } else if (type != null && type.equals("s") && valueType.equals(TIME)) {
+                TemporalAccessor time = options.getLocalTimeFormatter().parse(raw);
+                return new Cell(LocalTime.from(time), TIME, address);
+            }
             double d = Double.parseDouble(raw);
             if (d < XlsxWriter.MIN_OADATE_VALUE || d > XlsxWriter.MAX_OADATE_VALUE) {
                 return new Cell(d, Cell.CellType.NUMBER, address); // Invalid OAdate == plain number
             } else {
-                switch (type) {
+                switch (valueType) {
                     case DATE:
                         Date date = Helper.getDateFromOA(d);
-                        return new Cell(date, DATE, address);
+                        if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime()) {
+                            return new Cell(date, DATE, address);
+                        } else {
+                            // Prevent to import 00.01.1900, since it will lead to trouble when exporting / writing
+                            return new Cell(d, Cell.CellType.NUMBER, address);
+                        }
                     case TIME:
                         LocalTime time = LocalTime.ofSecondOfDay((long) (d * 86400));
                         return new Cell(time, TIME, address);

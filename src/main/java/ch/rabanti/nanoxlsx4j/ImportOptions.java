@@ -62,7 +62,7 @@ public class ImportOptions {
          */
         Double,
         /**
-         * Cells are tried to be imported as dates (Date)
+         * Cells are tried to be imported as dates (Date). If values are provided as Strings, the String defined with {@link ImportOptions#setDateFormat(java.lang.String)} will be used as parsing pattern
          */
         Date,
         /**

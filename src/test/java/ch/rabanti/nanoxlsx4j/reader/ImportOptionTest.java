@@ -319,6 +319,58 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
+    @DisplayName("Test of the import options for the import column type: Date")
+    @ParameterizedTest(name = "Given column {1} should lead to a valid import")
+    @CsvSource({
+            "STRING, 'B'",
+            "INTEGER, '1'",
+    })
+    void enforcingColumnAsDateTest(String sourceType, String sourceValue) throws Exception {
+        Object column = TestUtils.createInstance(sourceType, sourceValue);
+        LocalTime time = LocalTime.of(11, 12, 13);
+        Date date = getDate(2021, 7, 14, 18, 22, 13);
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_LOCALTIME_FORMAT);
+        Map<String, Object> cells = new HashMap<>();
+        cells.put("A1", 1);
+        cells.put("A2", "21");
+        cells.put("A3", true);
+        cells.put("B1", 1);
+        cells.put("B2", "Test");
+        cells.put("B3", false);
+        cells.put("B4", time);
+        cells.put("B5", date);
+        cells.put("B6", 44494.5209490741d);
+        cells.put("B7", "2021-10-25 12:30:10");
+        cells.put("B8", -10);
+        cells.put("B9", 44494.5f);
+        cells.put("C1", "0");
+        cells.put("C2", LocalTime.of(12, 14, 16));
+        Map<String, Object> expectedCells = new HashMap<>();
+        expectedCells.put("A1", 1);
+        expectedCells.put("A2", "21");
+        expectedCells.put("A3", true);
+        expectedCells.put("B1", getDate(1900, 0, 1, 0, 0, 0));
+        expectedCells.put("B2", "Test");
+        expectedCells.put("B3", false);
+        expectedCells.put("B4", 0.46681712962963); // Fallback since < 1
+        expectedCells.put("B5", getDate(2021, 7, 14, 18, 22, 13));
+        expectedCells.put("B6", getDate(2021, 9, 25, 12, 30, 10));
+        expectedCells.put("B7", getDate(2021, 9, 25, 12, 30, 10));
+        expectedCells.put("B8", -10d); // Fallback to double from int
+        expectedCells.put("B9", getDate(2021, 9, 25, 12, 0, 0));
+        expectedCells.put("C1", "0");
+        expectedCells.put("C2", LocalTime.of(12, 14, 16));
+        ImportOptions options = new ImportOptions();
+        if (column instanceof String) {
+            options.addEnforcedColumn((String) column, ImportOptions.ColumnType.Date);
+        } else {
+            options.addEnforcedColumn((Integer) column, ImportOptions.ColumnType.Date);
+        }
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
+
     private static Date getDate(int year, int month, int day, int hour, int minute, int second) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day, hour, minute, second);
@@ -341,7 +393,6 @@ public class ImportOptionTest {
         stream.close();
         Workbook givenWorkbook = Workbook.load(inputStream, importOptions);
         inputStream.close();
-
 
         assertNotNull(givenWorkbook);
         Worksheet givenWorksheet = givenWorkbook.setCurrentWorksheet(0);
