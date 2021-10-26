@@ -370,6 +370,56 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
+    @DisplayName("Test of the import options for the import column type: Time")
+    @ParameterizedTest(name = "Given column {1} should lead to a valid import")
+    @CsvSource({
+            "STRING, 'B'",
+            "INTEGER, '1'",
+    })
+    void enforcingColumnAsTimeTest(String sourceType, String sourceValue) throws Exception {
+        Object column = TestUtils.createInstance(sourceType, sourceValue);
+        LocalTime time = LocalTime.of(11, 12, 13);
+        Date date = getDate(2021, 7, 14, 18, 22, 13);
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_LOCALTIME_FORMAT);
+        Map<String, Object> cells = new HashMap<>();
+        cells.put("A1", 1);
+        cells.put("A2", "21");
+        cells.put("A3", true);
+        cells.put("B1", 1);
+        cells.put("B2", "Test");
+        cells.put("B3", false);
+        cells.put("B4", time);
+        cells.put("B5", date);
+        cells.put("B6", 44494.5209490741d);
+        cells.put("B7", "2021-10-25 12:30:10");
+        cells.put("B8", -10);
+        cells.put("B9", 44494.5f);
+        cells.put("C1", "0");
+        cells.put("C2", LocalTime.of(12, 14, 16));
+        Map<String, Object> expectedCells = new HashMap<>();
+        expectedCells.put("A1", 1);
+        expectedCells.put("A2", "21");
+        expectedCells.put("A3", true);
+        expectedCells.put("B1", LocalTime.of(0, 0, 0));
+        expectedCells.put("B2", "Test");
+        expectedCells.put("B3", false);
+        expectedCells.put("B4", time); // Fallback since < 1
+        expectedCells.put("B5", LocalTime.of(18, 22, 13));
+        expectedCells.put("B6", LocalTime.of(12, 30, 10));
+        expectedCells.put("B7", LocalTime.of(12, 30, 10));
+        expectedCells.put("B8", -10d); // Fallback to double from int
+        expectedCells.put("B9", LocalTime.of(12, 0, 0));
+        expectedCells.put("C1", "0");
+        expectedCells.put("C2", LocalTime.of(12, 14, 16));
+        ImportOptions options = new ImportOptions();
+        if (column instanceof String) {
+            options.addEnforcedColumn((String) column, ImportOptions.ColumnType.Time);
+        } else {
+            options.addEnforcedColumn((Integer) column, ImportOptions.ColumnType.Time);
+        }
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
 
     private static Date getDate(int year, int month, int day, int hour, int minute, int second) {
         Calendar calendar = Calendar.getInstance();

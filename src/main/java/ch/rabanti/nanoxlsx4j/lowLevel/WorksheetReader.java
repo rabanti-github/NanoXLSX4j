@@ -13,9 +13,11 @@ import ch.rabanti.nanoxlsx4j.ImportOptions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Time;
 import java.text.DateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
@@ -30,6 +32,7 @@ import static ch.rabanti.nanoxlsx4j.Cell.CellType.TIME;
 public class WorksheetReader {
 
     private static final double ZERO_THRESHOLD = 0.000001d;
+    private static Calendar CALENDAR = Calendar.getInstance();
 
     private int worksheetNumber;
     private final String name;
@@ -300,7 +303,7 @@ public class WorksheetReader {
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
                         return getNumericValue(value, address);
                     } else {
-                        return getDateTimeValue(value, address, TIME, importOptions);
+                        return getDateTimeValue(value, address, TIME, importOptions, type);
                     }
                 case Numeric:
                     return getNumericValue(value, address);
@@ -604,16 +607,19 @@ public class WorksheetReader {
                     return new Cell(date, DATE, address);
                 }
             } else if (type != null && type.equals("s") && valueType.equals(TIME)) {
-                TemporalAccessor time = options.getLocalTimeFormatter().parse(raw);
-                return new Cell(LocalTime.from(time), TIME, address);
+                LocalTime time = tryParseTime(raw, options);
+                if (time != null){
+                    return new Cell(LocalTime.of(time.get(ChronoField.HOUR_OF_DAY), time.get(ChronoField.MINUTE_OF_HOUR), time.get(ChronoField.SECOND_OF_MINUTE)), TIME, address);
+                }
             }
             double d = Double.parseDouble(raw);
+
             if (d < XlsxWriter.MIN_OADATE_VALUE || d > XlsxWriter.MAX_OADATE_VALUE) {
                 return new Cell(d, Cell.CellType.NUMBER, address); // Invalid OAdate == plain number
             } else {
+                Date date = Helper.getDateFromOA(d);
                 switch (valueType) {
                     case DATE:
-                        Date date = Helper.getDateFromOA(d);
                         if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime()) {
                             return new Cell(date, DATE, address);
                         } else {
@@ -621,14 +627,38 @@ public class WorksheetReader {
                             return new Cell(d, Cell.CellType.NUMBER, address);
                         }
                     case TIME:
-                        LocalTime time = LocalTime.ofSecondOfDay((long) (d * 86400));
-                        return new Cell(time, TIME, address);
+                        CALENDAR.setTime(date);
+                        return new Cell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), TIME, address);
                     default:
                         throw new IllegalArgumentException("The defined type is not supported to be uses as date or time");
                 }
             }
         } catch (Exception e) {
             return new Cell(raw, Cell.CellType.STRING, address);
+        }
+    }
+
+    /**
+     * Tries to parse a LoCalTime from a string that may represent a Date with a time component or a LocalTime
+     * @param raw String to parse
+     * @param options Import options to take the parsing patterns of
+     * @return LocalTime instance or null if not possible to parse
+     */
+    private static LocalTime tryParseTime(String raw, ImportOptions options) {
+        try{
+           Date date = options.getDateFormatter().parse(raw);
+           CALENDAR.setTime(date);
+           return LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND));
+        }
+        catch (Exception ex){
+            try {
+                TemporalAccessor time = options.getLocalTimeFormatter().parse(raw);
+                return LocalTime.of(time.get(ChronoField.HOUR_OF_DAY), time.get(ChronoField.MINUTE_OF_HOUR), time.get(ChronoField.SECOND_OF_MINUTE));
+            }
+            catch (Exception ex2){
+                // Fallback
+                return null;
+            }
         }
     }
 
