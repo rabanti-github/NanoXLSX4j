@@ -601,19 +601,24 @@ public class WorksheetReader {
             return getBooleanValue(raw, address);
         }
         try {
-            if (type != null && type.equals("s") && valueType.equals(DATE)) {
-                Date date = options.getDateFormatter().parse(raw);
-                if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()) {
-                    return new Cell(date, DATE, address);
+            if (type != null && type.equals("s")) {
+                Date tempDate = tryParseDate(raw, options);
+                if (tempDate != null && valueType == Cell.CellType.DATE)
+                {
+                    return new Cell(tempDate, Cell.CellType.DATE, address);
                 }
-            } else if (type != null && type.equals("s") && valueType.equals(TIME)) {
-                LocalTime time = tryParseTime(raw, options);
-                if (time != null){
-                    return new Cell(LocalTime.of(time.get(ChronoField.HOUR_OF_DAY), time.get(ChronoField.MINUTE_OF_HOUR), time.get(ChronoField.SECOND_OF_MINUTE)), TIME, address);
+                else if (tempDate != null && valueType == Cell.CellType.TIME)
+                {
+                    CALENDAR.setTime(tempDate);
+                    return new Cell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), Cell.CellType.TIME, address);
+                }
+                LocalTime tempTime = tryParseTime(raw, options);
+                if (tempTime != null && valueType == Cell.CellType.TIME)
+                {
+                    return new Cell(tempTime, Cell.CellType.TIME, address);
                 }
             }
             double d = Double.parseDouble(raw);
-
             if (d < XlsxWriter.MIN_OADATE_VALUE || d > XlsxWriter.MAX_OADATE_VALUE) {
                 return new Cell(d, Cell.CellType.NUMBER, address); // Invalid OAdate == plain number
             } else {
@@ -639,27 +644,48 @@ public class WorksheetReader {
     }
 
     /**
-     * Tries to parse a LoCalTime from a string that may represent a Date with a time component or a LocalTime
+     * Tris to parse a Date instance from a string
      * @param raw String to parse
      * @param options Import options to take the parsing patterns of
      * @return LocalTime instance or null if not possible to parse
      */
-    private static LocalTime tryParseTime(String raw, ImportOptions options) {
+    private static Date tryParseDate(String raw, ImportOptions options){
         try{
-           Date date = options.getDateFormatter().parse(raw);
-           CALENDAR.setTime(date);
-           return LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND));
-        }
-        catch (Exception ex){
-            try {
-                TemporalAccessor time = options.getLocalTimeFormatter().parse(raw);
-                return LocalTime.of(time.get(ChronoField.HOUR_OF_DAY), time.get(ChronoField.MINUTE_OF_HOUR), time.get(ChronoField.SECOND_OF_MINUTE));
-            }
-            catch (Exception ex2){
-                // Fallback
+            if (options == null || options.getDateFormatter() == null){
+                // no generic parsing available
                 return null;
             }
+           Date date = options.getDateFormatter().parse(raw);
+            long d = date.getTime();
+            if (d >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && d <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()){
+                return date;
+            }
+            return null;
+        }
+        catch (Exception ex){
+            return null;
         }
     }
+
+    /**
+     * Tris to parse a LocalTime instance from a string
+     * @param raw String to parse
+     * @param options Import options to take the parsing patterns of
+     * @return LocalTime instance or null if not possible to parse
+     */
+    private static LocalTime tryParseTime(String raw, ImportOptions options){
+        try{
+            if (options == null || options.getLocalTimeFormatter() == null){
+                // no generic parsing available
+                return null;
+            }
+            TemporalAccessor time = options.getLocalTimeFormatter().parse(raw);
+            return LocalTime.of(time.get(ChronoField.HOUR_OF_DAY), time.get(ChronoField.MINUTE_OF_HOUR), time.get(ChronoField.SECOND_OF_MINUTE));
+        }
+        catch (Exception ex){
+            return null;
+        }
+    }
+
 
 }

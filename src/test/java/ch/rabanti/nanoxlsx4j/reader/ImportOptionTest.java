@@ -155,6 +155,7 @@ public class ImportOptionTest {
         cells.put("B3", true);
         cells.put("B4", time);
         cells.put("B5", date);
+        cells.put("B6", null);
         cells.put("C1", "2");
         cells.put("C2", LocalTime.of(12, 14, 16));
         Map<String, Object> expectedCells = new HashMap<>();
@@ -166,6 +167,7 @@ public class ImportOptionTest {
         expectedCells.put("B3", 1d);
         expectedCells.put("B4", Double.parseDouble(Helper.getOATimeString(time)));
         expectedCells.put("B5", Double.parseDouble(Helper.getOADateString(date)));
+        expectedCells.put("B6", null);
         expectedCells.put("C1", "2");
         expectedCells.put("C2", LocalTime.of(12, 14, 16));
         ImportOptions options = new ImportOptions();
@@ -196,6 +198,7 @@ public class ImportOptionTest {
         cells.put("B3", true);
         cells.put("B4", time);
         cells.put("B5", date);
+        cells.put("B6", null);
         cells.put("C1", "2");
         cells.put("C2", LocalTime.of(12, 14, 16));
         Map<String, Object> expectedCells = new HashMap<>();
@@ -207,6 +210,7 @@ public class ImportOptionTest {
         expectedCells.put("B3", 1);
         expectedCells.put("B4", Float.parseFloat(Helper.getOATimeString(time)));
         expectedCells.put("B5", Float.parseFloat(Helper.getOADateString(date)));
+        expectedCells.put("B6", null);
         expectedCells.put("C1", "2");
         expectedCells.put("C2", LocalTime.of(12, 14, 16));
         ImportOptions options = new ImportOptions();
@@ -242,6 +246,7 @@ public class ImportOptionTest {
         cells.put("B7", "1");
         cells.put("B8", "Test");
         cells.put("B9", "1.0d");
+        cells.put("B10", null);
         cells.put("C1", "0");
         cells.put("C2", LocalTime.of(12, 14, 16));
         Map<String, Object> expectedCells = new HashMap<>();
@@ -257,6 +262,7 @@ public class ImportOptionTest {
         expectedCells.put("B7", true);
         expectedCells.put("B8", "Test");
         expectedCells.put("B9", true);
+        expectedCells.put("B10", null);
         expectedCells.put("C1", "0");
         expectedCells.put("C2", LocalTime.of(12, 14, 16));
         ImportOptions options = new ImportOptions();
@@ -293,6 +299,7 @@ public class ImportOptionTest {
         cells.put("B7", true);
         cells.put("B8", -10);
         cells.put("B9", 1.111d);
+        cells.put("B10", null);
         cells.put("C1", "0");
         cells.put("C2", LocalTime.of(12, 14, 16));
         Map<String, Object> expectedCells = new HashMap<>();
@@ -308,6 +315,7 @@ public class ImportOptionTest {
         expectedCells.put("B7", "true");
         expectedCells.put("B8", "-10");
         expectedCells.put("B9", "1.111");
+        expectedCells.put("B10", null);
         expectedCells.put("C1", "0");
         expectedCells.put("C2", LocalTime.of(12, 14, 16));
         ImportOptions options = new ImportOptions();
@@ -344,6 +352,7 @@ public class ImportOptionTest {
         cells.put("B7", "2021-10-25 12:30:10");
         cells.put("B8", -10);
         cells.put("B9", 44494.5f);
+        cells.put("B10", null);
         cells.put("C1", "0");
         cells.put("C2", LocalTime.of(12, 14, 16));
         Map<String, Object> expectedCells = new HashMap<>();
@@ -359,6 +368,7 @@ public class ImportOptionTest {
         expectedCells.put("B7", getDate(2021, 9, 25, 12, 30, 10));
         expectedCells.put("B8", -10d); // Fallback to double from int
         expectedCells.put("B9", getDate(2021, 9, 25, 12, 0, 0));
+        expectedCells.put("B10", null);
         expectedCells.put("C1", "0");
         expectedCells.put("C2", LocalTime.of(12, 14, 16));
         ImportOptions options = new ImportOptions();
@@ -395,6 +405,7 @@ public class ImportOptionTest {
         cells.put("B7", "2021-10-25 12:30:10");
         cells.put("B8", -10);
         cells.put("B9", 44494.5f);
+        cells.put("B10", null);
         cells.put("C1", "0");
         cells.put("C2", LocalTime.of(12, 14, 16));
         Map<String, Object> expectedCells = new HashMap<>();
@@ -410,6 +421,7 @@ public class ImportOptionTest {
         expectedCells.put("B7", LocalTime.of(12, 30, 10));
         expectedCells.put("B8", -10d); // Fallback to double from int
         expectedCells.put("B9", LocalTime.of(12, 0, 0));
+        expectedCells.put("B10", null);
         expectedCells.put("C1", "0");
         expectedCells.put("C2", LocalTime.of(12, 14, 16));
         ImportOptions options = new ImportOptions();
@@ -420,6 +432,103 @@ public class ImportOptionTest {
         }
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
+
+    @DisplayName("Test of the import options for the combination of a start row and a enforced column")
+    @ParameterizedTest(name = "Given type {0} should be converted from {1} to {2} at the row, defined by setEnforcingStartRowNumber")
+    @CsvSource({
+            "Bool, 'STRING', '1', 'BOOLEAN', 'true'",
+            "Bool, 'BOOLEAN', 'false', 'BOOLEAN', 'false'",
+            "Double, 'STRING','-2.5', 'DOUBLE', '-2.5'",
+            "Double, 'INTEGER','13', 'DOUBLE','13'",
+            "Numeric, 'STRING', '12.5', 'FLOAT', '12.5'",
+            "Numeric, 'INTEGER','13', 'INTEGER', '13'",
+            "String, 'FLOAT','16.5','STRING', '16.5'",
+            "String, 'BOOLEAN','true','STRING', 'true'",
+    })
+    void enforcingColumnStartRowTest(ImportOptions.ColumnType columnType, String givenType, String givenSourceValue, String expectedType, String expectedSourceValue) throws Exception {
+        Object givenValue = TestUtils.createInstance(givenType, givenSourceValue);
+        Object expectedValue = TestUtils.createInstance(expectedType, expectedSourceValue);
+        LocalTime time = LocalTime.of(11, 12, 13);
+        Map<String, Object> cells = new HashMap<>();
+        cells.put("A1", "test");
+        cells.put("A2", 23);
+        cells.put("A3", time);
+        cells.put("B1", null);
+        cells.put("B2", givenValue);
+        cells.put("B3", givenValue);
+        cells.put("C1", 28);
+        cells.put("C2", false);
+        cells.put("C3", "Test");
+        Map<String, Object> expectedCells = new HashMap<>();
+        expectedCells.put("A1", "test");
+        expectedCells.put("A2", 23);
+        expectedCells.put("A3", time);
+        expectedCells.put("B1", null);
+        expectedCells.put("B2", givenValue);
+        expectedCells.put("B3", expectedValue);
+        expectedCells.put("C1", 28);
+        expectedCells.put("C2", false);
+        expectedCells.put("C3", "Test");
+        ImportOptions options = new ImportOptions();
+        options.addEnforcedColumn(1, columnType);
+        options.setEnforcingStartRowNumber(2);
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+        ImportOptions options2 = new ImportOptions();
+        options2.addEnforcedColumn("B", columnType);
+        options2.setEnforcingStartRowNumber(2);
+        assertValues(cells, options2, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
+    @DisplayName("Test of the import options for the combination of a start row and a enforced column on types Date and Time")
+    @ParameterizedTest(name = "Given type {0} should lead to a valid import")
+    @CsvSource({
+            "Date",
+            "Time",
+    })
+    void enforcingColumnStartRowTest2(ImportOptions.ColumnType columnType) throws Exception {
+        LocalTime time = LocalTime.of(11, 12, 13);
+        LocalTime expectedTime = LocalTime.of(12, 13, 14);
+        Date expectedDate = getDate(2021, 7, 14, 18, 22, 13); // 7 = August
+        Map<String, Object> cells = new HashMap<>();
+        cells.put("A1", "test");
+        cells.put("A2", 23);
+        cells.put("A3", time);
+        cells.put("B1", null);
+        if (columnType == ImportOptions.ColumnType.Time) {
+            cells.put("B2", "12:13:14");
+            cells.put("B3", "12:13:14");
+        } else if (columnType == ImportOptions.ColumnType.Date) {
+            cells.put("B2", "2021-08-14 18:22:13");
+            cells.put("B3", "2021-08-14 18:22:13");
+        }
+        cells.put("C1", 28);
+        cells.put("C2", false);
+        cells.put("C3", "Test");
+        Map<String, Object> expectedCells = new HashMap<>();
+        expectedCells.put("A1", "test");
+        expectedCells.put("A2", 23);
+        expectedCells.put("A3", time);
+        expectedCells.put("B1", null);
+        if (columnType == ImportOptions.ColumnType.Time) {
+            expectedCells.put("B2", "12:13:14");
+            expectedCells.put("B3", expectedTime);
+        } else if (columnType == ImportOptions.ColumnType.Date) {
+            expectedCells.put("B2", "2021-08-14 18:22:13");
+            expectedCells.put("B3", expectedDate);
+        }
+        expectedCells.put("C1", 28);
+        expectedCells.put("C2", false);
+        expectedCells.put("C3", "Test");
+        ImportOptions options = new ImportOptions();
+        options.addEnforcedColumn(1, columnType);
+        options.setEnforcingStartRowNumber(2);
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+        ImportOptions options2 = new ImportOptions();
+        options2.addEnforcedColumn("B", columnType);
+        options2.setEnforcingStartRowNumber(2);
+        assertValues(cells, options2, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
 
     private static Date getDate(int year, int month, int day, int hour, int minute, int second) {
         Calendar calendar = Calendar.getInstance();
