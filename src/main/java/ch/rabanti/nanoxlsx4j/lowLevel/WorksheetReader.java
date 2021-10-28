@@ -13,7 +13,6 @@ import ch.rabanti.nanoxlsx4j.ImportOptions;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -603,37 +602,33 @@ public class WorksheetReader {
         try {
             if (type != null && type.equals("s")) {
                 Date tempDate = tryParseDate(raw, options);
-                if (tempDate != null && valueType == Cell.CellType.DATE)
-                {
-                    return new Cell(tempDate, Cell.CellType.DATE, address);
-                }
-                else if (tempDate != null && valueType == Cell.CellType.TIME)
-                {
+                if (tempDate != null && valueType == Cell.CellType.DATE) {
+                    return getTemporalCell(tempDate, address, options);
+                } else if (tempDate != null && valueType == Cell.CellType.TIME) {
                     CALENDAR.setTime(tempDate);
-                    return new Cell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), Cell.CellType.TIME, address);
+                    return getTemporalCell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), address, options);
                 }
                 LocalTime tempTime = tryParseTime(raw, options);
-                if (tempTime != null && valueType == Cell.CellType.TIME)
-                {
-                    return new Cell(tempTime, Cell.CellType.TIME, address);
+                if (tempTime != null && valueType == Cell.CellType.TIME) {
+                    return getTemporalCell(tempTime, address, options);
                 }
             }
             double d = Double.parseDouble(raw);
-            if (d < XlsxWriter.MIN_OADATE_VALUE || d > XlsxWriter.MAX_OADATE_VALUE) {
-                return new Cell(d, Cell.CellType.NUMBER, address); // Invalid OAdate == plain number
+            if (d < XlsxWriter.MIN_OADATE_VALUE || d > XlsxWriter.MAX_OADATE_VALUE || (options != null && options.isEnforceDateTimesAsNumbers())) {
+                return new Cell(d, Cell.CellType.NUMBER, address); // Invalid OAdate / enforced number == plain number
             } else {
                 Date date = Helper.getDateFromOA(d);
                 switch (valueType) {
                     case DATE:
                         if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime()) {
-                            return new Cell(date, DATE, address);
+                            return getTemporalCell(date, address, options);
                         } else {
                             // Prevent to import 00.01.1900, since it will lead to trouble when exporting / writing
                             return new Cell(d, Cell.CellType.NUMBER, address);
                         }
                     case TIME:
                         CALENDAR.setTime(date);
-                        return new Cell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), TIME, address);
+                        return getTemporalCell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), address, options);
                     default:
                         throw new IllegalArgumentException("The defined type is not supported to be uses as date or time");
                 }
@@ -644,45 +639,68 @@ public class WorksheetReader {
     }
 
     /**
+     * Gets a cell either as Date, LocalTime or as double if enforced by import options
+     *
+     * @param dateTimeValue Value of the cell
+     * @param address       Address of the cell
+     * @param options       Import options
+     * @return Casted cell
+     */
+    private static Cell getTemporalCell(Object dateTimeValue, Address address, ImportOptions options) {
+        if (options != null && options.isEnforceDateTimesAsNumbers()) {
+            if (dateTimeValue instanceof Date) {
+                return new Cell(Helper.getOADate((Date) dateTimeValue), Cell.CellType.NUMBER, address);
+            } else {
+                return new Cell(Helper.getOATime((LocalTime) dateTimeValue), Cell.CellType.NUMBER, address);
+            }
+        }
+        if (dateTimeValue instanceof Date) {
+            return new Cell((Date) dateTimeValue, Cell.CellType.DATE, address);
+        } else {
+            return new Cell((LocalTime) dateTimeValue, Cell.CellType.TIME, address);
+        }
+    }
+
+    /**
      * Tris to parse a Date instance from a string
-     * @param raw String to parse
+     *
+     * @param raw     String to parse
      * @param options Import options to take the parsing patterns of
      * @return LocalTime instance or null if not possible to parse
      */
-    private static Date tryParseDate(String raw, ImportOptions options){
-        try{
-            if (options == null || options.getDateFormatter() == null){
+    private static Date tryParseDate(String raw, ImportOptions options) {
+        try {
+            if (options == null || options.getDateFormatter() == null) {
                 // no generic parsing available
                 return null;
             }
-           Date date = options.getDateFormatter().parse(raw);
+            Date date = options.getDateFormatter().parse(raw);
             long d = date.getTime();
-            if (d >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && d <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()){
+            if (d >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && d <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()) {
                 return date;
             }
             return null;
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             return null;
         }
     }
 
     /**
      * Tris to parse a LocalTime instance from a string
-     * @param raw String to parse
+     *
+     * @param raw     String to parse
      * @param options Import options to take the parsing patterns of
      * @return LocalTime instance or null if not possible to parse
      */
-    private static LocalTime tryParseTime(String raw, ImportOptions options){
-        try{
-            if (options == null || options.getLocalTimeFormatter() == null){
+    private static LocalTime tryParseTime(String raw, ImportOptions options) {
+        try {
+            if (options == null || options.getLocalTimeFormatter() == null) {
                 // no generic parsing available
                 return null;
             }
             TemporalAccessor time = options.getLocalTimeFormatter().parse(raw);
             return LocalTime.of(time.get(ChronoField.HOUR_OF_DAY), time.get(ChronoField.MINUTE_OF_HOUR), time.get(ChronoField.SECOND_OF_MINUTE));
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             return null;
         }
     }

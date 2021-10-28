@@ -84,10 +84,29 @@ public class Helper {
      * https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year</a>
      *
      * @param date Date to convert
-     * @return OA date or date and time as number
+     * @return OA date or date and time as number string
      * @throws FormatException Throws a FormatException if the passed date cannot be translated to the OADate format
      */
     public static String getOADateString(Date date) {
+        double d = getOADate(date);
+        return Double.toString(d);
+    }
+
+    /**
+     * Method to calculate the OA date (OLE automation) of the passed date.<br>
+     * OA Date format starts at January 1st 1900 (actually 00.01.1900). Dates beyond this date cannot be handled by Excel under normal circumstances and will throw a FormatException.<br/>
+     * Excel assumes wrongly that the year 1900 is a leap year. There is a gap of 1.0 between 1900-02-28 and 1900-03-01. This method corrects all dates from the first valid date (1900-01-01) to 1900-03-01. However, Excel displays the minimum valid date as 1900-01-00, although 0 is not a valid description for a day of month.<br/>
+     * In conformance to the OAdate specifications, the maximum valid date is 9999-12-31 23:59:59 (plus 999 milliseconds).<br/>
+     * See also: <a href="https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1"><br/>
+     * https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1</a><br/>
+     * See also: <a href="https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br/>
+     * https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year</a>
+     *
+     * @param date Date to convert
+     * @return OA date or date and time as number
+     * @throws FormatException Throws a FormatException if the passed date cannot be translated to the OADate format
+     */
+    public static double getOADate(Date date) {
         if (date == null) {
             throw new FormatException("The date cannot be null");
         }
@@ -100,7 +119,19 @@ public class Helper {
             dateCal.add(Calendar.DAY_OF_WEEK, -1); // Fix of the leap-year-1900-error
         }
         long currentTicks = dateCal.getTimeInMillis();
-        double d = ((double) (dateCal.get(Calendar.SECOND) + (dateCal.get(Calendar.MINUTE) * 60) + (dateCal.get(Calendar.HOUR_OF_DAY) * 3600)) / 86400) + Math.floor((currentTicks - ROOT_TICKS) / (86400000));
+        return ((double) (dateCal.get(Calendar.SECOND) + (dateCal.get(Calendar.MINUTE) * 60) + (dateCal.get(Calendar.HOUR_OF_DAY) * 3600)) / 86400) + Math.floor((currentTicks - ROOT_TICKS) / (86400000));
+    }
+
+    /**
+     * Method to convert a time into the internal Excel time format (OAdate without days).<br>
+     * The time is represented by a OAdate without the date component. A time range is between &gt;0.0 (00:00:00) and &lt;1.0 (23:59:59)
+     *
+     * @param time Time to process
+     * @return Time as number string
+     * @throws FormatException Throws a FormatException if the passed time is invalid
+     */
+    public static String getOATimeString(LocalTime time) {
+        double d = getOATime(time);
         return Double.toString(d);
     }
 
@@ -112,11 +143,10 @@ public class Helper {
      * @return Time as number
      * @throws FormatException Throws a FormatException if the passed time is invalid
      */
-    public static String getOATimeString(LocalTime time) {
+    public static double getOATime(LocalTime time) {
         try {
             int seconds = time.getSecond() + time.getMinute() * 60 + time.getHour() * 3600;
-            double d = seconds / 86400d;
-            return Double.toString(d);
+            return seconds / 86400d;
         } catch (Exception e) {
             throw new FormatException("The time could not be transformed into Excel format (OADate).", e);
         }

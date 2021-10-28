@@ -104,8 +104,8 @@ public class ImportOptionTest {
         expectedCells.put("A4", 42);
         expectedCells.put("A5", 1);
         expectedCells.put("A6", -3);
-        expectedCells.put("A7", (int) Math.round(Double.parseDouble(Helper.getOADateString(getDate(2020, 11, 10, 9, 8, 7)))));
-        expectedCells.put("A8", (int) Math.round(Double.parseDouble(Helper.getOATimeString(LocalTime.of(18, 15, 12)))));
+        expectedCells.put("A7", (int) Math.round(Helper.getOADate(getDate(2020, 11, 10, 9, 8, 7))));
+        expectedCells.put("A8", (int) Math.round(Helper.getOATime(LocalTime.of(18, 15, 12))));
         expectedCells.put("A9", -5);
         expectedCells.put("A10", 0);
         expectedCells.put("A11", null);
@@ -136,6 +136,33 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
+    @DisplayName("Test of the enforceDateTimesAsNumbers functionality on global enforcing rules")
+    @Test()
+    void enforceDateTimesAsNumbersTest() throws Exception {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2021, 8, 17, 11, 12, 13);
+        Date date = calendar.getTime();
+        LocalTime time = LocalTime.of(18, 14, 10);
+        Map<String, Object> cells = new HashMap<>();
+        cells.put("A1", 22);
+        cells.put("A2", true);
+        cells.put("A3", date);
+        cells.put("A4", time);
+        cells.put("A5", 22.5d);
+        Map<String, Object> expectedCells = new HashMap<>();
+        expectedCells.put("A1", 22);
+        expectedCells.put("A2", true);
+        expectedCells.put("A3", Helper.getOADate(date));
+        expectedCells.put("A4", Helper.getOATime(time));
+        expectedCells.put("A5", 22.5f); // Auto-import will cast this value to float
+        ImportOptions options = new ImportOptions();
+        options.setEnforceDateTimesAsNumbers(true);
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
+
+
+
     @DisplayName("Test of the import options for the import column type: Double")
     @ParameterizedTest(name = "Given column {1} should lead to a valid import")
     @CsvSource({
@@ -165,8 +192,8 @@ public class ImportOptionTest {
         expectedCells.put("B1", 23d);
         expectedCells.put("B2", 20d);
         expectedCells.put("B3", 1d);
-        expectedCells.put("B4", Double.parseDouble(Helper.getOATimeString(time)));
-        expectedCells.put("B5", Double.parseDouble(Helper.getOADateString(date)));
+        expectedCells.put("B4", Helper.getOATime(time));
+        expectedCells.put("B5", Helper.getOADate(date));
         expectedCells.put("B6", null);
         expectedCells.put("C1", "2");
         expectedCells.put("C2", LocalTime.of(12, 14, 16));
@@ -579,12 +606,12 @@ public class ImportOptionTest {
             assertTrue(Math.abs((Float) given - (Float) expected) < threshold);
         } else if (given instanceof Date) {
 
-            double e = Double.parseDouble(Helper.getOADateString((Date) expected));
-            double g = Double.parseDouble(Helper.getOADateString((Date) given));
+            double e = Helper.getOADate((Date) expected);
+            double g = Helper.getOADate((Date) given);
             assertApproximateFunction(e, g);
         } else if (given instanceof LocalTime) {
-            double g = Double.parseDouble(Helper.getOATimeString((LocalTime) given));
-            double e = Double.parseDouble(Helper.getOATimeString((LocalTime) expected));
+            double g = Helper.getOATime((LocalTime) given);
+            double e = Helper.getOATime((LocalTime) expected);
             assertApproximateFunction(e, g);
         } else {
             assertEqualsFunction(expected, given);

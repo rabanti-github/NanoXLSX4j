@@ -41,6 +41,28 @@ public class HelperTest {
         assertTrue(Math.abs(expected - given) < threshold);
     }
 
+    @DisplayName("Test of the getOADate function")
+    @ParameterizedTest(name = "Given date {0} should lead to the OADate number {1}")
+    @CsvSource({
+            "01.01.1900 00:00:00, 1",
+            "02.01.1900 12:35:20, 2.5245370370370401",
+            "27.02.1900 00:00:00, 58",
+            "28.02.1900 00:00:00, 59",
+            "28.02.1900 12:30:32, 59.521203703703705",
+            "01.03.1900 00:00:00, 61",
+            "01.03.1900 08:08:11, 61.339016203703707",
+            "20.05.1960 22:11:05, 22056.924363425926",
+            "01.01.2021 00:00:00, 44197",
+            "12.12.5870 11:30:12, 1450360.47930556",
+    })
+    void getOADateTimeTest(String dateString, double expectedOaDate) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.US);
+        Date date = formatter.parse(dateString);
+        double oaDate = Helper.getOADate(date);
+        float threshold = 0.00000001f; // Ignore everything below a millisecond (double precision may vary)
+        assertTrue(Math.abs(expectedOaDate - oaDate) < threshold);
+    }
+
     @DisplayName("Test of the failing getOADateString function on invalid dates")
     @ParameterizedTest(name = "Given date {0} should lead to an exception")
     @CsvSource({
@@ -56,10 +78,31 @@ public class HelperTest {
         assertThrows(FormatException.class, () -> Helper.getOADateString(date));
     }
 
+    @DisplayName("Test of the failing getOADate function on invalid dates")
+    @ParameterizedTest(name = "Given date {0} should lead to an exception")
+    @CsvSource({
+            "01.01.0001 00:00:00",
+            "18.05.0712 11:15:02",
+            "31.12.1899 23:59:59",
+            "01.01.10000 00:00:00",
+    })
+    void getOADateFailTest(String dateString) throws ParseException {
+        // Note: Dates beyond the year 10000 may not be tested wit other frameworks
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.US);
+        Date date = formatter.parse(dateString);
+        assertThrows(FormatException.class, () -> Helper.getOADate(date));
+    }
+
     @DisplayName("Test of the failing getOADateString function on a null Date")
     @Test()
     void getOADateStringFailTest2() {
         assertThrows(FormatException.class, () -> Helper.getOADateString(null));
+    }
+
+    @DisplayName("Test of the failing getOADate function on a null Date")
+    @Test()
+    void getOADateFailTest() {
+        assertThrows(FormatException.class, () -> Helper.getOADate(null));
     }
 
     @DisplayName("Test of the getOATimeString function")
@@ -80,11 +123,34 @@ public class HelperTest {
         assertTrue(Math.abs(expected - given) < threshold);
     }
 
+    @DisplayName("Test of the getOATime function")
+    @ParameterizedTest(name = "Given value {0} should lead to the OaDate {1}")
+    @CsvSource({
+            "00:00:00, 0.0",
+            "12:00:00, 0.5",
+            "23:59:59,  0.999988425925926",
+            "13:11:10, 0.549421296296296",
+            "18:00:00, 0.75",
+    })
+    void getOATimeTest(String timeString, double expectedOaTime) throws ParseException {
+        LocalTime time = LocalTime.parse(timeString);
+        double oaTime = Helper.getOATime(time);
+        float threshold = 0.000000001f; // Ignore everything below a millisecond
+        assertTrue(Math.abs(expectedOaTime - oaTime) < threshold);
+    }
+
     @DisplayName("Test of the failing getOATimeString function on a null LocalTime")
     @Test()
     void getOATimeStringFailTest2() {
         assertThrows(FormatException.class, () -> Helper.getOATimeString(null));
     }
+
+    @DisplayName("Test of the failing getOATime function on a null LocalTime")
+    @Test()
+    void getOATimeFailTest() {
+        assertThrows(FormatException.class, () -> Helper.getOATime(null));
+    }
+
 
     @DisplayName("Test of the getInternalColumnWidth function")
     @ParameterizedTest(name = "Given value {0} should lead to the internal width {1}")
