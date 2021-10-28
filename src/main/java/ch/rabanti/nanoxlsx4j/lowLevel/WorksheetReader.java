@@ -294,13 +294,13 @@ public class WorksheetReader {
                     return tempCell;
                 case Date:
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
-                        return getNumericValue(value, address);
+                        return getNumericValue(value, address, styleNumber);
                     } else {
                         return getDateTimeValue(value, address, DATE, importOptions, type);
                     }
                 case Time:
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
-                        return getNumericValue(value, address);
+                        return getNumericValue(value, address, styleNumber);
                     } else {
                         return getDateTimeValue(value, address, TIME, importOptions, type);
                     }
@@ -388,9 +388,26 @@ public class WorksheetReader {
      * Parses the numeric value of a raw cell. The order of possible number types are: int, float double. If nothing applies, a string is returned
      *
      * @param raw Raw value as string
+     * @param address Address of cell
      * @return Cell of the type int, float, double or string as fall-back type<
      */
-    private static Cell getNumericValue(String raw, Address address) {
+    private Cell getNumericValue(String raw, Address address) {
+        return getNumericValue(raw, address, null);
+    }
+
+    /**
+     * Parses the numeric value of a raw cell. The order of possible number types are: int, float double. If nothing applies, a string is returned
+     *
+     * @param raw Raw value as string
+     * @param address Address of cell
+     * @param styleNumber Parameter to determine whether a double is enforced in case of a date or time style
+     * @return Cell of the type int, float, double or string as fall-back type<
+     */
+    private Cell getNumericValue(String raw, Address address, String styleNumber) {
+        if (dateStyles.contains(styleNumber) || timeStyles.contains(styleNumber))
+        {
+            return getDoubleValue(raw, address);
+        }
         Integer i = tryParseInt(raw);
         if (i != null) {
             return new Cell(i, Cell.CellType.NUMBER, address);

@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -160,8 +161,38 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
-
-
+    @DisplayName("Test of the EnforceDateTimesAsNumbers functionality for the import column type")
+    @ParameterizedTest(name = "Given column import type {0} should lead to a numeric value")
+    @CsvSource({
+            "Date",
+            "Time",
+    })
+    void enforceDateTimesAsNumbersTest2(ImportOptions.ColumnType columnType) throws Exception {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2021, 8, 17, 11, 12, 13);
+        Date date = calendar.getTime();
+        LocalTime time = LocalTime.of(18, 14, 10);
+        Map<String, Object> cells = new HashMap<>();
+        cells.put("A1", 22);
+        cells.put("A2", true);
+        cells.put("A3", date);
+        cells.put("A4", time);
+        cells.put("B1", date);
+        cells.put("B2", time);
+        cells.put("B3", 22.5d);
+        Map<String, Object> expectedCells = new HashMap<>();
+        expectedCells.put("A1", 22);
+        expectedCells.put("A2", true);
+        expectedCells.put("A3", Helper.getOADate(date));
+        expectedCells.put("A4", Helper.getOATime(time));
+        expectedCells.put("B1", Helper.getOADate(date));
+        expectedCells.put("B2", Helper.getOATime(time));
+        expectedCells.put("B3", 22.5f); // Auto-import will cast this value to float
+        ImportOptions options = new ImportOptions();
+        options.setEnforceDateTimesAsNumbers(true);
+        options.addEnforcedColumn(1, columnType);
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
 
     @DisplayName("Test of the import options for the import column type: Double")
     @ParameterizedTest(name = "Given column {1} should lead to a valid import")
@@ -554,6 +585,40 @@ public class ImportOptionTest {
         options2.addEnforcedColumn("B", columnType);
         options2.setEnforcingStartRowNumber(2);
         assertValues(cells, options2, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
+
+    @DisplayName("Test of the import options for custom date and time formats")
+    @ParameterizedTest(name = "Given type {0} should lead to a valid import")
+    @CsvSource({
+            "Date, 'yyyy-MM-dd HH:mm:ss', '2021-08-12 12:11:10', '2021-08-12 12:11:10'",
+            "Date, 'dd.MM.yyyy HH:mm:ss', '12.08.2021 12:11:10', '2021-08-12 12:11:10'",
+            "Date, 'dd/MM/yyyy', '12/08/2021', '2021-08-12 00:00:00'",
+            "Time, 'HH:mm:ss', '18:11:10', '18:11:10'",
+            "Time, 'HH', '12', '12:00:00'",
+    })
+    void parseDateTimeTest(ImportOptions.ColumnType columnType, String pattern, String givenValue, String expectedValue) throws Exception {
+
+        Map<String, Object> cells = new HashMap<>();
+        Map<String, Object> expectedCells = new HashMap<>();
+        ImportOptions importOptions = new ImportOptions();
+        if (columnType == ImportOptions.ColumnType.Date) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date expected = formatter.parse(expectedValue);
+            expectedCells.put("A1", expected);
+            importOptions.setDateFormat(pattern);
+            importOptions.addEnforcedColumn(0, ImportOptions.ColumnType.Date);
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            TemporalAccessor accessor = formatter.parse(expectedValue);
+            LocalTime expected = LocalTime.from(accessor);
+            expectedCells.put("A1", expected);
+            importOptions.setLocalTimeFormat(pattern);
+            importOptions.addEnforcedColumn(0, ImportOptions.ColumnType.Time);
+        }
+
+        cells.put("A1", givenValue);
+        assertValues(cells, importOptions, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
 
