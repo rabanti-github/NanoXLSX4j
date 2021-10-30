@@ -232,46 +232,44 @@ public class WorksheetReader {
         if (address.Row < importOptions.getEnforcingStartRowNumber()) {
             return autoResolveCellData(address, type, value, styleNumber, formula); // Skip enforcing
         }
-        if (importOptions.getGlobalEnforcingType() != ImportOptions.GlobalType.Default) {
-            Cell tempCell = autoResolveCellData(address, type, value, styleNumber, formula);
-            switch (importOptions.getGlobalEnforcingType()) {
-                case AllNumbersToDouble:
-                    if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
-                        Number number = (Number) tempCell.getValue();
-                        return new Cell(number.doubleValue(), tempCell.getDataType(), address);
-                    } else if (tempCell.getDataType().equals(Cell.CellType.BOOL)) {
-                        double tempDouble = ((boolean) tempCell.getValue()) ? 1d : 0d;
-                        return new Cell(tempDouble, Cell.CellType.NUMBER, address);
-                    } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
-                        return new Cell(Double.valueOf(value), Cell.CellType.NUMBER, address);
-                    } else if (tempCell.getDataType().equals(Cell.CellType.STRING)) {
-                        Number number = tryParseDecimal(tempCell.getValue().toString());
-                        if (number != null) {
-                            return new Cell(number.doubleValue(), Cell.CellType.NUMBER, address);
-                        }
+        Cell tempCell = autoResolveCellData(address, type, value, styleNumber, formula);
+        switch (importOptions.getGlobalEnforcingType()) {
+            case AllNumbersToDouble:
+                if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
+                    Number number = (Number) tempCell.getValue();
+                    return new Cell(number.doubleValue(), tempCell.getDataType(), address);
+                } else if (tempCell.getDataType().equals(Cell.CellType.BOOL)) {
+                    double tempDouble = ((boolean) tempCell.getValue()) ? 1d : 0d;
+                    return new Cell(tempDouble, Cell.CellType.NUMBER, address);
+                } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
+                    return new Cell(Double.valueOf(value), Cell.CellType.NUMBER, address);
+                } else if (tempCell.getDataType().equals(Cell.CellType.STRING)) {
+                    Number number = tryParseDecimal(tempCell.getValue().toString());
+                    if (number != null) {
+                        return new Cell(number.doubleValue(), Cell.CellType.NUMBER, address);
                     }
-                    return tempCell;
-                case AllNumbersToInt:
-                    if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
-                        Number number = (Number) tempCell.getValue();
-                        return new Cell((int) Math.round(number.doubleValue()), tempCell.getDataType(), address);
-                    } else if (tempCell.getDataType().equals(Cell.CellType.BOOL)) {
-                        int tempInt = ((boolean) tempCell.getValue()) ? 1 : 0;
-                        return new Cell(tempInt, Cell.CellType.NUMBER, address);
-                    } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
-                        return new Cell((int) Math.round(Double.parseDouble(value)), Cell.CellType.NUMBER, address);
-                    } else if (tempCell.getDataType().equals(Cell.CellType.STRING)) {
-                        Number number = tryParseDecimal(tempCell.getValue().toString());
-                        if (number != null) {
-                            return new Cell(number.intValue(), Cell.CellType.NUMBER, address);
-                        }
+                }
+                return tempCell;
+            case AllNumbersToInt:
+                if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
+                    Number number = (Number) tempCell.getValue();
+                    return new Cell((int) Math.round(number.doubleValue()), tempCell.getDataType(), address);
+                } else if (tempCell.getDataType().equals(Cell.CellType.BOOL)) {
+                    int tempInt = ((boolean) tempCell.getValue()) ? 1 : 0;
+                    return new Cell(tempInt, Cell.CellType.NUMBER, address);
+                } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
+                    return new Cell((int) Math.round(Double.parseDouble(value)), Cell.CellType.NUMBER, address);
+                } else if (tempCell.getDataType().equals(Cell.CellType.STRING)) {
+                    Number number = tryParseDecimal(tempCell.getValue().toString());
+                    if (number != null) {
+                        return new Cell(number.intValue(), Cell.CellType.NUMBER, address);
                     }
-                    return tempCell;
-                case EverythingToString:
-                    return getEnforcedStingValue(address, type, value, styleNumber, formula, importOptions);
-            }
+                }
+                return tempCell;
+            case EverythingToString:
+                return getEnforcedStingValue(address, type, value, styleNumber, formula, importOptions);
         }
-        if (Helper.isNullOrEmpty(value)) {
+        if (Helper.isNullOrEmpty(value) && Helper.isNullOrEmpty(formula)) {
             if (importOptions.isEnforceEmptyValuesAsString()) {
                 return new Cell("", Cell.CellType.STRING, address);
             } else {
@@ -287,19 +285,25 @@ public class WorksheetReader {
             }
             switch (importType) {
                 case Bool:
-                    Cell tempCell = getBooleanValue(value, address);
+                    tempCell = getBooleanValue(value, address);
                     if (tempCell == null) {
                         return autoResolveCellData(address, type, value, styleNumber, formula);
                     }
                     return tempCell;
                 case Date:
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
+                        if (!Helper.isNullOrEmpty(formula)) {
+                            return tempCell;
+                        }
                         return getNumericValue(value, address, styleNumber);
                     } else {
                         return getDateTimeValue(value, address, DATE, importOptions, type);
                     }
                 case Time:
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
+                        if (!Helper.isNullOrEmpty(formula)) {
+                            return tempCell;
+                        }
                         return getNumericValue(value, address, styleNumber);
                     } else {
                         return getDateTimeValue(value, address, TIME, importOptions, type);
@@ -310,12 +314,9 @@ public class WorksheetReader {
                     return getDoubleValue(value, address);
                 case String:
                     return getStringValue(value, address, type, styleNumber, importOptions);
-                default:
-                    return autoResolveCellData(address, type, value, styleNumber, formula);
             }
-        } else {
-            return autoResolveCellData(address, type, value, styleNumber, formula);
         }
+        return autoResolveCellData(address, type, value, styleNumber, formula);
     }
 
     /**
@@ -387,7 +388,7 @@ public class WorksheetReader {
     /**
      * Parses the numeric value of a raw cell. The order of possible number types are: int, float double. If nothing applies, a string is returned
      *
-     * @param raw Raw value as string
+     * @param raw     Raw value as string
      * @param address Address of cell
      * @return Cell of the type int, float, double or string as fall-back type<
      */
@@ -398,14 +399,13 @@ public class WorksheetReader {
     /**
      * Parses the numeric value of a raw cell. The order of possible number types are: int, float double. If nothing applies, a string is returned
      *
-     * @param raw Raw value as string
-     * @param address Address of cell
+     * @param raw         Raw value as string
+     * @param address     Address of cell
      * @param styleNumber Parameter to determine whether a double is enforced in case of a date or time style
      * @return Cell of the type int, float, double or string as fall-back type<
      */
     private Cell getNumericValue(String raw, Address address, String styleNumber) {
-        if (dateStyles.contains(styleNumber) || timeStyles.contains(styleNumber))
-        {
+        if (dateStyles.contains(styleNumber) || timeStyles.contains(styleNumber)) {
             return getDoubleValue(raw, address);
         }
         Integer i = tryParseInt(raw);

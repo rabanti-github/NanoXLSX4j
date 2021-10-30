@@ -35,6 +35,7 @@ public class ImportOptionTest {
         cells.put("A7", getDate(2020, 10, 10, 9, 8, 7)); // month -1
         cells.put("A8", LocalTime.of(18, 15, 12));
         cells.put("A9", null);
+        cells.put("A10", new Cell("=A1", Cell.CellType.FORMULA, "A10"));
         Map<String, String> expectedCells = new HashMap<String, String>();
         expectedCells.put("A1", "test");
         expectedCells.put("A2", "true");
@@ -45,6 +46,7 @@ public class ImportOptionTest {
         expectedCells.put("A7", "2020-11-10 09:08:07");
         expectedCells.put("A8", "18:15:12");
         expectedCells.put("A9", null);
+        expectedCells.put("A10", "=A1");
         ImportOptions options = new ImportOptions();
         options.setGlobalEnforcingType(ImportOptions.GlobalType.EverythingToString);
         assertValues(cells, options, ImportOptionTest::assertEqualsFunction, expectedCells);
@@ -65,6 +67,7 @@ public class ImportOptionTest {
         cells.put("A8", LocalTime.of(18, 15, 12));
         cells.put("A9", null);
         cells.put("A10", "27");
+        cells.put("A11", new Cell("=A1", Cell.CellType.FORMULA, "A11"));
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", "test");
         expectedCells.put("A2", 1d);
@@ -76,6 +79,7 @@ public class ImportOptionTest {
         expectedCells.put("A8", Double.valueOf(Helper.getOATimeString(LocalTime.of(18, 15, 12))));
         expectedCells.put("A9", null);
         expectedCells.put("A10", 27d);
+        expectedCells.put("A11", new Cell("=A1", Cell.CellType.FORMULA, "A11"));
         ImportOptions options = new ImportOptions();
         options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToDouble);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
@@ -98,6 +102,7 @@ public class ImportOptionTest {
         cells.put("A10", 0.49d);
         cells.put("A11", null);
         cells.put("A12", "28");
+        cells.put("A13", new Cell("=A1", Cell.CellType.FORMULA, "A13"));
         Map<String, Object> expectedCells = new HashMap<String, Object>();
         expectedCells.put("A1", "test");
         expectedCells.put("A2", 1);
@@ -111,6 +116,7 @@ public class ImportOptionTest {
         expectedCells.put("A10", 0);
         expectedCells.put("A11", null);
         expectedCells.put("A12", 28);
+        expectedCells.put("A13", new Cell("=A1", Cell.CellType.FORMULA, "A13"));
         ImportOptions options = new ImportOptions();
         options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToInt);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
@@ -122,15 +128,19 @@ public class ImportOptionTest {
         Map<String, Object> cells = new HashMap<String, Object>();
         cells.put("A1", 22);
         cells.put("A2", true);
-        cells.put("A3", 22);
-        cells.put("A4", true);
-        cells.put("A5", 22.5d);
+        cells.put("A3", new Cell("=A1", Cell.CellType.FORMULA, "A3"));
+        cells.put("A4", 22);
+        cells.put("A5", true);
+        cells.put("A6", 22.5d);
+        cells.put("A7", new Cell("=A1", Cell.CellType.FORMULA, "A7"));
         Map<String, Object> expectedCells = new HashMap<String, Object>();
         expectedCells.put("A1", 22);
         expectedCells.put("A2", true);
-        expectedCells.put("A3", "22");
-        expectedCells.put("A4", "true");
-        expectedCells.put("A5", "22.5");
+        expectedCells.put("A3", new Cell("=A1", Cell.CellType.FORMULA, "A3"));
+        expectedCells.put("A4", "22");
+        expectedCells.put("A5", "true");
+        expectedCells.put("A6", "22.5");
+        expectedCells.put("A7", "=A1");
         ImportOptions options = new ImportOptions();
         options.setEnforcingStartRowNumber(2);
         options.setGlobalEnforcingType(ImportOptions.GlobalType.EverythingToString);
@@ -150,12 +160,14 @@ public class ImportOptionTest {
         cells.put("A3", date);
         cells.put("A4", time);
         cells.put("A5", 22.5d);
+        cells.put("A6", new Cell("=A1", Cell.CellType.FORMULA, "A6"));
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", 22);
         expectedCells.put("A2", true);
         expectedCells.put("A3", Helper.getOADate(date));
         expectedCells.put("A4", Helper.getOATime(time));
         expectedCells.put("A5", 22.5f); // Auto-import will cast this value to float
+        expectedCells.put("A6", new Cell("=A1", Cell.CellType.FORMULA, "A6"));
         ImportOptions options = new ImportOptions();
         options.setEnforceDateTimesAsNumbers(true);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
@@ -180,6 +192,7 @@ public class ImportOptionTest {
         cells.put("B1", date);
         cells.put("B2", time);
         cells.put("B3", 22.5d);
+        cells.put("B4", new Cell("=A1", Cell.CellType.FORMULA, "B4"));
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", 22);
         expectedCells.put("A2", true);
@@ -188,6 +201,7 @@ public class ImportOptionTest {
         expectedCells.put("B1", Helper.getOADate(date));
         expectedCells.put("B2", Helper.getOATime(time));
         expectedCells.put("B3", 22.5f); // Auto-import will cast this value to float
+        expectedCells.put("B4", new Cell("=A1", Cell.CellType.FORMULA, "B4"));
         ImportOptions options = new ImportOptions();
         options.setEnforceDateTimesAsNumbers(true);
         options.addEnforcedColumn(1, columnType);
@@ -653,6 +667,8 @@ public class ImportOptionTest {
             D expectedValue = expectedCells.get(address);
             if (expectedValue == null) {
                 assertEquals(Cell.CellType.EMPTY, givenCell.getDataType());
+            } else if (expectedValue instanceof Cell){
+                assertionAction.accept((D)((Cell)expectedValue).getValue(), (D) givenCell.getValue());
             } else {
                 assertionAction.accept(expectedValue, (D) givenCell.getValue());
             }
