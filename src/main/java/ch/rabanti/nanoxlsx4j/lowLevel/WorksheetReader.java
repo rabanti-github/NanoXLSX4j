@@ -291,29 +291,40 @@ public class WorksheetReader {
                     }
                     return tempCell;
                 case Date:
+                    if (!Helper.isNullOrEmpty(formula)) {
+                        return tempCell;
+                    }
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
-                        if (!Helper.isNullOrEmpty(formula)) {
-                            return tempCell;
-                        }
                         return getNumericValue(value, address, styleNumber);
                     } else {
                         return getDateTimeValue(value, address, DATE, importOptions, type);
                     }
                 case Time:
+                    if (!Helper.isNullOrEmpty(formula)) {
+                        return tempCell;
+                    }
                     if (importOptions.isEnforceDateTimesAsNumbers()) {
-                        if (!Helper.isNullOrEmpty(formula)) {
-                            return tempCell;
-                        }
                         return getNumericValue(value, address, styleNumber);
                     } else {
                         return getDateTimeValue(value, address, TIME, importOptions, type);
                     }
                 case Numeric:
+                    if (!Helper.isNullOrEmpty(formula)) {
+                        return tempCell;
+                    }
                     return getNumericValue(value, address);
                 case Double:
+                    if (!Helper.isNullOrEmpty(formula)) {
+                        return tempCell;
+                    }
                     return getDoubleValue(value, address);
-                case String:
-                    return getStringValue(value, address, type, styleNumber, importOptions);
+                default:
+                    // Is string
+                    if (Helper.isNullOrEmpty(formula)) {
+                        return getStringValue(value, address, type, styleNumber, importOptions);
+                    } else {
+                        return getStringValue(formula, address, type, styleNumber, importOptions);
+                    }
             }
         }
         return autoResolveCellData(address, type, value, styleNumber, formula);
@@ -431,8 +442,18 @@ public class WorksheetReader {
      * @param address Address of the cell
      * @return Cell of the type double or string as fall-back type
      */
-    private static Cell getDoubleValue(String raw, Address address) {
+    private Cell getDoubleValue(String raw, Address address) {
         try {
+            if (importOptions != null && importOptions.isEnforceDateTimesAsNumbers()) {
+                Date date = tryParseDate(raw, importOptions);
+                if (date != null) {
+                    return new Cell(Helper.getOADate(date), Cell.CellType.NUMBER, address);
+                }
+                LocalTime time = tryParseTime(raw, importOptions);
+                if (time != null) {
+                    return new Cell(Helper.getOATime(time), Cell.CellType.NUMBER, address);
+                }
+            }
             double d = Double.parseDouble(raw);
             return new Cell(d, Cell.CellType.NUMBER, address);
         } catch (Exception ex) {
@@ -509,31 +530,32 @@ public class WorksheetReader {
      * @return Cell of the type string
      */
     private Cell getStringValue(String raw, Address address, String type, String styleNumber, ImportOptions options) {
+        String value = raw;
         if (type != null && type.equals("s")) {
-            return new Cell(resolveSharedString(raw), Cell.CellType.STRING, address);
+            return new Cell(resolveSharedString(value), Cell.CellType.STRING, address);
         } else if (type != null && type.equals("b")) {
-            Cell tempCell = getBooleanValue(raw, address);
+            Cell tempCell = getBooleanValue(value, address);
             if (tempCell != null) {
-                return new Cell(tempCell.getValue().toString(), Cell.CellType.STRING, address);
+                value = tempCell.getValue().toString();
             }
         } else if (styleNumber != null) {
             Cell tempCell = null;
             if (dateStyles.contains(styleNumber))  // date (priority)
             {
-                tempCell = getDateTimeValue(raw, address, Cell.CellType.DATE, options);
+                tempCell = getDateTimeValue(value, address, Cell.CellType.DATE, options);
             } else if (timeStyles.contains(styleNumber)) // time
             {
-                tempCell = getDateTimeValue(raw, address, Cell.CellType.TIME, options);
+                tempCell = getDateTimeValue(value, address, Cell.CellType.TIME, options);
             }
             if (tempCell != null && tempCell.getDataType().equals(DATE)) {
                 DateFormat format = options.getDateFormatter();
-                return new Cell(format.format((Date) tempCell.getValue()), Cell.CellType.STRING, address);
+                value = format.format((Date) tempCell.getValue());
             } else if (tempCell != null && tempCell.getDataType().equals(TIME)) {
                 DateTimeFormatter format = options.getLocalTimeFormatter();
-                return new Cell(format.format((LocalTime) tempCell.getValue()), Cell.CellType.STRING, address);
+                value = format.format((LocalTime) tempCell.getValue());
             }
         }
-        return new Cell(raw, Cell.CellType.STRING, address);
+        return new Cell(value, Cell.CellType.STRING, address);
     }
 
     /**
@@ -565,7 +587,7 @@ public class WorksheetReader {
      */
     private static Cell getBooleanValue(String raw, Address address) {
         if (raw == null || raw.isBlank()) {
-            return new Cell(raw, Cell.CellType.STRING, address);
+            return null;
         }
         String str = raw.toLowerCase();
         if (str.equals("1") || str.equals("true")) {
@@ -620,35 +642,33 @@ public class WorksheetReader {
             if (type != null && type.equals("s")) {
                 Date tempDate = tryParseDate(raw, options);
                 if (tempDate != null && valueType == Cell.CellType.DATE) {
-                    return getTemporalCell(tempDate, address, options);
+                    return getTemporalCell(tempDate, address);
                 } else if (tempDate != null && valueType == Cell.CellType.TIME) {
                     CALENDAR.setTime(tempDate);
-                    return getTemporalCell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), address, options);
+                    return getTemporalCell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), address);
                 }
                 LocalTime tempTime = tryParseTime(raw, options);
                 if (tempTime != null && valueType == Cell.CellType.TIME) {
-                    return getTemporalCell(tempTime, address, options);
+                    return getTemporalCell(tempTime, address);
                 }
             }
             double d = Double.parseDouble(raw);
             if (d < XlsxWriter.MIN_OADATE_VALUE || d > XlsxWriter.MAX_OADATE_VALUE || (options != null && options.isEnforceDateTimesAsNumbers())) {
                 return new Cell(d, Cell.CellType.NUMBER, address); // Invalid OAdate / enforced number == plain number
-            } else {
-                Date date = Helper.getDateFromOA(d);
-                switch (valueType) {
-                    case DATE:
-                        if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime()) {
-                            return getTemporalCell(date, address, options);
-                        } else {
-                            // Prevent to import 00.01.1900, since it will lead to trouble when exporting / writing
-                            return new Cell(d, Cell.CellType.NUMBER, address);
-                        }
-                    case TIME:
-                        CALENDAR.setTime(date);
-                        return getTemporalCell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), address, options);
-                    default:
-                        throw new IllegalArgumentException("The defined type is not supported to be uses as date or time");
+            }
+            Date date = Helper.getDateFromOA(d);
+            if (valueType.equals(DATE)) {
+
+                if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime()) {
+                    return getTemporalCell(date, address);
+                } else {
+                    // Prevent to import 00.01.1900, since it will lead to trouble when exporting / writing
+                    return new Cell(d, Cell.CellType.NUMBER, address);
                 }
+            } else {
+                // TIME
+                CALENDAR.setTime(date);
+                return getTemporalCell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), address);
             }
         } catch (Exception e) {
             return new Cell(raw, Cell.CellType.STRING, address);
@@ -660,17 +680,9 @@ public class WorksheetReader {
      *
      * @param dateTimeValue Value of the cell
      * @param address       Address of the cell
-     * @param options       Import options
      * @return Casted cell
      */
-    private static Cell getTemporalCell(Object dateTimeValue, Address address, ImportOptions options) {
-        if (options != null && options.isEnforceDateTimesAsNumbers()) {
-            if (dateTimeValue instanceof Date) {
-                return new Cell(Helper.getOADate((Date) dateTimeValue), Cell.CellType.NUMBER, address);
-            } else {
-                return new Cell(Helper.getOATime((LocalTime) dateTimeValue), Cell.CellType.NUMBER, address);
-            }
-        }
+    private static Cell getTemporalCell(Object dateTimeValue, Address address) {
         if (dateTimeValue instanceof Date) {
             return new Cell((Date) dateTimeValue, Cell.CellType.DATE, address);
         } else {
