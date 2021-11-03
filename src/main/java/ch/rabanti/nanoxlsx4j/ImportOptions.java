@@ -206,7 +206,12 @@ public class ImportOptions {
      */
     public void setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
-        this.dateFormatter = new SimpleDateFormat(dateFormat);
+        if (dateFormat == null){
+            this.dateFormatter = null;
+        }
+        else{
+            this.dateFormatter = new SimpleDateFormat(dateFormat);
+        }
     }
 
     /**
@@ -234,7 +239,12 @@ public class ImportOptions {
      */
     public void setLocalTimeFormat(String localTimeFormat) {
         this.localTimeFormat = localTimeFormat;
-        this.localTimeFormatter = DateTimeFormatter.ofPattern(localTimeFormat);
+        if (localTimeFormat == null){
+            this.localTimeFormatter = null;
+        }
+        else{
+            this.localTimeFormatter = DateTimeFormatter.ofPattern(localTimeFormat);
+        }
     }
 
     /**

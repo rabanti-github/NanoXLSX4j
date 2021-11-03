@@ -43,65 +43,12 @@ public class WorksheetReader {
     private List<String> timeStyles;
 
     /**
-     * Gets the assignment of resolved styles to cell addresses
-     *
-     * @return Maps of cell address-style number tuples
-     */
-    public Map<String, String> getStyleAssignment() {
-        return styleAssignment;
-    }
-
-    /**
-     * Gets the name of the worksheet
-     *
-     * @return Name of the worksheet
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Gets the number of the worksheet
-     *
-     * @return Number of the worksheet
-     */
-    public int getWorksheetNumber() {
-        return worksheetNumber;
-    }
-
-    /**
-     * Sets the number of the worksheet
-     *
-     * @param worksheetNumber Worksheet number
-     */
-    public void setWorksheetNumber(int worksheetNumber) {
-        this.worksheetNumber = worksheetNumber;
-    }
-
-    /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
      *
      * @return Hashmap of cell address-cell object tuples
      */
     public Map<String, Cell> getData() {
         return data;
-    }
-
-    /**
-     * Constructor with parameters
-     *
-     * @param sharedStrings        SharedStringsReader object
-     * @param name                 Worksheet name
-     * @param number               Worksheet number
-     * @param styleReaderContainer Resolved styles, used to determine dates or times
-     */
-    public WorksheetReader(SharedStringsReader sharedStrings, String name, int number, StyleReaderContainer styleReaderContainer) {
-        data = new HashMap<>();
-        this.name = name;
-        this.worksheetNumber = number;
-        this.sharedStrings = sharedStrings;
-        this.importOptions = null;
-        processStyles(styleReaderContainer);
     }
 
     /**
@@ -699,19 +646,17 @@ public class WorksheetReader {
      */
     private static Date tryParseDate(String raw, ImportOptions options) {
         try {
-            if (options == null || options.getDateFormatter() == null) {
-                // no generic parsing available
-                return null;
+            if (options != null && options.getDateFormatter() != null) {
+                Date date = options.getDateFormatter().parse(raw);
+                long d = date.getTime();
+                if (d >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && d <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()) {
+                    return date;
+                }
             }
-            Date date = options.getDateFormatter().parse(raw);
-            long d = date.getTime();
-            if (d >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && d <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()) {
-                return date;
-            }
-            return null;
         } catch (Exception ex) {
-            return null;
+            // Ignore
         }
+        return null;
     }
 
     /**

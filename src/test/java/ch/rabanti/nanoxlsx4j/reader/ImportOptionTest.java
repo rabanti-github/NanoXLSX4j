@@ -704,6 +704,54 @@ public class ImportOptionTest {
         assertValues(cells, importOptions, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
+    @DisplayName("Test of all getters of the ImportOptions class (code completion)")
+    @Test
+    void importOptionsGetterTest(){
+        ImportOptions options = new ImportOptions();
+        options.setDateFormat("yyyy-mm-dd");
+        options.setLocalTimeFormat("hh-mm");
+        options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToInt);
+        options.setEnforcingStartRowNumber(7);
+        options.setEnforceDateTimesAsNumbers(true);
+        options.setEnforceEmptyValuesAsString(true);
+
+        assertEquals("yyyy-mm-dd", options.getDateFormat());
+        assertNotNull(options.getDateFormatter());
+        assertEquals("hh-mm", options.getLocalTimeFormat());
+        assertEquals(ImportOptions.GlobalType.AllNumbersToInt, options.getGlobalEnforcingType());
+        assertEquals(7, options.getEnforcingStartRowNumber());
+        assertTrue(options.isEnforceDateTimesAsNumbers());
+        assertTrue(options.isEnforceEmptyValuesAsString());
+    }
+
+    @DisplayName("Test of all the failing date casting on a missing date formatter")
+    @Test
+    void missingDateFormatterTest() throws Exception {
+        ImportOptions options = new ImportOptions();
+        options.setEnforceDateTimesAsNumbers(true);
+        options.setDateFormat(null);
+        options.addEnforcedColumn("A", ImportOptions.ColumnType.Date);
+        Map<String, Object> cells = new HashMap<>();
+        Map<String, Object> expectedCells = new HashMap<>();
+        cells.put("A1", "12.12.2021");
+        expectedCells.put("A1", "12.12.2021");
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
+    @DisplayName("Test of all the failing date casting on a missing time formatter")
+    @Test
+    void missingTimeFormatterTest() throws Exception {
+        ImportOptions options = new ImportOptions();
+        options.setEnforceDateTimesAsNumbers(true);
+        options.setLocalTimeFormat(null);
+        options.addEnforcedColumn("A", ImportOptions.ColumnType.Time);
+        Map<String, Object> cells = new HashMap<>();
+        Map<String, Object> expectedCells = new HashMap<>();
+        cells.put("A1", "25:10:00");
+        expectedCells.put("A1", "25:10:00");
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
 
     private static Date getDate(int year, int month, int day, int hour, int minute, int second) {
         Calendar calendar = Calendar.getInstance();
