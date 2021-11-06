@@ -23,15 +23,6 @@ public class SharedStringsReader {
     private final List<String> sharedStrings;
 
     /**
-     * Gets the shared strings list
-     *
-     * @return ArrayList of shared string entries
-     */
-    public List<String> getSharedStrings() {
-        return sharedStrings;
-    }
-
-    /**
      * Gets whether the workbook contains shared strings
      *
      * @return True if at least one shared string object exists in the workbook

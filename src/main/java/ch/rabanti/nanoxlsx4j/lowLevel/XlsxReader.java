@@ -33,16 +33,6 @@ public class XlsxReader {
     private ImportOptions importOptions;
 
     /**
-     * Constructor with file path as parameter
-     *
-     * @param path File path of the XLSX file to load
-     */
-    public XlsxReader(String path) {
-        this.filePath = path;
-        this.worksheets = new HashMap<>();
-    }
-
-    /**
      * Constructor with stream and import options as parameter
      *
      * @param stream  Stream of the XLSX file to load
@@ -64,16 +54,6 @@ public class XlsxReader {
         this.filePath = path;
         this.worksheets = new HashMap<>();
         this.importOptions = options;
-    }
-
-    /**
-     * Constructor with stream as parameter
-     *
-     * @param stream Stream of the XLSX file to load
-     */
-    public XlsxReader(InputStream stream) {
-        this.worksheets = new HashMap<>();
-        this.inputStream = stream;
     }
 
     /**
@@ -101,6 +81,9 @@ public class XlsxReader {
                         break;
                     }
                 }
+            }
+            if (is == null){
+                throw new IOException("The entry '" + name + "' is missing in the file");
             }
             return is;
         } catch (Exception ex) {

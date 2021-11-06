@@ -262,6 +262,8 @@ public class ReadDataTest {
             "invalid_worksheet.xlsx",
             "invalid_style.xlsx",
             "invalid_sharedStrings.xlsx",
+            "invalid_sharedStrings2.xlsx",
+            "missing_worksheet.xlsx",
     })
     void failingReadInvalidDataTest(String invalidFile) {
         // Note: all referenced (embedded) files contains invalid XML documents (malformed, missing start or end tags, missing attributes)
