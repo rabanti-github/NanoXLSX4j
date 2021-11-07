@@ -427,11 +427,7 @@ public class XlsxWriter {
                         value = item.getValue().toString();
                     } else {
                         typeAttribute = "s";
-                        value = item.getValue().toString();
-                        if (!sharedStrings.containsKey(value)) {
-                            sharedStrings.add(value, Integer.toString(sharedStrings.size()));
-                        }
-                        value = sharedStrings.get(value);
+                        value = sharedStrings.add(item.getValue().toString(), Integer.toString(sharedStrings.size()));
                         sharedStringsTotalCount++;
                     }
                 }

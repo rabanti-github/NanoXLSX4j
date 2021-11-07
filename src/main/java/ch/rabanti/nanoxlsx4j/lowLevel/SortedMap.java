@@ -23,7 +23,6 @@ class SortedMap {
     private final List<String> keyEntries;
     private final List<String> valueEntries;
 
-
 // ### C O N S T R U C T O R S ###
 
     /**
@@ -36,48 +35,24 @@ class SortedMap {
         this.count = 0;
     }
 
-// ### M E T H O D S ###    
+// ### M E T H O D S ###
 
     /**
      * Method to add a key value pair
      *
      * @param key   key as string
      * @param value value as string
-     * @return returns the index of the inserted or replaced entry in the map
+     * @return returns the resolved string (either added or returned from an existing entry)
      */
-    public int add(String key, String value) {
-        if (index.containsKey(key)) {
-            return index.get(key);
-        } else {
-            index.put(key, count);
-            keyEntries.add(key);
-            valueEntries.add(value);
-            count++;
-            return count - 1;
-        }
-    }
-
-    /**
-     * Gets whether the specified key exists in the map
-     *
-     * @param key Key to check
-     * @return True if the entry exists, otherwise false
-     */
-    public boolean containsKey(String key) {
-        return index.containsKey(key);
-    }
-
-    /**
-     * Gets the value of the specified key
-     *
-     * @param key Key of the entry
-     * @return The value of the entry. If the key was not found, null is returned
-     */
-    public String get(String key) {
+    public String add(String key, String value) {
         if (index.containsKey(key)) {
             return valueEntries.get(index.get(key));
         }
-        return null;
+        index.put(key, count);
+        count++;
+        keyEntries.add(key);
+        valueEntries.add(value);
+        return value;
     }
 
     /**
@@ -87,15 +62,6 @@ class SortedMap {
      */
     public List<String> getKeys() {
         return this.keyEntries;
-    }
-
-    /**
-     * Gets the values of the map as list
-     *
-     * @return ArrayList of Values
-     */
-    public List<String> getValues() {
-        return this.valueEntries;
     }
 
     /**
