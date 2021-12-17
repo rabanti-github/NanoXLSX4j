@@ -11,11 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.time.LocalTime;
-import java.util.Calendar;
+import java.time.Duration;
 import java.util.Date;
 import java.util.function.BiConsumer;
 
+import static ch.rabanti.nanoxlsx4j.TestUtils.buildDate;
+import static ch.rabanti.nanoxlsx4j.TestUtils.buildTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AddCellTest {
@@ -71,17 +72,15 @@ public class AddCellTest {
     @DisplayName("Test of the addCell function for DateTime and TimeSpan (with address and column/row invocation)")
     @Test()
     void addCellTest3() {
-        Calendar calendar = Calendar.getInstance();
         worksheet = WorksheetTest.initWorksheet(worksheet, "D2", Worksheet.CellDirection.RowToRow);
-        calendar.set(2020, 6, 10, 11, 12, 22);
-        Date date = calendar.getTime();
+        Date date = buildDate(2020, 6, 10, 11, 12, 22);
         invokeAddCellTest(date, 5, 1, worksheet::addCell, Cell.CellType.DATE, "F2", 5, 2, BasicStyles.DateFormat());
         Address address = new Address(5, 1);
         worksheet = WorksheetTest.initWorksheet(worksheet, "R3", Worksheet.CellDirection.ColumnToColumn);
         invokeAddCellTest(date, address.getAddress(), worksheet::addCell, Cell.CellType.DATE, "F2", 6, 1, BasicStyles.DateFormat());
 
         worksheet = WorksheetTest.initWorksheet(worksheet, "S9", Worksheet.CellDirection.RowToRow);
-        LocalTime time = LocalTime.of(6, 22, 13);
+        Duration time = buildTime(6, 22, 13);
         invokeAddCellTest(time, 5, 1, worksheet::addCell, Cell.CellType.TIME, "F2", 5, 2, BasicStyles.TimeFormat());
         worksheet = WorksheetTest.initWorksheet(worksheet, "V6", Worksheet.CellDirection.ColumnToColumn);
         invokeAddCellTest(time, address.getAddress(), worksheet::addCell, Cell.CellType.TIME, "F2", 6, 1, BasicStyles.TimeFormat());
@@ -90,10 +89,8 @@ public class AddCellTest {
     @DisplayName("Test of the addCell function for DateTime and TimeSpan with styles (with address and column/row invocation)")
     @Test()
     void addCellTest4() {
-        Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
         worksheet = WorksheetTest.initWorksheet(worksheet, "D2", Worksheet.CellDirection.RowToRow);
-        calendar.set(2020, 6, 10, 11, 12, 22);
+        Date date = buildDate(2020, 6, 10, 11, 12, 22);
         Style mixedStyle = BasicStyles.DateFormat();
         mixedStyle.append(BasicStyles.Bold());
         invokeAddCellTest(date, 5, 1, BasicStyles.Bold(), worksheet::addCell, Cell.CellType.DATE, "F2", 5, 2, mixedStyle);
@@ -102,7 +99,7 @@ public class AddCellTest {
         invokeAddCellTest(date, address.getAddress(), BasicStyles.Bold(), worksheet::addCell, Cell.CellType.DATE, "F2", 6, 1, mixedStyle);
 
         worksheet = WorksheetTest.initWorksheet(worksheet, "S9", Worksheet.CellDirection.RowToRow);
-        LocalTime time = LocalTime.of(6, 22, 13);
+        Duration time = buildTime(6, 22, 13);
         mixedStyle = BasicStyles.TimeFormat();
         mixedStyle.append(BasicStyles.Underline());
         invokeAddCellTest(time, 5, 1, BasicStyles.Underline(), worksheet::addCell, Cell.CellType.TIME, "F2", 5, 2, mixedStyle);
@@ -137,10 +134,8 @@ public class AddCellTest {
     @DisplayName("Test of the addCell function for DateTime and TimeSpan with active worksheet style (with address and column/row invocation)")
     @Test()
     void addCellTest6() {
-        Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
         worksheet = WorksheetTest.initWorksheet(worksheet, "D2", Worksheet.CellDirection.RowToRow, BasicStyles.BorderFrameHeader());
-        calendar.set(2020, 6, 10, 11, 12, 22);
+        Date date = buildDate(2020, 6, 10, 11, 12, 22);
         Style mixedStyle = BasicStyles.DateFormat();
         mixedStyle.append(BasicStyles.BorderFrameHeader());
         invokeAddCellTest(date, 5, 1, worksheet::addCell, Cell.CellType.DATE, "F2", 5, 2, mixedStyle);
@@ -149,7 +144,7 @@ public class AddCellTest {
         invokeAddCellTest(date, address.getAddress(), worksheet::addCell, Cell.CellType.DATE, "F2", 6, 1, mixedStyle);
 
         worksheet = WorksheetTest.initWorksheet(worksheet, "S9", Worksheet.CellDirection.RowToRow, BasicStyles.Underline());
-        LocalTime time = LocalTime.of(6, 22, 13);
+        Duration time = buildTime(6, 22, 13);
         mixedStyle = BasicStyles.TimeFormat();
         mixedStyle.append(BasicStyles.Underline());
         invokeAddCellTest(time, 5, 1, worksheet::addCell, Cell.CellType.TIME, "F2", 5, 2, mixedStyle);
@@ -257,10 +252,8 @@ public class AddCellTest {
     @Test()
     void addCellOverwriteTest2() {
         Worksheet worksheet = new Worksheet();
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2020, 10, 5, 4, 11, 12);
-        Date date = calendar.getTime();
-        LocalTime time = LocalTime.of(11, 12, 13);
+        Date date = buildDate(2020, 10, 5, 4, 11, 12);
+        Duration time = buildTime(11, 12, 13);
         worksheet.addCell(date, "C2");
         worksheet.addCell(time, "C3");
         assertEquals(Cell.CellType.DATE, worksheet.getCells().get("C2").getDataType());

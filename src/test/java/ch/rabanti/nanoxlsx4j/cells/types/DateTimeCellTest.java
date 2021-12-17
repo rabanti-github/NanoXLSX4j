@@ -4,22 +4,24 @@ import ch.rabanti.nanoxlsx4j.Cell;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 
+import static ch.rabanti.nanoxlsx4j.TestUtils.buildDate;
+import static ch.rabanti.nanoxlsx4j.TestUtils.buildTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DateTimeCellTest {
 
     CellTypeUtils dateUtils;
     CellTypeUtils timeUtils;
-    Calendar calendarInstance;
 
     public DateTimeCellTest() {
         dateUtils = new CellTypeUtils(Date.class);
-        timeUtils = new CellTypeUtils(LocalTime.class);
-        calendarInstance = Calendar.getInstance();
+        timeUtils = new CellTypeUtils(Duration.class);
     }
 
     @DisplayName("Date value cell test: Test of the cell values, as well as proper modification")
@@ -31,13 +33,13 @@ class DateTimeCellTest {
         dateUtils.assertCellCreation(defaultDateTime, buildDate(9999, 12, 31, 23, 59, 59), Cell.CellType.DATE, Date::equals);
     }
 
-    @DisplayName("LocalTime value cell test: Test of the cell values, as well as proper modification")
+    @DisplayName("Duration value cell test: Test of the cell values, as well as proper modification")
     @Test()
-    void LocalTimeCellTest() {
+    void DurationCellTest() {
         // LocalTime is hard to parametrize, therefore hardcoded
-        LocalTime defaultTime = buildTime(22, 11, 7, 135);
-        timeUtils.assertCellCreation(defaultTime, buildTime(0, 0, 0), Cell.CellType.TIME, LocalTime::equals);
-        timeUtils.assertCellCreation(defaultTime, buildTime(23, 59, 59, 999), Cell.CellType.TIME, LocalTime::equals);
+        Duration defaultTime = buildTime(22, 11, 7, 135);
+        timeUtils.assertCellCreation(defaultTime, buildTime(0, 0, 0), Cell.CellType.TIME, Duration::equals);
+        timeUtils.assertCellCreation(defaultTime, buildTime(23, 59, 59, 999), Cell.CellType.TIME, Duration::equals);
     }
 
     @DisplayName("Test of the Date comparison method on cells")
@@ -66,13 +68,13 @@ class DateTimeCellTest {
 
     @DisplayName("Test of the LocalTime comparison method on cells")
     @Test()
-    void LocalTimeCellComparisonTest() {
+    void durationCellComparisonTest() {
         // Hard to parametrize, thus hardcoded
-        LocalTime baseTime = buildTime(5, 7, 22, 113);
-        LocalTime nearBelowBase = buildTime(5, 7, 22, 112);
-        LocalTime belowBase = buildTime(4, 7, 22, 113);
-        LocalTime nearAboveBase = buildTime(5, 7, 22, 114);
-        LocalTime aboveBase = buildTime(5, 17, 22, 113);
+        Duration baseTime = buildTime(5, 7, 22, 113);
+        Duration nearBelowBase = buildTime(5, 7, 22, 112);
+        Duration belowBase = buildTime(4, 7, 22, 113);
+        Duration nearAboveBase = buildTime(5, 7, 22, 114);
+        Duration aboveBase = buildTime(5, 17, 22, 113);
 
         Cell baseCell = timeUtils.createVariantCell(baseTime, timeUtils.getCellAddress());
         Cell equalCell = timeUtils.createVariantCell(baseTime, timeUtils.getCellAddress());
@@ -81,34 +83,25 @@ class DateTimeCellTest {
         Cell belowCell = timeUtils.createVariantCell(belowBase, timeUtils.getCellAddress());
         Cell aboveCell = timeUtils.createVariantCell(aboveBase, timeUtils.getCellAddress());
 
-        assertEquals(0, ((LocalTime) baseCell.getValue()).compareTo((LocalTime) equalCell.getValue()));
-        assertEquals(1, ((LocalTime) baseCell.getValue()).compareTo((LocalTime) nearBelowCell.getValue()));
-        assertEquals(-1, ((LocalTime) baseCell.getValue()).compareTo((LocalTime) nearAboveCell.getValue()));
-        assertEquals(1, ((LocalTime) baseCell.getValue()).compareTo((LocalTime) belowCell.getValue()));
-        assertEquals(-1, ((LocalTime) baseCell.getValue()).compareTo((LocalTime) aboveCell.getValue()));
+        assertCompareTo(0, (Duration) baseCell.getValue(), (Duration) equalCell.getValue());
+        assertCompareTo(1, (Duration) baseCell.getValue(), (Duration) nearBelowCell.getValue());
+        assertCompareTo(-1,(Duration) baseCell.getValue(), (Duration) nearAboveCell.getValue());
+        assertCompareTo(1, (Duration) baseCell.getValue(), (Duration) belowCell.getValue());
+        assertCompareTo(-1,(Duration) baseCell.getValue(), (Duration) aboveCell.getValue());
     }
 
-
-    private Date buildDate(int year, int month, int day) {
-        return buildDate(year, month, day, 0, 0, 0, 0);
-    }
-
-    private Date buildDate(int year, int month, int day, int hour, int minute, int second) {
-        return buildDate(year, month, day, hour, minute, second, 0);
-    }
-
-    private Date buildDate(int year, int month, int day, int hour, int minute, int second, int millisSecond) {
-        calendarInstance.set(year, month, day, hour, minute, second);
-        calendarInstance.set(Calendar.MILLISECOND, millisSecond);
-        return calendarInstance.getTime();
-    }
-
-    private LocalTime buildTime(int hour, int minute, int second) {
-        return buildTime(hour, minute, second, 0);
-    }
-
-    private LocalTime buildTime(int hour, int minute, int second, int milliSecond) {
-        return LocalTime.of(hour, minute, second, milliSecond * 1000000);
+    private static <T extends Comparable> void assertCompareTo(int threshold, T v1, T v2){
+        if (threshold == 0){
+            assertEquals(0, v1.compareTo(v2));
+        }
+        else if (threshold > 0){
+            int result = v1.compareTo(v2);
+            assertTrue(result >= threshold);
+        }
+        else{
+            int result = v1.compareTo(v2);
+            assertTrue(result <= threshold);
+        }
     }
 
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.Locale;
@@ -115,7 +116,7 @@ public class HelperTest {
             "18:00:00, 0.75",
     })
     void getOATimeStringTest(String timeString, String expectedOaTime) throws ParseException {
-        LocalTime time = LocalTime.parse(timeString);
+        Duration time = Helper.parseTime(timeString, "HH:mm:ss");
         String oaDate = Helper.getOATimeString(time);
         float expected = Float.parseFloat(expectedOaTime);
         float given = Float.parseFloat(oaDate);
@@ -133,7 +134,7 @@ public class HelperTest {
             "18:00:00, 0.75",
     })
     void getOATimeTest(String timeString, double expectedOaTime) throws ParseException {
-        LocalTime time = LocalTime.parse(timeString);
+        Duration time = Helper.parseTime(timeString, "HH:mm:ss");
         double oaTime = Helper.getOATime(time);
         float threshold = 0.000000001f; // Ignore everything below a millisecond
         assertTrue(Math.abs(expectedOaTime - oaTime) < threshold);

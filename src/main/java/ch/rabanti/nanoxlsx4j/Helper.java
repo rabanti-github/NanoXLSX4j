@@ -8,7 +8,11 @@ package ch.rabanti.nanoxlsx4j;
 
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 
-import java.time.LocalTime;
+import java.time.Duration;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -107,10 +111,29 @@ public class Helper {
      * @throws FormatException Throws a FormatException if the passed date cannot be translated to the OADate format
      */
     public static double getOADate(Date date) {
+        return getOADate(date, false);
+    }
+
+    /**
+     * Method to calculate the OA date (OLE automation) of the passed date.<br>
+     * OA Date format starts at January 1st 1900 (actually 00.01.1900). Dates beyond this date cannot be handled by Excel under normal circumstances and will throw a FormatException.<br/>
+     * Excel assumes wrongly that the year 1900 is a leap year. There is a gap of 1.0 between 1900-02-28 and 1900-03-01. This method corrects all dates from the first valid date (1900-01-01) to 1900-03-01. However, Excel displays the minimum valid date as 1900-01-00, although 0 is not a valid description for a day of month.<br/>
+     * In conformance to the OAdate specifications, the maximum valid date is 9999-12-31 23:59:59 (plus 999 milliseconds).<br/>
+     * See also: <a href="https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1"><br/>
+     * https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1</a><br/>
+     * See also: <a href="https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br/>
+     * https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year</a>
+     *
+     * @param date      Date to convert
+     * @param skipCheck If true, the validity check is skipped</param>
+     * @return OA date or date and time as number
+     * @throws FormatException Throws a FormatException if the passed date cannot be translated to the OADate format
+     */
+    public static double getOADate(Date date, boolean skipCheck) {
         if (date == null) {
             throw new FormatException("The date cannot be null");
         }
-        if (date.before(FIRST_ALLOWED_EXCEL_DATE) || date.after(LAST_ALLOWED_EXCEL_DATE)) {
+        if (!skipCheck && (date.before(FIRST_ALLOWED_EXCEL_DATE) || date.after(LAST_ALLOWED_EXCEL_DATE))) {
             throw new FormatException("The date is not in a valid range for Excel. Dates before 1900-01-01 are not allowed.");
         }
         Calendar dateCal = Calendar.getInstance();
@@ -123,30 +146,30 @@ public class Helper {
     }
 
     /**
-     * Method to convert a time into the internal Excel time format (OAdate without days).<br>
-     * The time is represented by a OAdate without the date component. A time range is between &gt;0.0 (00:00:00) and &lt;1.0 (23:59:59)
+     * Method to convert a duration into the internal Excel time format (OAdate without days).<br>
+     * The time is represented by a OAdate without the date component but a possible number of total days
      *
      * @param time Time to process
      * @return Time as number string
      * @throws FormatException Throws a FormatException if the passed time is invalid
      */
-    public static String getOATimeString(LocalTime time) {
+    public static String getOATimeString(Duration time) {
         double d = getOATime(time);
         return Double.toString(d);
     }
 
     /**
-     * Method to convert a time into the internal Excel time format (OAdate without days).<br>
-     * The time is represented by a OAdate without the date component. A time range is between &gt;0.0 (00:00:00) and &lt;1.0 (23:59:59)
+     * Method to convert a duration into the internal Excel time format (OAdate without days).<br>
+     * The time is represented by a OAdate without the date component but a possible number of total days
      *
      * @param time Time to process
      * @return Time as number
      * @throws FormatException Throws a FormatException if the passed time is invalid
      */
-    public static double getOATime(LocalTime time) {
+    public static double getOATime(Duration time) {
         try {
-            int seconds = time.getSecond() + time.getMinute() * 60 + time.getHour() * 3600;
-            return seconds / 86400d;
+            long seconds = time.get(ChronoUnit.SECONDS);
+            return (double) seconds / 86400d;
         } catch (Exception e) {
             throw new FormatException("The time could not be transformed into Excel format (OADate).", e);
         }
@@ -179,6 +202,60 @@ public class Helper {
         dateCal.add(Calendar.MINUTE, (int) minutes);
         dateCal.add(Calendar.SECOND, (int) seconds);
         return dateCal.getTime();
+    }
+
+    /**
+     * Method to parse a {@link Duration} object from a string and a pattern that is allied to a {@link DateTimeFormatter} instance
+     * @param timeString String to parse
+     * @param pattern Pattern as string
+     * @return Duration object
+     * @throws FormatException thrown if the time could not be parsed or of the pattern was invalid
+     * @apiNote Supported formatting tokens are all time-related patterns like 'HH', 'mm', 'ss'. To represent the number
+     * of days, the pattern 'n' is used. This deviates from the actual definition of 'n' which would be nanoseconds of the second.
+     */
+    public static Duration parseTime(String timeString, String pattern) {
+        if (isNullOrEmpty(timeString) || isNullOrEmpty(pattern)) {
+            throw new FormatException("The pattern is not valid");
+        }
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+            return parseTime(timeString, formatter);
+        } catch (Exception ex) {
+            throw new FormatException("The time could not be parsed: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Method to parse a {@link Duration} object from a string and a {@link DateTimeFormatter} instance
+     * @param timeString String to parse
+     * @param formatter Formatter to apply the parsing
+     * @return Duration object
+     * @throws FormatException thrown if the time could not be parsed or of the formatter was invalid
+     */
+    public static Duration parseTime(String timeString, DateTimeFormatter formatter) {
+        if (isNullOrEmpty(timeString) || formatter == null) {
+            throw new FormatException("Either no time value or formatter was defined and no time can be parsed");
+        }
+        try {
+            TemporalAccessor accessor = formatter.parse(timeString);
+            long hours = 0;
+            if (accessor.isSupported(ChronoField.HOUR_OF_DAY)) {
+                hours = accessor.get(ChronoField.HOUR_OF_DAY);
+            } else if (accessor.isSupported(ChronoField.HOUR_OF_AMPM)) {
+                hours = accessor.get(ChronoField.HOUR_OF_AMPM);
+            }
+            long minutes = accessor.get(ChronoField.MINUTE_OF_HOUR);
+            long seconds = accessor.get(ChronoField.SECOND_OF_MINUTE);
+            long days = accessor.get(ChronoField.NANO_OF_SECOND);
+            Duration duration = Duration.ZERO;
+            duration = duration.plusDays(days);
+            duration = duration.plusHours(hours);
+            duration = duration.plusMinutes(minutes);
+            duration = duration.plusSeconds(seconds);
+            return duration;
+        } catch (Exception ex) {
+            throw new FormatException("The time could not be parsed: " + ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -308,7 +385,7 @@ public class Helper {
     }
 
     /**
-     * Method of a string to check whether its reference is null or the content is empty
+     * Method to check a string whether its reference is null or the content is empty
      *
      * @param value value / reference to check
      * @return True if the passed parameter is null or empty, otherwise false
@@ -318,6 +395,39 @@ public class Helper {
             return true;
         }
         return value.isEmpty();
+    }
+
+    /**
+     * Method to create a {@link Duration} object form hours, minutes and second
+     * @param hours Number of Hours within the day
+     * @param minutes Number of minutes within the hour
+     * @param seconds Number of seconds within the minute
+     * @return Duration object
+     * @throws FormatException thrown if one of the components is invalid (e.g. negative), or if the number of days exceeds the year 9999
+     */
+    public static Duration createDuration(int hours, int minutes, int seconds) {
+        return createDuration(0, hours, minutes, seconds);
+    }
+
+    /**
+     * Method to create a {@link Duration} object form days, hours, minutes and second
+     * @param days Total number of days
+     * @param hours Number of Hours within the day
+     * @param minutes Number of minutes within the hour
+     * @param seconds Number of seconds within the minute
+     * @return Duration object
+     * @throws FormatException thrown if one of the components is invalid (e.g. negative), or if the number of days exceeds the year 9999
+     */
+    public static Duration createDuration(int days, int hours, int minutes, int seconds) {
+        if (days > MAX_OADATE_VALUE) {
+            throw new FormatException("The number of days '" + days + "' exceeds the maximum allowed date of 9999-12-31");
+        }
+        if (days < 0 || hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) {
+            throw new FormatException(String.format("One of the passed duration components is invalid. Days:%d, Hours:%d, Minutes:%d, Seconds:%d", days, hours, minutes, seconds));
+        }
+        Duration duration = Duration.ofDays(days);
+        duration = duration.plusHours(hours).plusMinutes(minutes).plusSeconds(seconds);
+        return duration;
     }
 
 

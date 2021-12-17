@@ -8,6 +8,7 @@ package ch.rabanti.nanoxlsx4j.lowLevel;
 
 import ch.rabanti.nanoxlsx4j.*;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
+import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +32,7 @@ public class XlsxReader {
     private final Map<Integer, WorksheetReader> worksheets;
     private WorkbookReader workbook;
     private ImportOptions importOptions;
+    private StyleReaderContainer styleReaderContainer;
 
     /**
      * Constructor with stream and import options as parameter
@@ -120,7 +122,7 @@ public class XlsxReader {
             StyleReader styleReader = new StyleReader();
             stream = getEntryStream("xl/styles.xml", zf);
             styleReader.read(stream);
-            StyleReaderContainer styleReaderContainer = styleReader.getStyleReaderContainer();
+            this.styleReaderContainer = styleReader.getStyleReaderContainer();
 
             this.workbook = new WorkbookReader();
             stream = getEntryStream("xl/workbook.xml", zf);
@@ -130,11 +132,11 @@ public class XlsxReader {
             WorksheetReader wr;
             String nameTemplate = "sheet" + worksheetIndex + ".xml";
             String name = "xl/worksheets/" + nameTemplate;
-            for (int i = 0; i < this.workbook.getWorksheetDefinitions().size(); i++) {
+            for (Map.Entry<Integer, WorkbookReader.WorksheetDefinition> definition: workbook.getWorksheetDefinitions().entrySet()) {
                 stream = getEntryStream(name, zf);
                 wr = new WorksheetReader(sharedStrings, nameTemplate, worksheetIndex, styleReaderContainer, importOptions);
                 wr.read(stream);
-                this.worksheets.put(worksheetIndex - 1, wr);
+                this.worksheets.put(definition.getKey(), wr);
                 worksheetIndex++;
                 nameTemplate = "sheet" + worksheetIndex + ".xml";
                 name = "xl/worksheets/" + nameTemplate;
@@ -155,17 +157,42 @@ public class XlsxReader {
      */
     public Workbook getWorkbook() {
         Workbook wb = new Workbook(false);
+        Worksheet ws;
+        for (Map.Entry<Integer, WorksheetReader> reader : this.worksheets.entrySet())
+        {
+            WorkbookReader.WorksheetDefinition definition = workbook.getWorksheetDefinitions().get(reader.getKey());
+            ws = new Worksheet(definition.getWorksheetName(), definition.getSheetId(), wb);
+            ws.setHidden(definition.isHidden());
+            for (Map.Entry<String, Cell> cell : reader.getValue().getData().entrySet())
+            {
+                if (reader.getValue().getStyleAssignment().containsKey(cell.getKey()))
+                {
+                    Style style = styleReaderContainer.getStyle(reader.getValue().getStyleAssignment().get(cell.getKey()), true);
+                    if (style != null)
+                    {
+                        cell.getValue().setStyle(style);
+                    }
+                }
+                ws.addCell(cell.getValue(), cell.getKey());
+            }
+            wb.addWorksheet(ws);
+        }
+        return wb;
+        /*
+        Workbook wb = new Workbook(false);
         WorksheetReader wr;
         Worksheet ws;
-        for (int i = 0; i < this.worksheets.size(); i++) {
-            wr = this.worksheets.get(i);
-            ws = new Worksheet(this.workbook.getWorksheetDefinitions().get(i + 1), i + 1, wb);
+        for (Map.Entry<Integer, WorkbookReader.WorksheetDefinition> entry : this.workbook.getWorksheetDefinitions().entrySet()) {
+            wr = this.worksheets.get(entry.getKey());
+            ws = new Worksheet(entry.getValue().getWorksheetName(), entry.getValue().getSheetId(), wb);
             for (Map.Entry<String, Cell> cell : wr.getData().entrySet()) {
                 ws.addCell(cell.getValue(), cell.getKey());
             }
             wb.addWorksheet(ws);
         }
         return wb;
+
+         */
     }
 
 }

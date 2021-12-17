@@ -14,6 +14,7 @@ import ch.rabanti.nanoxlsx4j.styles.Style;
 import ch.rabanti.nanoxlsx4j.styles.StyleRepository;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -428,7 +429,7 @@ public class Cell implements Comparable<Cell> {
         else if (value instanceof Date) {
             this.dataType = CellType.DATE;
             setStyle(BasicStyles.DateFormat());
-        } else if (value instanceof LocalTime) {
+        } else if (value instanceof Duration) {
             this.dataType = CellType.TIME;
             setStyle(BasicStyles.TimeFormat());
         } else {

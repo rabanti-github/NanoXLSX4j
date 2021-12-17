@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static ch.rabanti.nanoxlsx4j.TestUtils.buildTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CellTest {
@@ -377,10 +378,10 @@ class CellTest {
         dateCell = new Cell(new Date(), Cell.CellType.DEFAULT, this.cellAddress);
         dateCell.resolveCellType();
         assertEquals(Cell.CellType.DATE, dateCell.getDataType());
-        Cell timeCell = new Cell(LocalTime.of(0, 59), Cell.CellType.NUMBER, this.cellAddress);
+        Cell timeCell = new Cell(buildTime(0,0, 59), Cell.CellType.NUMBER, this.cellAddress);
         timeCell.resolveCellType();
         assertEquals(Cell.CellType.TIME, timeCell.getDataType());
-        timeCell = new Cell(LocalTime.of(0, 59), Cell.CellType.DEFAULT, this.cellAddress);
+        timeCell = new Cell(buildTime(0,0, 59), Cell.CellType.DEFAULT, this.cellAddress);
         dateCell.resolveCellType();
         assertEquals(Cell.CellType.TIME, timeCell.getDataType());
     }

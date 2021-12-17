@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.time.LocalTime;
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -180,11 +180,11 @@ public class ReadDataTest {
     @DisplayName("Test of the reader functionality for LocalTime values")
     @Test()
     void readLocalTimeTest() throws Exception {
-        Map<String, LocalTime> cells = new HashMap<>();
-        cells.put("A1", LocalTime.of(0, 0, 0));
-        cells.put("A2", LocalTime.of(13, 18, 22));
-        cells.put("A3", LocalTime.of(12, 0, 0));
-        cells.put("A4", LocalTime.of(23, 59, 59));
+        Map<String, Duration> cells = new HashMap<>();
+        cells.put("A1", Helper.createDuration(0, 0, 0));
+        cells.put("A2", Helper.createDuration(13, 18, 22));
+        cells.put("A3", Helper.createDuration(12, 0, 0));
+        cells.put("A4", Helper.createDuration(23, 59, 59));
         assertValues(cells, ReadDataTest::assertEqualsFunction);
     }
 
@@ -226,7 +226,8 @@ public class ReadDataTest {
             "C1, NUMBER, DOUBLE, '-1.8538541667'",
             "D1, NUMBER, INTEGER, 2",
             "E1, STRING, STRING, 'x'",
-            "F1, STRING, STRING, '1'", // Reference 1 is cast to string '1'  "G1, Cell.CellType.NUMBER, -1.5",
+            "F1, STRING, STRING, '1'", // Reference 1 is cast to string '1'
+            "G1, NUMBER, FLOAT, '-1.5f'",
             "H1, STRING, STRING, 'y'",
             "I1, BOOL, BOOLEAN,'true'",
             "J1, BOOL, BOOLEAN,'false'",

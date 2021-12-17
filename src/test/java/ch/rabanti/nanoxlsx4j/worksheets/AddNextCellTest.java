@@ -10,10 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 
+import static ch.rabanti.nanoxlsx4j.TestUtils.buildDate;
+import static ch.rabanti.nanoxlsx4j.TestUtils.buildTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AddNextCellTest {
@@ -73,42 +76,38 @@ public class AddNextCellTest {
         WorksheetTest.assertAddedCell(worksheet, 2, "E3", expectedType, BasicStyles.Bold(), value, 5, 2);
     }
 
-    @DisplayName("Test of the addNextCell function for Date and LocalTime")
+    @DisplayName("Test of the addNextCell function for Date and Duration")
     @Test()
     void addNextCellTest3() {
         Worksheet worksheet = new Worksheet();
         worksheet.setCurrentCellAddress("D2");
         worksheet.setCurrentCellDirection(Worksheet.CellDirection.RowToRow);
         assertEquals(0, worksheet.getCells().size());
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2020, 6, 10, 11, 12, 22);
-        Date date = calendar.getTime();
+        Date date = buildDate(2020, 6, 10, 11, 12, 22);
         worksheet.addNextCell(date);
         WorksheetTest.assertAddedCell(worksheet, 1, "D2", Cell.CellType.DATE, BasicStyles.DateFormat(), date, 3, 2);
         worksheet.setCurrentCellAddress("E3");
         worksheet.setCurrentCellDirection(Worksheet.CellDirection.ColumnToColumn);
-        LocalTime time = LocalTime.of(6, 22, 13);
+        Duration time = buildTime(6, 22, 13);
         worksheet.addNextCell(time);
         WorksheetTest.assertAddedCell(worksheet, 2, "E3", Cell.CellType.TIME, BasicStyles.TimeFormat(), time, 5, 2);
     }
 
-    @DisplayName("Test of the addNextCell function for Date and LocalTime with styles")
+    @DisplayName("Test of the addNextCell function for Date and Duration with styles")
     @Test()
     void addNextCellTest4() {
         Worksheet worksheet = new Worksheet();
         worksheet.setCurrentCellAddress("D2");
         worksheet.setCurrentCellDirection(Worksheet.CellDirection.RowToRow);
         assertEquals(0, worksheet.getCells().size());
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2020, 6, 10, 11, 12, 22);
-        Date date = calendar.getTime();
+        Date date = buildDate(2020, 6, 10, 11, 12, 22);
         worksheet.addNextCell(date, BasicStyles.Bold());
         Style mixedStyle = BasicStyles.DateFormat();
         mixedStyle.append(BasicStyles.Bold());
         WorksheetTest.assertAddedCell(worksheet, 1, "D2", Cell.CellType.DATE, mixedStyle, date, 3, 2);
         worksheet.setCurrentCellAddress("E3");
         worksheet.setCurrentCellDirection(Worksheet.CellDirection.ColumnToColumn);
-        LocalTime time = LocalTime.of(6, 22, 13);
+        Duration time = buildTime(6, 22, 13);
         worksheet.addNextCell(time, BasicStyles.Underline());
         mixedStyle = BasicStyles.TimeFormat();
         mixedStyle.append(BasicStyles.Underline());
@@ -148,16 +147,14 @@ public class AddNextCellTest {
         worksheet.setCurrentCellAddress("D2");
         worksheet.setCurrentCellDirection(Worksheet.CellDirection.RowToRow);
         assertEquals(0, worksheet.getCells().size());
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2020, 6, 10, 11, 12, 22);
-        Date date = calendar.getTime();
+        Date date = buildDate(2020, 6, 10, 11, 12, 22);
         worksheet.addNextCell(date);
         Style mixedStyle = BasicStyles.DateFormat();
         mixedStyle.append(BasicStyles.BorderFrameHeader());
         WorksheetTest.assertAddedCell(worksheet, 1, "D2", Cell.CellType.DATE, mixedStyle, date, 3, 2);
         worksheet.setCurrentCellAddress("E3");
         worksheet.setCurrentCellDirection(Worksheet.CellDirection.ColumnToColumn);
-        LocalTime time = LocalTime.of(6, 22, 13);
+        Duration time = buildTime(6, 22, 13);
         worksheet.addNextCell(time);
         mixedStyle = BasicStyles.TimeFormat();
         mixedStyle.append(BasicStyles.BorderFrameHeader());

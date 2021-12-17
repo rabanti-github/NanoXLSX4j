@@ -26,7 +26,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
+import java.time.Duration;
 import java.util.*;
 
 
@@ -414,7 +414,7 @@ public class XlsxWriter {
             else if (item.getDataType().equals(Cell.CellType.TIME)) {
                 typeAttribute = "d";
                 // TODO: 'd' is probably an outdated attribute (to be checked for dates and times)
-                LocalTime time = (LocalTime) item.getValue();
+                Duration time = (Duration) item.getValue();
                 value = Helper.getOATimeString(time);
             } else {
                 if (item.getValue() == null) {
@@ -736,7 +736,7 @@ public class XlsxWriter {
             }
             if (borderStyle.getLeftStyle() != Border.StyleValue.none) {
                 sb.append("<left style=\"").append(Border.getStyleName(borderStyle.getLeftStyle())).append("\">");
-                if (Helper.isNullOrEmpty(borderStyle.getLeftColor()) == true) {
+                if (!Helper.isNullOrEmpty(borderStyle.getLeftColor())) {
                     sb.append("<color rgb=\"").append(borderStyle.getLeftColor()).append("\"/>");
                 } else {
                     sb.append("<color auto=\"1\"/>");
@@ -747,7 +747,7 @@ public class XlsxWriter {
             }
             if (borderStyle.getRightStyle() != Border.StyleValue.none) {
                 sb.append("<right style=\"").append(Border.getStyleName(borderStyle.getRightStyle())).append("\">");
-                if (Helper.isNullOrEmpty(borderStyle.getRightColor()) == true) {
+                if (!Helper.isNullOrEmpty(borderStyle.getRightColor())) {
                     sb.append("<color rgb=\"").append(borderStyle.getRightColor()).append("\"/>");
                 } else {
                     sb.append("<color auto=\"1\"/>");
@@ -758,7 +758,7 @@ public class XlsxWriter {
             }
             if (borderStyle.getTopStyle() != Border.StyleValue.none) {
                 sb.append("<top style=\"").append(Border.getStyleName(borderStyle.getTopStyle())).append("\">");
-                if (Helper.isNullOrEmpty(borderStyle.getTopColor()) == true) {
+                if (!Helper.isNullOrEmpty(borderStyle.getTopColor())) {
                     sb.append("<color rgb=\"").append(borderStyle.getTopColor()).append("\"/>");
                 } else {
                     sb.append("<color auto=\"1\"/>");
@@ -769,7 +769,7 @@ public class XlsxWriter {
             }
             if (borderStyle.getBottomStyle() != Border.StyleValue.none) {
                 sb.append("<bottom style=\"").append(Border.getStyleName(borderStyle.getBottomStyle())).append("\">");
-                if (Helper.isNullOrEmpty(borderStyle.getBottomColor()) == true) {
+                if (!Helper.isNullOrEmpty(borderStyle.getBottomColor())) {
                     sb.append("<color rgb=\"").append(borderStyle.getBottomColor()).append("\"/>");
                 } else {
                     sb.append("<color auto=\"1\"/>");
@@ -780,7 +780,7 @@ public class XlsxWriter {
             }
             if (borderStyle.getDiagonalStyle() != Border.StyleValue.none) {
                 sb.append("<diagonal style=\"").append(Border.getStyleName(borderStyle.getDiagonalStyle())).append("\">");
-                if (Helper.isNullOrEmpty(borderStyle.getDiagonalColor()) == true) {
+                if (!Helper.isNullOrEmpty(borderStyle.getDiagonalColor())) {
                     sb.append("<color rgb=\"").append(borderStyle.getDiagonalColor()).append("\"/>");
                 } else {
                     sb.append("<color auto=\"1\"/>");

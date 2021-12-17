@@ -18,14 +18,15 @@ import java.util.Map;
  * @author Raphael Stoeckli
  */
 public class WorkbookReader {
-    private final Map<Integer, String> worksheetDefinitions;
+    private final Map<Integer, WorksheetDefinition> worksheetDefinitions;
 
     /**
-     * Hashmap of worksheet definitions. The key is the worksheet number and the value is the worksheet name
+     * Hashmap of worksheet definitions. The key is the worksheet number and the value is a WorksheetDefinition object
+     * with name, hidden state and other information
      *
      * @return Hashmap of number-name tuples
      */
-    public Map<Integer, String> getWorksheetDefinitions() {
+    public Map<Integer, WorksheetDefinition> getWorksheetDefinitions() {
         return worksheetDefinitions;
     }
 
@@ -69,7 +70,15 @@ public class WorkbookReader {
             try {
                 String sheetName = node.getAttribute("name", "worksheet1");
                 int id = Integer.parseInt(node.getAttribute("sheetId")); // Default will rightly throw an exception
-                worksheetDefinitions.put(id, sheetName);
+                String state = node.getAttribute("state");
+                boolean hidden = false;
+                if (state != null && state.toLowerCase().equals("hidden"))
+                {
+                    hidden = true;
+                }
+                WorksheetDefinition definition = new WorksheetDefinition(id, sheetName);
+                definition.setHidden(hidden);
+                worksheetDefinitions.put(id, definition);
             } catch (Exception e) {
                 throw new IOException("The workbook information could not be resolved. Please see the inner exception:", e);
             }
@@ -78,6 +87,59 @@ public class WorkbookReader {
             for (XmlDocument.XmlNode childNode : node.getChildNodes()) {
                 getWorkbookInformation(childNode);
             }
+        }
+    }
+
+// ### S U B - C L A S S E S ###
+
+    /**
+     * Class for worksheet Mata-data on import
+     */
+    public static class WorksheetDefinition{
+        private final String worksheetName;
+        private final int sheetId;
+        private boolean hidden;
+
+        /**
+         * Sets the hidden state of the worksheet
+         * @param hidden True if hidden
+         */
+        public void setHidden(boolean hidden) {
+            this.hidden = hidden;
+        }
+
+        /**
+         * Gets the hidden state of the worksheet
+         * @return True if hidden
+         */
+        public boolean isHidden() {
+            return hidden;
+        }
+
+        /**
+         * gets the worksheet name
+         * @return Name as string
+         */
+        public String getWorksheetName() {
+            return worksheetName;
+        }
+
+        /**
+         * Internal worksheet ID
+         * @return Intenal id
+         */
+        public int getSheetId() {
+            return sheetId;
+        }
+
+        /**
+         * Default constructor with parameters
+         * @param worksheetName Worksheet name
+         * @param sheetId Internal ID
+         */
+        public WorksheetDefinition(int sheetId, String worksheetName) {
+            this.worksheetName = worksheetName;
+            this.sheetId = sheetId;
         }
     }
 

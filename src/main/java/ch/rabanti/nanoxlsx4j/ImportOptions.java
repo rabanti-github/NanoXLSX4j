@@ -23,9 +23,9 @@ public class ImportOptions {
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     /**
-     * Default format if LocalTime values are cast to strings
+     * Default format if time (Duration) values are cast to strings
      */
-    public static final String DEFAULT_LOCALTIME_FORMAT = "HH:mm:ss";
+    public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
 
     /**
      * Global conversion types to enforce during the import. All types other than {@link GlobalType#Default} will override defined {@link ColumnType}s
@@ -44,7 +44,7 @@ public class ImportOptions {
          */
         AllNumbersToInt,
         /**
-         * Every cell is cast to a string
+         * Every cell is cast to a string. An empty cell will be cast to an empty string
          */
         EverythingToString
     }
@@ -85,9 +85,9 @@ public class ImportOptions {
     private int enforcingStartRowNumber = 0;
     private GlobalType globalEnforcingType = GlobalType.Default;
     private String dateFormat;
-    private String localTimeFormat;
+    private String timeFormat;
     private SimpleDateFormat dateFormatter;
-    private DateTimeFormatter localTimeFormatter;
+    private DateTimeFormatter timeFormatter;
 
     /**
      * Gets whether date or time values in the workbook are interpreted as numbers
@@ -206,10 +206,9 @@ public class ImportOptions {
      */
     public void setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
-        if (dateFormat == null){
-            this.dateFormatter = null;
-        }
-        else{
+        if (dateFormat == null) {
+            this.dateFormatter = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+        } else {
             this.dateFormatter = new SimpleDateFormat(dateFormat);
         }
     }
@@ -224,42 +223,44 @@ public class ImportOptions {
     }
 
     /**
-     * Gets the format if LocalTime values are cast to Strings
+     * Gets the format if Duration (time) values are cast to Strings
      *
      * @return String format pattern
      */
-    public String getLocalTimeFormat() {
-        return localTimeFormat;
+    public String getTimeFormat() {
+        return timeFormat;
     }
 
     /**
-     * Sets the format if LocalTime values are cast to Strings
+     * Sets the format if LocalTime values are cast to Strings.<br>
+     * Note that the parameter 'n' in a pattern is used to parse the number of days since 1900-01-01
      *
-     * @param localTimeFormat String format pattern
+     * @param timeFormat String format pattern
+     * @apiNote Supported formatting tokens are all time-related patterns like 'HH', 'mm', 'ss'. To represent the number
+     * of days, the pattern 'n' is used. This deviates from the actual definition of 'n' which would be nanoseconds of the second.
      */
-    public void setLocalTimeFormat(String localTimeFormat) {
-        this.localTimeFormat = localTimeFormat;
-        if (localTimeFormat == null){
-            this.localTimeFormatter = null;
-        }
-        else{
-            this.localTimeFormatter = DateTimeFormatter.ofPattern(localTimeFormat);
+    public void setTimeFormat(String timeFormat) {
+        this.timeFormat = timeFormat;
+        if (timeFormat == null) {
+            this.timeFormatter = DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT);
+        } else {
+            this.timeFormatter = DateTimeFormatter.ofPattern(timeFormat);
         }
     }
 
     /**
-     * Gets the LocalTime formatter, set by the string of {@link ImportOptions#setLocalTimeFormat(String)}
+     * Gets the formatter to parse a Duartion (time), set by the string of {@link ImportOptions#setTimeFormat(String)}
      *
      * @return DateTimeFormatter instance
      */
-    public DateTimeFormatter getLocalTimeFormatter() {
-        return this.localTimeFormatter;
+    public DateTimeFormatter getTimeFormatter() {
+        return this.timeFormatter;
     }
 
     public ImportOptions() {
         this.dateFormat = DEFAULT_DATE_FORMAT;
-        this.localTimeFormat = DEFAULT_LOCALTIME_FORMAT;
+        this.timeFormat = DEFAULT_TIME_FORMAT;
         this.dateFormatter = new SimpleDateFormat(this.dateFormat);
-        this.localTimeFormatter = DateTimeFormatter.ofPattern(this.localTimeFormat);
+        this.timeFormatter = DateTimeFormatter.ofPattern(this.timeFormat);
     }
 }

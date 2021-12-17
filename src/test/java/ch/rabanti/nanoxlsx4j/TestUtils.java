@@ -1,15 +1,23 @@
 package ch.rabanti.nanoxlsx4j;
 
+import ch.rabanti.nanoxlsx4j.lowLevel.WorksheetReader;
+
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUtils {
+
+    private static final Calendar CALENADR;
+
+    static {
+        CALENADR = new GregorianCalendar();
+    }
 
     public static Object createInstance(String sourceType, String stringValue) {
         switch (sourceType.toUpperCase()) {
@@ -129,4 +137,48 @@ public class TestUtils {
             };
         }
     }
+
+    public static Date buildDate(int year, int month, int day) {
+        return buildDate(year, month, day, 0, 0, 0, 0);
+    }
+
+    public static Date buildDate(int year, int month, int day, int hour, int minute, int second) {
+        return buildDate(year, month, day, hour, minute, second, 0);
+    }
+
+    public static Date buildDate(int year, int month, int day, int hour, int minute, int second, int millisSecond) {
+        CALENADR.set(year, month, day, hour, minute, second);
+        CALENADR.set(Calendar.MILLISECOND, millisSecond);
+        return CALENADR.getTime();
+    }
+
+    public static Duration buildTimeWithDays(int days, int hour, int minute, int second) {
+        Duration duration = buildTime(hour, minute, second, 0);
+        duration = duration.plusDays(days);
+        return duration;
+    }
+
+    public static Duration buildTime(int hour, int minute, int second) {
+        return buildTime(hour, minute, second, 0);
+    }
+
+    public static Duration buildTime(int hour, int minute, int second, int milliSecond) {
+        int millis = milliSecond + (1000 * second) + (minute * 60000) + (hour * 3600000);
+        return Duration.ofMillis(millis);
+    }
+
+    public static String formatTime(Object given, String expectedPattern){
+        if (given == null || !(given instanceof Duration) || expectedPattern == null || expectedPattern.isEmpty()){
+            return null;
+        }
+        long totalSeconds = ((Duration)given).getSeconds();
+        long days = totalSeconds / 86400;
+        long hours = (totalSeconds - (days * 86400)) / 3600;
+        long minutes = (totalSeconds - (days * 86400) - (hours * 3600)) / 60;
+        long seconds = (totalSeconds - (days * 86400) - (hours * 3600) - (minutes * 60));
+        LocalTime tempTime = LocalTime.of((int)hours, (int)minutes, (int)seconds, (int)days);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(expectedPattern);
+        return formatter.format(tempTime);
+    }
+
 }

@@ -1,6 +1,7 @@
 package ch.rabanti.nanoxlsx4j.reader;
 
 import ch.rabanti.nanoxlsx4j.*;
+import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,15 +10,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import static ch.rabanti.nanoxlsx4j.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ImportOptionTest {
@@ -32,8 +33,8 @@ public class ImportOptionTest {
         cells.put("A4", 42);
         cells.put("A5", 0.55f);
         cells.put("A6", -0.111d);
-        cells.put("A7", getDate(2020, 10, 10, 9, 8, 7)); // month -1
-        cells.put("A8", LocalTime.of(18, 15, 12));
+        cells.put("A7", buildDate(2020, 10, 10, 9, 8, 7)); // month -1
+        cells.put("A8", buildTime(18, 15, 12));
         cells.put("A9", null);
         cells.put("A10", new Cell("=A1", Cell.CellType.FORMULA, "A10"));
         Map<String, String> expectedCells = new HashMap<String, String>();
@@ -45,7 +46,7 @@ public class ImportOptionTest {
         expectedCells.put("A6", "-0.111");
         expectedCells.put("A7", "2020-11-10 09:08:07");
         expectedCells.put("A8", "18:15:12");
-        expectedCells.put("A9", null);
+        expectedCells.put("A9", null);  // Empty remains null
         expectedCells.put("A10", "=A1");
         ImportOptions options = new ImportOptions();
         options.setGlobalEnforcingType(ImportOptions.GlobalType.EverythingToString);
@@ -63,8 +64,8 @@ public class ImportOptionTest {
         cells.put("A4", 42);
         cells.put("A5", 0.55f);
         cells.put("A6", -0.111d);
-        cells.put("A7", getDate(2020, 11, 10, 9, 8, 7));
-        cells.put("A8", LocalTime.of(18, 15, 12));
+        cells.put("A7", buildDate(2020, 11, 10, 9, 8, 7));
+        cells.put("A8", buildTime(18, 15, 12));
         cells.put("A9", null);
         cells.put("A10", "27");
         cells.put("A11", new Cell("=A1", Cell.CellType.FORMULA, "A11"));
@@ -75,8 +76,8 @@ public class ImportOptionTest {
         expectedCells.put("A4", 42d);
         expectedCells.put("A5", 0.55d);
         expectedCells.put("A6", -0.111d);
-        expectedCells.put("A7", Double.valueOf(Helper.getOADateString(getDate(2020, 11, 10, 9, 8, 7))));
-        expectedCells.put("A8", Double.valueOf(Helper.getOATimeString(LocalTime.of(18, 15, 12))));
+        expectedCells.put("A7", Double.valueOf(Helper.getOADateString(buildDate(2020, 11, 10, 9, 8, 7))));
+        expectedCells.put("A8", Double.valueOf(Helper.getOATimeString(buildTime(18, 15, 12))));
         expectedCells.put("A9", null);
         expectedCells.put("A10", 27d);
         expectedCells.put("A11", new Cell("=A1", Cell.CellType.FORMULA, "A11"));
@@ -96,13 +97,15 @@ public class ImportOptionTest {
         cells.put("A4", 42);
         cells.put("A5", 0.55f);
         cells.put("A6", -3.111d);
-        cells.put("A7", getDate(2020, 11, 10, 9, 8, 7));
-        cells.put("A8", LocalTime.of(18, 15, 12));
+        cells.put("A7", buildDate(2020, 11, 10, 9, 8, 7));
+        cells.put("A8", buildTime(18, 15, 12));
         cells.put("A9", -4.9f);
         cells.put("A10", 0.49d);
         cells.put("A11", null);
         cells.put("A12", "28");
         cells.put("A13", new Cell("=A1", Cell.CellType.FORMULA, "A13"));
+        cells.put("A14", 8589934592l);
+        cells.put("A15", 2147483650.6f);
         Map<String, Object> expectedCells = new HashMap<String, Object>();
         expectedCells.put("A1", "test");
         expectedCells.put("A2", 1);
@@ -110,13 +113,15 @@ public class ImportOptionTest {
         expectedCells.put("A4", 42);
         expectedCells.put("A5", 1);
         expectedCells.put("A6", -3);
-        expectedCells.put("A7", (int) Math.round(Helper.getOADate(getDate(2020, 11, 10, 9, 8, 7))));
-        expectedCells.put("A8", (int) Math.round(Helper.getOATime(LocalTime.of(18, 15, 12))));
+        expectedCells.put("A7", (int) Math.round(Helper.getOADate(buildDate(2020, 11, 10, 9, 8, 7))));
+        expectedCells.put("A8", (int) Math.round(Helper.getOATime(buildTime(18, 15, 12))));
         expectedCells.put("A9", -5);
         expectedCells.put("A10", 0);
         expectedCells.put("A11", null);
         expectedCells.put("A12", 28);
         expectedCells.put("A13", new Cell("=A1", Cell.CellType.FORMULA, "A13"));
+        expectedCells.put("A14", 8589934592l);
+        expectedCells.put("A15", 2147483650.6f);
         ImportOptions options = new ImportOptions();
         options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToInt);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
@@ -175,7 +180,7 @@ public class ImportOptionTest {
         Calendar calendar = Calendar.getInstance();
         calendar.set(2021, 8, 17, 11, 12, 13);
         Date date = calendar.getTime();
-        LocalTime time = LocalTime.of(18, 14, 10);
+        Duration time = buildTime(18, 14, 10);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 22);
         cells.put("A2", true);
@@ -205,7 +210,7 @@ public class ImportOptionTest {
         Calendar calendar = Calendar.getInstance();
         calendar.set(2021, 8, 17, 11, 12, 13);
         Date date = calendar.getTime();
-        LocalTime time = LocalTime.of(18, 14, 10);
+        Duration time = buildTime(18, 14, 10);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 22);
         cells.put("A2", true);
@@ -219,10 +224,10 @@ public class ImportOptionTest {
         expectedCells.put("A1", 22);
         expectedCells.put("A2", true);
         expectedCells.put("A3", Helper.getOADate(date));
-        expectedCells.put("A4", Helper.getOATime(time));
+       expectedCells.put("A4", Helper.getOATime(time));
         expectedCells.put("B1", Helper.getOADate(date));
         expectedCells.put("B2", Helper.getOATime(time));
-        expectedCells.put("B3", 22.5f); // Auto-import will cast this value to float
+        expectedCells.put("B3", 22.5d);
         expectedCells.put("B4", new Cell("=A1", Cell.CellType.FORMULA, "B4"));
         ImportOptions options = new ImportOptions();
         options.setEnforceDateTimesAsNumbers(true);
@@ -238,8 +243,8 @@ public class ImportOptionTest {
     })
     void enforcingColumnAsNumberTest(String sourceType, String sourceValue) throws Exception {
         Object column = TestUtils.createInstance(sourceType, sourceValue);
-        LocalTime time = LocalTime.of(11, 12, 13);
-        Date date = getDate(2021, 8, 14, 18, 22, 13);
+        Duration time = buildTime(11, 12, 13);
+        Date date = buildDate(2021, 8, 14, 18, 22, 13);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 22);
         cells.put("A2", "21");
@@ -252,7 +257,7 @@ public class ImportOptionTest {
         cells.put("B6", null);
         cells.put("B7", new Cell("=A1", Cell.CellType.FORMULA, "B7"));
         cells.put("C1", "2");
-        cells.put("C2", LocalTime.of(12, 14, 16));
+        cells.put("C2", buildTime(12, 14, 16));
         cells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", 22);
@@ -266,7 +271,7 @@ public class ImportOptionTest {
         expectedCells.put("B6", null);
         expectedCells.put("B7", new Cell("=A1", Cell.CellType.FORMULA, "B7"));
         expectedCells.put("C1", "2");
-        expectedCells.put("C2", LocalTime.of(12, 14, 16));
+        expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         ImportOptions options = new ImportOptions();
         if (column instanceof String) {
@@ -285,21 +290,25 @@ public class ImportOptionTest {
     })
     void enforcingColumnAsNumberTest2(String sourceType, String sourceValue) throws Exception {
         Object column = TestUtils.createInstance(sourceType, sourceValue);
-        LocalTime time = LocalTime.of(11, 12, 13);
-        Date date = getDate(2021, 8, 14, 18, 22, 13);
+        Duration time = buildTime(11, 12, 13);
+        Date date = buildDate(2021, 8, 14, 18, 22, 13);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 22);
         cells.put("A2", "21");
         cells.put("A3", true);
         cells.put("B1", 23);
         cells.put("B2", "20.1");
-        cells.put("B3", true);
-        cells.put("B4", time);
-        cells.put("B5", date);
-        cells.put("B6", null);
-        cells.put("B7", new Cell("=A1", Cell.CellType.FORMULA, "B7"));
+        cells.put("B3", time);
+        cells.put("B4", date);
+        cells.put("B5", null);
+        cells.put("B6", new Cell("=A1", Cell.CellType.FORMULA, "B7"));
+        cells.put("B7", "true");
+        cells.put("B8", "false");
+        cells.put("B9", true);
+        cells.put("B10", false);
+        cells.put("B11", "XYZ");
         cells.put("C1", "2");
-        cells.put("C2", LocalTime.of(12, 14, 16));
+        cells.put("C2", buildTime(12, 14, 16));
         cells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", 22);
@@ -307,13 +316,17 @@ public class ImportOptionTest {
         expectedCells.put("A3", true);
         expectedCells.put("B1", 23);
         expectedCells.put("B2", 20.1f);
-        expectedCells.put("B3", 1);
-        expectedCells.put("B4", Float.parseFloat(Helper.getOATimeString(time)));
-        expectedCells.put("B5", Float.parseFloat(Helper.getOADateString(date)));
-        expectedCells.put("B6", null);
-        expectedCells.put("B7", new Cell("=A1", Cell.CellType.FORMULA, "B7"));
+        expectedCells.put("B3", Helper.getOATime(time));
+        expectedCells.put("B4", Helper.getOADate(date));
+        expectedCells.put("B5", null);
+        expectedCells.put("B6", new Cell("=A1", Cell.CellType.FORMULA, "B7"));
+        expectedCells.put("B7", 1);
+        expectedCells.put("B8", 0);
+        expectedCells.put("B9", 1);
+        expectedCells.put("B10", 0);
+        expectedCells.put("B11", "XYZ");
         expectedCells.put("C1", "2");
-        expectedCells.put("C2", LocalTime.of(12, 14, 16));
+        expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         ImportOptions options = new ImportOptions();
         if (column instanceof String) {
@@ -348,6 +361,61 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
+    @DisplayName("Test of the import options for the import column type with wrong style information: Double")
+    @ParameterizedTest(name = "Given column {1} should lead to a valid import")
+    @CsvSource({
+            "STRING, 'B', Double",
+            "INTEGER, '1', Double",
+    })
+    void enforcingColumnAsNumberTest4(String sourceType, String sourceValue, ImportOptions.ColumnType columnType) throws Exception {
+        //Object column = TestUtils.createInstance(sourceType, sourceValue);
+        //Duration time = buildTime(11, 12, 13);
+        Object column = TestUtils.createInstance(sourceType, sourceValue);
+        Date date = buildDate(2021, 8, 14, 18, 22, 13);
+        Map<String, Object> cells = new HashMap<>();
+        Cell a1 = new Cell(1, Cell.CellType.NUMBER, "A1");
+        Cell b1 = new Cell(-10, Cell.CellType.NUMBER, "B1");
+        b1.setStyle(BasicStyles.DateFormat());
+        Cell b2 = new Cell(-5.5f, Cell.CellType.NUMBER, "B2");
+        b1.setStyle(BasicStyles.TimeFormat());
+        Cell b3 = new Cell("5-7", Cell.CellType.STRING, "B3");
+        b1.setStyle(BasicStyles.DateFormat());
+        Cell b4 = new Cell("-1", Cell.CellType.STRING, "B4");
+        b1.setStyle(BasicStyles.DateFormat());
+        Cell b5 = new Cell("1870-06-01 12:12:00", Cell.CellType.STRING, "B5");
+        b5.setStyle(BasicStyles.DateFormat());
+        Cell c1 = new Cell(10, Cell.CellType.NUMBER, "C1");
+        cells.put("A1", a1);
+        cells.put("B1", b1);
+        cells.put("B2", b2);
+        cells.put("B3", b3);
+        cells.put("B4", b4);
+        cells.put("B5", b5);
+        cells.put("C1", c1);
+        Map<String, Cell> expectedCells = new HashMap<>();
+        Cell exA1 = new Cell(1, Cell.CellType.NUMBER, "A1");
+        Cell exB1 = new Cell(-10d, Cell.CellType.NUMBER, "B1");
+        Cell exB2 = new Cell(-5.5d, Cell.CellType.NUMBER, "B2");
+        Cell exB3 = new Cell("5-7", Cell.CellType.STRING, "B3");
+        Cell exB4 = new Cell(-1d, Cell.CellType.STRING, "B4");
+        Cell exB5 = new Cell("1870-06-01 12:12:00", Cell.CellType.STRING, "B5");
+        Cell exC1 = new Cell(10, Cell.CellType.NUMBER, "C1");
+        expectedCells.put("A1", exA1);
+        expectedCells.put("B1", exB1);
+        expectedCells.put("B2", exB2);
+        expectedCells.put("B3", exB3);
+        expectedCells.put("B4", exB4);
+        expectedCells.put("B5", exB5);
+        expectedCells.put("C1", exC1);
+        ImportOptions options = new ImportOptions();
+        if (column instanceof String) {
+            options.addEnforcedColumn((String) column, columnType);
+        } else {
+            options.addEnforcedColumn((Integer) column, columnType);
+        }
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
     @DisplayName("Test of the import options for the import column type: Bool")
     @ParameterizedTest(name = "Given column {1} should lead to a valid import")
     @CsvSource({
@@ -356,8 +424,8 @@ public class ImportOptionTest {
     })
     void enforcingColumnAsBooleanTest(String sourceType, String sourceValue) throws Exception {
         Object column = TestUtils.createInstance(sourceType, sourceValue);
-        LocalTime time = LocalTime.of(11, 12, 13);
-        Date date = getDate(2021, 8, 14, 18, 22, 13);
+        Duration time = buildTime(11, 12, 13);
+        Date date = buildDate(2021, 8, 14, 18, 22, 13);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 1);
         cells.put("A2", "21");
@@ -374,7 +442,7 @@ public class ImportOptionTest {
         cells.put("B10", null);
         cells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
         cells.put("C1", "0");
-        cells.put("C2", LocalTime.of(12, 14, 16));
+        cells.put("C2", buildTime(12, 14, 16));
         cells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", 1);
@@ -392,7 +460,7 @@ public class ImportOptionTest {
         expectedCells.put("B10", null);
         expectedCells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
         expectedCells.put("C1", "0");
-        expectedCells.put("C2", LocalTime.of(12, 14, 16));
+        expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         ImportOptions options = new ImportOptions();
         if (column instanceof String) {
@@ -411,10 +479,10 @@ public class ImportOptionTest {
     })
     void enforcingColumnAsStringTest(String sourceType, String sourceValue) throws Exception {
         Object column = TestUtils.createInstance(sourceType, sourceValue);
-        LocalTime time = LocalTime.of(11, 12, 13);
-        Date date = getDate(2021, 8, 14, 18, 22, 13);
+        Duration time = buildTime(11, 12, 13);
+        Date date = buildDate(2021, 8, 14, 18, 22, 13);
         SimpleDateFormat dateFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT);
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_LOCALTIME_FORMAT);
+        //DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_TIME_FORMAT);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 1);
         cells.put("A2", "21");
@@ -430,8 +498,13 @@ public class ImportOptionTest {
         cells.put("B9", 1.111d);
         cells.put("B10", null);
         cells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
+        cells.put("B13", 9223372036854775806l);
+        cells.put("B15", (short)32766);
+        cells.put("B17", 0.000000001d);
+        cells.put("B18", 0.123f);
+        cells.put("B19", (byte)17);
         cells.put("C1", "0");
-        cells.put("C2", LocalTime.of(12, 14, 16));
+        cells.put("C2", buildTime(12, 14, 16));
         cells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", 1);
@@ -440,7 +513,7 @@ public class ImportOptionTest {
         expectedCells.put("B1", "1");
         expectedCells.put("B2", "Test");
         expectedCells.put("B3", "false");
-        expectedCells.put("B4", timeFormatter.format(time));
+        expectedCells.put("B4", TestUtils.formatTime(time, ImportOptions.DEFAULT_TIME_FORMAT));
         expectedCells.put("B5", dateFormatter.format(date));
         expectedCells.put("B6", "0.0"); // Java behavior - May become broken
         expectedCells.put("B7", "true");
@@ -448,8 +521,14 @@ public class ImportOptionTest {
         expectedCells.put("B9", "1.111");
         expectedCells.put("B10", null);
         expectedCells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
+        expectedCells.put("B13", "9223372036854775806");
+        expectedCells.put("B15", "32766");
+        expectedCells.put("B17", "1.0E-9"); // Currently handled without option to format the number
+        expectedCells.put("B18", "0.123");
+        expectedCells.put("B19", "17");
+
         expectedCells.put("C1", "0");
-        expectedCells.put("C2", LocalTime.of(12, 14, 16));
+        expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         ImportOptions options = new ImportOptions();
         if (column instanceof String) {
@@ -468,10 +547,10 @@ public class ImportOptionTest {
     })
     void enforcingColumnAsDateTest(String sourceType, String sourceValue) throws Exception {
         Object column = TestUtils.createInstance(sourceType, sourceValue);
-        LocalTime time = LocalTime.of(11, 12, 13);
-        Date date = getDate(2021, 7, 14, 18, 22, 13);
+        Duration time = buildTime(11, 12, 13);
+        Date date = buildDate(2021, 7, 14, 18, 22, 13);
         SimpleDateFormat dateFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT);
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_LOCALTIME_FORMAT);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_TIME_FORMAT);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 1);
         cells.put("A2", "21");
@@ -487,32 +566,91 @@ public class ImportOptionTest {
         cells.put("B9", 44494.5f);
         cells.put("B10", null);
         cells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
+        cells.put("B13", 2958466);
         cells.put("C1", "0");
-        cells.put("C2", LocalTime.of(12, 14, 16));
+        cells.put("C2", buildTime(12, 14, 16));
         cells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", 1);
         expectedCells.put("A2", "21");
         expectedCells.put("A3", true);
-        expectedCells.put("B1", getDate(1900, 0, 1, 0, 0, 0));
+        expectedCells.put("B1", buildDate(1900, 0, 1, 0, 0, 0));
         expectedCells.put("B2", "Test");
         expectedCells.put("B3", false);
-        expectedCells.put("B4", 0.46681712962963); // Fallback since < 1
-        expectedCells.put("B5", getDate(2021, 7, 14, 18, 22, 13));
-        expectedCells.put("B6", getDate(2021, 9, 25, 12, 30, 10));
-        expectedCells.put("B7", getDate(2021, 9, 25, 12, 30, 10));
-        expectedCells.put("B8", -10d); // Fallback to double from int
-        expectedCells.put("B9", getDate(2021, 9, 25, 12, 0, 0));
+        expectedCells.put("B4", buildDate(1900, 0, 1, 11, 12, 13));
+        expectedCells.put("B5", buildDate(2021, 7, 14, 18, 22, 13));
+        expectedCells.put("B6", buildDate(2021, 9, 25, 12, 30, 10));
+        expectedCells.put("B7", buildDate(2021, 9, 25, 12, 30, 10));
+        expectedCells.put("B8", -10);
+        expectedCells.put("B9", buildDate(2021, 9, 25, 12, 0, 0));
         expectedCells.put("B10", null);
         expectedCells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
+        expectedCells.put("B13", 2958466); // Exceeds year 9999
         expectedCells.put("C1", "0");
-        expectedCells.put("C2", LocalTime.of(12, 14, 16));
+        expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         ImportOptions options = new ImportOptions();
         if (column instanceof String) {
             options.addEnforcedColumn((String) column, ImportOptions.ColumnType.Date);
         } else {
             options.addEnforcedColumn((Integer) column, ImportOptions.ColumnType.Date);
+        }
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
+    @DisplayName("Test of the import options for the import column type with wrong style information: Date")
+    @ParameterizedTest(name = "Given column {1} should lead to a valid import")
+    @CsvSource({
+            "STRING, 'B', Date",
+            "INTEGER, '1', Date",
+            "STRING, 'B', Time",
+            "INTEGER, '1', Time",
+    })
+    public void enforcingColumnAsDateTest2(String sourceType, String sourceValue, ImportOptions.ColumnType type) throws Exception {
+        Object column = TestUtils.createInstance(sourceType, sourceValue);
+        Map<String, Object> cells = new HashMap<>();
+        Cell a1 = new Cell(1, Cell.CellType.NUMBER, "A1");
+        Cell b1 = new Cell(-10, Cell.CellType.NUMBER, "B1");
+        b1.setStyle(BasicStyles.DateFormat());
+        Cell b2 = new Cell(-5.5f, Cell.CellType.NUMBER, "B2");
+        b2.setStyle(BasicStyles.TimeFormat());
+        Cell b3 = new Cell("5-7", Cell.CellType.STRING, "B3");
+        b3.setStyle(BasicStyles.DateFormat());
+        Cell b4 = new Cell("-1", Cell.CellType.STRING, "B4");
+        b4.setStyle(BasicStyles.TimeFormat());
+        Cell b5 = new Cell("1870-06-06 12:12:00", Cell.CellType.STRING, "B5");
+        b5.setStyle(BasicStyles.DateFormat());
+        Cell c1 = new Cell(10, Cell.CellType.NUMBER, "C1");
+        cells.put("A1", a1);
+        cells.put("B1", b1);
+        cells.put("B2", b2);
+        cells.put("B3", b3);
+        cells.put("B4", b4);
+        cells.put("B5", b5);
+        cells.put("C1", c1);
+        Map<String, Cell> expectedCells = new HashMap<>();
+        Cell exA1 = new Cell(1, Cell.CellType.NUMBER, "A1");
+        Cell exB1 = new Cell(-10, Cell.CellType.NUMBER, "B1");
+        Cell exB2 = new Cell(-5.5f, Cell.CellType.NUMBER, "B2");
+        Cell exB3 = new Cell("5-7", Cell.CellType.STRING, "B3");
+        Cell exB4 = new Cell("-1", Cell.CellType.STRING, "B4");
+        Cell exB5 = new Cell("1870-06-06 12:12:00", Cell.CellType.STRING, "B4");
+        Cell exC1 = new Cell(10, Cell.CellType.NUMBER, "C1");
+        expectedCells.put("A1", exA1);
+        expectedCells.put("B1", exB1);
+        expectedCells.put("B2", exB2);
+        expectedCells.put("B3", exB3);
+        expectedCells.put("B4", exB4);
+        expectedCells.put("B5", exB5);
+        expectedCells.put("C1", exC1);
+        ImportOptions options = new ImportOptions();
+        if (column instanceof String)
+        {
+            options.addEnforcedColumn((String)column, type);
+        }
+            else
+        {
+            options.addEnforcedColumn((int)column, type);
         }
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
@@ -525,10 +663,10 @@ public class ImportOptionTest {
     })
     void enforcingColumnAsTimeTest(String sourceType, String sourceValue) throws Exception {
         Object column = TestUtils.createInstance(sourceType, sourceValue);
-        LocalTime time = LocalTime.of(11, 12, 13);
-        Date date = getDate(2021, 7, 14, 18, 22, 13);
+        Duration time = buildTime(11, 12, 13);
+        Date date = buildDate(2021, 7, 14, 18, 22, 13);
         SimpleDateFormat dateFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT);
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_LOCALTIME_FORMAT);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_TIME_FORMAT);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 1);
         cells.put("A2", "21");
@@ -545,25 +683,25 @@ public class ImportOptionTest {
         cells.put("B10", null);
         cells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
         cells.put("C1", "0");
-        cells.put("C2", LocalTime.of(12, 14, 16));
+        cells.put("C2", buildTime(12, 14, 16));
         cells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", 1);
         expectedCells.put("A2", "21");
         expectedCells.put("A3", true);
-        expectedCells.put("B1", LocalTime.of(0, 0, 0));
+        expectedCells.put("B1", buildTimeWithDays(1, 0, 0, 0));
         expectedCells.put("B2", "Test");
         expectedCells.put("B3", false);
-        expectedCells.put("B4", time); // Fallback since < 1
-        expectedCells.put("B5", LocalTime.of(18, 22, 13));
-        expectedCells.put("B6", LocalTime.of(12, 30, 10));
-        expectedCells.put("B7", LocalTime.of(12, 30, 10));
-        expectedCells.put("B8", -10d); // Fallback to double from int
-        expectedCells.put("B9", LocalTime.of(12, 0, 0));
+        expectedCells.put("B4", time);
+        expectedCells.put("B5", buildTimeWithDays(44422,18, 22, 13));
+        expectedCells.put("B6", buildTimeWithDays(44494,12, 30, 10));
+        expectedCells.put("B7", buildTimeWithDays(44494,12, 30, 10));
+        expectedCells.put("B8", -10);
+        expectedCells.put("B9", buildTimeWithDays(44494,12, 0, 0));
         expectedCells.put("B10", null);
         expectedCells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
         expectedCells.put("C1", "0");
-        expectedCells.put("C2", LocalTime.of(12, 14, 16));
+        expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
         ImportOptions options = new ImportOptions();
         if (column instanceof String) {
@@ -589,7 +727,7 @@ public class ImportOptionTest {
     void enforcingColumnStartRowTest(ImportOptions.ColumnType columnType, String givenType, String givenSourceValue, String expectedType, String expectedSourceValue) throws Exception {
         Object givenValue = TestUtils.createInstance(givenType, givenSourceValue);
         Object expectedValue = TestUtils.createInstance(expectedType, expectedSourceValue);
-        LocalTime time = LocalTime.of(11, 12, 13);
+        Duration time = buildTime(11, 12, 13);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", "test");
         cells.put("A2", 23);
@@ -627,9 +765,9 @@ public class ImportOptionTest {
             "Time",
     })
     void enforcingColumnStartRowTest2(ImportOptions.ColumnType columnType) throws Exception {
-        LocalTime time = LocalTime.of(11, 12, 13);
-        LocalTime expectedTime = LocalTime.of(12, 13, 14);
-        Date expectedDate = getDate(2021, 7, 14, 18, 22, 13); // 7 = August
+        Duration time = buildTime(11, 12, 13);
+        Duration expectedTime = buildTime(12, 13, 14);
+        Date expectedDate = buildDate(2021, 7, 14, 18, 22, 13); // 7 = August
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", "test");
         cells.put("A2", 23);
@@ -692,11 +830,9 @@ public class ImportOptionTest {
             importOptions.setDateFormat(pattern);
             importOptions.addEnforcedColumn(0, ImportOptions.ColumnType.Date);
         } else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-            TemporalAccessor accessor = formatter.parse(expectedValue);
-            LocalTime expected = LocalTime.from(accessor);
+            Duration expected = Helper.parseTime(expectedValue, "HH:mm:ss");
             expectedCells.put("A1", expected);
-            importOptions.setLocalTimeFormat(pattern);
+            importOptions.setTimeFormat(pattern);
             importOptions.addEnforcedColumn(0, ImportOptions.ColumnType.Time);
         }
 
@@ -709,7 +845,7 @@ public class ImportOptionTest {
     void importOptionsGetterTest(){
         ImportOptions options = new ImportOptions();
         options.setDateFormat("yyyy-mm-dd");
-        options.setLocalTimeFormat("hh-mm");
+        options.setTimeFormat("hh-mm");
         options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToInt);
         options.setEnforcingStartRowNumber(7);
         options.setEnforceDateTimesAsNumbers(true);
@@ -717,7 +853,7 @@ public class ImportOptionTest {
 
         assertEquals("yyyy-mm-dd", options.getDateFormat());
         assertNotNull(options.getDateFormatter());
-        assertEquals("hh-mm", options.getLocalTimeFormat());
+        assertEquals("hh-mm", options.getTimeFormat());
         assertEquals(ImportOptions.GlobalType.AllNumbersToInt, options.getGlobalEnforcingType());
         assertEquals(7, options.getEnforcingStartRowNumber());
         assertTrue(options.isEnforceDateTimesAsNumbers());
@@ -743,7 +879,7 @@ public class ImportOptionTest {
     void missingTimeFormatterTest() throws Exception {
         ImportOptions options = new ImportOptions();
         options.setEnforceDateTimesAsNumbers(true);
-        options.setLocalTimeFormat(null);
+        options.setTimeFormat(null);
         options.addEnforcedColumn("A", ImportOptions.ColumnType.Time);
         Map<String, Object> cells = new HashMap<>();
         Map<String, Object> expectedCells = new HashMap<>();
@@ -752,13 +888,15 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
-
-    private static Date getDate(int year, int month, int day, int hour, int minute, int second) {
+/*
+    private static Date buildDate(int year, int month, int day, int hour, int minute, int second) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day, hour, minute, second);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
     }
+    
+ */
 
     private static <T, D> void assertValues(Map<String, T> givenCells, ImportOptions importOptions, BiConsumer<Object, Object> assertionAction) throws Exception {
         assertValues(givenCells, importOptions, assertionAction, null);
@@ -807,9 +945,9 @@ public class ImportOptionTest {
             double e = Helper.getOADate((Date) expected);
             double g = Helper.getOADate((Date) given);
             assertApproximateFunction(e, g);
-        } else if (given instanceof LocalTime) {
-            double g = Helper.getOATime((LocalTime) given);
-            double e = Helper.getOATime((LocalTime) expected);
+        } else if (given instanceof Duration) {
+            double g = Helper.getOATime((Duration) given);
+            double e = Helper.getOATime((Duration) expected);
             assertApproximateFunction(e, g);
         } else {
             assertEqualsFunction(expected, given);

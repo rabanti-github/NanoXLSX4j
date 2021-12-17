@@ -10,14 +10,17 @@ import ch.rabanti.nanoxlsx4j.Address;
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.ImportOptions;
+import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
-import java.time.temporal.TemporalAccessor;
+import java.time.temporal.*;
 import java.util.*;
 
 import static ch.rabanti.nanoxlsx4j.Cell.CellType.DATE;
@@ -32,6 +35,7 @@ public class WorksheetReader {
 
     private static final double ZERO_THRESHOLD = 0.000001d;
     private static Calendar CALENDAR = Calendar.getInstance();
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#########");
 
     private int worksheetNumber;
     private final String name;
@@ -41,6 +45,7 @@ public class WorksheetReader {
     private final ImportOptions importOptions;
     private List<String> dateStyles;
     private List<String> timeStyles;
+    private Map<String, Style> resolvedStyles;
 
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
@@ -52,6 +57,30 @@ public class WorksheetReader {
     }
 
     /**
+     * Gets the number of the worksheet
+     * @return Number of the worksheet
+     */
+    public int getWorksheetNumber() {
+        return worksheetNumber;
+    }
+
+    /**
+     * Gets the name of the worksheet
+     * @return Name of the worksheet
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Gets the assignment of resolved styles to cell addresses
+     * @return Map of cell address-style number tuples
+     */
+    public Map<String, String> getStyleAssignment() {
+        return styleAssignment;
+    }
+
+    /**
      * Constructor with parameters and import options
      *
      * @param sharedStrings        SharedStringsReader object
@@ -60,7 +89,7 @@ public class WorksheetReader {
      * @param styleReaderContainer Resolved styles, used to determine dates or times
      */
     public WorksheetReader(SharedStringsReader sharedStrings, String name, int number, StyleReaderContainer styleReaderContainer, ImportOptions options) {
-        data = new HashMap<>();
+        this.data = new HashMap<>();
         this.name = name;
         this.worksheetNumber = number;
         this.sharedStrings = sharedStrings;
@@ -76,14 +105,17 @@ public class WorksheetReader {
     private void processStyles(StyleReaderContainer styleReaderContainer) {
         this.dateStyles = new ArrayList<>();
         this.timeStyles = new ArrayList<>();
+        this.resolvedStyles = new HashMap<>();
         for (int i = 0; i < styleReaderContainer.getStyleCount(); i++) {
+            String index = Integer.toString(i);
             StyleReaderContainer.StyleResult result = styleReaderContainer.evaluateDateTimeStyle(i, true);
             if (result.isDateStyle()) {
-                this.dateStyles.add(Integer.toString(i));
+                this.dateStyles.add(index);
             }
             if (result.isTimeStyle()) {
-                this.timeStyles.add(Integer.toString(i));
+                this.timeStyles.add(index);
             }
+            resolvedStyles.put(index, result.getResult());
         }
     }
 
@@ -126,7 +158,6 @@ public class WorksheetReader {
         String styleNumber = "";
         String address = "A1";
         String value = "";
-        String formula = null;
         if (rowChild.getName().equalsIgnoreCase("c")) {
             address = rowChild.getAttribute("r"); // Mandatory
             type = rowChild.getAttribute("t"); // can be null if not existing
@@ -137,275 +168,685 @@ public class WorksheetReader {
                         value = valueNode.getInnerText();
                     }
                     if (valueNode.getName().equalsIgnoreCase("f")) {
-                        formula = valueNode.getInnerText();
+                        value = valueNode.getInnerText();
                     }
                 }
             }
         }
-        resolveCellData(address, type, value, styleNumber, formula);
+        String key = address.toUpperCase();
+        styleAssignment.put(key,styleNumber);
+        data.put(key, resolveCellData(value, type, styleNumber, address));
     }
 
-    /**
-     * Resolves the data of a read cell, transforms it into a cell object and adds it to the data
-     *
-     * @param addressString Address of the cell
-     * @param type          Expected data type
-     * @param value         Raw value as string
-     * @param styleNumber   Style number as string (can be null)
-     * @param formula       Formula as string (can be null; data type determines whether value or formula is used)
-     */
-    private void resolveCellData(String addressString, String type, String value, String styleNumber, String formula) {
-        Address address = new Address(addressString);
-        String key = addressString.toUpperCase();
-        this.styleAssignment.put(key, styleNumber);
-        if (importOptions == null) {
-            this.data.put(key, autoResolveCellData(address, type, value, styleNumber, formula));
-        } else {
-            this.data.put(key, resolveCellDataConditionally(address, type, value, styleNumber, formula));
+    private Cell resolveCellData(String raw, String type, String styleNumber, String address) {
+        Cell.CellType importedType = Cell.CellType.DEFAULT;
+        Object rawValue;
+        if (checkType(type, "b"))
+        {
+            rawValue = tryParseBool(raw);
+            if (rawValue != null)
+            {
+                importedType = Cell.CellType.BOOL;
+            }
+            else
+            {
+                rawValue = getNumericValue(raw);
+                if (rawValue != null)
+                {
+                    importedType = Cell.CellType.NUMBER;
+                }
+            }
+        }
+        else if (checkType(type, "s"))
+        {
+            importedType = Cell.CellType.STRING;
+            rawValue = resolveSharedString(raw);
+        }
+        else if (checkType(type, "str"))
+        {
+            importedType = Cell.CellType.FORMULA;
+            rawValue = raw;
+        }
+        else if (dateStyles.contains(styleNumber) && (checkType(type, null) || checkType(type, "") || checkType(type, "n")))
+        {
+            Result<Object, Cell.CellType> result = getDateTimeValue(raw,  DATE);
+            rawValue = result.result1;
+            importedType = result.result2;
+        }
+        else if (timeStyles.contains(styleNumber) && (checkType(type, null) || checkType(type, "") || checkType(type, "n")))
+        {
+            Result<Object, Cell.CellType> result = getDateTimeValue(raw,  TIME);
+            rawValue = result.result1;
+            importedType = result.result2;
+        }
+        else
+        {
+            importedType = Cell.CellType.NUMBER;
+            rawValue = getNumericValue(raw);
+        }
+        if (rawValue == null && raw.equals(""))
+        {
+            importedType = Cell.CellType.EMPTY;
+            rawValue = null;
+        }
+        else if (rawValue == null && raw.length() > 0)
+        {
+            importedType = Cell.CellType.STRING;
+            rawValue = raw;
+        }
+        Address cellAddress = new Address(address);
+        if (importOptions != null)
+        {
+            if (importOptions.getEnforcedColumnTypes().size() > 0)
+            {
+                rawValue = getEnforcedColumnValue(rawValue, importedType, cellAddress);
+            }
+            rawValue = getGloballyEnforcedValue(rawValue, cellAddress);
+            rawValue = getGloballyEnforcedFlagValues(rawValue, cellAddress);
+            importedType = resolveType(rawValue, importedType);
+            if (importedType == Cell.CellType.DATE && rawValue instanceof Date && ((Date)rawValue).getTime() < Helper.FIRST_ALLOWED_EXCEL_DATE.getTime())
+            {
+                // Fix conversion from time to date, where time has no days
+                rawValue =  addTemporalUnits((Date)rawValue, 1,0,0,0);
+            }
+        }
+        return createCell(rawValue, importedType, cellAddress, styleNumber);
+    }
+
+    private boolean checkType(String type, String expectation){
+        if (type == null && expectation != null){
+            return false;
+        }
+        else if (type == null){
+            return true;
+        }
+        return expectation.equals(type);
+    }
+
+    private Cell.CellType resolveType(Object value, Cell.CellType defaultType)
+    {
+        if (defaultType == Cell.CellType.FORMULA)
+        {
+            return defaultType;
+        }
+        if (value == null)
+        {
+            return Cell.CellType.EMPTY;
+        }
+        Class<?> cls = value.getClass();
+        if (BigDecimal.class.equals(cls) || Long.class.equals(cls) || Short.class.equals(cls) || Float.class.equals(cls) || Double.class.equals(cls) || Byte.class.equals(cls) || Integer.class.equals(cls)) {
+            return Cell.CellType.NUMBER;
+        } else if (Date.class.equals(cls)) {
+            return DATE;
+        } else if (Duration.class.equals(cls)) {
+            return TIME;
+        } else if (Boolean.class.equals(cls)) {
+            return Cell.CellType.BOOL;
+        }
+        else{
+            return Cell.CellType.STRING;
         }
     }
 
-    /**
-     * Resolves the data of a read cell with conditions of import options, transforms it into a cell object
-     *
-     * @param address     Address of the cell
-     * @param type        Expected data type
-     * @param value       Raw value as string
-     * @param styleNumber Style number as string (can be null)
-     * @param formula     Formula as string (can be null; data type determines whether value or formula is used)
-     * @return The resolved Cell
-     */
-    private Cell resolveCellDataConditionally(Address address, String type, String value, String styleNumber, String formula) {
-        if (address.Row < importOptions.getEnforcingStartRowNumber()) {
-            return autoResolveCellData(address, type, value, styleNumber, formula); // Skip enforcing
+    private Object getGloballyEnforcedFlagValues(Object data, Address address)
+    {
+        if (address.Row < importOptions.getEnforcingStartRowNumber())
+        {
+            return data;
         }
-        Cell tempCell = autoResolveCellData(address, type, value, styleNumber, formula);
-        switch (importOptions.getGlobalEnforcingType()) {
-            case AllNumbersToDouble:
-                if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
-                    Number number = (Number) tempCell.getValue();
-                    return new Cell(number.doubleValue(), tempCell.getDataType(), address);
-                } else if (tempCell.getDataType().equals(Cell.CellType.BOOL)) {
-                    double tempDouble = ((boolean) tempCell.getValue()) ? 1d : 0d;
-                    return new Cell(tempDouble, Cell.CellType.NUMBER, address);
-                } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
-                    return new Cell(Double.valueOf(value), Cell.CellType.NUMBER, address);
-                } else if (tempCell.getDataType().equals(Cell.CellType.STRING)) {
-                    Number number = tryParseDecimal(tempCell.getValue().toString());
-                    if (number != null) {
-                        return new Cell(number.doubleValue(), Cell.CellType.NUMBER, address);
-                    }
-                }
-                return tempCell;
-            case AllNumbersToInt:
-                if (tempCell.getDataType().equals(Cell.CellType.NUMBER)) {
-                    Number number = (Number) tempCell.getValue();
-                    return new Cell((int) Math.round(number.doubleValue()), tempCell.getDataType(), address);
-                } else if (tempCell.getDataType().equals(Cell.CellType.BOOL)) {
-                    int tempInt = ((boolean) tempCell.getValue()) ? 1 : 0;
-                    return new Cell(tempInt, Cell.CellType.NUMBER, address);
-                } else if (tempCell.getDataType().equals(DATE) || tempCell.getDataType().equals(TIME)) {
-                    return new Cell((int) Math.round(Double.parseDouble(value)), Cell.CellType.NUMBER, address);
-                } else if (tempCell.getDataType().equals(Cell.CellType.STRING)) {
-                    Number number = tryParseDecimal(tempCell.getValue().toString());
-                    if (number != null) {
-                        return new Cell(number.intValue(), Cell.CellType.NUMBER, address);
-                    }
-                }
-                return tempCell;
-            case EverythingToString:
-                return getEnforcedStingValue(address, type, value, styleNumber, formula, importOptions);
+        if (importOptions.isEnforceDateTimesAsNumbers())
+        {
+            if (data instanceof Date)
+            {
+                data = Helper.getOADate((Date)data, true);
+            }
+                else if (data instanceof Duration)
+            {
+                data = Helper.getOATime((Duration) data);
+            }
         }
-        if (Helper.isNullOrEmpty(value) && Helper.isNullOrEmpty(formula)) {
-            if (importOptions.isEnforceEmptyValuesAsString()) {
-                return new Cell("", Cell.CellType.STRING, address);
+        if (importOptions.isEnforceEmptyValuesAsString())
+        {
+            if (data == null)
+            {
+                return "";
+            }
+        }
+        return data;
+    }
+
+    private Object getGloballyEnforcedValue(Object data, Address address)
+    {
+        if (address.Row < importOptions.getEnforcingStartRowNumber())
+        {
+            return data;
+        }
+        if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToDouble))
+        {
+            Object tempDouble = convertToDouble(data);
+            if (tempDouble != null)
+            {
+                return tempDouble;
+            }
+        }
+        else if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToInt))
+        {
+            Object tempInt = convertToInt(data);
+            if (tempInt != null)
+            {
+                return tempInt;
+            }
+        }
+        else if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.EverythingToString))
+        {
+            return convertToString(data);
+        }
+        return data;
+    }
+
+    private Object getEnforcedColumnValue(Object data, Cell.CellType importedTyp, Address address)
+    {
+        if (address.Row < importOptions.getEnforcingStartRowNumber())
+        {
+            return data;
+        }
+        if (!importOptions.getEnforcedColumnTypes().containsKey(address.Column))
+        {
+            return data;
+        }
+        if (importedTyp == Cell.CellType.FORMULA)
+        {
+            return data;
+        }
+        switch (importOptions.getEnforcedColumnTypes().get(address.Column))
+        {
+            case Numeric:
+                return getNumericValue(data, importedTyp);
+            case Double:
+                return convertToDouble(data);
+            case Date:
+                return convertToDate(data);
+            case Time:
+                return convertToTime(data);
+            case Bool:
+                return convertToBool(data);
+            default:
+                return convertToString(data);
+        }
+    }
+
+    private Object convertToBool(Object data)
+    {
+        if (data == null){
+            return null;
+        }
+        Class<?> cls = data.getClass();
+        if (Boolean.class.equals(cls)) {
+            return data;
+        } else if (Long.class.equals(cls) || Short.class.equals(cls) || Float.class.equals(cls) || Double.class.equals(cls) || Byte.class.equals(cls) || BigDecimal.class.equals(cls) || Integer.class.equals(cls)) {
+            Object tempObject = convertToDouble(data);
+            if (tempObject instanceof Double) {
+                double tempDouble = (double) tempObject;
+                if (compareDouble(tempDouble, 0d)) {
+                    return false;
+                } else if (compareDouble(tempDouble, 1d)) {
+                    return true;
+                }
+            }
+        } else if (String.class.equals(cls)) {
+            String tempString = (String) data;
+            Boolean tempBool = tryParseBool(tempString);
+            if (tempBool != null) {
+                return tempBool;
+            } else if (tempString.equals("1")) {
+                return true;
+            } else if (tempString.equals("0")) {
+                return false;
+            }
+        }
+        return data;
+    }
+
+    private Boolean tryParseBool(String raw){
+        if (Helper.isNullOrEmpty(raw)){
+            return null;
+        }
+        Object nValue = getNumericValue(raw);
+        if (nValue != null){
+            Number n = (Number) nValue;
+            if (n.intValue() == 1 ){
+                return true;
+            }
+            else if (n.intValue() == 0){
+                return false;
+            }
+            else{
+                return null;
+            }
+        }
+        if (raw.equalsIgnoreCase("true")){
+            return true;
+        }
+        else if (raw.equalsIgnoreCase("false")){
+            return false;
+        }
+        return null;
+    }
+
+    private Object convertToDouble(Object data)
+    {
+        if (data == null){
+            return null;
+        }
+        Class<?> cls = data.getClass();
+        if (Double.class.equals(cls)) {
+            return data;
+        } else if (BigDecimal.class.equals(cls)) {
+            return ((BigDecimal) data).doubleValue();
+        } else if (Long.class.equals(cls) || Short.class.equals(cls) || Float.class.equals(cls) || Byte.class.equals(cls) || Integer.class.equals(cls)) {
+            Number number = (Number) data;
+            return number.doubleValue();
+        } else if (Boolean.class.equals(cls)) {
+            if (Boolean.TRUE.equals(data)) {
+                return 1d;
             } else {
-                return new Cell(null, Cell.CellType.EMPTY, address);
+                return 0d;
+            }
+        } else if (Date.class.equals(cls)) {
+            return Helper.getOADate((Date) data);
+        } else if (Duration.class.equals(cls)) {
+            return Helper.getOATime((Duration) data);
+        } else if (String.class.equals(cls)) {
+            String tempString = (String) data;
+            Double dValue = tryParseDouble(tempString);
+            if (dValue != null) {
+                return dValue;
+            }
+            Date tempDate = tryParseDate(tempString, importOptions);
+            if (tempDate != null) {
+                return Helper.getOADate(tempDate);
+            }
+            Duration tempTime = tryParseTime(tempString, importOptions);
+            if (tempTime != null) {
+                return Helper.getOATime(tempTime);
             }
         }
-        if (importOptions.getEnforcedColumnTypes().containsKey(address.Column)) {
+        return data;
+    }
 
-            ImportOptions.ColumnType importType = importOptions.getEnforcedColumnTypes().get(address.Column);
-            if (type != null && type.equals("s")) {
-                // Resolve shared string first
-                value = resolveSharedString(value);
+    private Object convertToInt(Object data)
+    {
+        if (data == null){
+            return null;
+        }
+        double tempDouble;
+        Class<?> cls = data.getClass();
+        if (Date.class.equals(cls)) {
+            tempDouble = Helper.getOADate((Date) data, true);
+            return convertDoubleToInt(tempDouble);
+        } else if (Duration.class.equals(cls)) {
+            tempDouble = Helper.getOATime((Duration) data);
+            return convertDoubleToInt(tempDouble);
+        } else if (Float.class.equals(cls) || BigDecimal.class.equals(cls) || Double.class.equals(cls)) {
+            Object tempInt = tryConvertDoubleToInt(data);
+            if (tempInt != null) {
+                return tempInt;
             }
-            switch (importType) {
-                case Bool:
-                    tempCell = getBooleanValue(value, address);
-                    if (tempCell == null) {
-                        return autoResolveCellData(address, type, value, styleNumber, formula);
-                    }
-                    return tempCell;
-                case Date:
-                    if (!Helper.isNullOrEmpty(formula)) {
-                        return tempCell;
-                    }
-                    if (importOptions.isEnforceDateTimesAsNumbers()) {
-                        return getNumericValue(value, address, styleNumber);
-                    } else {
-                        return getDateTimeValue(value, address, DATE, importOptions, type);
-                    }
-                case Time:
-                    if (!Helper.isNullOrEmpty(formula)) {
-                        return tempCell;
-                    }
-                    if (importOptions.isEnforceDateTimesAsNumbers()) {
-                        return getNumericValue(value, address, styleNumber);
-                    } else {
-                        return getDateTimeValue(value, address, TIME, importOptions, type);
-                    }
-                case Numeric:
-                    if (!Helper.isNullOrEmpty(formula)) {
-                        return tempCell;
-                    }
-                    return getNumericValue(value, address);
-                case Double:
-                    if (!Helper.isNullOrEmpty(formula)) {
-                        return tempCell;
-                    }
-                    return getDoubleValue(value, address);
-                default:
-                    // Is string
-                    if (Helper.isNullOrEmpty(formula)) {
-                        return getStringValue(value, address, type, styleNumber, importOptions);
-                    } else {
-                        return getStringValue(formula, address, type, styleNumber, importOptions);
-                    }
+        } else if (Boolean.class.equals(cls)) {
+            return (boolean) data ? 1 : 0;
+        } else if (String.class.equals(cls)) {
+            Integer tempInt2 = tryParseInt((String) data);
+            if (tempInt2 != null) {
+                return tempInt2;
             }
         }
-        return autoResolveCellData(address, type, value, styleNumber, formula);
+        return null;
     }
 
-    /**
-     * Resolves the data of a read cell automatically, transforms it into a cell object
-     *
-     * @param address     Address of the cell
-     * @param type        Expected data type
-     * @param value       Raw value as string
-     * @param styleNumber Style number as string (can be null)
-     * @param formula     Formula as string (can be null; data type determines whether value or formula is used)
-     * @return The resolved Cell
-     */
-    private Cell autoResolveCellData(Address address, String type, String value, String styleNumber, String formula) {
-        if (type != null && type.equals("s")) // string (declared)
-        {
-            return getStringValue(value, address, type, null, null);
-        } else if (type != null && type.equals("b")) // boolean
-        {
-            Cell tempCell = getBooleanValue(value, address);
-            if (tempCell == null) {
-                return autoResolveCellData(address, null, value, styleNumber, formula);
+    private Object convertToDate(Object data)
+    {
+        if (data == null){
+            return null;
+        }
+        Class<?> cls = data.getClass();
+        if (Date.class.equals(cls)) {
+            return data;
+        } else if (Duration.class.equals(cls)) {
+            Date root = Helper.FIRST_ALLOWED_EXCEL_DATE;
+            TimeComponent t = new TimeComponent(((Duration) data).get(ChronoUnit.SECONDS));
+            root = addTemporalUnits(root, -1, t.getHours(), t.getMinutes(), t.getSeconds());
+            return root;
+        } else if (Double.class.equals(cls) || BigDecimal.class.equals(cls) || Long.class.equals(cls) || Short.class.equals(cls) || Float.class.equals(cls) || Byte.class.equals(cls) || Integer.class.equals(cls)) {
+            return convertDateFromDouble(data);
+        } else if (String.class.equals(cls)) {
+            Date date2 = tryParseDate((String) data, importOptions.getDateFormatter());
+            if (date2 != null) {
+                return date2;
             }
-            return tempCell;
-        } else if (dateStyles.contains(styleNumber))  // date (priority)
+            return convertDateFromDouble(data);
+        }
+        return data;
+    }
+
+    private static Date tryParseDate(String raw, SimpleDateFormat formatter){
+        try{
+            Date date;
+        if (Helper.isNullOrEmpty(raw) || formatter == null){
+            SimpleDateFormat defaultFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT);
+            date = defaultFormatter.parse(raw);
+        }
+        else
         {
-            return getDateTimeValue(value, address, DATE, importOptions);
-        } else if (timeStyles.contains(styleNumber)) // time
-        {
-            return getDateTimeValue(value, address, TIME, importOptions);
-        } else if (Helper.isNullOrEmpty(type) || type.equals("n")) // try numeric if not parsed as date or time, before numeric
-        {
-            if (Helper.isNullOrEmpty(value)) {
-                return new Cell(null, Cell.CellType.EMPTY, address);
+            date = formatter.parse(raw);
+        }
+            if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime())
+            {
+                return date;
             }
-            return getNumericValue(value, address);
-        } else if (formula != null) // formula before string
+        }
+        catch (Exception ex){
+        }
+        return null;
+    }
+
+    private Object convertToTime(Object data)
+    {
+        if (data == null){
+            return null;
+        }
+        Class<?> cls = data.getClass();
+        if (Date.class.equals(cls)) {
+            return convertTimeFromDouble(data);
+        } else if (Duration.class.equals(cls)) {
+            return data;
+        } else if (Double.class.equals(cls) || BigDecimal.class.equals(cls) || Long.class.equals(cls) || Short.class.equals(cls) || Float.class.equals(cls) || Byte.class.equals(cls) || Integer.class.equals(cls)) {
+            return convertTimeFromDouble(data);
+        } else if (String.class.equals(cls)) {
+            Duration time = tryParseTime((String) data, importOptions.getTimeFormatter());
+            if (time != null) {
+                return time;
+            }
+            return convertTimeFromDouble(data);
+        }
+        return data;
+    }
+
+
+    private static Duration tryParseTime(String raw, DateTimeFormatter formatter){
+        try{
+            Duration time;
+            if (Helper.isNullOrEmpty(raw) || formatter == null){
+                DateTimeFormatter defaultFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_TIME_FORMAT);
+                time = Helper.parseTime(raw, defaultFormatter);
+            }
+            else
+            {
+                time = Helper.parseTime(raw, formatter);
+            }
+            double days = time.get(ChronoUnit.SECONDS) / 86400d;
+            if (days >= 0d && days < Helper.MAX_OADATE_VALUE)
+            {
+                return time;
+            }
+        }
+        catch (Exception ex){
+        }
+        return null;
+    }
+
+    private Result<Object, Cell.CellType> getDateTimeValue(String raw, Cell.CellType valueType)
+    {
+        Double dValue = tryParseDouble(raw);
+        if (dValue == null)
         {
-            return new Cell(formula, Cell.CellType.FORMULA, address);
-        } else // fall back to sting
+            return new Result<>(raw, Cell.CellType.STRING);
+        }
+        if ((valueType == Cell.CellType.DATE && (dValue < Helper.MIN_OADATE_VALUE || dValue > Helper.MAX_OADATE_VALUE)) || (valueType == Cell.CellType.TIME && (dValue < 0.0 || dValue > Helper.MAX_OADATE_VALUE)))
         {
-            return getStringValue(value, address);
+            // fallback to number (cannot be anything else)
+            return new Result<>(getNumericValue(raw), Cell.CellType.NUMBER);
+        }
+        Date tempDate = Helper.getDateFromOA(dValue);
+        if (dValue < 1.0)
+        {
+            tempDate = addTemporalUnits(tempDate, 1,0,0,0); // Modify wrong 1st date when < 1
+        }
+        if (valueType == Cell.CellType.DATE)
+        {
+            return new Result<>(tempDate, DATE);
+        }
+        else
+        {
+            CALENDAR.setTime(tempDate);
+            return new Result<>(Helper.createDuration(dValue.intValue(), CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), TIME);
         }
     }
 
-    /**
-     * Handles the value of a raw cell as string. An appropriate formatting is applied to Date and LocalTime values. Null values are left on type EMPTY
-     *
-     * @param address     Address of the cell
-     * @param type        Expected data type
-     * @param value       Raw value as string
-     * @param styleNumber Style number as string (can be null)
-     * @param formula     Formula as string (can be null; data type determines whether value or formula is used)
-     * @param options     Options instance to determine appropriate formatting information
-     * @return Cell of the type string
-     */
-    private Cell getEnforcedStingValue(Address address, String type, String value, String styleNumber, String formula, ImportOptions options) {
-        Cell parsed = autoResolveCellData(address, type, value, styleNumber, formula);
-        if (parsed.getDataType().equals(Cell.CellType.EMPTY)) {
-            return parsed;
-        } else if (parsed.getDataType().equals(Cell.CellType.DATE)) {
-            return getStringValue(options.getDateFormatter().format((Date) parsed.getValue()), address);
-        } else if (parsed.getDataType().equals(Cell.CellType.TIME)) {
-            return getStringValue(options.getLocalTimeFormatter().format((LocalTime) parsed.getValue()), address);
-        } else {
-            return getStringValue(parsed.getValue().toString(), address);
+    private Object convertDateFromDouble(Object data)
+    {
+        Object oaDate = convertToDouble(data);
+        if (oaDate instanceof Double && (Double)oaDate < Helper.MAX_OADATE_VALUE)
+        {
+            Date date = Helper.getDateFromOA((Double)oaDate);
+            if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime())
+            {
+                return date;
+            }
+        }
+        return data;
+    }
+
+    private Object convertTimeFromDouble(Object data)
+    {
+        Object oaDate = convertToDouble(data);
+        if (oaDate instanceof Double)
+        { double d = (Double)oaDate;
+            if (d >= Helper.MIN_OADATE_VALUE && d <= Helper.MAX_OADATE_VALUE)
+            {
+                Date date = Helper.getDateFromOA(d);
+                CALENDAR.setTime(date);
+                return Helper.createDuration((int) d, CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND));
+            }
+        }
+        return data;
+    }
+
+    private Object tryConvertDoubleToInt(Object data)
+    {
+        Number number = (Number)data;
+        double dValue = number.doubleValue();
+        if (dValue > Integer.MIN_VALUE && dValue < Integer.MAX_VALUE)
+        {
+            return (int)Math.round(number.doubleValue());
+        }
+        return null;
+    }
+
+    public Object convertDoubleToInt(Object data)
+    {
+        Number number = (Number) data;
+        return (int)Math.round(number.doubleValue());
+    }
+
+    private String convertToString(Object data)
+    {
+        if (data == null) {
+            return null;
+        }
+        Class<?> cls = data.getClass();
+        if (Integer.class.equals(cls)) {
+            return ((Integer) data).toString();
+        } else if (Long.class.equals(cls)) {
+            return ((Long) data).toString();
+        } else if (Float.class.equals(cls)) {
+            return ((Float) data).toString();
+        } else if (Double.class.equals(cls)) {
+            return ((Double) data).toString();
+        } else if (BigDecimal.class.equals(cls)) {
+            return ((BigDecimal) data).toString();
+        } else if (Boolean.class.equals(cls)) {
+            return ((Boolean) data).toString();
+        } else if (Date.class.equals(cls)) {
+            return importOptions.getDateFormatter().format((Date) data);
+        } else if (Duration.class.equals(cls)) {
+            TimeComponent t = new TimeComponent((int) ((Duration) data).toSeconds());
+            LocalTime tempTime = LocalTime.of(t.getHours(), t.getMinutes(), t.getSeconds(), t.getDays());
+            return importOptions.getTimeFormatter().format(tempTime);
+        }
+        return data.toString();
+    }
+
+    private Object getNumericValue(Object raw, Cell.CellType importedType)
+    {
+        if (raw == null)
+        {
+            return null;
+        }
+        Object tempObject;
+        switch (importedType)
+        {
+            case STRING:
+                String tempString = raw.toString();
+                tempObject = getNumericValue(tempString);
+                if (tempObject != null)
+                {
+                    return tempObject;
+                }
+                Date tempDate = tryParseDate(tempString, importOptions);
+                if (tempDate != null)
+                {
+                    return Helper.getOADate(tempDate);
+                }
+                Duration tempTime = tryParseTime(tempString, importOptions);
+                if (tempTime != null)
+                {
+                    return Helper.getOATime(tempTime);
+                }
+                tempObject = convertToBool(raw);
+                if (tempObject instanceof Boolean)
+            {
+                return (boolean)tempObject ? 1 : 0;
+            }
+            break;
+            case NUMBER:
+                return raw;
+            case  DATE:
+                return Helper.getOADate((Date)raw);
+            case  TIME:
+                return Helper.getOATime((Duration) raw);
+            case  BOOL:
+                if ((boolean)raw){
+                    return 1;
+                }
+                return 0;
+        }
+        return raw;
+    }
+
+    private Object getNumericValue(String raw)
+    {
+        // integer section
+        Integer iValue = tryParseInt(raw);
+        if (iValue != null)
+        {
+            return iValue;
+        }
+        Long lValue = tryParseLong(raw);
+        if (lValue != null)
+        {
+            return lValue;
+        }
+        // float section
+        Number dcValue = tryParseDecimal(raw);
+        if (dcValue != null && dcValue instanceof Float){
+            return dcValue.floatValue();
+        }
+        else if (dcValue != null && dcValue instanceof Double){
+            return dcValue.doubleValue();
+        }
+        /*
+        Float fValue = tryParseFloat(raw);
+        Double dValue = tryParseDouble(raw);
+        if (dcValue != null){
+            String decimalString = DECIMAL_FORMAT.format(dValue);
+            String[] div = decimalString.split("\\.");
+            int decimals = 0;
+            if (div.length == 2 && div[1].endsWith("0")){
+                decimals = div[1].substring(0, div[1].lastIndexOf('0')).length();
+            }
+            else if (div.length == 2){
+                decimals = div[1].length();
+            }
+            if (decimals < 7 && !fValue.isInfinite() && Math.abs(dValue - fValue) < ZERO_THRESHOLD)
+            {
+                return dcValue.floatValue();
+            }
+            else
+            {
+                return dcValue.doubleValue();
+            }
+        }
+
+        // High range float section
+        else if (fValue != null && fValue >= Float.MIN_VALUE && fValue <= Float.MAX_VALUE && !Float.isFinite(fValue))
+        {
+            return fValue;
+        }
+        if (dValue != null)
+        {
+            return dValue;
+        }
+         */
+        return null;
+    }
+
+    private static class Result<R1, R2>{
+        public final R1 result1;
+        public final R2 result2;
+        public Result(R1 result1, R2 result2) {
+            this.result1 = result1;
+            this.result2 = result2;
         }
     }
 
-    /**
-     * Parses the numeric value of a raw cell. The order of possible number types are: int, float double. If nothing applies, a string is returned
-     *
-     * @param raw     Raw value as string
-     * @param address Address of cell
-     * @return Cell of the type int, float, double or string as fall-back type<
-     */
-    private Cell getNumericValue(String raw, Address address) {
-        return getNumericValue(raw, address, null);
+    private static Date addTemporalUnits(Date root, int days, int hours, int minutes, int seconds){
+        CALENDAR.setTime(root);
+        if (days != 0){
+            CALENDAR.add(Calendar.DATE, days);
+        }
+        if (hours != 0){
+            CALENDAR.add(Calendar.HOUR, hours);
+        }
+        if (minutes != 0){
+            CALENDAR.add(Calendar.MINUTE, minutes);
+        }
+        if (seconds != 0){
+            CALENDAR.add(Calendar.SECOND, seconds);
+        }
+        return CALENDAR.getTime();
     }
 
-    /**
-     * Parses the numeric value of a raw cell. The order of possible number types are: int, float double. If nothing applies, a string is returned
-     *
-     * @param raw         Raw value as string
-     * @param address     Address of cell
-     * @param styleNumber Parameter to determine whether a double is enforced in case of a date or time style
-     * @return Cell of the type int, float, double or string as fall-back type<
-     */
-    private Cell getNumericValue(String raw, Address address, String styleNumber) {
-        if (dateStyles.contains(styleNumber) || timeStyles.contains(styleNumber)) {
-            return getDoubleValue(raw, address);
-        }
-        Integer i = tryParseInt(raw);
-        if (i != null) {
-            return new Cell(i, Cell.CellType.NUMBER, address);
-        }
-        Long l = tryParseLong(raw);
-        if (l != null) {
-            return new Cell(l, Cell.CellType.NUMBER, address);
-        }
-
-        Number n = tryParseDecimal(raw);
-        if (n instanceof Float) {
-            return new Cell(n.floatValue(), Cell.CellType.NUMBER, address);
-        }
-        return getDoubleValue(raw, address);
-    }
-
-    /**
-     * Parses a raw value as double
-     *
-     * @param raw     Raw value as string
-     * @param address Address of the cell
-     * @return Cell of the type double or string as fall-back type
-     */
-    private Cell getDoubleValue(String raw, Address address) {
+    private static Double tryParseDouble(String raw){
         try {
-            if (importOptions != null && importOptions.isEnforceDateTimesAsNumbers()) {
-                Date date = tryParseDate(raw, importOptions);
-                if (date != null) {
-                    return new Cell(Helper.getOADate(date), Cell.CellType.NUMBER, address);
-                }
-                LocalTime time = tryParseTime(raw, importOptions);
-                if (time != null) {
-                    return new Cell(Helper.getOATime(time), Cell.CellType.NUMBER, address);
-                }
-            }
-            double d = Double.parseDouble(raw);
-            return new Cell(d, Cell.CellType.NUMBER, address);
-        } catch (Exception ex) {
-            return new Cell(raw, Cell.CellType.STRING, address);
+            return Double.parseDouble(raw);
         }
+        catch (Exception ex){
+            return null;
+        }
+    }
+
+    private static Float tryParseFloat(String raw){
+        try {
+            return Float.parseFloat(raw);
+        }
+        catch (Exception ex){
+            return null;
+        }
+    }
+
+    private static boolean compareDouble(double d1, double d2){
+        final double epsilon = 0.000001d;
+        return Math.abs(d1 - d2) < epsilon;
     }
 
     /**
@@ -417,8 +858,15 @@ public class WorksheetReader {
     private static Number tryParseDecimal(String value) {
         try {
             double d = Double.parseDouble(value);
+            String[] dString = DECIMAL_FORMAT.format(d).split("\\.");
+            int numberOfDigits = 0;
+            if (dString.length == 2){
+                numberOfDigits = dString[1].length();
+            }
             float f = Float.parseFloat(value);
-            if (Float.isFinite(f) && (f != 0.0 || (float) d == d)) {
+            if (Float.isFinite(f) && numberOfDigits < 7 && (f != 0.0 && d != 0.0)) {
+            //if (Float.isFinite(f) && numberOfDigits < 7 && (Math.abs(f) <= Float.MAX_VALUE || Math.abs(f - d) < 1d)) {
+            //if (Float.isFinite(f) && (f == 0.0 || (float) d == d)) {
                 return f;
             }
             return d;
@@ -456,56 +904,6 @@ public class WorksheetReader {
     }
 
     /**
-     * Parses the string value of a raw cell. May take the value from the shared string table, if available
-     *
-     * @param raw     Raw value as string
-     * @param address Address of the cell
-     * @return Cell of the type string
-     */
-    private Cell getStringValue(String raw, Address address) {
-        return new Cell(resolveSharedString(raw), Cell.CellType.STRING, address);
-    }
-
-    /**
-     * Parses the string value of a raw cell. May take the value from the shared string table, if available
-     *
-     * @param raw         Raw value as string
-     * @param address     Address of the cell
-     * @param type        Type to check whether the raw value is already a resolved string
-     * @param styleNumber Optional style number that may indicate a date or time value
-     * @param options     Optional import options to determine the date and time formatting information
-     * @return Cell of the type string
-     */
-    private Cell getStringValue(String raw, Address address, String type, String styleNumber, ImportOptions options) {
-        String value = raw;
-        if (type != null && type.equals("s")) {
-            return new Cell(resolveSharedString(value), Cell.CellType.STRING, address);
-        } else if (type != null && type.equals("b")) {
-            Cell tempCell = getBooleanValue(value, address);
-            if (tempCell != null) {
-                value = tempCell.getValue().toString();
-            }
-        } else if (styleNumber != null) {
-            Cell tempCell = null;
-            if (dateStyles.contains(styleNumber))  // date (priority)
-            {
-                tempCell = getDateTimeValue(value, address, Cell.CellType.DATE, options);
-            } else if (timeStyles.contains(styleNumber)) // time
-            {
-                tempCell = getDateTimeValue(value, address, Cell.CellType.TIME, options);
-            }
-            if (tempCell != null && tempCell.getDataType().equals(DATE)) {
-                DateFormat format = options.getDateFormatter();
-                value = format.format((Date) tempCell.getValue());
-            } else if (tempCell != null && tempCell.getDataType().equals(TIME)) {
-                DateTimeFormatter format = options.getLocalTimeFormatter();
-                value = format.format((LocalTime) tempCell.getValue());
-            }
-        }
-        return new Cell(value, Cell.CellType.STRING, address);
-    }
-
-    /**
      * Tries to resolve a shared string from its ID
      *
      * @param raw Raw value that can be either an ID of a shared string or an actual string value
@@ -522,118 +920,6 @@ public class WorksheetReader {
             }
         } catch (Exception ex) {
             return raw;
-        }
-    }
-
-    /**
-     * Parses the boolean value of a raw cell
-     *
-     * @param raw     Raw value as string
-     * @param address Address of the cell
-     * @return Cell of the type boolean or null if not able to parse
-     */
-    private static Cell getBooleanValue(String raw, Address address) {
-        if (raw == null || raw.isBlank()) {
-            return null;
-        }
-        String str = raw.toLowerCase();
-        if (str.equals("1") || str.equals("true")) {
-            return new Cell(true, Cell.CellType.BOOL, address);
-        } else if (str.equals("0") || str.equals("false")) {
-            return new Cell(false, Cell.CellType.BOOL, address);
-        } else {
-            try {
-                double d = Double.parseDouble(raw);
-                if (d >= -ZERO_THRESHOLD && d <= ZERO_THRESHOLD) {
-                    return new Cell(false, Cell.CellType.BOOL, address);
-                } else if (d - 1 >= -ZERO_THRESHOLD && d - 1 <= ZERO_THRESHOLD) {
-                    return new Cell(true, Cell.CellType.BOOL, address);
-                }
-            } catch (Exception ex) {
-                return null;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Parses the date (Date) or time (LocalTime) value of a raw cell. If the value is numeric, but out of range of a OAdate, a numeric value will be returned instead. If invalid, the string representation will be returned.
-     *
-     * @param raw     Raw value as string
-     * @param address Address of the cell
-     * @param type    Type of the value to be converted: Valid values are DATE and TIME
-     * @param options Import options instance to take the Date or LocalTime parser from
-     * @return CellResolverTuple with information about the validity and resolved data
-     * @throws IllegalArgumentException Thrown if an unsupported type was passed
-     */
-    private static Cell getDateTimeValue(String raw, Address address, Cell.CellType type, ImportOptions options) {
-        return getDateTimeValue(raw, address, type, options, null);
-    }
-
-    /**
-     * Parses the date (Date) or time (LocalTime) value of a raw cell. If the value is numeric, but out of range of a OAdate, a numeric value will be returned instead. If invalid, the string representation will be returned.
-     *
-     * @param raw       Raw value as string
-     * @param address   Address of the cell
-     * @param valueType Type of the value to be converted: Valid values are DATE and TIME
-     * @param type      Parameter to check whether the raw value should be tried to be parsed as date or time
-     * @param options   Import options instance to take the Date or LocalTime parser from
-     * @return CellResolverTuple with information about the validity and resolved data
-     * @throws IllegalArgumentException Thrown if an unsupported type was passed
-     */
-    private static Cell getDateTimeValue(String raw, Address address, Cell.CellType valueType, ImportOptions options, String type) {
-        if (type != null && type.equals("b")) {
-            return getBooleanValue(raw, address);
-        }
-        try {
-            if (type != null && type.equals("s")) {
-                Date tempDate = tryParseDate(raw, options);
-                if (tempDate != null && valueType == Cell.CellType.DATE) {
-                    return getTemporalCell(tempDate, address);
-                } else if (tempDate != null && valueType == Cell.CellType.TIME) {
-                    CALENDAR.setTime(tempDate);
-                    return getTemporalCell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), address);
-                }
-                LocalTime tempTime = tryParseTime(raw, options);
-                if (tempTime != null && valueType == Cell.CellType.TIME) {
-                    return getTemporalCell(tempTime, address);
-                }
-            }
-            double d = Double.parseDouble(raw);
-            if (d < XlsxWriter.MIN_OADATE_VALUE || d > XlsxWriter.MAX_OADATE_VALUE || (options != null && options.isEnforceDateTimesAsNumbers())) {
-                return new Cell(d, Cell.CellType.NUMBER, address); // Invalid OAdate / enforced number == plain number
-            }
-            Date date = Helper.getDateFromOA(d);
-            if (valueType.equals(DATE)) {
-
-                if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime()) {
-                    return getTemporalCell(date, address);
-                } else {
-                    // Prevent to import 00.01.1900, since it will lead to trouble when exporting / writing
-                    return new Cell(d, Cell.CellType.NUMBER, address);
-                }
-            } else {
-                // TIME
-                CALENDAR.setTime(date);
-                return getTemporalCell(LocalTime.of(CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), address);
-            }
-        } catch (Exception e) {
-            return new Cell(raw, Cell.CellType.STRING, address);
-        }
-    }
-
-    /**
-     * Gets a cell either as Date, LocalTime or as double if enforced by import options
-     *
-     * @param dateTimeValue Value of the cell
-     * @param address       Address of the cell
-     * @return Casted cell
-     */
-    private static Cell getTemporalCell(Object dateTimeValue, Address address) {
-        if (dateTimeValue instanceof Date) {
-            return new Cell((Date) dateTimeValue, Cell.CellType.DATE, address);
-        } else {
-            return new Cell((LocalTime) dateTimeValue, Cell.CellType.TIME, address);
         }
     }
 
@@ -659,24 +945,97 @@ public class WorksheetReader {
         return null;
     }
 
+
     /**
-     * Tris to parse a LocalTime instance from a string
+     * Creates a generic cell with style information
+     * @param value value of the cell
+     * @param type Cell type
+     * @param address Cell address
+     * @param styleNumber Style number of the cell
+     * @return Resolved cell
+     */
+    private Cell createCell(Object value, Cell.CellType type, Address address, String styleNumber) {
+        Cell cell = new Cell(value, type, address);
+        if (styleNumber != null && resolvedStyles.containsKey(styleNumber)){
+            cell.setStyle(resolvedStyles.get(styleNumber));
+        }
+        return cell;
+    }
+
+    /**
+     * Tris to parse a Duration instance from a string
      *
      * @param raw     String to parse
      * @param options Import options to take the parsing patterns of
-     * @return LocalTime instance or null if not possible to parse
+     * @return Duration instance or null if not possible to parse
      */
-    private static LocalTime tryParseTime(String raw, ImportOptions options) {
+    private static Duration tryParseTime(String raw, ImportOptions options) {
         try {
-            if (options == null || options.getLocalTimeFormatter() == null) {
+            if (options == null || options.getTimeFormatter() == null) {
                 // no generic parsing available
                 return null;
             }
-            TemporalAccessor time = options.getLocalTimeFormatter().parse(raw);
-            return LocalTime.of(time.get(ChronoField.HOUR_OF_DAY), time.get(ChronoField.MINUTE_OF_HOUR), time.get(ChronoField.SECOND_OF_MINUTE));
+            TemporalAccessor time = options.getTimeFormatter().parse(raw);
+            int days = time.get(ChronoField.NANO_OF_SECOND);
+            int hours = time.get(ChronoField.HOUR_OF_DAY);
+            int minutes = time.get(ChronoField.MINUTE_OF_HOUR);
+            int seconds = time.get(ChronoField.SECOND_OF_MINUTE);
+            Duration duration = Duration.ofSeconds(hours * 3600 + minutes * 60 + seconds, 0 );
+            return duration.plusDays(days);
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    private static class  TimeComponent{
+        private int hours;
+        private int minutes;
+        private int seconds;
+        private int days;
+
+        public int getHours() {
+            return hours;
+        }
+
+        public void setHours(int hours) {
+            this.hours = hours;
+        }
+
+        public int getMinutes() {
+            return minutes;
+        }
+
+        public void setMinutes(int minutes) {
+            this.minutes = minutes;
+        }
+
+        public int getSeconds() {
+            return seconds;
+        }
+
+        public void setSeconds(int seconds) {
+            this.seconds = seconds;
+        }
+
+        public int getDays() {
+            return days;
+        }
+
+        public void setDays(int days) {
+            this.days = days;
+        }
+
+        public TimeComponent(long totalSeconds) {
+            calculateComponents((int)totalSeconds);
+        }
+
+        private void calculateComponents(int totalSeconds){
+            this.days = totalSeconds / 86400;
+            this.hours = (totalSeconds - (this.days * 86400)) / 3600;
+            this.minutes = (totalSeconds - (this.days * 86400) - (this.hours * 3600)) / 60;
+            this.seconds = (totalSeconds - (this.days * 86400) - (this.hours * 3600) - (this.minutes * 60));
+        }
+
     }
 
 
