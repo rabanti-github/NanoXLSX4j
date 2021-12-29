@@ -1,7 +1,9 @@
 package ch.rabanti.nanoxlsx4j;
 
-import ch.rabanti.nanoxlsx4j.lowLevel.WorksheetReader;
+import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -109,6 +111,16 @@ public class TestUtils {
         assertTrue(list.contains(expectedEntry));
     }
 
+    public static Workbook saveAndLoadWorkbook(Workbook workbook, ImportOptions options) throws IOException, java.io.IOException {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        workbook.saveAsStream(stream);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(stream.toByteArray());
+        stream.close();
+        Workbook givenWorkbook = Workbook.load(inputStream, options);
+        inputStream.close();
+        return givenWorkbook;
+    }
+
     public interface TriConsumer<T1, T2, T3> {
         void accept(T1 t1, T2 t2, T3 t3);
 
@@ -167,16 +179,16 @@ public class TestUtils {
         return Duration.ofMillis(millis);
     }
 
-    public static String formatTime(Object given, String expectedPattern){
-        if (given == null || !(given instanceof Duration) || expectedPattern == null || expectedPattern.isEmpty()){
+    public static String formatTime(Object given, String expectedPattern) {
+        if (given == null || !(given instanceof Duration) || expectedPattern == null || expectedPattern.isEmpty()) {
             return null;
         }
-        long totalSeconds = ((Duration)given).getSeconds();
+        long totalSeconds = ((Duration) given).getSeconds();
         long days = totalSeconds / 86400;
         long hours = (totalSeconds - (days * 86400)) / 3600;
         long minutes = (totalSeconds - (days * 86400) - (hours * 3600)) / 60;
         long seconds = (totalSeconds - (days * 86400) - (hours * 3600) - (minutes * 60));
-        LocalTime tempTime = LocalTime.of((int)hours, (int)minutes, (int)seconds, (int)days);
+        LocalTime tempTime = LocalTime.of((int) hours, (int) minutes, (int) seconds, (int) days);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(expectedPattern);
         return formatter.format(tempTime);
     }

@@ -180,21 +180,6 @@ public class XlsxReader {
         }
         wb.setImportState(false);
         return wb;
-        /*
-        Workbook wb = new Workbook(false);
-        WorksheetReader wr;
-        Worksheet ws;
-        for (Map.Entry<Integer, WorkbookReader.WorksheetDefinition> entry : this.workbook.getWorksheetDefinitions().entrySet()) {
-            wr = this.worksheets.get(entry.getKey());
-            ws = new Worksheet(entry.getValue().getWorksheetName(), entry.getValue().getSheetId(), wb);
-            for (Map.Entry<String, Cell> cell : wr.getData().entrySet()) {
-                ws.addCell(cell.getValue(), cell.getKey());
-            }
-            wb.addWorksheet(ws);
-        }
-        return wb;
-
-         */
     }
 
 }

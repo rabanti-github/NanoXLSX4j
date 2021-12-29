@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.Calendar;
@@ -201,12 +199,7 @@ public class ReadDataTest {
         for (Map.Entry<String, String> cell : cells.entrySet()) {
             workbook.getCurrentWorksheet().addCellFormula(cell.getValue(), cell.getKey());
         }
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        workbook.saveAsStream(stream);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(stream.toByteArray());
-        stream.close();
-        Workbook givenWorkbook = Workbook.load(inputStream);
-        inputStream.close();
+        Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
 
         assertNotNull(givenWorkbook);
         Worksheet givenWorksheet = givenWorkbook.setCurrentWorksheet(0);
@@ -296,12 +289,7 @@ public class ReadDataTest {
         for (Map.Entry<String, T> cell : givenCells.entrySet()) {
             workbook.getCurrentWorksheet().addCell(cell.getValue(), cell.getKey());
         }
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        workbook.saveAsStream(stream);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(stream.toByteArray());
-        stream.close();
-        Workbook givenWorkbook = Workbook.load(inputStream);
-        inputStream.close();
+        Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
 
         assertNotNull(givenWorkbook);
         Worksheet givenWorksheet = givenWorkbook.setCurrentWorksheet(0);

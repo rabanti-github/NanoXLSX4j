@@ -764,39 +764,6 @@ public class WorksheetReader {
         else if (dcValue != null && dcValue instanceof Double){
             return dcValue.doubleValue();
         }
-        /*
-        Float fValue = tryParseFloat(raw);
-        Double dValue = tryParseDouble(raw);
-        if (dcValue != null){
-            String decimalString = DECIMAL_FORMAT.format(dValue);
-            String[] div = decimalString.split("\\.");
-            int decimals = 0;
-            if (div.length == 2 && div[1].endsWith("0")){
-                decimals = div[1].substring(0, div[1].lastIndexOf('0')).length();
-            }
-            else if (div.length == 2){
-                decimals = div[1].length();
-            }
-            if (decimals < 7 && !fValue.isInfinite() && Math.abs(dValue - fValue) < ZERO_THRESHOLD)
-            {
-                return dcValue.floatValue();
-            }
-            else
-            {
-                return dcValue.doubleValue();
-            }
-        }
-
-        // High range float section
-        else if (fValue != null && fValue >= Float.MIN_VALUE && fValue <= Float.MAX_VALUE && !Float.isFinite(fValue))
-        {
-            return fValue;
-        }
-        if (dValue != null)
-        {
-            return dValue;
-        }
-         */
         return null;
     }
 
@@ -865,8 +832,6 @@ public class WorksheetReader {
             }
             float f = Float.parseFloat(value);
             if (Float.isFinite(f) && numberOfDigits < 7 && (f != 0.0 && d != 0.0)) {
-            //if (Float.isFinite(f) && numberOfDigits < 7 && (Math.abs(f) <= Float.MAX_VALUE || Math.abs(f - d) < 1d)) {
-            //if (Float.isFinite(f) && (f == 0.0 || (float) d == d)) {
                 return f;
             }
             return d;
@@ -987,6 +952,9 @@ public class WorksheetReader {
         }
     }
 
+    /**
+     * Class to represent the components of a time with an optional number of days
+     */
     private static class  TimeComponent{
         private int hours;
         private int minutes;
@@ -997,32 +965,16 @@ public class WorksheetReader {
             return hours;
         }
 
-        public void setHours(int hours) {
-            this.hours = hours;
-        }
-
         public int getMinutes() {
             return minutes;
-        }
-
-        public void setMinutes(int minutes) {
-            this.minutes = minutes;
         }
 
         public int getSeconds() {
             return seconds;
         }
 
-        public void setSeconds(int seconds) {
-            this.seconds = seconds;
-        }
-
         public int getDays() {
             return days;
-        }
-
-        public void setDays(int days) {
-            this.days = days;
         }
 
         public TimeComponent(long totalSeconds) {

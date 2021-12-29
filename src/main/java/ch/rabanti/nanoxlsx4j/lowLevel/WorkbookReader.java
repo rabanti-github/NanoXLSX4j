@@ -72,7 +72,7 @@ public class WorkbookReader {
                 int id = Integer.parseInt(node.getAttribute("sheetId")); // Default will rightly throw an exception
                 String state = node.getAttribute("state");
                 boolean hidden = false;
-                if (state != null && state.toLowerCase().equals("hidden"))
+                if (state != null && state.equalsIgnoreCase("hidden"))
                 {
                     hidden = true;
                 }

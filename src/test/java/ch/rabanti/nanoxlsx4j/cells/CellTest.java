@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -378,10 +377,10 @@ class CellTest {
         dateCell = new Cell(new Date(), Cell.CellType.DEFAULT, this.cellAddress);
         dateCell.resolveCellType();
         assertEquals(Cell.CellType.DATE, dateCell.getDataType());
-        Cell timeCell = new Cell(buildTime(0,0, 59), Cell.CellType.NUMBER, this.cellAddress);
+        Cell timeCell = new Cell(buildTime(0, 0, 59), Cell.CellType.NUMBER, this.cellAddress);
         timeCell.resolveCellType();
         assertEquals(Cell.CellType.TIME, timeCell.getDataType());
-        timeCell = new Cell(buildTime(0,0, 59), Cell.CellType.DEFAULT, this.cellAddress);
+        timeCell = new Cell(buildTime(0, 0, 59), Cell.CellType.DEFAULT, this.cellAddress);
         dateCell.resolveCellType();
         assertEquals(Cell.CellType.TIME, timeCell.getDataType());
     }

@@ -11,8 +11,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.time.Duration;
-import java.time.LocalTime;
-import java.util.Calendar;
 import java.util.Date;
 
 import static ch.rabanti.nanoxlsx4j.TestUtils.buildDate;

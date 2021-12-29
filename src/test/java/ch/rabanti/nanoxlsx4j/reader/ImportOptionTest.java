@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
@@ -221,7 +219,7 @@ public class ImportOptionTest {
         expectedCells.put("A1", 22);
         expectedCells.put("A2", true);
         expectedCells.put("A3", Helper.getOADate(date));
-       expectedCells.put("A4", Helper.getOATime(time));
+        expectedCells.put("A4", Helper.getOATime(time));
         expectedCells.put("B1", Helper.getOADate(date));
         expectedCells.put("B2", Helper.getOATime(time));
         expectedCells.put("B3", 22.5d);
@@ -496,10 +494,10 @@ public class ImportOptionTest {
         cells.put("B10", null);
         cells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
         cells.put("B13", 9223372036854775806l);
-        cells.put("B15", (short)32766);
+        cells.put("B15", (short) 32766);
         cells.put("B17", 0.000000001d);
         cells.put("B18", 0.123f);
-        cells.put("B19", (byte)17);
+        cells.put("B19", (byte) 17);
         cells.put("C1", "0");
         cells.put("C2", buildTime(12, 14, 16));
         cells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
@@ -641,13 +639,10 @@ public class ImportOptionTest {
         expectedCells.put("B5", exB5);
         expectedCells.put("C1", exC1);
         ImportOptions options = new ImportOptions();
-        if (column instanceof String)
-        {
-            options.addEnforcedColumn((String)column, type);
-        }
-            else
-        {
-            options.addEnforcedColumn((int)column, type);
+        if (column instanceof String) {
+            options.addEnforcedColumn((String) column, type);
+        } else {
+            options.addEnforcedColumn((int) column, type);
         }
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
@@ -690,11 +685,11 @@ public class ImportOptionTest {
         expectedCells.put("B2", "Test");
         expectedCells.put("B3", false);
         expectedCells.put("B4", time);
-        expectedCells.put("B5", buildTimeWithDays(44422,18, 22, 13));
-        expectedCells.put("B6", buildTimeWithDays(44494,12, 30, 10));
-        expectedCells.put("B7", buildTimeWithDays(44494,12, 30, 10));
+        expectedCells.put("B5", buildTimeWithDays(44422, 18, 22, 13));
+        expectedCells.put("B6", buildTimeWithDays(44494, 12, 30, 10));
+        expectedCells.put("B7", buildTimeWithDays(44494, 12, 30, 10));
         expectedCells.put("B8", -10);
-        expectedCells.put("B9", buildTimeWithDays(44494,12, 0, 0));
+        expectedCells.put("B9", buildTimeWithDays(44494, 12, 0, 0));
         expectedCells.put("B10", null);
         expectedCells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
         expectedCells.put("C1", "0");
@@ -805,7 +800,6 @@ public class ImportOptionTest {
         assertValues(cells, options2, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
-
     @DisplayName("Test of the import options for custom date and time formats")
     @ParameterizedTest(name = "Given type {0} should lead to a valid import")
     @CsvSource({
@@ -821,7 +815,7 @@ public class ImportOptionTest {
         Map<String, Object> expectedCells = new HashMap<>();
         ImportOptions importOptions = new ImportOptions();
         if (columnType == ImportOptions.ColumnType.Date) {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", ImportOptions.DEFAULT_LOCALE);
             Date expected = formatter.parse(expectedValue);
             expectedCells.put("A1", expected);
             importOptions.setDateFormat(pattern);
@@ -839,8 +833,9 @@ public class ImportOptionTest {
 
     @DisplayName("Test of all getters of the ImportOptions class (code completion)")
     @Test
-    void importOptionsGetterTest(){
+    void importOptionsGetterTest() {
         ImportOptions options = new ImportOptions();
+        options.setTemporalLocale(Locale.ITALY);
         options.setDateFormat("yyyy-mm-dd");
         options.setTimeFormat("hh-mm");
         options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToInt);
@@ -848,6 +843,7 @@ public class ImportOptionTest {
         options.setEnforceDateTimesAsNumbers(true);
         options.setEnforceEmptyValuesAsString(true);
 
+        assertEquals(Locale.ITALY, options.getTemporalLocale());
         assertEquals("yyyy-mm-dd", options.getDateFormat());
         assertNotNull(options.getDateFormatter());
         assertEquals("hh-mm", options.getTimeFormat());
@@ -885,16 +881,6 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
-/*
-    private static Date buildDate(int year, int month, int day, int hour, int minute, int second) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day, hour, minute, second);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
-    
- */
-
     private static <T, D> void assertValues(Map<String, T> givenCells, ImportOptions importOptions, BiConsumer<Object, Object> assertionAction) throws Exception {
         assertValues(givenCells, importOptions, assertionAction, null);
     }
@@ -904,12 +890,7 @@ public class ImportOptionTest {
         for (Map.Entry<String, T> cell : givenCells.entrySet()) {
             workbook.getCurrentWorksheet().addCell(cell.getValue(), cell.getKey());
         }
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        workbook.saveAsStream(stream);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(stream.toByteArray());
-        stream.close();
-        Workbook givenWorkbook = Workbook.load(inputStream, importOptions);
-        inputStream.close();
+        Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, importOptions);
 
         assertNotNull(givenWorkbook);
         Worksheet givenWorksheet = givenWorkbook.setCurrentWorksheet(0);

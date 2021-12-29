@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.Locale;
 
@@ -76,7 +75,7 @@ public class HelperTest {
         // Note: Dates beyond the year 10000 may not be tested wit other frameworks
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.US);
         Date date = formatter.parse(dateString);
-        double given =  Helper.getOADate(date, true);
+        double given = Helper.getOADate(date, true);
         assertNotEquals(0d, given);
     }
 
@@ -296,7 +295,7 @@ public class HelperTest {
             "'09:10:12 AM', 'hh:mm:ss a', 'en-US', 'PT9H10M12S'",
             "'09:10:12p.m.', 'hh:mm:ssa', 'ca-FR', 'PT21H10M12S'",
     })
-    void parseTimeTest(String givenValue, String givenPattern, String localeString, String expectedDuration){
+    void parseTimeTest(String givenValue, String givenPattern, String localeString, String expectedDuration) {
 
         String[] localeParts = localeString.split("-");
         Locale locale = new Locale(localeParts[1], localeParts[0]);

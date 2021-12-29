@@ -5,8 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
-import java.time.LocalTime;
-import java.util.Calendar;
 import java.util.Date;
 
 import static ch.rabanti.nanoxlsx4j.TestUtils.buildDate;
@@ -85,20 +83,18 @@ class DateTimeCellTest {
 
         assertCompareTo(0, (Duration) baseCell.getValue(), (Duration) equalCell.getValue());
         assertCompareTo(1, (Duration) baseCell.getValue(), (Duration) nearBelowCell.getValue());
-        assertCompareTo(-1,(Duration) baseCell.getValue(), (Duration) nearAboveCell.getValue());
+        assertCompareTo(-1, (Duration) baseCell.getValue(), (Duration) nearAboveCell.getValue());
         assertCompareTo(1, (Duration) baseCell.getValue(), (Duration) belowCell.getValue());
-        assertCompareTo(-1,(Duration) baseCell.getValue(), (Duration) aboveCell.getValue());
+        assertCompareTo(-1, (Duration) baseCell.getValue(), (Duration) aboveCell.getValue());
     }
 
-    private static <T extends Comparable> void assertCompareTo(int threshold, T v1, T v2){
-        if (threshold == 0){
+    private static <T extends Comparable> void assertCompareTo(int threshold, T v1, T v2) {
+        if (threshold == 0) {
             assertEquals(0, v1.compareTo(v2));
-        }
-        else if (threshold > 0){
+        } else if (threshold > 0) {
             int result = v1.compareTo(v2);
             assertTrue(result >= threshold);
-        }
-        else{
+        } else {
             int result = v1.compareTo(v2);
             assertTrue(result <= threshold);
         }
