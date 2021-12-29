@@ -157,6 +157,7 @@ public class XlsxReader {
      */
     public Workbook getWorkbook() {
         Workbook wb = new Workbook(false);
+        wb.setImportState(true);
         Worksheet ws;
         for (Map.Entry<Integer, WorksheetReader> reader : this.worksheets.entrySet())
         {
@@ -177,6 +178,7 @@ public class XlsxReader {
             }
             wb.addWorksheet(ws);
         }
+        wb.setImportState(false);
         return wb;
         /*
         Workbook wb = new Workbook(false);

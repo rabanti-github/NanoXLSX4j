@@ -35,6 +35,7 @@ public class Workbook {
     private String workbookProtectionPassword;
     private List<Worksheet> worksheets;
     private boolean hidden;
+    private boolean importInProgress = false;
 
     /**
      * Shortener omits getter and setter to simplify the access (Can throw a WorksheetException if not defined)
@@ -637,16 +638,19 @@ public class Workbook {
      * - A hidden worksheet cannot be the selected one<br/>
      * - At least one worksheet must be visible<br/>
      * If one of the conditions is not met, an exception is thrown
+     * @apiNote If an import is in progress, these rules are disabled to avoid conflicts by the order of loaded worksheets
      */
     public void validateWorksheets() {
+        if (importInProgress) {
+            // No validation during import
+            return;
+        }
         int worksheetCount = worksheets.size();
-        int hiddenCount = 0;
         if (worksheetCount == 0) {
             throw new WorksheetException("The workbook must contain at least one worksheet");
         }
         for (int i = 0; i < worksheetCount; i++) {
             if (worksheets.get(i).isHidden()) {
-                hiddenCount++;
                 if (i == selectedWorksheet) {
                     throw new WorksheetException("The worksheet with the index " + selectedWorksheet + " cannot be set as selected, since it is set hidden");
                 }
@@ -726,6 +730,15 @@ public class Workbook {
         r.read();
         return r.getWorkbook();
     }
+
+    /**
+     *  Sets the import state. If an import is in progress, no validity checks on are performed to avoid conflicts by incomplete data (e.g. hidden worksheets)
+     * @param state True if an import is in progress, otherwise false
+     */
+    public void setImportState(boolean state) {
+        this.importInProgress = state;
+    }
+
 
 
 }

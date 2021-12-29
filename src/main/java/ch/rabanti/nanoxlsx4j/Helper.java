@@ -15,6 +15,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Class for shared used (static) methods
@@ -73,7 +74,10 @@ public class Helper {
         LAST_ALLOWED_EXCEL_DATE = rootCalendar.getTime();
     }
 
-    private double d;
+// ### C O N S T R U C T O R S ###
+    private Helper(){
+        // Prevents class instantiation
+    }
 
 // ### S T A T I C   M E T H O D S ###    
 
@@ -142,7 +146,7 @@ public class Helper {
             dateCal.add(Calendar.DAY_OF_WEEK, -1); // Fix of the leap-year-1900-error
         }
         long currentTicks = dateCal.getTimeInMillis();
-        return ((double) (dateCal.get(Calendar.SECOND) + (dateCal.get(Calendar.MINUTE) * 60) + (dateCal.get(Calendar.HOUR_OF_DAY) * 3600)) / 86400) + Math.floor((currentTicks - ROOT_TICKS) / (86400000));
+        return ((dateCal.get(Calendar.SECOND) + (dateCal.get(Calendar.MINUTE) * 60) + (dateCal.get(Calendar.HOUR_OF_DAY) * 3600)) / 86400d) + Math.floor((currentTicks - ROOT_TICKS) / (86400000d));
     }
 
     /**
@@ -208,17 +212,18 @@ public class Helper {
      * Method to parse a {@link Duration} object from a string and a pattern that is allied to a {@link DateTimeFormatter} instance
      * @param timeString String to parse
      * @param pattern Pattern as string
+     * @param locale Locale of the formatter that is created from the pattern
      * @return Duration object
      * @throws FormatException thrown if the time could not be parsed or of the pattern was invalid
      * @apiNote Supported formatting tokens are all time-related patterns like 'HH', 'mm', 'ss'. To represent the number
      * of days, the pattern 'n' is used. This deviates from the actual definition of 'n' which would be nanoseconds of the second.
      */
-    public static Duration parseTime(String timeString, String pattern) {
+    public static Duration parseTime(String timeString, String pattern, Locale locale) {
         if (isNullOrEmpty(timeString) || isNullOrEmpty(pattern)) {
             throw new FormatException("The pattern is not valid");
         }
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern).withLocale(locale);
             return parseTime(timeString, formatter);
         } catch (Exception ex) {
             throw new FormatException("The time could not be parsed: " + ex.getMessage(), ex);
@@ -231,6 +236,7 @@ public class Helper {
      * @param formatter Formatter to apply the parsing
      * @return Duration object
      * @throws FormatException thrown if the time could not be parsed or of the formatter was invalid
+     * @apiNote Note that the formatter may consider locales. Parsing may fail e.g. with "AM/PM" when not on {@link java.util.Locale#US}
      */
     public static Duration parseTime(String timeString, DateTimeFormatter formatter) {
         if (isNullOrEmpty(timeString) || formatter == null) {

@@ -32,7 +32,7 @@ public class HelperTest {
             "01.01.2021 00:00:00, 44197",
             "12.12.5870 11:30:12, 1450360.47930556",
     })
-    void getOADateTimeStringTest(String dateString, String expectedOaDate) throws ParseException {
+    void getOADateStringTest(String dateString, String expectedOaDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.US);
         Date date = formatter.parse(dateString);
         String oaDate = Helper.getOADateString(date);
@@ -56,12 +56,28 @@ public class HelperTest {
             "01.01.2021 00:00:00, 44197",
             "12.12.5870 11:30:12, 1450360.47930556",
     })
-    void getOADateTimeTest(String dateString, double expectedOaDate) throws ParseException {
+    void getOADateTest(String dateString, double expectedOaDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.US);
         Date date = formatter.parse(dateString);
         double oaDate = Helper.getOADate(date);
         float threshold = 0.00000001f; // Ignore everything below a millisecond (double precision may vary)
         assertTrue(Math.abs(expectedOaDate - oaDate) < threshold);
+    }
+
+    @DisplayName("Test of the successful getOADate function on invalid dates when checks are disabled")
+    @ParameterizedTest(name = "Given date {0} should not lead to an exception")
+    @CsvSource({
+            "01.01.0001 00:00:00",
+            "18.05.0712 11:15:02",
+            "31.12.1899 23:59:59",
+            "01.01.10000 00:00:00",
+    })
+    void getOADateTest2(String dateString) throws ParseException {
+        // Note: Dates beyond the year 10000 may not be tested wit other frameworks
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.US);
+        Date date = formatter.parse(dateString);
+        double given =  Helper.getOADate(date, true);
+        assertNotEquals(0d, given);
     }
 
     @DisplayName("Test of the failing getOADateString function on invalid dates")
@@ -116,7 +132,7 @@ public class HelperTest {
             "18:00:00, 0.75",
     })
     void getOATimeStringTest(String timeString, String expectedOaTime) throws ParseException {
-        Duration time = Helper.parseTime(timeString, "HH:mm:ss");
+        Duration time = Helper.parseTime(timeString, "HH:mm:ss", Locale.US);
         String oaDate = Helper.getOATimeString(time);
         float expected = Float.parseFloat(expectedOaTime);
         float given = Float.parseFloat(oaDate);
@@ -134,7 +150,7 @@ public class HelperTest {
             "18:00:00, 0.75",
     })
     void getOATimeTest(String timeString, double expectedOaTime) throws ParseException {
-        Duration time = Helper.parseTime(timeString, "HH:mm:ss");
+        Duration time = Helper.parseTime(timeString, "HH:mm:ss", Locale.US);
         double oaTime = Helper.getOATime(time);
         float threshold = 0.000000001f; // Ignore everything below a millisecond
         assertTrue(Math.abs(expectedOaTime - oaTime) < threshold);
@@ -267,6 +283,25 @@ public class HelperTest {
         Date expectedDate = formatter.parse(expectedDateString);
         Date date = Helper.getDateFromOA(givenValue);
         assertEquals(expectedDate, date);
+    }
+
+    @DisplayName("Test of the parseTime function")
+    @ParameterizedTest(name = "Given value {0}  and pattern {1} should lead to the duration {2}")
+    @CsvSource({
+            "'12:13:14', 'HH:mm:ss', 'en-US', 'PT12H13M14S'",
+            "'00-00-00', 'HH-mm-ss', 'CA-fr', 'PT0S'",
+            "'59/59/23', 'mm/ss/HH', 'en-US', 'PT23H59M59S'",
+            "'10:11', 'HH:mm', 'de-DE', 'PT10H11M'",
+            "'09:10:12 PM', 'hh:mm:ss a', 'en-US', 'PT21H10M12S'",
+            "'09:10:12 AM', 'hh:mm:ss a', 'en-US', 'PT9H10M12S'",
+            "'09:10:12p.m.', 'hh:mm:ssa', 'ca-FR', 'PT21H10M12S'",
+    })
+    void parseTimeTest(String givenValue, String givenPattern, String localeString, String expectedDuration){
+
+        String[] localeParts = localeString.split("-");
+        Locale locale = new Locale(localeParts[1], localeParts[0]);
+        Duration time = Helper.parseTime(givenValue, givenPattern, locale);
+        assertEquals(expectedDuration, time.toString());
     }
 
 

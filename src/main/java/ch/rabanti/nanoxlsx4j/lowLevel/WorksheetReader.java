@@ -532,7 +532,7 @@ public class WorksheetReader {
         try{
             Date date;
         if (Helper.isNullOrEmpty(raw) || formatter == null){
-            SimpleDateFormat defaultFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT);
+            SimpleDateFormat defaultFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT, ImportOptions.DEFAULT_LOCALE);
             date = defaultFormatter.parse(raw);
         }
         else
@@ -576,7 +576,7 @@ public class WorksheetReader {
         try{
             Duration time;
             if (Helper.isNullOrEmpty(raw) || formatter == null){
-                DateTimeFormatter defaultFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_TIME_FORMAT);
+                DateTimeFormatter defaultFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_TIME_FORMAT).withLocale(ImportOptions.DEFAULT_LOCALE);
                 time = Helper.parseTime(raw, defaultFormatter);
             }
             else

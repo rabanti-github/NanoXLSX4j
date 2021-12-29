@@ -10,6 +10,7 @@ package ch.rabanti.nanoxlsx4j;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -26,6 +27,11 @@ public class ImportOptions {
      * Default format if time (Duration) values are cast to strings
      */
     public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
+
+    /**
+     * Default locale instance (en-US) used for time parsing, if no custom locale is defined
+     */
+    public static final Locale DEFAULT_LOCALE = Locale.US;
 
     /**
      * Global conversion types to enforce during the import. All types other than {@link GlobalType#Default} will override defined {@link ColumnType}s
@@ -88,6 +94,7 @@ public class ImportOptions {
     private String timeFormat;
     private SimpleDateFormat dateFormatter;
     private DateTimeFormatter timeFormatter;
+    private Locale temporalLocale;
 
     /**
      * Gets whether date or time values in the workbook are interpreted as numbers
@@ -214,6 +221,22 @@ public class ImportOptions {
     }
 
     /**
+     * Gets the Locale instance, used to parse Duration objects from strings. If null, parsing will be tried with 'best effort'.
+     * @return Locale instance used for parsing
+     */
+    public Locale getTemporalLocale() {
+        return temporalLocale;
+    }
+
+    /**
+     * Sets the Locale instance, used to parse Duration objects from strings. If null, parsing will be tried with 'best effort'.
+     * @param temporalLocale Locale instance used for parsing
+     */
+    public void setTemporalLocale(Locale temporalLocale) {
+        this.temporalLocale = temporalLocale;
+    }
+
+    /**
      * Gets the Date formatter, set by the string of {@link ImportOptions#setDateFormat(String)}
      *
      * @return SimpleDateFormat instance
@@ -242,14 +265,14 @@ public class ImportOptions {
     public void setTimeFormat(String timeFormat) {
         this.timeFormat = timeFormat;
         if (timeFormat == null) {
-            this.timeFormatter = DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT);
+            this.timeFormatter = DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT).withLocale(this.temporalLocale);
         } else {
-            this.timeFormatter = DateTimeFormatter.ofPattern(timeFormat);
+            this.timeFormatter = DateTimeFormatter.ofPattern(timeFormat).withLocale(this.temporalLocale);
         }
     }
 
     /**
-     * Gets the formatter to parse a Duartion (time), set by the string of {@link ImportOptions#setTimeFormat(String)}
+     * Gets the formatter to parse a Duration (time), set by the string of {@link ImportOptions#setTimeFormat(String)}
      *
      * @return DateTimeFormatter instance
      */
@@ -260,7 +283,8 @@ public class ImportOptions {
     public ImportOptions() {
         this.dateFormat = DEFAULT_DATE_FORMAT;
         this.timeFormat = DEFAULT_TIME_FORMAT;
+        this.temporalLocale = DEFAULT_LOCALE;
         this.dateFormatter = new SimpleDateFormat(this.dateFormat);
-        this.timeFormatter = DateTimeFormatter.ofPattern(this.timeFormat);
+        this.timeFormatter = DateTimeFormatter.ofPattern(this.timeFormat).withLocale(this.temporalLocale);
     }
 }

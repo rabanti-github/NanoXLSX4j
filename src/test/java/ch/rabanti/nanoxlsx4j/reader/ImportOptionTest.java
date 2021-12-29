@@ -12,10 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 import static ch.rabanti.nanoxlsx4j.TestUtils.*;
@@ -830,7 +827,7 @@ public class ImportOptionTest {
             importOptions.setDateFormat(pattern);
             importOptions.addEnforcedColumn(0, ImportOptions.ColumnType.Date);
         } else {
-            Duration expected = Helper.parseTime(expectedValue, "HH:mm:ss");
+            Duration expected = Helper.parseTime(expectedValue, "HH:mm:ss", Locale.US);
             expectedCells.put("A1", expected);
             importOptions.setTimeFormat(pattern);
             importOptions.addEnforcedColumn(0, ImportOptions.ColumnType.Time);
