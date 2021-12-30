@@ -42,7 +42,7 @@ public class Workbook {
      */
     public Shortener WS;
 
-// ### G E T T E R S  &  S E T T E R S ###    
+// ### G E T T E R S  &  S E T T E R S ###
 
     /**
      * Gets the current worksheet

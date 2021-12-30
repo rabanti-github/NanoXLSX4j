@@ -1088,44 +1088,55 @@ public class XlsxWriter {
      * @throws IOException    Thrown in case of an error while creating the XML document
      */
     private Document createWorkbookDocument() throws IOException {
-        if (this.workbook.getWorksheets().isEmpty()) {
+        if (workbook.getWorksheets().isEmpty()) {
             throw new RangeException("The workbook can not be created because no worksheet was defined.");
         }
         StringBuilder sb = new StringBuilder();
         sb.append("<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">");
-        if (this.workbook.getSelectedWorksheet() > 0) {
-            sb.append("<bookViews><workbookView activeTab=\"");
-            sb.append(this.workbook.getSelectedWorksheet());
-            sb.append("\"/></bookViews>");
+        if (workbook.getSelectedWorksheet() > 0 || workbook.isHidden()) {
+            sb.append("<bookViews><workbookView ");
+            if (workbook.isHidden()) {
+                sb.append("visibility=\"hidden\"");
+            } else {
+                sb.append("activeTab=\"").append(workbook.getSelectedWorksheet()).append("\"");
+            }
+            sb.append("/></bookViews>");
         }
-        if (this.workbook.isWorkbookProtectionUsed() == true) {
-            sb.append("<workbookProtection");
-            if (this.workbook.isWindowsLockedIfProtected() == true) {
-                sb.append(" lockWindows=\"1\"");
-            }
-            if (this.workbook.isStructureLockedIfProtected() == true) {
-                sb.append(" lockStructure=\"1\"");
-            }
-            if (!Helper.isNullOrEmpty(this.workbook.getWorkbookProtectionPassword())) {
-                sb.append("workbookPassword=\"");
-                sb.append(generatePasswordHash(this.workbook.getWorkbookProtectionPassword()));
-                sb.append("\"");
+        createWorkbookProtectionString(sb);
+        sb.append("<sheets>");
+        for (Worksheet item : workbook.getWorksheets()) {
+            sb.append("<sheet r:id=\"rId").append(item.getSheetID()).append("\" sheetId=\"").append(item.getSheetID()).append("\" name=\"").append(escapeXMLAttributeChars(item.getSheetName())).append("\"");
+            if (item.isHidden()) {
+                sb.append(" state=\"hidden\"");
             }
             sb.append("/>");
-        }
-        sb.append("<sheets>");
-        int id;
-        for (int i = 0; i < this.workbook.getWorksheets().size(); i++) {
-            id = this.workbook.getWorksheets().get(i).getSheetID();
-            sb.append("<sheet r:id=\"rId");
-            sb.append(id);
-            sb.append("\" sheetId=\"");
-            sb.append(id);
-            sb.append("\" name=\"").append(XlsxWriter.escapeXMLAttributeChars(this.workbook.getWorksheets().get(i).getSheetName())).append("\"/>");
         }
         sb.append("</sheets>");
         sb.append("</workbook>");
         return createXMLDocument(sb.toString(), "WORKBOOK");
+    }
+
+    /**
+     * Method to create the (sub) part of the workbook protection within the workbook XML document
+     *
+     * @param sb reference to the stringbuilder
+     */
+    private void createWorkbookProtectionString(StringBuilder sb) {
+        if (workbook.isWorkbookProtectionUsed()) {
+            sb.append("<workbookProtection");
+            if (workbook.isWindowsLockedIfProtected()) {
+                sb.append(" lockWindows=\"1\"");
+            }
+            if (workbook.isStructureLockedIfProtected()) {
+                sb.append(" lockStructure=\"1\"");
+            }
+            if (!Helper.isNullOrEmpty(workbook.getWorkbookProtectionPassword())) {
+                sb.append("workbookPassword=\"");
+                sb.append(generatePasswordHash(workbook.getWorkbookProtectionPassword()));
+                sb.append("\"");
+            }
+            sb.append("/>");
+        }
     }
 
     /**
