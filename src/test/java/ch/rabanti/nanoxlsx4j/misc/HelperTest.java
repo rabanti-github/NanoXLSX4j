@@ -1,6 +1,8 @@
 package ch.rabanti.nanoxlsx4j.misc;
 
 import ch.rabanti.nanoxlsx4j.Helper;
+import ch.rabanti.nanoxlsx4j.TestUtils;
+import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -294,6 +296,10 @@ public class HelperTest {
             "'09:10:12 PM', 'hh:mm:ss a', 'en-US', 'PT21H10M12S'",
             "'09:10:12 AM', 'hh:mm:ss a', 'en-US', 'PT9H10M12S'",
             "'09:10:12p.m.', 'hh:mm:ssa', 'ca-FR', 'PT21H10M12S'",
+            "'01.01.2022', 'dd.MM.yyyy', 'en-US', 'PT0S'", // Not properly formatted to get the number of days
+            "'01.01.2022 22-11-05', 'dd.MM.yyyy HH-mm-ss', 'ca-FR', 'PT22H11M5S'", // Not properly formatted to get the number of days
+            "'13 09:10:12 PM', 'n hh:mm:ss a', 'en-US', 'PT333H10M12S'", // Adds 13x24h
+            "'00-00-00 10', 'HH-mm-ss n', 'CA-fr', 'PT240H'", // Adds 10x24h
     })
     void parseTimeTest(String givenValue, String givenPattern, String localeString, String expectedDuration) {
 
@@ -303,5 +309,89 @@ public class HelperTest {
         assertEquals(expectedDuration, time.toString());
     }
 
+    @DisplayName("Test of the failing parseTime function on a missing formatter")
+    @Test()
+    void parseTimeFailTest() {
+        assertThrows(FormatException.class, () -> Helper.parseTime("12.12.2021", null));
+    }
+
+    @DisplayName("Test of the failing parseTime function on missing or invalid values")
+    @ParameterizedTest(name = "Given time value {1} of type {0} should lead to an exception")
+    @CsvSource({
+            "NULL, '', 'HH:mm:ss'",
+            "STRING, '?', 'HH:mm:ss'",
+            "STRING, '', 'HH:mm:ss'",
+            "STRING, '12-10-09', 'HH:mm:ss'",
+            "STRING, '12-10-09 1', 'HH-mm-ss'",
+            "STRING, '12-10-09', 'n HH-mm-ss'",
+            "STRING, '-1 12-10-09', 'n HH-mm-ss'",
+            "STRING, 'x 12-10-09', 'n HH-mm-ss'",
+            "STRING, '10 zz-10-09', 'n HH-mm-ss'",
+    })
+    void parseTimeFailTest2(String sourceType, String sourceValue, String givenPattern) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
+        assertThrows(FormatException.class, () -> Helper.parseTime(value, givenPattern, Locale.US));
+    }
+
+    @DisplayName("Test of the createDuration function without days")
+    @ParameterizedTest(name = "Given hours {1}, minutes {2} and seconds {3} should lead to the duration {4}")
+    @CsvSource({
+            "0, 0, 0, 'PT0S'",
+            "12, 10, 9, 'PT12H10M9S'",
+            "23, 59, 59, 'PT23H59M59S'",
+    })
+    void createDurationTest(int hours, int minutes, int seconds, String expectedDuration){
+        Duration time = Helper.createDuration(hours,minutes,seconds);
+        assertEquals(expectedDuration, time.toString());
+    }
+
+    @DisplayName("Test of the createDuration  with days")
+    @ParameterizedTest(name = "Given days {0}, hours {1}, minutes {2} and seconds {3} should lead to the duration {4}")
+    @CsvSource({
+            "0, 0, 0, 0, 'PT0S'",
+            "0, 12, 10, 9, 'PT12H10M9S'",
+            "0, 23, 59, 59, 'PT23H59M59S'",
+            "1, 0, 0, 0, 'PT24H'",
+            "2, 3, 4, 5, 'PT51H4M5S'",
+    })
+    void createDurationTest2(int days, int hours, int minutes, int seconds, String expectedDuration){
+        Duration time = Helper.createDuration(days, hours,minutes,seconds);
+        assertEquals(expectedDuration, time.toString());
+    }
+
+    @DisplayName("Test of the failing createDuration function on invalid values")
+    @ParameterizedTest(name = "Given hours {0}, minutes {1} and seconds {2} should lead to an exception")
+    @CsvSource({
+            "-1, 0, 0",
+            "10, -1, 0",
+            "1, 0, -5",
+            "25, 1, 0",
+            "10, 62, 30",
+            "0, 12, 120",
+    })
+    void createDurationFailTest(int hours, int minutes, int seconds) {
+        assertThrows(FormatException.class, () -> Helper.createDuration(hours,minutes,seconds));
+    }
+
+    @DisplayName("Test of the failing createDuration function on invalid values with days")
+    @ParameterizedTest(name = "Given days {0}, hours {1}, minute {2} and second {3} should lead to an exception")
+    @CsvSource({
+            "-1, 0, 0, 0",
+            "-10, 10, -1, 0",
+            "5, 1, 0, -5",
+            "10, 25, 1, 0",
+            "0, 10, 62, 30",
+            "-1, 0, 12, 120",
+            "2958466, 0, 0, 0",
+            "2958465, 10, -1, 0",
+            "2958465, 1, 0, -5",
+            "2958465, 25, 1, 0",
+            "2958465, 10, 62, 30",
+            "2958465, 0, 12, 120",
+            "2958466, 1 , 1, 1",
+    })
+    void createDurationFailTest2(int days, int hours, int minutes, int seconds) {
+        assertThrows(FormatException.class, () -> Helper.createDuration(days,hours,minutes,seconds));
+    }
 
 }

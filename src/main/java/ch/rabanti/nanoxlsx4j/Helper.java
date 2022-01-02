@@ -74,8 +74,8 @@ public class Helper {
         LAST_ALLOWED_EXCEL_DATE = rootCalendar.getTime();
     }
 
-// ### C O N S T R U C T O R S ###
-    private Helper(){
+    // ### C O N S T R U C T O R S ###
+    private Helper() {
         // Prevents class instantiation
     }
 
@@ -210,13 +210,15 @@ public class Helper {
 
     /**
      * Method to parse a {@link Duration} object from a string and a pattern that is allied to a {@link DateTimeFormatter} instance
+     *
      * @param timeString String to parse
-     * @param pattern Pattern as string
-     * @param locale Locale of the formatter that is created from the pattern
+     * @param pattern    Pattern as string
+     * @param locale     Locale of the formatter that is created from the pattern
      * @return Duration object
      * @throws FormatException thrown if the time could not be parsed or of the pattern was invalid
      * @apiNote Supported formatting tokens are all time-related patterns like 'HH', 'mm', 'ss'. To represent the number
      * of days, the pattern 'n' is used. This deviates from the actual definition of 'n' which would be nanoseconds of the second.
+     * date-related patterns like 'dd', 'MM' or 'yyyy' are not supported yet for time parsing
      */
     public static Duration parseTime(String timeString, String pattern, Locale locale) {
         if (isNullOrEmpty(timeString) || isNullOrEmpty(pattern)) {
@@ -232,11 +234,15 @@ public class Helper {
 
     /**
      * Method to parse a {@link Duration} object from a string and a {@link DateTimeFormatter} instance
+     *
      * @param timeString String to parse
-     * @param formatter Formatter to apply the parsing
+     * @param formatter  Formatter to apply the parsing
      * @return Duration object
      * @throws FormatException thrown if the time could not be parsed or of the formatter was invalid
-     * @apiNote Note that the formatter may consider locales. Parsing may fail e.g. with "AM/PM" when not on {@link java.util.Locale#US}
+     * @apiNote Note that the formatter may consider locales. Parsing may fail e.g. with "AM/PM" when not on {@link java.util.Locale#US}.
+     * Supported formatting tokens are all time-related patterns like 'HH', 'mm', 'ss'. To represent the number
+     * of days, the pattern 'n' is used. This deviates from the actual definition of 'n' which would be nanoseconds of the second.
+     * date-related patterns like 'dd', 'MM' or 'yyyy' are not supported yet for time parsing
      */
     public static Duration parseTime(String timeString, DateTimeFormatter formatter) {
         if (isNullOrEmpty(timeString) || formatter == null) {
@@ -244,15 +250,22 @@ public class Helper {
         }
         try {
             TemporalAccessor accessor = formatter.parse(timeString);
+            long days = 0;
             long hours = 0;
+            long minutes = 0;
+            long seconds = 0;
             if (accessor.isSupported(ChronoField.HOUR_OF_DAY)) {
                 hours = accessor.get(ChronoField.HOUR_OF_DAY);
-            } else if (accessor.isSupported(ChronoField.HOUR_OF_AMPM)) {
-                hours = accessor.get(ChronoField.HOUR_OF_AMPM);
             }
-            long minutes = accessor.get(ChronoField.MINUTE_OF_HOUR);
-            long seconds = accessor.get(ChronoField.SECOND_OF_MINUTE);
-            long days = accessor.get(ChronoField.NANO_OF_SECOND);
+            if (accessor.isSupported(ChronoField.MINUTE_OF_HOUR)) {
+                minutes = accessor.get(ChronoField.MINUTE_OF_HOUR);
+            }
+            if (accessor.isSupported(ChronoField.SECOND_OF_MINUTE)) {
+                seconds = accessor.get(ChronoField.SECOND_OF_MINUTE);
+            }
+            if (accessor.isSupported(ChronoField.NANO_OF_SECOND)) {
+                days = accessor.get(ChronoField.NANO_OF_SECOND);
+            }
             Duration duration = Duration.ZERO;
             duration = duration.plusDays(days);
             duration = duration.plusHours(hours);
@@ -405,7 +418,8 @@ public class Helper {
 
     /**
      * Method to create a {@link Duration} object form hours, minutes and second
-     * @param hours Number of Hours within the day
+     *
+     * @param hours   Number of Hours within the day
      * @param minutes Number of minutes within the hour
      * @param seconds Number of seconds within the minute
      * @return Duration object
@@ -417,8 +431,9 @@ public class Helper {
 
     /**
      * Method to create a {@link Duration} object form days, hours, minutes and second
-     * @param days Total number of days
-     * @param hours Number of Hours within the day
+     *
+     * @param days    Total number of days
+     * @param hours   Number of Hours within the day
      * @param minutes Number of minutes within the hour
      * @param seconds Number of seconds within the minute
      * @return Duration object
