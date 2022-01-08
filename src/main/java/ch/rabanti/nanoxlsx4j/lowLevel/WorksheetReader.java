@@ -37,8 +37,6 @@ public class WorksheetReader {
     private static Calendar CALENDAR = Calendar.getInstance();
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#########");
 
-    private int worksheetNumber;
-    private final String name;
     private final Map<String, Cell> data;
     private final SharedStringsReader sharedStrings;
     private final Map<String, String> styleAssignment = new HashMap<>();
@@ -57,22 +55,6 @@ public class WorksheetReader {
     }
 
     /**
-     * Gets the number of the worksheet
-     * @return Number of the worksheet
-     */
-    public int getWorksheetNumber() {
-        return worksheetNumber;
-    }
-
-    /**
-     * Gets the name of the worksheet
-     * @return Name of the worksheet
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
      * Gets the assignment of resolved styles to cell addresses
      * @return Map of cell address-style number tuples
      */
@@ -84,14 +66,10 @@ public class WorksheetReader {
      * Constructor with parameters and import options
      *
      * @param sharedStrings        SharedStringsReader object
-     * @param name                 Worksheet name
-     * @param number               Worksheet number
      * @param styleReaderContainer Resolved styles, used to determine dates or times
      */
-    public WorksheetReader(SharedStringsReader sharedStrings, String name, int number, StyleReaderContainer styleReaderContainer, ImportOptions options) {
+    public WorksheetReader(SharedStringsReader sharedStrings, StyleReaderContainer styleReaderContainer, ImportOptions options) {
         this.data = new HashMap<>();
-        this.name = name;
-        this.worksheetNumber = number;
         this.sharedStrings = sharedStrings;
         this.importOptions = options;
         processStyles(styleReaderContainer);

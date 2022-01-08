@@ -134,7 +134,7 @@ public class XlsxReader {
             String name = "xl/worksheets/" + nameTemplate;
             for (Map.Entry<Integer, WorkbookReader.WorksheetDefinition> definition: workbook.getWorksheetDefinitions().entrySet()) {
                 stream = getEntryStream(name, zf);
-                wr = new WorksheetReader(sharedStrings, nameTemplate, worksheetIndex, styleReaderContainer, importOptions);
+                wr = new WorksheetReader(sharedStrings, styleReaderContainer, importOptions);
                 wr.read(stream);
                 this.worksheets.put(definition.getKey(), wr);
                 worksheetIndex++;
