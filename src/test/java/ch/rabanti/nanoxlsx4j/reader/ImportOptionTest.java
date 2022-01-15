@@ -181,7 +181,7 @@ public class ImportOptionTest {
         cells.put("A2", true);
         cells.put("A3", date);
         cells.put("A4", time);
-        cells.put("A5", 22.5d);
+        cells.put("A5", 22.5f);
         cells.put("A6", new Cell("=A1", Cell.CellType.FORMULA, "A6"));
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", 22);
@@ -198,10 +198,12 @@ public class ImportOptionTest {
     @DisplayName("Test of the EnforceDateTimesAsNumbers functionality for the import column type")
     @ParameterizedTest(name = "Given column import type {0} should lead to a numeric value")
     @CsvSource({
-            "Date",
-            "Time",
+            "Date, 'FLOAT', 22.5, 'DOUBLE', 22.5",
+            "Time, 'DOUBLE', 22.5, 'DOUBLE', 22.5",
     })
-    void enforceDateTimesAsNumbersTest2(ImportOptions.ColumnType columnType) throws Exception {
+    void enforceDateTimesAsNumbersTest2(ImportOptions.ColumnType columnType, String givenType, String givenValue, String expectedType, String expectedValue) throws Exception {
+        Object givenLowNumber = TestUtils.createInstance(givenType, givenValue);
+        Object expectedLowNumber = TestUtils.createInstance(expectedType, expectedValue);
         Calendar calendar = Calendar.getInstance();
         calendar.set(2021, 8, 17, 11, 12, 13);
         Date date = calendar.getTime();
@@ -213,7 +215,7 @@ public class ImportOptionTest {
         cells.put("A4", time);
         cells.put("B1", date);
         cells.put("B2", time);
-        cells.put("B3", 22.5d);
+        cells.put("B3", givenLowNumber);
         cells.put("B4", new Cell("=A1", Cell.CellType.FORMULA, "B4"));
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", 22);
@@ -222,7 +224,7 @@ public class ImportOptionTest {
         expectedCells.put("A4", Helper.getOATime(time));
         expectedCells.put("B1", Helper.getOADate(date));
         expectedCells.put("B2", Helper.getOATime(time));
-        expectedCells.put("B3", 22.5d);
+        expectedCells.put("B3", expectedLowNumber);
         expectedCells.put("B4", new Cell("=A1", Cell.CellType.FORMULA, "B4"));
         ImportOptions options = new ImportOptions();
         options.setEnforceDateTimesAsNumbers(true);
@@ -363,10 +365,7 @@ public class ImportOptionTest {
             "INTEGER, '1', Double",
     })
     void enforcingColumnAsNumberTest4(String sourceType, String sourceValue, ImportOptions.ColumnType columnType) throws Exception {
-        //Object column = TestUtils.createInstance(sourceType, sourceValue);
-        //Duration time = buildTime(11, 12, 13);
         Object column = TestUtils.createInstance(sourceType, sourceValue);
-        Date date = buildDate(2021, 8, 14, 18, 22, 13);
         Map<String, Object> cells = new HashMap<>();
         Cell a1 = new Cell(1, Cell.CellType.NUMBER, "A1");
         Cell b1 = new Cell(-10, Cell.CellType.NUMBER, "B1");
@@ -436,6 +435,8 @@ public class ImportOptionTest {
         cells.put("B9", "1.0d");
         cells.put("B10", null);
         cells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
+        cells.put("B12", 2);
+        cells.put("B13", "0");
         cells.put("C1", "0");
         cells.put("C2", buildTime(12, 14, 16));
         cells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
@@ -454,6 +455,8 @@ public class ImportOptionTest {
         expectedCells.put("B9", true);
         expectedCells.put("B10", null);
         expectedCells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
+        expectedCells.put("B12", 2);
+        expectedCells.put("B13", false);
         expectedCells.put("C1", "0");
         expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
@@ -477,7 +480,6 @@ public class ImportOptionTest {
         Duration time = buildTime(11, 12, 13);
         Date date = buildDate(2021, 8, 14, 18, 22, 13);
         SimpleDateFormat dateFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT);
-        //DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_TIME_FORMAT);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 1);
         cells.put("A2", "21");
@@ -561,6 +563,7 @@ public class ImportOptionTest {
         cells.put("B9", 44494.5f);
         cells.put("B10", null);
         cells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
+        cells.put("B12", 2147483650l);
         cells.put("B13", 2958466);
         cells.put("C1", "0");
         cells.put("C2", buildTime(12, 14, 16));
@@ -580,6 +583,7 @@ public class ImportOptionTest {
         expectedCells.put("B9", buildDate(2021, 9, 25, 12, 0, 0));
         expectedCells.put("B10", null);
         expectedCells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
+        expectedCells.put("B12", 2147483650l);
         expectedCells.put("B13", 2958466); // Exceeds year 9999
         expectedCells.put("C1", "0");
         expectedCells.put("C2", buildTime(12, 14, 16));

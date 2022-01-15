@@ -159,19 +159,10 @@ public class ReadDataTest {
     @Test()
     void readDateTest() throws Exception {
         Map<String, Date> cells = new HashMap<>();
-        Calendar calendarInstance = Calendar.getInstance();
-        calendarInstance.set(Calendar.MILLISECOND, 0);
-        calendarInstance.set(2021, 4, 11, 15, 7, 2);
-        cells.put("A1", calendarInstance.getTime());
-        calendarInstance.set(1900, 0, 1, 0, 0, 0);
-        cells.put("A2", calendarInstance.getTime());
-        calendarInstance.set(Calendar.HOUR_OF_DAY, 0);
-        calendarInstance.set(Calendar.MINUTE, 0);
-        calendarInstance.set(Calendar.SECOND, 0);
-        calendarInstance.set(1960, 11, 12);
-        cells.put("A3", calendarInstance.getTime());
-        calendarInstance.set(9999, 11, 31, 23, 59, 59);
-        cells.put("A4", calendarInstance.getTime());
+        cells.put("A1", TestUtils.buildDate(2021,4,11,15,7,2));
+        cells.put("A2", TestUtils.buildDate(1900,0,1,0,0,0));
+        cells.put("A3", TestUtils.buildDate(1960,11,12));
+        cells.put("A4", TestUtils.buildDate(9999,11,31,23,59,59));
         assertValues(cells, ReadDataTest::assertEqualsFunction);
     }
 
@@ -226,6 +217,7 @@ public class ReadDataTest {
             "J1, BOOL, BOOLEAN,'false'",
             "K1, STRING, STRING,'z'",
             "L1, STRING, STRING,'z'",
+            "M1, STRING, STRING,'a'",
     })
     void readInvalidDataTest(String cellAddress, Cell.CellType expectedType, String sourceType, String sourceValue) throws Exception {
         // Note: Cell A1 is a valid String
@@ -240,6 +232,7 @@ public class ReadDataTest {
         //       Cell J1 is defined as boolean but has 'FALSE' instead of 0 as XML value
         //       Cell K1 is defined as date but has an invalid value of 'z'
         //       Cell L1 is defined as time but has an invalid value of 'z'
+        //       Cell M1 is defined as shared string but has an invalid value of 'a'
 
         Object expectedValue = TestUtils.createInstance(sourceType, sourceValue);
         InputStream stream = TestUtils.getResource("tampered.xlsx");
@@ -263,6 +256,13 @@ public class ReadDataTest {
         // Note: all referenced (embedded) files contains invalid XML documents (malformed, missing start or end tags, missing attributes)
         InputStream stream = TestUtils.getResource(invalidFile);
         assertThrows(IOException.class, () -> Workbook.load(stream));
+    }
+
+    @DisplayName("Test of the reader functionality on an invalid stream")
+    @Test()
+    void readInvalidStreamTest(){
+        InputStream  nullStream = null;
+        assertThrows(IOException.class, () -> Workbook.load(nullStream));
     }
 
 
