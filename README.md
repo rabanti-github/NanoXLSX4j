@@ -16,7 +16,7 @@ See the **[Change Log](https://github.com/rabanti-github/NanoXLSX4j/blob/master/
 Currently, only basic reader functionality is available:
 
 * Reading and casting of cell values into the appropriate data types
-* Reading of several worksheets in on workbook with names
+* Reading of several worksheets in one workbook with worksheet names
 * Limited processing of styles (when reading) at the moment
 * No support of other objects than spreadsheet data at the moment
 

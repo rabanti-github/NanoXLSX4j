@@ -307,6 +307,14 @@ public class WorksheetReader {
                 return tempDouble;
             }
         }
+        if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToBigDecimal))
+        {
+            Object tempBigDecimal = convertToBigDecimal(data);
+            if (tempBigDecimal != null)
+            {
+                return tempBigDecimal;
+            }
+        }
         else if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToInt))
         {
             Object tempInt = convertToInt(data);
@@ -340,6 +348,8 @@ public class WorksheetReader {
         {
             case Numeric:
                 return getNumericValue(data, importedTyp);
+            case BigDecimal:
+                return convertToBigDecimal(data);
             case Double:
                 return convertToDouble(data);
             case Date:
@@ -376,10 +386,6 @@ public class WorksheetReader {
             Boolean tempBool = tryParseBool(tempString);
             if (tempBool != null) {
                 return tempBool;
-            } else if (tempString.equals("1")) {
-                return true;
-            } else if (tempString.equals("0")) {
-                return false;
             }
         }
         return data;
@@ -411,7 +417,18 @@ public class WorksheetReader {
         return null;
     }
 
-    private Object convertToDouble(Object data)
+    private  Object convertToDouble(Object data){
+        Object value = convertToBigDecimal(data);
+        if (value instanceof  BigDecimal){
+            double tempDouble = ((BigDecimal)value).doubleValue();
+            if (Double.isFinite(tempDouble)){
+                return tempDouble;
+            }
+        }
+        return value;
+    }
+
+    private Object convertToBigDecimal(Object data)
     {
         if (data == null){
             return null;
@@ -423,30 +440,30 @@ public class WorksheetReader {
             return ((BigDecimal) data).doubleValue();
         } else if (Long.class.equals(cls) || Short.class.equals(cls) || Float.class.equals(cls) || Byte.class.equals(cls) || Integer.class.equals(cls)) {
             Number number = (Number) data;
-            return number.doubleValue();
+            return BigDecimal.valueOf(number.doubleValue());
         } else if (Boolean.class.equals(cls)) {
             if (Boolean.TRUE.equals(data)) {
-                return 1d;
+                return BigDecimal.ONE;
             } else {
-                return 0d;
+                return BigDecimal.ZERO;
             }
         } else if (Date.class.equals(cls)) {
-            return Helper.getOADate((Date) data);
+            return BigDecimal.valueOf(Helper.getOADate((Date) data));
         } else if (Duration.class.equals(cls)) {
-            return Helper.getOATime((Duration) data);
+            return BigDecimal.valueOf(Helper.getOATime((Duration) data));
         } else if (String.class.equals(cls)) {
             String tempString = (String) data;
-            Double dValue = tryParseDouble(tempString);
+            BigDecimal dValue = tryParseBigDecimal(tempString);
             if (dValue != null) {
                 return dValue;
             }
             Date tempDate = tryParseDate(tempString, importOptions);
             if (tempDate != null) {
-                return Helper.getOADate(tempDate);
+                return BigDecimal.valueOf(Helper.getOADate(tempDate));
             }
             Duration tempTime = tryParseTime(tempString, importOptions);
             if (tempTime != null) {
-                return Helper.getOATime(tempTime);
+                return BigDecimal.valueOf(Helper.getOATime(tempTime));
             }
         }
         return data;
@@ -774,6 +791,15 @@ public class WorksheetReader {
     private static Double tryParseDouble(String raw){
         try {
             return Double.parseDouble(raw);
+        }
+        catch (Exception ex){
+            return null;
+        }
+    }
+
+    private static BigDecimal tryParseBigDecimal(String raw){
+        try {
+            return new BigDecimal(raw);
         }
         catch (Exception ex){
             return null;

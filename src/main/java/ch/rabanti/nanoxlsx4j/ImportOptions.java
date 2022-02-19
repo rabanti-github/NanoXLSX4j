@@ -42,9 +42,13 @@ public class ImportOptions {
          */
         Default,
         /**
-         * ll numbers are cast to doubles
+         * All numbers are cast to doubles
          */
         AllNumbersToDouble,
+        /**
+         * All numbers are cast to BigDecimal
+         */
+        AllNumbersToBigDecimal,
         /**
          * All numbers are cast to integers. Floating point numbers will be rounded (commercial rounding) to the nearest integer
          */
@@ -67,6 +71,10 @@ public class ImportOptions {
          * Cells are tried to be imported as numbers (enforcing double)
          */
         Double,
+        /**
+         * Cells are tried to be imported as numbers (enforcing BigDecimal)
+         */
+        BigDecimal,
         /**
          * Cells are tried to be imported as dates (Date). If values are provided as Strings, the String defined with {@link ImportOptions#setDateFormat(java.lang.String)} will be used as parsing pattern
          */

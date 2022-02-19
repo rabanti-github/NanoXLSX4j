@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
@@ -48,6 +49,37 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertEqualsFunction, expectedCells);
     }
 
+    @DisplayName("Test of the reader functionality with the global import option to cast all number to BigDecimal")
+    @Test()
+    void castToBigDecimalTest() throws Exception {
+        Map<String, Object> cells = new HashMap<String, Object>();
+        cells.put("A1", "test");
+        cells.put("A2", true);
+        cells.put("A3", false);
+        cells.put("A4", 42);
+        cells.put("A5", 0.55f);
+        cells.put("A6", -0.111d);
+        cells.put("A7", buildDate(2020, 11, 10, 9, 8, 7));
+        cells.put("A8", buildTime(18, 15, 12));
+        cells.put("A9", null);
+        cells.put("A10", "27");
+        cells.put("A11", new Cell("=A1", Cell.CellType.FORMULA, "A11"));
+        Map<String, Object> expectedCells = new HashMap<>();
+        expectedCells.put("A1", "test");
+        expectedCells.put("A2", BigDecimal.ONE);
+        expectedCells.put("A3", BigDecimal.ZERO);
+        expectedCells.put("A4", BigDecimal.valueOf(42));
+        expectedCells.put("A5", BigDecimal.valueOf(0.55d));
+        expectedCells.put("A6", BigDecimal.valueOf(-0.111d));
+        expectedCells.put("A7", BigDecimal.valueOf(Double.valueOf(Helper.getOADateString(buildDate(2020, 11, 10, 9, 8, 7)))));
+        expectedCells.put("A8", BigDecimal.valueOf(Double.valueOf(Helper.getOATimeString(buildTime(18, 15, 12)))));
+        expectedCells.put("A9", null);
+        expectedCells.put("A10", BigDecimal.valueOf(27));
+        expectedCells.put("A11", new Cell("=A1", Cell.CellType.FORMULA, "A11"));
+        ImportOptions options = new ImportOptions();
+        options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToBigDecimal);
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
 
     @DisplayName("Test of the reader functionality with the global import option to cast all number to double")
     @Test()
@@ -80,7 +112,6 @@ public class ImportOptionTest {
         options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToDouble);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
-
 
     @DisplayName("Test of the reader functionality with the global import option to cast all number to int")
     @Test()
@@ -253,6 +284,7 @@ public class ImportOptionTest {
         cells.put("B5", date);
         cells.put("B6", null);
         cells.put("B7", new Cell("=A1", Cell.CellType.FORMULA, "B7"));
+        cells.put("B8", "02.0E+1025");
         cells.put("C1", "2");
         cells.put("C2", buildTime(12, 14, 16));
         cells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
@@ -267,6 +299,7 @@ public class ImportOptionTest {
         expectedCells.put("B5", Helper.getOADate(date));
         expectedCells.put("B6", null);
         expectedCells.put("B7", new Cell("=A1", Cell.CellType.FORMULA, "B7"));
+        expectedCells.put("B8", new BigDecimal("02.0E+1025"));
         expectedCells.put("C1", "2");
         expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
@@ -334,11 +367,13 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
-    @DisplayName("Test of the import options for the import column types Numeric and Double on parsed dates and times")
+    @DisplayName("Test of the import options for the import column types Numeric, BigDecimal and Double on parsed dates and times")
     @ParameterizedTest(name = "Given column type {0} with the string {1} should lead to a cell with the value {2}")
     @CsvSource({
             "Double, '2021-10-31 12:11:10', 44500.5077546296d",
             "Double, '18:20:22', 0.764143518518519d",
+            "BigDecimal, '2021-10-31 12:11:10', 44500.5077546296d",
+            "BigDecimal, '18:20:22', 0.764143518518519d",
             "Numeric, '2021-10-31 12:11:10', 44500.5077546296d",
             "Numeric, '18:20:22', 0.764143518518519d",
     })
@@ -350,7 +385,12 @@ public class ImportOptionTest {
 
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", true);
-        expectedCells.put("B1", expectedValue);
+        if (columnType == ImportOptions.ColumnType.BigDecimal){
+            expectedCells.put("B1", BigDecimal.valueOf(expectedValue));
+        }
+        else {
+            expectedCells.put("B1", expectedValue);
+        }
         expectedCells.put("C1", "2");
         ImportOptions options = new ImportOptions();
         options.setEnforceDateTimesAsNumbers(true);
@@ -358,25 +398,40 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
-    @DisplayName("Test of the import options for the import column type with wrong style information: Double")
+    @DisplayName("Test of the import options for the import column type with wrong style information: Double and BigDecimal")
     @ParameterizedTest(name = "Given column {1} should lead to a valid import")
     @CsvSource({
             "STRING, 'B', Double",
             "INTEGER, '1', Double",
+            "STRING, 'B', BigDecimal",
+            "INTEGER, '1', BigDecimal",
     })
     void enforcingColumnAsNumberTest4(String sourceType, String sourceValue, ImportOptions.ColumnType columnType) throws Exception {
+        Object ob1, ob2, ob4;
+        String ob3 = "5-7";
+        String ob5 = "1870-06-01 12:12:00";
+        if (columnType == ImportOptions.ColumnType.Double){
+            ob1 = -10d;
+            ob2 = -5.5d;
+            ob4 = -1d;
+        }
+        else{
+            ob1 = BigDecimal.valueOf(-10);
+            ob2 = BigDecimal.valueOf(-5.5);
+            ob4 = BigDecimal.valueOf(-1);
+        }
         Object column = TestUtils.createInstance(sourceType, sourceValue);
         Map<String, Object> cells = new HashMap<>();
         Cell a1 = new Cell(1, Cell.CellType.NUMBER, "A1");
-        Cell b1 = new Cell(-10, Cell.CellType.NUMBER, "B1");
+        Cell b1 = new Cell(ob1, Cell.CellType.NUMBER, "B1");
         b1.setStyle(BasicStyles.DateFormat());
-        Cell b2 = new Cell(-5.5f, Cell.CellType.NUMBER, "B2");
+        Cell b2 = new Cell(ob2, Cell.CellType.NUMBER, "B2");
         b1.setStyle(BasicStyles.TimeFormat());
-        Cell b3 = new Cell("5-7", Cell.CellType.STRING, "B3");
+        Cell b3 = new Cell(ob3, Cell.CellType.STRING, "B3");
         b1.setStyle(BasicStyles.DateFormat());
-        Cell b4 = new Cell("-1", Cell.CellType.STRING, "B4");
+        Cell b4 = new Cell(ob4, Cell.CellType.STRING, "B4");
         b1.setStyle(BasicStyles.DateFormat());
-        Cell b5 = new Cell("1870-06-01 12:12:00", Cell.CellType.STRING, "B5");
+        Cell b5 = new Cell(ob5, Cell.CellType.STRING, "B5");
         b5.setStyle(BasicStyles.DateFormat());
         Cell c1 = new Cell(10, Cell.CellType.NUMBER, "C1");
         cells.put("A1", a1);
@@ -388,11 +443,11 @@ public class ImportOptionTest {
         cells.put("C1", c1);
         Map<String, Cell> expectedCells = new HashMap<>();
         Cell exA1 = new Cell(1, Cell.CellType.NUMBER, "A1");
-        Cell exB1 = new Cell(-10d, Cell.CellType.NUMBER, "B1");
-        Cell exB2 = new Cell(-5.5d, Cell.CellType.NUMBER, "B2");
-        Cell exB3 = new Cell("5-7", Cell.CellType.STRING, "B3");
-        Cell exB4 = new Cell(-1d, Cell.CellType.STRING, "B4");
-        Cell exB5 = new Cell("1870-06-01 12:12:00", Cell.CellType.STRING, "B5");
+        Cell exB1 = new Cell(ob1, Cell.CellType.NUMBER, "B1");
+        Cell exB2 = new Cell(ob2, Cell.CellType.NUMBER, "B2");
+        Cell exB3 = new Cell(ob3, Cell.CellType.STRING, "B3");
+        Cell exB4 = new Cell(ob4, Cell.CellType.STRING, "B4");
+        Cell exB5 = new Cell(ob5, Cell.CellType.STRING, "B5");
         Cell exC1 = new Cell(10, Cell.CellType.NUMBER, "C1");
         expectedCells.put("A1", exA1);
         expectedCells.put("B1", exB1);
@@ -437,6 +492,7 @@ public class ImportOptionTest {
         cells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
         cells.put("B12", 2);
         cells.put("B13", "0");
+        cells.put("B14", "");
         cells.put("C1", "0");
         cells.put("C2", buildTime(12, 14, 16));
         cells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
@@ -457,6 +513,7 @@ public class ImportOptionTest {
         expectedCells.put("B11", new Cell("=A1", Cell.CellType.FORMULA, "B11"));
         expectedCells.put("B12", 2);
         expectedCells.put("B13", false);
+        expectedCells.put("B14", "");
         expectedCells.put("C1", "0");
         expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
@@ -917,13 +974,15 @@ public class ImportOptionTest {
     }
 
     private static void assertApproximateFunction(Object expected, Object given) {
-        double threshold = 0.000012; // The precision may vary (roughly one second)
-        if (given instanceof Double) {
-            assertTrue(Math.abs((Double) given - (Double) expected) < threshold);
+        double doubleThreshold = 0.000012; // The precision may vary (roughly one second)
+        if (given instanceof BigDecimal){
+            assertTrue(((BigDecimal)given).abs().subtract(((BigDecimal)expected).abs()).doubleValue() < doubleThreshold);
+        }
+        else if (given instanceof Double) {
+            assertTrue(Math.abs((Double) given - (Double) expected) < doubleThreshold);
         } else if (given instanceof Float) {
-            assertTrue(Math.abs((Float) given - (Float) expected) < threshold);
+            assertTrue(Math.abs((Float) given - (Float) expected) < doubleThreshold);
         } else if (given instanceof Date) {
-
             double e = Helper.getOADate((Date) expected);
             double g = Helper.getOADate((Date) given);
             assertApproximateFunction(e, g);
