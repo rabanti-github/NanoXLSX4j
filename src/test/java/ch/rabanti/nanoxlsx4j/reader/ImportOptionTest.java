@@ -385,10 +385,9 @@ public class ImportOptionTest {
 
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", true);
-        if (columnType == ImportOptions.ColumnType.BigDecimal){
+        if (columnType == ImportOptions.ColumnType.BigDecimal) {
             expectedCells.put("B1", BigDecimal.valueOf(expectedValue));
-        }
-        else {
+        } else {
             expectedCells.put("B1", expectedValue);
         }
         expectedCells.put("C1", "2");
@@ -410,12 +409,11 @@ public class ImportOptionTest {
         Object ob1, ob2, ob4;
         String ob3 = "5-7";
         String ob5 = "1870-06-01 12:12:00";
-        if (columnType == ImportOptions.ColumnType.Double){
+        if (columnType == ImportOptions.ColumnType.Double) {
             ob1 = -10d;
             ob2 = -5.5d;
             ob4 = -1d;
-        }
-        else{
+        } else {
             ob1 = BigDecimal.valueOf(-10);
             ob2 = BigDecimal.valueOf(-5.5);
             ob4 = BigDecimal.valueOf(-1);
@@ -654,6 +652,39 @@ public class ImportOptionTest {
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
+    @DisplayName("Test of the import options for the import column type (without casting to numbers) with missing formats for Date and Duration")
+    @ParameterizedTest(name = "Given column {1} and {2} should lead to a valid import")
+    @CsvSource({
+            "STRING, 'B', 'C'",
+            "INTEGER, '1', '2'",
+    })
+    void enforcingColumnAsDateTest2(String sourceType, String sourceValue1, String sourceValue2) throws Exception {
+        Object column1 = TestUtils.createInstance(sourceType, sourceValue1);
+        Object column2 = TestUtils.createInstance(sourceType, sourceValue2);
+        Map<String, Object> cells = new HashMap<>();
+        cells.put("A1", 1);
+        cells.put("B1", "11:12:13");
+        cells.put("C1", "2021-08-14 18:22:13");
+        cells.put("D1", "0");
+
+        Map<String, Object> expectedCells = new HashMap<>();
+        expectedCells.put("A1", 1);
+        expectedCells.put("B1", buildTime(11, 12, 13));
+        expectedCells.put("C1", buildDate(2021, 7, 14, 18, 22, 13));
+        expectedCells.put("D1", "0");
+        ImportOptions options = new ImportOptions();
+        options.setDateFormat(null);
+        options.setTimeFormat(null);
+        if (column1 instanceof String) {
+            options.addEnforcedColumn((String) column1, ImportOptions.ColumnType.Time);
+            options.addEnforcedColumn((String) column2, ImportOptions.ColumnType.Date);
+        } else {
+            options.addEnforcedColumn((Integer) column1, ImportOptions.ColumnType.Time);
+            options.addEnforcedColumn((Integer) column2, ImportOptions.ColumnType.Date);
+        }
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
     @DisplayName("Test of the import options for the import column type with wrong style information: Date")
     @ParameterizedTest(name = "Given column {1} should lead to a valid import")
     @CsvSource({
@@ -662,7 +693,7 @@ public class ImportOptionTest {
             "STRING, 'B', Time",
             "INTEGER, '1', Time",
     })
-    public void enforcingColumnAsDateTest2(String sourceType, String sourceValue, ImportOptions.ColumnType type) throws Exception {
+    public void enforcingColumnAsDateTest3(String sourceType, String sourceValue, ImportOptions.ColumnType type) throws Exception {
         Object column = TestUtils.createInstance(sourceType, sourceValue);
         Map<String, Object> cells = new HashMap<>();
         Cell a1 = new Cell(1, Cell.CellType.NUMBER, "A1");
@@ -861,6 +892,57 @@ public class ImportOptionTest {
         assertValues(cells, options2, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
+    @DisplayName("Test of enforced import types when the same type overlaps globally and on a column")
+    @ParameterizedTest(name = "Given global type {0} and column type {1} should lead to a valid, enforced import")
+    @CsvSource({
+            "AllNumbersToBigDecimal, BigDecimal, '7', '23', 1.1, 'BIGDECIMAL'",
+            "AllNumbersToDouble, Double, '7', '23', 1.1, 'DOUBLE'",
+            "AllNumbersToInt, Numeric, '7', '23', 1.1, 'INTEGER'",
+            "EverythingToString, String, '7', '23', 1.1, 'STRING'",
+    })
+    void importEnforceOverlappingTest(ImportOptions.GlobalType globalType, ImportOptions.ColumnType columnType, Object givenA2Value, Object givenB1Value, Object givenB2Value, String expectedType) throws Exception {
+        Map<String, Object> cells = new HashMap<>();
+        Map<String, Object> expectedCells = new HashMap<>();
+        cells.put("A1", "test");
+        cells.put("A2", givenA2Value);
+        cells.put("B1", givenB1Value);
+        cells.put("B2", givenB2Value);
+        expectedCells.put("A1", "test");
+        expectedCells.put("A2", TestUtils.createInstance(expectedType, String.valueOf(givenA2Value)));
+        expectedCells.put("B1", TestUtils.createInstance(expectedType, String.valueOf(givenB1Value)));
+        expectedCells.put("B2", TestUtils.createInstance(expectedType, String.valueOf(givenB2Value)));
+        ImportOptions importOptions = new ImportOptions();
+        importOptions.addEnforcedColumn(1, columnType);
+        importOptions.setGlobalEnforcingType(globalType);
+        assertValues(cells, importOptions, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
+    @DisplayName("Test of enforced import types when the global type overrules the column type")
+    @ParameterizedTest(name = "Given global type {0} and column type {1} should lead to a valid, enforced import")
+    @CsvSource({
+            "BigDecimal, AllNumbersToBigDecimal, '7', '23', 1.1, 'BIGDECIMAL'",
+            "Double, AllNumbersToDouble, '7', '23', 1.1, 'DOUBLE'",
+            "Numeric, AllNumbersToInt, '7', '23', 1.1, 'INTEGER'",
+            "String, EverythingToString, '7', '23', 1.1, 'STRING'",
+            "BigDecimal, EverythingToString, '7', '23', 1.1, 'STRING'",
+    })
+    void importEnforceOverruleTest(ImportOptions.ColumnType columnType, ImportOptions.GlobalType globalType, Object givenA2Value, Object givenB1Value, Object givenB2Value, String expectedType) throws Exception {
+        Map<String, Object> cells = new HashMap<>();
+        Map<String, Object> expectedCells = new HashMap<>();
+        cells.put("A1", "test");
+        cells.put("A2", givenA2Value);
+        cells.put("B1", givenB1Value);
+        cells.put("B2", givenB2Value);
+        expectedCells.put("A1", "test");
+        expectedCells.put("A2", TestUtils.createInstance(expectedType, String.valueOf(givenA2Value)));
+        expectedCells.put("B1", TestUtils.createInstance(expectedType, String.valueOf(givenB1Value)));
+        expectedCells.put("B2", TestUtils.createInstance(expectedType, String.valueOf(givenB2Value)));
+        ImportOptions importOptions = new ImportOptions();
+        importOptions.addEnforcedColumn(1, columnType);
+        importOptions.setGlobalEnforcingType(globalType);
+        assertValues(cells, importOptions, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
     @DisplayName("Test of the import options for custom date and time formats")
     @ParameterizedTest(name = "Given type {0} should lead to a valid import")
     @CsvSource({
@@ -892,28 +974,6 @@ public class ImportOptionTest {
         assertValues(cells, importOptions, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
-    @DisplayName("Test of all getters of the ImportOptions class (code completion)")
-    @Test
-    void importOptionsGetterTest() {
-        ImportOptions options = new ImportOptions();
-        options.setTemporalLocale(Locale.ITALY);
-        options.setDateFormat("yyyy-mm-dd");
-        options.setTimeFormat("hh-mm");
-        options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToInt);
-        options.setEnforcingStartRowNumber(7);
-        options.setEnforceDateTimesAsNumbers(true);
-        options.setEnforceEmptyValuesAsString(true);
-
-        assertEquals(Locale.ITALY, options.getTemporalLocale());
-        assertEquals("yyyy-mm-dd", options.getDateFormat());
-        assertNotNull(options.getDateFormatter());
-        assertEquals("hh-mm", options.getTimeFormat());
-        assertEquals(ImportOptions.GlobalType.AllNumbersToInt, options.getGlobalEnforcingType());
-        assertEquals(7, options.getEnforcingStartRowNumber());
-        assertTrue(options.isEnforceDateTimesAsNumbers());
-        assertTrue(options.isEnforceEmptyValuesAsString());
-    }
-
     @DisplayName("Test of all the failing date casting on a missing date formatter")
     @Test
     void missingDateFormatterTest() throws Exception {
@@ -940,6 +1000,63 @@ public class ImportOptionTest {
         cells.put("A1", "25:10:00");
         expectedCells.put("A1", "25:10:00");
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
+    @DisplayName("Test of all the failing casting on an invalid Date or Duration value")
+    @ParameterizedTest(name = "Given type {0} should fail cast on value {1}")
+    @CsvSource({
+            "Time, '55.81.202x'",
+            "Date, '2022-18-22 15:6x:00'",
+            "Time, '10000-01-01 00:00:00'",
+            "Date, '10000-01-01 00:00:00'",
+            "Time, '1800-01-01 00:00:00'",
+            "Time, '-10:00:00'",
+    })
+    void invalidDateCastingTest(ImportOptions.ColumnType columnType, String value) throws Exception {
+        ImportOptions options = new ImportOptions();
+        options.setEnforceDateTimesAsNumbers(true);
+        options.addEnforcedColumn("A", columnType);
+        Map<String, Object> cells = new HashMap<>();
+        Map<String, Object> expectedCells = new HashMap<>();
+        cells.put("A1", value);
+        expectedCells.put("A1", value);
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
+    @DisplayName("Test of all the failing casting on an Duration with an invalid (too high) number of days")
+    @Test()
+    void invalidDateCastingTest2() throws Exception {
+        ImportOptions options = new ImportOptions();
+        options.setEnforceDateTimesAsNumbers(true);
+        options.addEnforcedColumn("A", ImportOptions.ColumnType.Time);
+        options.setTimeFormat("HH:mm:ss n");
+        Map<String, Object> cells = new HashMap<>();
+        Map<String, Object> expectedCells = new HashMap<>();
+        cells.put("A1", "00:00:00 2958467");
+        expectedCells.put("A1", "00:00:00 2958467");
+        assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
+    }
+
+    @DisplayName("Test of all getters of the ImportOptions class (code completion)")
+    @Test
+    void importOptionsGetterTest() {
+        ImportOptions options = new ImportOptions();
+        options.setTemporalLocale(Locale.ITALY);
+        options.setDateFormat("yyyy-mm-dd");
+        options.setTimeFormat("hh-mm");
+        options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToInt);
+        options.setEnforcingStartRowNumber(7);
+        options.setEnforceDateTimesAsNumbers(true);
+        options.setEnforceEmptyValuesAsString(true);
+
+        assertEquals(Locale.ITALY, options.getTemporalLocale());
+        assertEquals("yyyy-mm-dd", options.getDateFormat());
+        assertNotNull(options.getDateFormatter());
+        assertEquals("hh-mm", options.getTimeFormat());
+        assertEquals(ImportOptions.GlobalType.AllNumbersToInt, options.getGlobalEnforcingType());
+        assertEquals(7, options.getEnforcingStartRowNumber());
+        assertTrue(options.isEnforceDateTimesAsNumbers());
+        assertTrue(options.isEnforceEmptyValuesAsString());
     }
 
     private static <T, D> void assertValues(Map<String, T> givenCells, ImportOptions importOptions, BiConsumer<Object, Object> assertionAction) throws Exception {
@@ -975,10 +1092,9 @@ public class ImportOptionTest {
 
     private static void assertApproximateFunction(Object expected, Object given) {
         double doubleThreshold = 0.000012; // The precision may vary (roughly one second)
-        if (given instanceof BigDecimal){
-            assertTrue(((BigDecimal)given).abs().subtract(((BigDecimal)expected).abs()).doubleValue() < doubleThreshold);
-        }
-        else if (given instanceof Double) {
+        if (given instanceof BigDecimal) {
+            assertTrue(((BigDecimal) given).abs().subtract(((BigDecimal) expected).abs()).doubleValue() < doubleThreshold);
+        } else if (given instanceof Double) {
             assertTrue(Math.abs((Double) given - (Double) expected) < doubleThreshold);
         } else if (given instanceof Float) {
             assertTrue(Math.abs((Float) given - (Float) expected) < doubleThreshold);

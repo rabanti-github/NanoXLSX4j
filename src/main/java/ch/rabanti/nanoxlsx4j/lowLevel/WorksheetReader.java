@@ -434,11 +434,9 @@ public class WorksheetReader {
             return null;
         }
         Class<?> cls = data.getClass();
-        if (Double.class.equals(cls)) {
-            return data;
-        } else if (BigDecimal.class.equals(cls)) {
-            return ((BigDecimal) data).doubleValue();
-        } else if (Long.class.equals(cls) || Short.class.equals(cls) || Float.class.equals(cls) || Byte.class.equals(cls) || Integer.class.equals(cls)) {
+        if (BigDecimal.class.equals(cls)) {
+            return  data;
+        } else if (Long.class.equals(cls) || Short.class.equals(cls) || Float.class.equals(cls) || Double.class.equals(cls) || Byte.class.equals(cls) || Integer.class.equals(cls)) {
             Number number = (Number) data;
             return BigDecimal.valueOf(number.doubleValue());
         } else if (Boolean.class.equals(cls)) {
@@ -526,14 +524,7 @@ public class WorksheetReader {
     private static Date tryParseDate(String raw, SimpleDateFormat formatter){
         try{
             Date date;
-        if (Helper.isNullOrEmpty(raw) || formatter == null){
-            SimpleDateFormat defaultFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT, ImportOptions.DEFAULT_LOCALE);
-            date = defaultFormatter.parse(raw);
-        }
-        else
-        {
             date = formatter.parse(raw);
-        }
             if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime())
             {
                 return date;
@@ -570,23 +561,18 @@ public class WorksheetReader {
     private static Duration tryParseTime(String raw, DateTimeFormatter formatter){
         try{
             Duration time;
-            if (Helper.isNullOrEmpty(raw) || formatter == null){
-                DateTimeFormatter defaultFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_TIME_FORMAT).withLocale(ImportOptions.DEFAULT_LOCALE);
-                time = Helper.parseTime(raw, defaultFormatter);
-            }
-            else
-            {
-                time = Helper.parseTime(raw, formatter);
-            }
+            time = Helper.parseTime(raw, formatter);
             double days = time.get(ChronoUnit.SECONDS) / 86400d;
-            if (days >= 0d && days < Helper.MAX_OADATE_VALUE)
-            {
+            if (days >= 0d && days < Helper.MAX_OADATE_VALUE) {
                 return time;
+            }
+            else {
+                return null;
             }
         }
         catch (Exception ex){
+            return null;
         }
-        return null;
     }
 
     private Result<Object, Cell.CellType> getDateTimeValue(String raw, Cell.CellType valueType)
@@ -806,15 +792,6 @@ public class WorksheetReader {
         }
     }
 
-    private static Float tryParseFloat(String raw){
-        try {
-            return Float.parseFloat(raw);
-        }
-        catch (Exception ex){
-            return null;
-        }
-    }
-
     private static boolean compareDouble(double d1, double d2){
         final double epsilon = 0.000001d;
         return Math.abs(d1 - d2) < epsilon;
@@ -940,10 +917,6 @@ public class WorksheetReader {
      */
     private static Duration tryParseTime(String raw, ImportOptions options) {
         try {
-            if (options == null || options.getTimeFormatter() == null) {
-                // no generic parsing available
-                return null;
-            }
             TemporalAccessor time = options.getTimeFormatter().parse(raw);
             int days = time.get(ChronoField.NANO_OF_SECOND);
             int hours = time.get(ChronoField.HOUR_OF_DAY);

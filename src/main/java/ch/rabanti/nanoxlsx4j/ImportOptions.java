@@ -188,7 +188,7 @@ public class ImportOptions {
     }
 
     /**
-     * Gets the global strategy to handle cell values. The default will not enforce any general casting, besides {@link ImportOptions#setEnforceDateTimesAsNumbers(boolean)}, {@link ImportOptions#setEnforceEmptyValuesAsString(boolean)} and {@link ImportOptions#addEnforcedColumn(int, ColumnType)}
+     * Gets the global strategy to handle cell values. The default will not enforce any general casting, beside defined values of {@link ImportOptions#setEnforceDateTimesAsNumbers(boolean)}, {@link ImportOptions#setEnforceEmptyValuesAsString(boolean)} and {@link ImportOptions#addEnforcedColumn(int, ColumnType)}
      *
      * @return Global cast strategy on import
      */
@@ -197,7 +197,7 @@ public class ImportOptions {
     }
 
     /**
-     * Sets the global strategy to handle cell values. The default will not enforce any casting, besides {@link ImportOptions#setEnforceDateTimesAsNumbers(boolean)}, {@link ImportOptions#setEnforceEmptyValuesAsString(boolean)} and {@link ImportOptions#addEnforcedColumn(int, ColumnType)}
+     * Sets the global strategy to handle cell values. The default will not enforce any casting, beside defined values of {@link ImportOptions#setEnforceDateTimesAsNumbers(boolean)}, {@link ImportOptions#setEnforceEmptyValuesAsString(boolean)} and {@link ImportOptions#addEnforcedColumn(int, ColumnType)}
      *
      * @param globalEnforcingType Global cast strategy on import
      */

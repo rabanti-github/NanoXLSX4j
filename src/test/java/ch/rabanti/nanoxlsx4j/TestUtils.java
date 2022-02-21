@@ -5,6 +5,9 @@ import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -23,8 +26,16 @@ public class TestUtils {
 
     public static Object createInstance(String sourceType, String stringValue) {
         switch (sourceType.toUpperCase()) {
+            case "BIGDECIMAL":
+                return  new BigDecimal(stringValue);
             case "INTEGER":
-                return Integer.parseInt(stringValue);
+                try {
+                    Number number = NumberFormat.getInstance().parse(stringValue);
+                    return number.intValue();
+                }
+                catch(Exception ex){
+                    throw new IllegalArgumentException("Cannot cast to int: " + sourceType);
+            }
             case "LONG":
                 return Long.parseLong(stringValue);
             case "BYTE":
