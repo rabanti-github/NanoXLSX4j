@@ -439,18 +439,15 @@ public class CellXf extends AbstractStyle {
      */
     @Override
     public int hashCode() {
-        int p = 269;
-        int r = 1;
-        r *= p + this.horizontalAlign.value;
-        r *= p + this.verticalAlign.value;
-        r *= p + this.alignment.value;
-        r *= p + this.textDirection.value;
-        r *= p + this.textRotation;
-        r *= p + (this.forceApplyAlignment ? 0 : 1);
-        r *= p + (this.locked ? 0 : 2);
-        r *= p + (this.hidden ? 0 : 4);
-        r *= p + this.indent;
-        return r;
+        int result = textRotation;
+        result = 31 * result + (textDirection != null ? textDirection.hashCode() : 0);
+        result = 31 * result + (horizontalAlign != null ? horizontalAlign.hashCode() : 0);
+        result = 31 * result + (verticalAlign != null ? verticalAlign.hashCode() : 0);
+        result = 31 * result + (alignment != null ? alignment.hashCode() : 0);
+        result = 31 * result + (locked ? 1 : 0);
+        result = 31 * result + (hidden ? 1 : 0);
+        result = 31 * result + (forceApplyAlignment ? 1 : 0);
+        result = 31 * result + indent;
+        return result;
     }
-
-}  
+}

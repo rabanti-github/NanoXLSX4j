@@ -119,56 +119,55 @@ public class StyleReader {
             if (diagonalUp != null && diagonalUp.equals("1")) {
                 borderStyle.setDiagonalUp(true);
             }
-            Border.StyleValue styleType;
             XmlDocument.XmlNode innerNode = getChildNode(border, "diagonal");
             if (innerNode != null) {
-                String styleValue = innerNode.getAttribute("style");
-                styleType = getEnumValue(styleValue);
-                if (styleValue != null) {
-                    borderStyle.setDiagonalStyle(styleType);
-                }
+                borderStyle.setDiagonalStyle(parseStyle(innerNode));
                 borderStyle.setDiagonalColor(getColor(innerNode, Border.DEFAULT_BORDER_COLOR));
             }
             innerNode = getChildNode(border, "top");
             if (innerNode != null) {
-                String styleValue = innerNode.getAttribute("style");
-                styleType = getEnumValue(styleValue);
-                if (styleValue != null) {
-                    borderStyle.setTopStyle(styleType);
-                }
+                borderStyle.setTopStyle(parseStyle(innerNode));
                 borderStyle.setTopColor(getColor(innerNode, Border.DEFAULT_BORDER_COLOR));
             }
             innerNode = getChildNode(border, "bottom");
             if (innerNode != null) {
-                String styleValue = innerNode.getAttribute("style");
-                styleType = getEnumValue(styleValue);
-                if (styleValue != null) {
-                    borderStyle.setBottomStyle(styleType);
-                }
+                borderStyle.setBottomStyle(parseStyle(innerNode));
                 borderStyle.setBottomColor(getColor(innerNode, Border.DEFAULT_BORDER_COLOR));
             }
             innerNode = getChildNode(border, "left");
             if (innerNode != null) {
-                String styleValue = innerNode.getAttribute("style");
-                styleType = getEnumValue(styleValue);
-                if (styleValue != null) {
-                    borderStyle.setLeftStyle(styleType);
-                }
+                borderStyle.setLeftStyle(parseStyle(innerNode));
                 borderStyle.setLeftColor(getColor(innerNode, Border.DEFAULT_BORDER_COLOR));
             }
             innerNode = getChildNode(border, "right");
             if (innerNode != null) {
-                String styleValue = innerNode.getAttribute("style");
-                styleType = getEnumValue(styleValue);
-                if (styleValue != null) {
-                    borderStyle.setRightStyle(styleType);
-                }
+                borderStyle.setRightStyle(parseStyle(innerNode));
                 borderStyle.setRightColor(getColor(innerNode, Border.DEFAULT_BORDER_COLOR));
             }
             borderStyle.setInternalID(styleReaderContainer.getNextBorderId());
             styleReaderContainer.addStyleComponent(borderStyle);
         }
     }
+
+    /**
+     * Tries to parse a border style
+     * @param innerNode Border sub-node
+     * @return Border type or non if parsing was not successful
+     */
+    private static Border.StyleValue parseStyle(XmlDocument.XmlNode innerNode)
+    {
+        String value = innerNode.getAttribute("style");
+        if (value != null)
+        {
+            if (value.equalsIgnoreCase("double"))
+            {
+                return Border.StyleValue.s_double; // special handling, since double is not a valid enum value
+            }
+            return getEnumValue(value);
+        }
+        return Border.StyleValue.none;
+    }
+
 
     /**
      * Determines the cell XF entries in a XML node of the style document

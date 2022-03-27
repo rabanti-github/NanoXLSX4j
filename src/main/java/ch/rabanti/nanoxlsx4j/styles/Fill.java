@@ -275,13 +275,11 @@ public class Fill extends AbstractStyle {
      */
     @Override
     public int hashCode() {
-        int p = 263;
-        int r = 1;
-        r *= p + this.indexedColor;
-        r *= p + this.patternFill.value;
-        r *= p + this.foregroundColor.hashCode();
-        r *= p + this.backgroundColor.hashCode();
-        return r;
+        int result = indexedColor;
+        result = 31 * result + (patternFill != null ? patternFill.hashCode() : 0);
+        result = 31 * result + (foregroundColor != null ? foregroundColor.hashCode() : 0);
+        result = 31 * result + (backgroundColor != null ? backgroundColor.hashCode() : 0);
+        return result;
     }
 
 // ###  S T A T I C   F U N C T I O N S ###

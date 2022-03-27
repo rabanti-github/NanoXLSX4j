@@ -443,22 +443,19 @@ public class Font extends AbstractStyle {
      */
     @Override
     public int hashCode() {
-        int p = 257;
-        int r = 1;
-        r *= p + (this.bold ? 0 : 1);
-        r *= p + (this.italic ? 0 : 2);
-        r *= p + (this.underline ? 0 : 4);
-        r *= p + (this.doubleUnderline ? 0 : 8);
-        r *= p + (this.strike ? 0 : 16);
-        r *= p + this.colorTheme;
-        r *= p + this.colorValue.hashCode();
-        r *= p + this.family.hashCode();
-        r *= p + this.name.hashCode();
-        r *= p + this.scheme.getValue();
-        r *= p + this.verticalAlign.value;
-        r *= p + this.charset.hashCode();
-        r *= p + Float.hashCode(this.size);
-        return r;
+        int result = (size != +0.0f ? Float.floatToIntBits(size) : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (family != null ? family.hashCode() : 0);
+        result = 31 * result + colorTheme;
+        result = 31 * result + (colorValue != null ? colorValue.hashCode() : 0);
+        result = 31 * result + (scheme != null ? scheme.hashCode() : 0);
+        result = 31 * result + (verticalAlign != null ? verticalAlign.hashCode() : 0);
+        result = 31 * result + (bold ? 1 : 0);
+        result = 31 * result + (italic ? 1 : 0);
+        result = 31 * result + (underline ? 1 : 0);
+        result = 31 * result + (doubleUnderline ? 1 : 0);
+        result = 31 * result + (strike ? 1 : 0);
+        result = 31 * result + (charset != null ? charset.hashCode() : 0);
+        return result;
     }
-
 }

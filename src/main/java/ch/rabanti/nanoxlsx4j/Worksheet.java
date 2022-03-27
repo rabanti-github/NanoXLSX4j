@@ -16,6 +16,7 @@ import ch.rabanti.nanoxlsx4j.styles.Style;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 /**
@@ -1254,61 +1255,104 @@ public class Worksheet {
     }
 
     /**
+     * Gets the first existing column number in the current worksheet (zero-based)
+     *
+     * @return Zero-based column number. In case of an empty worksheet, -1 will be returned
+     * @apiNote getFirstColumnNumber() will not return the first column with data in any case. If there is a formatted but empty cell
+     * (or many) before the first cell with data. getFirstColumnNumber() will return the column number of this empty cell.
+     * Use {@link Worksheet#getFirstDataColumnNumber()}  in this case.
+     */
+    public int getFirstColumnNumber() {
+        return getBoundaryNumber(false, true);
+    }
+
+    /**
+     * Gets the first existing column number with data in the current worksheet (zero-based)
+     *
+     * @return Zero-based column number. In case of an empty worksheet, -1 will be returned
+     * @apiNote getFirstDataColumnNumber() will ignore formatted but empty cells before the first column with data.
+     * If you want the first defined column, use {@link Worksheet#getFirstColumnNumber()} instead.
+     */
+    public int getFirstDataColumnNumber() {
+        return getBoundaryDataNumber(false, true, true);
+    }
+
+    /**
+     * Gets the first existing row number in the current worksheet (zero-based)
+     *
+     * @return Zero-based row number. In case of an empty worksheet, -1 will be returned
+     * @apiNote getLastColumnNumber() will not return the first column with data in any case. If there is a formatted but empty cell
+     * (or many) before the first cell with data. getFirstRowNumber() will return the column number of this empty cell.
+     * Use {@link Worksheet#getFirstDataRowNumber()}  in this case.
+     */
+    public int getFirstRowNumber() {
+        return getBoundaryNumber(true, true);
+    }
+
+    /**
+     * Gets the first existing row number with data in the current worksheet (zero-based)
+     *
+     * @return Zero-based row number. In case of an empty worksheet, -1 will be returned
+     * @apiNote getFirstDataRowNumber() will ignore formatted but empty cells before the first row with data.
+     * If you want the first defined row, use {@link Worksheet#getFirstRowNumber()} instead.
+     */
+    public int getFirstDataRowNumber() {
+        return getBoundaryDataNumber(true, true, true);
+    }
+
+    /**
      * Gets the last existing column number in the current worksheet (zero-based)
      *
      * @return Zero-based column number. In case of an empty worksheet, -1 will be returned
-     * @apiNote getLastColumnNumber() will not return the last column with data in any case. If there is a formatted
-     * (or with the definition of AutoFilter, column width or hidden state) but empty cell (or many) beyond the last cell with data,
-     * getLastColumnNumber() will return the column number of this empty cell. Use {@link Worksheet#getLastDataColumnNumber()} in this case.
+     * @apiNote getLastColumnNumber() will not return the last column with data in any case. If there is a formatted but empty cell
+     * (or many) after the last cell with data. getLastColumnNumber() will return the column number of this empty cell.
+     * Use {@link Worksheet#getLastDataColumnNumber()}  in this case.
      */
     public int getLastColumnNumber() {
-        return getLastAddress(true, false);
+        return getBoundaryNumber(false, false);
     }
 
     /**
      * Gets the last existing column number with data in the current worksheet (zero-based)
      *
-     * @return Zero-based column number. In case of an empty worksheet, -1 will be returned
-     * @apiNote GetLastDataColumnNumber() will ignore formatted (or with the definition of AutoFilter, column width or hidden state)
-     * but empty cells beyond the last column with data. getLastColumnNumber() will return the column number of this empty cell.
-     * Use {@link Worksheet#getLastColumnNumber()} in this case.
+     * @return Zero-based column number. in case of an empty worksheet, -1 will be returned
+     * @apiNote getLastDataColumnNumber() will ignore formatted but empty cells after the last column with data.
+     * If you want the last defined column, use {@link Worksheet#getLastColumnNumber()} instead.
      */
     public int getLastDataColumnNumber() {
-        return getLastAddress(true, true);
+        return getBoundaryDataNumber(false, false, true);
     }
 
     /**
      * Gets the last existing row number in the current worksheet (zero-based)
      *
      * @return Zero-based row number. In case of an empty worksheet, -1 will be returned
-     * @apiNote getLastRowNumber() will not return the last row with data in any case. If there is a formatted
-     * (or with the definition of row height or hidden state) but empty cell (or many) beyond the last cell with data,
-     * getLastRowNumber() will return the row number of this empty cell. Use {@link Worksheet#getLastDataRowNumber()} in this case.
+     * @apiNote getLastRowNumber() will not return the last row with data in any case. If there is a formatted but empty cell
+     * (or many) after the last cell with data. getLastRowNumber() will return the row number of this empty cell.
+     * Use {@link Worksheet#getLastDataRowNumber()}  in this case.
      */
     public int getLastRowNumber() {
-        return getLastAddress(false, false);
+        return getBoundaryNumber(true, false);
     }
 
     /**
      * Gets the last existing row number with data in the current worksheet (zero-based)
      *
      * @return Zero-based row number. in case of an empty worksheet, -1 will be returned
-     * @apiNote GetLastDataColumnNumber() will ignore formatted (or with the definition of row height or hidden state)
-     * but empty cells beyond the last column with data.
-     * If you want the last defined column, use {@link Worksheet#getLastRowNumber()} instead.
+     * @apiNote getLastDataRowNumber() will ignore formatted but empty cells after the last row with data.
+     * If you want the last defined row, use {@link Worksheet#getLastRowNumber()} instead.
      */
     public int getLastDataRowNumber() {
-        return getLastAddress(false, true);
+        return getBoundaryDataNumber(true, false, true);
     }
-
 
     /**
      * Gets the last existing cell in the current worksheet (bottom right)
      *
-     * @return Cell Address. If no cell address could be determined, null will be returned
+     * @return Nullable Cell Address. If no cell address could be determined, null will be returned
      * @apiNote getLastCellAddress() will not return the last cell with data in any case. If there is a formatted
-     * (or with definitions of hidden states, AutoFilters, heights or widths) but empty cell (or many) beyond the last cell with data,
-     * getLastCellAddress() will return the address of this empty cell. Use {@link Worksheet#getLastDataCellAddress} in this case.
+     * (or with definitions of hidden states, AutoFilters, heights or widths) but empty cell (or many) beyond the last cell
+     * with data, getLastCellAddress() will return the address of this empty cell. Use {@link Worksheet#getLastDataCellAddress()} in this case.
      */
     public Address getLastCellAddress() {
         int lastRow = getLastRowNumber();
@@ -1320,11 +1364,11 @@ public class Worksheet {
     }
 
     /**
-     * Gets the last existing cell with data in the current worksheet (bottom right)
+     * Gets the last existing cell in the current worksheet (bottom right)
      *
-     * @return Cell Address. If no cell address could be determined, null will be returned
-     * @apiNote GetLastDataCellAddress() will ignore formatted (or with definitions of hidden states, AutoFilters, heights or widths)
-     * but empty cells beyond the last cell with data. If you want the last defined cell, use {@link Worksheet#getLastCellAddress()} instead.
+     * @return Nullable Cell Address. If no cell address could be determined, null will be returned
+     * @apiNote getLastDataCellAddress() will ignore formatted (or with definitions of hidden states, AutoFilters, heights
+     * or widths) but empty cells beyond the last cell with data. If you want the last defined cell, use {@link Worksheet#getLastCellAddress()} instead.
      */
     public Address getLastDataCellAddress() {
         int lastRow = getLastDataRowNumber();
@@ -1336,43 +1380,157 @@ public class Worksheet {
     }
 
     /**
-     * Gets the last existing row or column number of the current worksheet (zero-based)
+     * Gets the first existing cell in the current worksheet (bottom right)
      *
-     * @param column      If true, the output will be the last column, otherwise the last row
-     * @param ignoreEmpty If true, empty cells are ignored and the last column or row is this one with a value
-     * @return Row or column number (zero-based)
+     * @return Nullable Cell Address. If no cell address could be determined, null will be returned
+     * @apiNote getFirstCellAddress() will not return the first cell with data in any case. If there is a formated but empty cell (or many) before the first cell with data,
+     * GetLastCellAddress() will return the address of this empty cell. Use {@link Worksheet#getFirstDataCellAddress()} in this case.
      */
-    private int getLastAddress(boolean column, boolean ignoreEmpty) {
-        int max = -1;
-        int number;
-        for (Map.Entry<String, Cell> cell : this.cells.entrySet()) {
-            number = column ? cell.getValue().getColumnNumber() : cell.getValue().getRowNumber();
-            if (ignoreEmpty && cell.getValue().getValue() != null && !cell.getValue().getValue().toString().equals("") && number > max) {
-                max = number;
-            } else if (!ignoreEmpty && number > max) {
-                max = number;
-            }
+    public Address getFirstCellAddress() {
+        int firstRow = getFirstRowNumber();
+        int firstColumn = getFirstColumnNumber();
+        if (firstRow < 0 || firstColumn < 0) {
+            return null;
         }
-        if (column && !ignoreEmpty && columns.size() > 0) {
-            int maxColumnDefinition = columns.entrySet().stream().max((c1, c2) -> Integer.compare(c1.getValue().getNumber(), c2.getValue().getNumber())).get().getValue().getNumber();
-            if (maxColumnDefinition > max) {
-                max = maxColumnDefinition;
-            }
-        } else if (!column && !ignoreEmpty && (hiddenRows.size() > 0 || rowHeights.size() > 0)) {
-            if (hiddenRows.size() > 0) {
-                int maxHiddenRowItem = hiddenRows.entrySet().stream().max((r1, r2) -> Integer.compare(r1.getKey(), r2.getKey())).get().getKey();
-                if (maxHiddenRowItem > max) {
-                    max = maxHiddenRowItem;
+        return new Address(firstColumn, firstRow);
+    }
+
+    /**
+     * Gets the first existing cell with data in the current worksheet (bottom right)
+     *
+     * @return Nullable Cell Address. If no cell address could be determined, null will be returned
+     * @apiNote getFirstDataCellAddress() will ignore formatted but empty cells before the first cell with data.
+     * If you want the first defined cell, use  {@link Worksheet#getFirstCellAddress()} instead.
+     */
+    public Address getFirstDataCellAddress() {
+        int firstRow = getFirstDataRowNumber();
+        int firstColumn = getLastDataColumnNumber();
+        if (firstRow < 0 || firstColumn < 0) {
+            return null;
+        }
+        return new Address(firstColumn, firstRow);
+    }
+
+    /**
+     * Gets either the minimum or maximum row or column number, considering only calls with data
+     *
+     * @param row If true, the min or max row is returned, otherwise the column
+     * @param min If true, the min value of the row or column is defined, otherwise the max value
+     * @param ignoreEmpty If true, empty cell values are ignored, otherwise considered without checking the content
+     * @return Min or max number, or -1 if not defined
+     */
+    private int getBoundaryDataNumber(boolean row, boolean min, boolean ignoreEmpty) {
+        if (cells.isEmpty()) {
+            return -1;
+        }
+            if (!ignoreEmpty){
+                if (row && min) {
+                    return cells.values().stream().min(Comparator.comparingInt(Cell::getRowNumber)).get().getRowNumber();
+                } else if (row) {
+                    return cells.values().stream().max(Comparator.comparingInt(Cell::getRowNumber)).get().getRowNumber();
+                } else if (min) {
+                    return cells.values().stream().min(Comparator.comparingInt(Cell::getColumnNumber)).get().getColumnNumber();
+                } else {
+                    return cells.values().stream().max(Comparator.comparingInt(Cell::getColumnNumber)).get().getColumnNumber();
                 }
             }
-            if (rowHeights.size() > 0) {
-                int maxRowHeightItem = rowHeights.entrySet().stream().max((r1, r2) -> Integer.compare(r1.getKey(), r2.getKey())).get().getKey();
-                if (maxRowHeightItem > max) {
-                    max = maxRowHeightItem;
-                }
+            List<Cell> nonEmptyCells  = cells.values().stream().filter(x -> x.getValue() != null).collect(Collectors.toList());
+            if (nonEmptyCells.isEmpty()) {
+                return -1;
+            }
+            if (row && min) {
+                return nonEmptyCells.stream().filter(x -> x.getValue().toString() != "").min(Comparator.comparingInt(Cell::getRowNumber)).get().getRowNumber();
+            } else if (row) {
+                return nonEmptyCells.stream().filter(x -> x.getValue().toString() != "").max(Comparator.comparingInt(Cell::getRowNumber)).get().getRowNumber();
+            } else if (min) {
+                return nonEmptyCells.stream().filter(x -> x.getValue().toString() != "").max(Comparator.comparingInt(Cell::getColumnNumber)).get().getColumnNumber();
+            } else {
+                return nonEmptyCells.stream().filter(x -> x.getValue().toString() != "").min(Comparator.comparingInt(Cell::getColumnNumber)).get().getColumnNumber();
+            }
+    }
+
+
+
+    /**
+     * Gets either the minimum or maximum row or column number, considering all available data
+     *
+     * @param row If true, the min or max row is returned, otherwise the column
+     * @param min If true, the min value of the row or column is defined, otherwise the max value
+     * @return Min or max number, or -1 if not defined
+     */
+    private int getBoundaryNumber(boolean row, boolean min) {
+        int cellBoundary = getBoundaryDataNumber(row, min, false);
+        if (row) {
+            int heightBoundary = -1;
+            if (!rowHeights.isEmpty()) {
+                heightBoundary = min ?
+                        rowHeights.keySet().stream().min(Comparator.comparingInt(a -> a)).get() :
+                        rowHeights.keySet().stream().max(Comparator.comparingInt(a -> a)).get();
+            }
+            int hiddenBoundary = -1;
+            if (!hiddenRows.isEmpty()) {
+                hiddenBoundary = min ?
+                        hiddenRows.keySet().stream().min(Comparator.comparingInt(a -> a)).get() :
+                        hiddenRows.keySet().stream().max(Comparator.comparingInt(a -> a)).get();
+            }
+            return min ? getMinRow(cellBoundary, heightBoundary, hiddenBoundary) : getMaxRow(cellBoundary, heightBoundary, hiddenBoundary);
+        } else {
+            int columnDefBoundary = -1;
+            if (!columns.isEmpty()) {
+                columnDefBoundary = min ?
+                        columns.keySet().stream().min(Comparator.comparingInt(a -> a)).get() :
+                        columns.keySet().stream().max(Comparator.comparingInt(a -> a)).get();
+            }
+            if (min) {
+                return cellBoundary >= 0 && cellBoundary < columnDefBoundary ? cellBoundary : columnDefBoundary;
+            } else {
+                return cellBoundary >= 0 && cellBoundary > columnDefBoundary ? cellBoundary : columnDefBoundary;
             }
         }
-        return max;
+    }
+
+    /**
+     * Gets the maximum row coordinate either from cell data, height definitions or hidden rows
+     *
+     * @param cellBoundary   Row number of max cell data
+     * @param heightBoundary Row number of max defined row height
+     * @param hiddenBoundary Row number of max defined hidden row
+     * @return Max row number or -1 if nothing valid defined
+     */
+    private int getMaxRow(int cellBoundary, int heightBoundary, int hiddenBoundary) {
+        int highest = -1;
+        if (cellBoundary >= 0) {
+            highest = cellBoundary;
+        }
+        if (heightBoundary >= 0 && heightBoundary > highest) {
+            highest = heightBoundary;
+        }
+        if (hiddenBoundary >= 0 && hiddenBoundary > highest) {
+            highest = hiddenBoundary;
+        }
+        return highest;
+    }
+
+    /**
+     * Gets the minimum row coordinate either from cell data, height definitions or hidden rows
+     *
+     * @param cellBoundary   Row number of min cell data
+     * @param heightBoundary Row number of min defined row height
+     * @param hiddenBoundary Row number of min defined hidden row
+     * @return Min row number or -1 if nothing valid defined
+     */
+    private int getMinRow(int cellBoundary, int heightBoundary, int hiddenBoundary) {
+        int lowest = Integer.MAX_VALUE;
+        if (cellBoundary >= 0) {
+            lowest = cellBoundary;
+        }
+        if (heightBoundary >= 0 && heightBoundary < lowest) {
+            lowest = heightBoundary;
+        }
+        if (hiddenBoundary >= 0 && hiddenBoundary < lowest) {
+            lowest = hiddenBoundary;
+        }
+        return lowest == Integer.MAX_VALUE ? -1 : lowest;
     }
 
     /**
@@ -1801,7 +1959,14 @@ public class Worksheet {
                 }
                 if (pos != 0) {
                     cell.setDataType(Cell.CellType.EMPTY);
-                    cell.setStyle(mergeStyle);
+                    if (cell.getCellStyle() == null) {
+                        cell.setStyle(mergeStyle);
+                    } else {
+                        Style mixedMergeStyle = cell.getCellStyle();
+                        // TODO: There should be a better possibility to identify particular style elements that deviates
+                        mixedMergeStyle.getCellXf().setForceApplyAlignment(mergeStyle.getCellXf().isForceApplyAlignment());
+                        cell.setStyle(mixedMergeStyle);
+                    }
                 }
                 pos++;
             }

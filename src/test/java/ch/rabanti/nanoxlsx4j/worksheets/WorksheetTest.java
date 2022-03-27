@@ -789,6 +789,177 @@ public class WorksheetTest {
         assertEquals("L12", address.getAddress());
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @DisplayName("Test of the getFirstCellAddress function with an empty worksheet")
+    @ParameterizedTest(name = "Column definitions: {0}, and row definitions of hidden states: {1} and heights: {2} should lead to a null address")
+    @CsvSource({
+            "false, false, false",
+            "false, false, true",
+            "false, true, true",
+            "false, true, false",
+            "true, false, false"
+    })
+    void getFirstCellAddressTest(boolean hasColumns, boolean hasHiddenRows, boolean hasRowHeights) {
+        Worksheet worksheet = new Worksheet();
+        if (hasColumns) {
+            worksheet.addHiddenColumn(1);
+            worksheet.addHiddenColumn(2);
+            worksheet.addHiddenColumn(3);
+        }
+        if (hasHiddenRows) {
+            worksheet.addHiddenRow(1);
+            worksheet.addHiddenRow(2);
+            worksheet.addHiddenRow(3);
+        }
+        if (hasRowHeights) {
+            worksheet.setRowHeight(1, 22.2f);
+            worksheet.setRowHeight(2, 22.2f);
+            worksheet.setRowHeight(3, 22.2f);
+        }
+        Address address = worksheet.getFirstCellAddress();
+        assertNull(address);
+    }
+
+    @DisplayName("Test of the getFirstCellAddress function with an empty worksheet but defined columns and rows")
+    @Test()
+    void getFirstCellAddressTest2() {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addHiddenColumn(1);
+        worksheet.addHiddenColumn(2);
+        worksheet.addHiddenColumn(3);
+        worksheet.addHiddenRow(1);
+        worksheet.addHiddenRow(2);
+        Address address = worksheet.getFirstCellAddress();
+        assertNotNull(address);
+        assertEquals("B2", address.getAddress());
+    }
+
+    @DisplayName("Test of the getFirstCellAddress function with an empty worksheet but defined columns and rows with gaps")
+    @Test()
+    void getFirstCellAddressTest3() {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addHiddenColumn(1);
+        worksheet.addHiddenColumn(2);
+        worksheet.addHiddenColumn(10);
+        worksheet.addHiddenRow(1);
+        worksheet.addHiddenRow(2);
+        worksheet.setRowHeight(10, 22.2f);
+        Address address = worksheet.getFirstCellAddress();
+        assertNotNull(address);
+        assertEquals("B2", address.getAddress());
+    }
+
+    @DisplayName("Test of the getFirstCellAddress function with defined columns and rows where cells are defined above the first column and row")
+    @Test()
+    void getFirstCellAddressTest4() {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addHiddenColumn(1);
+        worksheet.addHiddenColumn(2);
+        worksheet.addHiddenColumn(10);
+        worksheet.addHiddenRow(1);
+        worksheet.addHiddenRow(2);
+        worksheet.setRowHeight(10, 22.2f);
+        worksheet.addCell("test", "E5");
+        Address address = worksheet.getFirstCellAddress();
+        assertNotNull(address);
+        assertEquals("B2", address.getAddress());
+    }
+
+    @DisplayName("Test of the getFirstCellAddress function with defined columns and rows where cells are defined below the first column and row")
+    @Test()
+    void getFirstCellAddressTest5() {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addHiddenColumn(3);
+        worksheet.addHiddenColumn(4);
+        worksheet.addHiddenColumn(10);
+        worksheet.addHiddenRow(3);
+        worksheet.addHiddenRow(4);
+        worksheet.setRowHeight(100, 22.2f);
+        worksheet.addCell("test", "E5");
+        Address address = worksheet.getFirstCellAddress();
+        assertNotNull(address);
+        assertEquals("D4", address.getAddress());
+    }
+
+    @DisplayName("Test of the getFirstDataCellAddress function with an empty worksheet")
+    @ParameterizedTest(name = "Column definitions: {0} and row definitions: {1} should lead to a null address")
+    @CsvSource({
+            "false, false, false",
+            "false, false, true",
+            "false, true, true",
+            "false, true, false",
+            "true, false, false",
+            "true, false, true",
+            "true, true, false",
+            "true, true, true",
+    })
+    void getFirstDataCellAddressTest(boolean hasColumns, boolean hasHiddenRows, boolean hasRowHeights) {
+        Worksheet worksheet = new Worksheet();
+        if (hasColumns) {
+            worksheet.addHiddenColumn(0);
+            worksheet.addHiddenColumn(1);
+            worksheet.addHiddenColumn(2);
+        }
+        if (hasHiddenRows) {
+            worksheet.addHiddenRow(0);
+            worksheet.addHiddenRow(1);
+            worksheet.addHiddenRow(2);
+        }
+        if (hasRowHeights) {
+            worksheet.setRowHeight(0, 22.2f);
+            worksheet.setRowHeight(1, 22.2f);
+            worksheet.setRowHeight(2, 22.2f);
+        }
+        Address address = worksheet.getFirstDataCellAddress();
+        assertNull(address);
+    }
+
+    @DisplayName("Test of the getFirstCellAddress function with defined columns and rows where cells are defined above the first column and row")
+    @Test()
+    void getFirstDataCellAddressTest2() {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addHiddenColumn(2);
+        worksheet.addHiddenColumn(3);
+        worksheet.addHiddenColumn(4);
+        worksheet.addHiddenRow(2);
+        worksheet.addHiddenRow(3);
+        worksheet.setRowHeight(4, 22.2f);
+        worksheet.addCell("test", "E5");
+        worksheet.addCell("test", "F6");
+        Address address = worksheet.getFirstDataCellAddress();
+        assertNotNull(address);
+        assertEquals("E5", address.getAddress());
+    }
+
+    @DisplayName("Test of the getFirstDataCellAddress function with defined columns and rows where cells are defined below the first column and row")
+    @Test()
+    void getFirstDataCellAddressTest3() {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addHiddenColumn(1);
+        worksheet.addHiddenColumn(2);
+        worksheet.addHiddenColumn(10);
+        worksheet.addHiddenRow(1);
+        worksheet.addHiddenRow(2);
+        worksheet.setRowHeight(10, 22.2f);
+        worksheet.addCell("test", "C3");
+        worksheet.addCell("test", "D4");
+        Address address = worksheet.getFirstDataCellAddress();
+        assertNotNull(address);
+        assertEquals("C3", address.getAddress());
+    }
+
     @DisplayName("Test of the MergeCells function")
     @ParameterizedTest(name = "Given representation {0} an column {1}, row {2} to column {3}, and row {4} should lead to a range {5}")
     @CsvSource({

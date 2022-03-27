@@ -500,21 +500,18 @@ public class Border extends AbstractStyle {
      */
     @Override
     public int hashCode() {
-        int p = 271;
-        int r = 1;
-        r *= p + this.bottomStyle.value;
-        r *= p + this.diagonalStyle.value;
-        r *= p + this.topStyle.value;
-        r *= p + this.leftStyle.value;
-        r *= p + this.rightStyle.value;
-        r *= p + this.bottomColor.hashCode();
-        r *= p + this.diagonalColor.hashCode();
-        r *= p + this.topColor.hashCode();
-        r *= p + this.leftColor.hashCode();
-        r *= p + this.rightColor.hashCode();
-        r *= p + (this.diagonalDown ? 0 : 1);
-        r *= p + (this.diagonalUp ? 0 : 2);
-        return r;
+        int result = leftStyle != null ? leftStyle.hashCode() : 0;
+        result = 31 * result + (rightStyle != null ? rightStyle.hashCode() : 0);
+        result = 31 * result + (topStyle != null ? topStyle.hashCode() : 0);
+        result = 31 * result + (bottomStyle != null ? bottomStyle.hashCode() : 0);
+        result = 31 * result + (diagonalStyle != null ? diagonalStyle.hashCode() : 0);
+        result = 31 * result + (diagonalDown ? 1 : 0);
+        result = 31 * result + (diagonalUp ? 1 : 0);
+        result = 31 * result + (leftColor != null ? leftColor.hashCode() : 0);
+        result = 31 * result + (rightColor != null ? rightColor.hashCode() : 0);
+        result = 31 * result + (topColor != null ? topColor.hashCode() : 0);
+        result = 31 * result + (bottomColor != null ? bottomColor.hashCode() : 0);
+        result = 31 * result + (diagonalColor != null ? diagonalColor.hashCode() : 0);
+        return result;
     }
-
 }

@@ -304,15 +304,13 @@ public class NumberFormat extends AbstractStyle {
      *
      * @return Calculated hash as string
      */
-    @Override
-    public int hashCode() {
-        int p = 251;
-        int r = 1;
-        r *= p + this.customFormatCode.hashCode();
-        r *= p + this.customFormatID;
-        r *= p + this.number.getValue();
-        return r;
-    }
+     @Override
+     public int hashCode() {
+        int result = number != null ? number.hashCode() : 0;
+        result = 31 * result + customFormatID;
+        result = 31 * result + (customFormatCode != null ? customFormatCode.hashCode() : 0);
+        return result;
+     }
 
     /**
      * Tries to parse registered format numbers. If the parsing fails, it is assumed that the number is a custom format number (164 or higher) and 'custom' is returned
