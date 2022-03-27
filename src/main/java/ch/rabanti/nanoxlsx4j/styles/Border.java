@@ -107,10 +107,8 @@ public class Border extends AbstractStyle {
     public static String getStyleName(StyleValue style) {
         String output = "";
         switch (style) {
-            case none:
-                output = "";
-                break;
             case hair:
+                output = "hair";
                 break;
             case dotted:
                 output = "dotted";
@@ -148,9 +146,7 @@ public class Border extends AbstractStyle {
             case s_double:
                 output = "double";
                 break;
-            default:
-                output = "";
-                break;
+            // Default / none is already handled (ignored)
         }
         return output;
     }
