@@ -18,20 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BorderWriteReadTest {
 
-    @Test
-    void timeTest() {
-        String pattern = "n.HH:mm:ss";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-
-        String time = "23547.12:13:15";
-        TemporalAccessor d = null;
-        try {
-            d = formatter.parse(time);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //Duration d = Duration.parse(time);
-        int x = 1;
+    public enum BorderDirection
+    {
+        Diagonal,
+        Left,
+        Right,
+        Top,
+        Bottom
     }
 
     @DisplayName("Test of the writing and reading of the diagonal color style value")
@@ -41,6 +34,7 @@ public class BorderWriteReadTest {
             "'FFAADD00', 'FLOAT', '0.5f', true, false",
             "'FFDDCC00', 'BOOLEAN', true, false, true",
             "'FFAACCDD', 'NULL', '', false, false",
+            ", 'INTEGER', '22', true, true"
     })
     void diagonalColorTest(String color, String sourceType, String sourceValue, boolean diagonalUp, boolean diagonalDown) {
         Object value = TestUtils.createInstance(sourceType, sourceValue);
@@ -65,6 +59,7 @@ public class BorderWriteReadTest {
             "FFAADD00, 0.5f",
             "FFDDCC00, true",
             "FFAACCDD, null",
+            ", null"
     })
     void topColorTest(String color, Object value)
     {
@@ -85,6 +80,7 @@ public class BorderWriteReadTest {
             "FFAADD00, 0.5f",
             "FFDDCC00, true",
             "FFAACCDD, null",
+            ", null"
     })
     void bottomColorTest(String color, Object value)
     {
@@ -105,6 +101,7 @@ public class BorderWriteReadTest {
             "FFAADD00, 0.5f",
             "FFDDCC00, true",
             "FFAACCDD, null",
+            ", null"
     })
     void leftColorTest(String color, Object value)
     {
@@ -125,6 +122,7 @@ public class BorderWriteReadTest {
             "FFAADD00, 0.5f",
             "FFDDCC00, true",
             "FFAACCDD, null",
+            ", null"
     })
     void rightColorTest(String color, Object value)
     {
@@ -139,31 +137,62 @@ public class BorderWriteReadTest {
     }
 
     @DisplayName("Test of the writing and reading of border style value")
-    @ParameterizedTest(name = "Given value {0} should lead to a cell with a border style of this vale")
+    @ParameterizedTest(name = "Given value {0} should lead on the to a cell with a border style (direction {1}) of this vale")
     @CsvSource({
-            "dashDotDot",
-            "dashDot",
-            "dashed",
-            "dotted",
-            "hair",
-            "medium",
-            "mediumDashDot",
-            "mediumDashDotDot",
-            "mediumDashed",
-            "slantDashDot",
-            "thin",
-            "s_double",
-            "thick",
-            "none",
+            "dashDotDot, Bottom",
+            "dashDot, Top",
+            "dashed, Left",
+            "dotted, Right",
+            "hair, Diagonal",
+            "medium, Bottom",
+            "mediumDashDot, Top",
+            "mediumDashDotDot, Left",
+            "mediumDashed, Right",
+            "slantDashDot, Diagonal",
+            "thin, Bottom",
+            "s_double, Top",
+            "thick, Left",
+            "none, Right",
     })
-    void borderStyleTest(Border.StyleValue styleValue)
+    void borderStyleTest(Border.StyleValue styleValue, BorderDirection direction)
     {
         Style style = new Style();
-        style.getBorder().setRightStyle(styleValue);
-
+        switch (direction){
+            case Diagonal:
+                style.getBorder().setDiagonalStyle(styleValue);
+                break;
+            case Left:
+                style.getBorder().setLeftStyle(styleValue);
+                break;
+            case Right:
+                style.getBorder().setRightStyle(styleValue);
+                break;
+            case Top:
+                style.getBorder().setTopStyle(styleValue);
+                break;
+            case Bottom:
+                style.getBorder().setBottomStyle(styleValue);
+                break;
+        }
         Cell cell = createWorkbook("test", style);
+        switch (direction){
 
-        assertEquals(styleValue, cell.getCellStyle().getBorder().getRightStyle());
+            case Diagonal:
+                assertEquals(styleValue, cell.getCellStyle().getBorder().getDiagonalStyle());
+                break;
+            case Left:
+                assertEquals(styleValue, cell.getCellStyle().getBorder().getLeftStyle());
+                break;
+            case Right:
+                assertEquals(styleValue, cell.getCellStyle().getBorder().getRightStyle());
+                break;
+            case Top:
+                assertEquals(styleValue, cell.getCellStyle().getBorder().getTopStyle());
+                break;
+            case Bottom:
+                assertEquals(styleValue, cell.getCellStyle().getBorder().getBottomStyle());
+                break;
+        }
     }
 
 

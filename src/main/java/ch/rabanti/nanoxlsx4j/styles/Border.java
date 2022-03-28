@@ -417,19 +417,19 @@ public class Border extends AbstractStyle {
      */
     public boolean isEmpty() {
         boolean state = true;
-        if (!this.bottomColor.equals(DEFAULT_BORDER_COLOR)) {
+        if (!DEFAULT_BORDER_COLOR.equals(this.bottomColor)) {
             state = false;
         }
-        if (!this.topColor.equals(DEFAULT_BORDER_COLOR)) {
+        if (!DEFAULT_BORDER_COLOR.equals(this.topColor)) {
             state = false;
         }
-        if (!this.leftColor.equals(DEFAULT_BORDER_COLOR)) {
+        if (!DEFAULT_BORDER_COLOR.equals(this.leftColor)) {
             state = false;
         }
-        if (!this.rightColor.equals(DEFAULT_BORDER_COLOR)) {
+        if (!DEFAULT_BORDER_COLOR.equals(this.rightColor)) {
             state = false;
         }
-        if (!this.diagonalColor.equals(DEFAULT_BORDER_COLOR)) {
+        if (!DEFAULT_BORDER_COLOR.equals(this.diagonalColor)) {
             state = false;
         }
         if (this.leftStyle != DEFAULT_BORDER_STYLE) {
