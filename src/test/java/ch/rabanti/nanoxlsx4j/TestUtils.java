@@ -145,7 +145,6 @@ public class TestUtils {
     }
 
     public static InputStream getResource(String resourceName) {
-        ClassLoader classLoader = TestUtils.class.getClassLoader();
         return ClassLoader.getSystemResourceAsStream(resourceName);
     }
 

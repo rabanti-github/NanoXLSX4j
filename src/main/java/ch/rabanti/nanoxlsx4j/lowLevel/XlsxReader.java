@@ -115,7 +115,7 @@ public class XlsxReader {
                 throw new IOException("No valid stream or file path was provided to open");
             }
             InputStream stream;
-            SharedStringsReader sharedStrings = new SharedStringsReader();
+            SharedStringsReader sharedStrings = new SharedStringsReader(importOptions);
             stream = getEntryStream("xl/sharedStrings.xml", zf);
             sharedStrings.read(stream);
 

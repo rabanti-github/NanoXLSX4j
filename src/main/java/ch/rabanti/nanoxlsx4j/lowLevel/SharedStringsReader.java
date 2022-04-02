@@ -7,6 +7,7 @@
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
 import ch.rabanti.nanoxlsx4j.Helper;
+import ch.rabanti.nanoxlsx4j.ImportOptions;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 
 import java.io.InputStream;
@@ -21,6 +22,8 @@ import java.util.List;
 public class SharedStringsReader {
 
     private final List<String> sharedStrings;
+    private boolean capturePhoneticCharacters = false;
+    private List<PhoneticInfo> phoneticsInfo = null;
 
     /**
      * Gets whether the workbook contains shared strings
@@ -45,9 +48,18 @@ public class SharedStringsReader {
     }
 
     /**
-     * Default constructor
+     * Constructor with parameters
+     * @param importOptions Import options instance
      */
-    public SharedStringsReader() {
+    public SharedStringsReader(ImportOptions importOptions) {
+        if (importOptions != null)
+        {
+            this.capturePhoneticCharacters = importOptions.isEnforcePhoneticCharacterImport();
+            if (this.capturePhoneticCharacters)
+            {
+                this.phoneticsInfo = new ArrayList<>();
+            }
+        }
         this.sharedStrings = new ArrayList<>();
     }
 
@@ -66,7 +78,12 @@ public class SharedStringsReader {
                 if (node.getName().equalsIgnoreCase("si")) {
                     sb = new StringBuilder();
                     getTextToken(node, sb);
-                    this.sharedStrings.add(sb.toString());
+                    if (this.capturePhoneticCharacters){
+                        this.sharedStrings.add(processPhoneticCharacters(sb));
+                    }
+                    else{
+                        this.sharedStrings.add(sb.toString());
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -85,6 +102,17 @@ public class SharedStringsReader {
      * @param sb   StringBuilder reference
      */
     private void getTextToken(XmlDocument.XmlNode node, StringBuilder sb) {
+        if (node.getName().equalsIgnoreCase("rPh")){
+            if (this.capturePhoneticCharacters){
+                if (node.hasChildNodes() && node.getChildNodes().get(0).getName().equalsIgnoreCase("t") && !Helper.isNullOrEmpty(node.getChildNodes().get(0).getInnerText())){
+                    String start = node.getAttribute("sb");
+                    String end = node.getAttribute("eb");
+                    this.phoneticsInfo.add(new PhoneticInfo(node.getChildNodes().get(0).getInnerText(), start, end));
+                }
+            }
+            return;
+        }
+
         if (node.getName().equalsIgnoreCase("t") && !Helper.isNullOrEmpty(node.getInnerText())) {
             // Reproduces the new line behavior of Excel
             String text = node.getInnerText().replace("\r\n", "\n").replace("\n", "\r\n");
@@ -94,6 +122,75 @@ public class SharedStringsReader {
             for (XmlDocument.XmlNode childNode : node.getChildNodes()) {
                 getTextToken(childNode, sb);
             }
+        }
+    }
+
+    /**
+     * Function to add determined phonetic tokens
+     * @param sb Original StringBuilder
+     * @return Text with added phonetic characters (after particular characters, in brackets)
+     */
+    private String processPhoneticCharacters(StringBuilder sb){
+        if (this.phoneticsInfo.isEmpty()){
+            return sb.toString();
+        }
+        String text = sb.toString();
+        StringBuilder sb2 = new StringBuilder();
+        int currentTextIndex = 0;
+        for(PhoneticInfo info : this.phoneticsInfo){
+            sb2.append(text.substring(currentTextIndex, info.getStartIndex() + info.length));
+            sb2.append("(").append(info.getValue()).append(")");
+            currentTextIndex = info.getStartIndex() + info.getLength();
+        }
+        sb2.append(text.substring(currentTextIndex));
+
+        phoneticsInfo.clear();
+        return sb2.toString();
+    }
+
+    /**
+     * Class to represent a phonetic transcription of character sequence.
+     * @implNote Invalid values will lead to a crash. The specifications requires a start index, an end index and a value
+     */
+    private static class PhoneticInfo{
+        private final String value;
+        private final int startIndex;
+        private final int length;
+
+        /**
+         * Gets the transcription value
+         * @return Transcription (phonetic characters)
+         */
+        public String getValue() {
+            return value;
+        }
+
+        /**
+         * Gets the absolute start index within the original string
+         * @return Zero-based start index
+         */
+        public int getStartIndex() {
+            return startIndex;
+        }
+
+        /**
+         * Gets the number of characters of the original string that are described by this transcription token
+         * @return Number of characters
+         */
+        public int getLength() {
+            return length;
+        }
+
+        /**
+         * Constructor with parameters
+         * @param value Transcription value
+         * @param start Absolute start index as string
+         * @param end Absolute end index as string
+         */
+        public PhoneticInfo(String value, String start, String end) {
+            this.value = value;
+            this.startIndex =  Integer.parseInt(start);
+            this.length = Integer.parseInt(end) - this.startIndex;
         }
     }
 

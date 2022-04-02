@@ -95,6 +95,7 @@ public class ImportOptions {
 
     private boolean enforceDateTimesAsNumbers = false;
     private boolean enforceEmptyValuesAsString = false;
+    private boolean enforcePhoneticCharacterImport = false;
     private final Map<Integer, ColumnType> enforcedColumnTypes = new HashMap<>();
     private int enforcingStartRowNumber = 0;
     private GlobalType globalEnforcingType = GlobalType.Default;
@@ -167,6 +168,25 @@ public class ImportOptions {
      */
     public void addEnforcedColumn(int columnNumber, ColumnType type) {
         this.enforcedColumnTypes.put(columnNumber, type);
+    }
+
+    /**
+     * Gets whether phonetic characters (like ruby characters / Furigana / Zhuyin fuhao) in strings are added in brackets after the transcribed symbols.
+     * By default, phonetic characters are removed from strings.
+     * @return If true, phonetic characters will be appended, otherwise discarded
+     */
+    public boolean isEnforcePhoneticCharacterImport() {
+        return enforcePhoneticCharacterImport;
+    }
+
+    /**
+     * Sets whether phonetic characters (like ruby characters / Furigana / Zhuyin fuhao) in strings are added in brackets after the transcribed symbols.
+     * By default, phonetic characters are removed from strings.
+     * @param enforcePhoneticCharacterImport If true, phonetic characters will be appended, otherwise discarded
+     * @apiNote This option is not applicable to specific rows or a start column (applied globally)
+     */
+    public void setEnforcePhoneticCharacterImport(boolean enforcePhoneticCharacterImport) {
+        this.enforcePhoneticCharacterImport = enforcePhoneticCharacterImport;
     }
 
     /**

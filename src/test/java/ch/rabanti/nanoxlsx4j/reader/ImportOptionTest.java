@@ -1,12 +1,14 @@
 package ch.rabanti.nanoxlsx4j.reader;
 
 import ch.rabanti.nanoxlsx4j.*;
+import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -1036,6 +1038,33 @@ public class ImportOptionTest {
         expectedCells.put("A1", "00:00:00 2958467");
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
+
+    @DisplayName("Test of the import option to process or discard phonetic characters in strings")
+    @ParameterizedTest(name = "Given Column {0} should lead to the expected value in column {1} option {2}")
+    @CsvSource({
+            "0, 1, false",
+            "0, 2 , true"
+    })
+    void phoneticCharactersImportOptionTest(int givenValuesColumn, int expectedValuesColumn, boolean importOptionValue) throws Exception {
+        // Note: Cells in column A contains the strings with phonetic characters.
+        // The corresponding Cells in column B contains the values without enabled import option.
+        // The cells in column C contains the values with the import option enabled.
+        // The values start at Row 2 (Index 1)
+
+        ImportOptions options = new ImportOptions();
+        options.setEnforcePhoneticCharacterImport(importOptionValue);
+        InputStream stream = TestUtils.getResource("phonetics.xlsx");
+        Workbook workbook = Workbook.load(stream, options);
+
+        int lastRow = workbook.getWorksheets().get(0).getLastDataRowNumber();
+        for(int r = 1; r <= lastRow; r++)
+        {
+            String given = workbook.getWorksheets().get(0).getCell(new Address(givenValuesColumn, r)).getValue().toString();
+            String expected = workbook.getWorksheets().get(0).getCell(new Address(expectedValuesColumn, r)).getValue().toString();
+            assertEquals(expected, given);
+        }
+    }
+
 
     @DisplayName("Test of all getters of the ImportOptions class (code completion)")
     @Test
