@@ -409,7 +409,20 @@ public class CellXf extends AbstractStyle {
      */
     @Override
     public String toString() {
-        return "StyleXF:" + this.hashCode();
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"StyleXF\": {\n");
+        addPropertyAsJson(sb, "HorizontalAlign", horizontalAlign);
+        addPropertyAsJson(sb, "Alignment", alignment);
+        addPropertyAsJson(sb, "TextDirection", textDirection);
+        addPropertyAsJson(sb, "TextRotation", textRotation);
+        addPropertyAsJson(sb, "VerticalAlign", verticalAlign);
+        addPropertyAsJson(sb, "ForceApplyAlignment", forceApplyAlignment);
+        addPropertyAsJson(sb, "Locked", locked);
+        addPropertyAsJson(sb, "Hidden", hidden);
+        addPropertyAsJson(sb, "Indent", indent);
+        addPropertyAsJson(sb, "HashCode", this.hashCode(), true);
+        sb.append("\n}");
+        return sb.toString();
     }
 
     /**

@@ -195,8 +195,6 @@ public class BorderWriteReadTest {
         }
     }
 
-
-
     private static Cell createWorkbook(Object value, Style style) {
         try {
             Workbook workbook = new Workbook(false);

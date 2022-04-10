@@ -282,7 +282,14 @@ public class NumberFormat extends AbstractStyle {
      */
     @Override
     public String toString() {
-        return "NumberFormat:" + this.hashCode();
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"NumberFormat\": {\n");
+        addPropertyAsJson(sb, "CustomFormatCode", customFormatCode);
+        addPropertyAsJson(sb, "CustomFormatID", customFormatID);
+        addPropertyAsJson(sb, "Number", number);
+        addPropertyAsJson(sb, "HashCode", this.hashCode(), true);
+        sb.append("\n}");
+        return sb.toString();
     }
 
     /**

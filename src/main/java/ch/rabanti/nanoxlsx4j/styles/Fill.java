@@ -160,6 +160,10 @@ public class Fill extends AbstractStyle {
     public void setForegroundColor(String foregroundColor) {
         validateColor(foregroundColor, true);
         this.foregroundColor = foregroundColor;
+        if (this.patternFill == PatternValue.none)
+        {
+            this.patternFill = PatternValue.solid;
+        }
     }
 
     /**
@@ -179,6 +183,10 @@ public class Fill extends AbstractStyle {
     public void setBackgroundColor(String backgroundColor) {
         validateColor(backgroundColor, true);
         this.backgroundColor = backgroundColor;
+        if (this.patternFill == PatternValue.none)
+        {
+            this.patternFill = PatternValue.solid;
+        }
     }
 
 // ### C O N S T R U C T O R S ###
@@ -250,7 +258,15 @@ public class Fill extends AbstractStyle {
      */
     @Override
     public String toString() {
-        return "Fill:" + this.hashCode();
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"Fill\": {\n");
+        addPropertyAsJson(sb, "BackgroundColor", backgroundColor);
+        addPropertyAsJson(sb, "ForegroundColor", foregroundColor);
+        addPropertyAsJson(sb, "IndexedColor", indexedColor);
+        addPropertyAsJson(sb, "PatternFill", patternFill);
+        addPropertyAsJson(sb, "HashCode", this.hashCode(), true);
+        sb.append("\n}");
+        return sb.toString();
     }
 
     /**
@@ -293,9 +309,6 @@ public class Fill extends AbstractStyle {
     public static String getPatternName(PatternValue pattern) {
         String output;
         switch (pattern) {
-            case none:
-                output = "none";
-                break;
             case solid:
                 output = "solid";
                 break;

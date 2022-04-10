@@ -235,11 +235,16 @@ public class Style extends AbstractStyle {
      */
     @Override
     public String toString() {
-        if (name == null || name.isEmpty()) {
-            return Integer.toString(this.hashCode());
-        } else {
-            return this.name + "->" + this.hashCode();
-        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\n\"Style\": {\n");
+        addPropertyAsJson(sb, "Name", name);
+        addPropertyAsJson(sb, "HashCode", this.hashCode());
+        sb.append(borderRef.toString()).append(",\n");
+        sb.append(cellXfRef.toString()).append(",\n");
+        sb.append(fillRef.toString()).append(",\n");
+        sb.append(fontRef.toString()).append(",\n");
+        sb.append(numberFormatRef.toString()).append("\n}\n}");
+        return sb.toString();
     }
 
     /**

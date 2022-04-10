@@ -8,6 +8,7 @@ package ch.rabanti.nanoxlsx4j.lowLevel;
 
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.styles.Border;
+import ch.rabanti.nanoxlsx4j.styles.Fill;
 import ch.rabanti.nanoxlsx4j.styles.NumberFormat;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 
@@ -61,6 +62,9 @@ public class StyleReader {
                 this.getNumberFormats(node);
             } else if (node.getName().equalsIgnoreCase("borders")) { // handle borders
                 this.getBorders(node);
+            }
+            else if (node.getName().equalsIgnoreCase("fills")) { // handle fills
+                this.getFills(node);
             }
             // TODO: Implement other style components
         }
@@ -121,27 +125,27 @@ public class StyleReader {
             }
             XmlDocument.XmlNode innerNode = getChildNode(border, "diagonal");
             if (innerNode != null) {
-                borderStyle.setDiagonalStyle(parseStyle(innerNode));
+                borderStyle.setDiagonalStyle(parseBorderStyle(innerNode));
                 borderStyle.setDiagonalColor(getColor(innerNode, Border.DEFAULT_BORDER_COLOR));
             }
             innerNode = getChildNode(border, "top");
             if (innerNode != null) {
-                borderStyle.setTopStyle(parseStyle(innerNode));
+                borderStyle.setTopStyle(parseBorderStyle(innerNode));
                 borderStyle.setTopColor(getColor(innerNode, Border.DEFAULT_BORDER_COLOR));
             }
             innerNode = getChildNode(border, "bottom");
             if (innerNode != null) {
-                borderStyle.setBottomStyle(parseStyle(innerNode));
+                borderStyle.setBottomStyle(parseBorderStyle(innerNode));
                 borderStyle.setBottomColor(getColor(innerNode, Border.DEFAULT_BORDER_COLOR));
             }
             innerNode = getChildNode(border, "left");
             if (innerNode != null) {
-                borderStyle.setLeftStyle(parseStyle(innerNode));
+                borderStyle.setLeftStyle(parseBorderStyle(innerNode));
                 borderStyle.setLeftColor(getColor(innerNode, Border.DEFAULT_BORDER_COLOR));
             }
             innerNode = getChildNode(border, "right");
             if (innerNode != null) {
-                borderStyle.setRightStyle(parseStyle(innerNode));
+                borderStyle.setRightStyle(parseBorderStyle(innerNode));
                 borderStyle.setRightColor(getColor(innerNode, Border.DEFAULT_BORDER_COLOR));
             }
             borderStyle.setInternalID(styleReaderContainer.getNextBorderId());
@@ -154,7 +158,7 @@ public class StyleReader {
      * @param innerNode Border sub-node
      * @return Border type or non if parsing was not successful
      */
-    private static Border.StyleValue parseStyle(XmlDocument.XmlNode innerNode)
+    private static Border.StyleValue parseBorderStyle(XmlDocument.XmlNode innerNode)
     {
         String value = innerNode.getAttribute("style");
         if (value != null)
@@ -163,11 +167,44 @@ public class StyleReader {
             {
                 return Border.StyleValue.s_double; // special handling, since double is not a valid enum value
             }
-            return getEnumValue(value);
+            return getBorderEnumValue(value);
         }
         return Border.StyleValue.none;
     }
 
+    private void getFills(XmlDocument.XmlNode node) {
+        for (XmlDocument.XmlNode fill : node.getChildNodes()) {
+            Fill fillStyle = new Fill();
+            XmlDocument.XmlNode innerNode = getChildNode(fill, "patternFill");
+            if (innerNode != null) {
+                String pattern = innerNode.getAttribute("patternType");
+                fillStyle.setPatternFill(getFillPatternEnumValue(pattern));
+                XmlDocument.XmlNode foregroundNode = getChildNode(innerNode, "fgColor");
+                if (foregroundNode != null){
+                    String foregroundRgba = foregroundNode.getAttribute("rgb");
+                    if (foregroundRgba != null)
+                    {
+                        fillStyle.setForegroundColor(foregroundRgba);
+                    }
+                }
+                XmlDocument.XmlNode backgroundNode = getChildNode(innerNode, "bgColor");
+                if (backgroundNode != null){
+                    String backgroundRgba = backgroundNode.getAttribute("rgb");
+                    if (backgroundRgba != null)
+                    {
+                        fillStyle.setBackgroundColor(backgroundRgba);
+                    }
+                    String backgroundIndex = backgroundNode.getAttribute("indexed");
+                    if (backgroundIndex != null)
+                    {
+                        fillStyle.setIndexedColor(Integer.parseInt(backgroundIndex));
+                    }
+                }
+            }
+            fillStyle.setInternalID(styleReaderContainer.getNextFillId());
+            styleReaderContainer.addStyleComponent(fillStyle);
+        }
+    }
 
     /**
      * Determines the cell XF entries in a XML node of the style document
@@ -198,9 +235,16 @@ public class StyleReader {
                     border = new Border();
                     border.setInternalID(styleReaderContainer.getNextBorderId());
                 }
+                id = Integer.parseInt(childNode.getAttribute("fillId"));
+                Fill fill = styleReaderContainer.getFill(id, true);
+                if (fill == null) {
+                    fill = new Fill();
+                    fill.setInternalID(styleReaderContainer.getNextFillId());
+                }
                 // TODO: Implement other style information
                 style.setNumberFormat(format);
                 style.setBorder(border);
+                style.setFill(fill);
                 style.setInternalID(this.styleReaderContainer.getNextStyleId());
 
                 this.styleReaderContainer.addStyleComponent(style);
@@ -247,9 +291,23 @@ public class StyleReader {
      * @param styleValue String to check
      * @return Enum value or null if not found
      */
-    private static Border.StyleValue getEnumValue(String styleValue) {
+    private static Border.StyleValue getBorderEnumValue(String styleValue) {
         try {
             return Border.StyleValue.valueOf(styleValue);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Tries to determine a pattern value type StyleValue enum entry from a string
+     *
+     * @param styleValue String to check
+     * @return Enum value or null if not found
+     */
+    private static Fill.PatternValue getFillPatternEnumValue(String styleValue) {
+        try {
+            return Fill.PatternValue.valueOf(styleValue);
         } catch (Exception e) {
             return null;
         }

@@ -377,7 +377,7 @@ public class StyleTest {
         String hashCode = Integer.toString(style.hashCode());
         assertNotEquals(s1, s2);
         assertTrue(s2.contains("Test1"));
-        assertEquals(hashCode, s3);
+        assertTrue(s3.contains(hashCode));
     }
 
 }

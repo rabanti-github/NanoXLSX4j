@@ -463,7 +463,22 @@ public class Border extends AbstractStyle {
      */
     @Override
     public String toString() {
-        return "Border:" + this.hashCode();
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"Border\": {\n");
+        addPropertyAsJson(sb, "BottomStyle", bottomStyle);
+        addPropertyAsJson(sb, "DiagonalColor", diagonalColor);
+        addPropertyAsJson(sb, "DiagonalDown", diagonalDown);
+        addPropertyAsJson(sb, "DiagonalStyle", diagonalStyle);
+        addPropertyAsJson(sb, "DiagonalUp", diagonalUp);
+        addPropertyAsJson(sb, "LeftColor", leftColor);
+        addPropertyAsJson(sb, "LeftStyle", leftStyle);
+        addPropertyAsJson(sb, "RightColor", rightColor);
+        addPropertyAsJson(sb, "RightStyle", rightStyle);
+        addPropertyAsJson(sb, "TopColor", topColor);
+        addPropertyAsJson(sb, "TopStyle", topStyle);
+        addPropertyAsJson(sb, "HashCode", this.hashCode(), true);
+        sb.append("\n}");
+        return sb.toString();
     }
 
     /**

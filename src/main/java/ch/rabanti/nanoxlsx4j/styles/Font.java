@@ -409,7 +409,24 @@ public class Font extends AbstractStyle {
      */
     @Override
     public String toString() {
-        return "Font:" + this.hashCode();
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"Font\": {\n");
+        addPropertyAsJson(sb, "Bold", bold);
+        addPropertyAsJson(sb, "Charset", charset);
+        addPropertyAsJson(sb, "ColorTheme", colorTheme);
+        addPropertyAsJson(sb, "ColorValue", colorValue);
+        addPropertyAsJson(sb, "VerticalAlign", verticalAlign);
+        addPropertyAsJson(sb, "DoubleUnderline", doubleUnderline);
+        addPropertyAsJson(sb, "Family", family);
+        addPropertyAsJson(sb, "Italic", italic);
+        addPropertyAsJson(sb, "Name", name);
+        addPropertyAsJson(sb, "Scheme", scheme);
+        addPropertyAsJson(sb, "Size", size);
+        addPropertyAsJson(sb, "Strike", strike);
+        addPropertyAsJson(sb, "Underline", underline);
+        addPropertyAsJson(sb, "HashCode", this.hashCode(), true);
+        sb.append("\n}");
+        return sb.toString();
     }
 
     /**
