@@ -1,25 +1,18 @@
 package ch.rabanti.nanoxlsx4j.styles.writeRead;
 
-import ch.rabanti.nanoxlsx4j.Address;
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.TestUtils;
-import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.styles.Border;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BorderWriteReadTest {
 
-    public enum BorderDirection
-    {
+    public enum BorderDirection {
         Diagonal,
         Left,
         Right,
@@ -44,7 +37,7 @@ public class BorderWriteReadTest {
         style.getBorder().setDiagonalUp(diagonalUp);
         style.getBorder().setDiagonalDown(diagonalDown);
 
-        Cell cell = createWorkbook(value, style);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(color, cell.getCellStyle().getBorder().getDiagonalColor());
         assertEquals(Border.StyleValue.dashDot, cell.getCellStyle().getBorder().getDiagonalStyle());
@@ -61,13 +54,12 @@ public class BorderWriteReadTest {
             "FFAACCDD, null",
             ", null"
     })
-    void topColorTest(String color, Object value)
-    {
+    void topColorTest(String color, Object value) {
         Style style = new Style();
         style.getBorder().setTopColor(color);
         style.getBorder().setTopStyle(Border.StyleValue.s_double);
 
-        Cell cell = createWorkbook(value, style);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(color, cell.getCellStyle().getBorder().getTopColor());
         assertEquals(Border.StyleValue.s_double, cell.getCellStyle().getBorder().getTopStyle());
@@ -82,13 +74,12 @@ public class BorderWriteReadTest {
             "FFAACCDD, null",
             ", null"
     })
-    void bottomColorTest(String color, Object value)
-    {
+    void bottomColorTest(String color, Object value) {
         Style style = new Style();
         style.getBorder().setBottomColor(color);
         style.getBorder().setBottomStyle(Border.StyleValue.thin);
 
-        Cell cell = createWorkbook(value, style);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(color, cell.getCellStyle().getBorder().getBottomColor());
         assertEquals(Border.StyleValue.thin, cell.getCellStyle().getBorder().getBottomStyle());
@@ -103,13 +94,12 @@ public class BorderWriteReadTest {
             "FFAACCDD, null",
             ", null"
     })
-    void leftColorTest(String color, Object value)
-    {
+    void leftColorTest(String color, Object value) {
         Style style = new Style();
         style.getBorder().setLeftColor(color);
         style.getBorder().setLeftStyle(Border.StyleValue.dashDotDot);
 
-        Cell cell = createWorkbook(value, style);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(color, cell.getCellStyle().getBorder().getLeftColor());
         assertEquals(Border.StyleValue.dashDotDot, cell.getCellStyle().getBorder().getLeftStyle());
@@ -124,13 +114,12 @@ public class BorderWriteReadTest {
             "FFAACCDD, null",
             ", null"
     })
-    void rightColorTest(String color, Object value)
-    {
+    void rightColorTest(String color, Object value) {
         Style style = new Style();
         style.getBorder().setRightColor(color);
         style.getBorder().setRightStyle(Border.StyleValue.dashed);
 
-        Cell cell = createWorkbook(value, style);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(color, cell.getCellStyle().getBorder().getRightColor());
         assertEquals(Border.StyleValue.dashed, cell.getCellStyle().getBorder().getRightStyle());
@@ -154,10 +143,9 @@ public class BorderWriteReadTest {
             "thick, Left",
             "none, Right",
     })
-    void borderStyleTest(Border.StyleValue styleValue, BorderDirection direction)
-    {
+    void borderStyleTest(Border.StyleValue styleValue, BorderDirection direction) {
         Style style = new Style();
-        switch (direction){
+        switch (direction) {
             case Diagonal:
                 style.getBorder().setDiagonalStyle(styleValue);
                 break;
@@ -174,8 +162,8 @@ public class BorderWriteReadTest {
                 style.getBorder().setBottomStyle(styleValue);
                 break;
         }
-        Cell cell = createWorkbook("test", style);
-        switch (direction){
+        Cell cell = TestUtils.saveAndReadStyledCell("test", style, "A1");
+        switch (direction) {
 
             case Diagonal:
                 assertEquals(styleValue, cell.getCellStyle().getBorder().getDiagonalStyle());
@@ -192,22 +180,6 @@ public class BorderWriteReadTest {
             case Bottom:
                 assertEquals(styleValue, cell.getCellStyle().getBorder().getBottomStyle());
                 break;
-        }
-    }
-
-    private static Cell createWorkbook(Object value, Style style) {
-        try {
-            Workbook workbook = new Workbook(false);
-            workbook.addWorksheet("sheet1");
-            workbook.getCurrentWorksheet().addCell(value, "A1", style);
-
-            Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
-
-            Cell cell = givenWorkbook.getCurrentWorksheet().getCell(new Address("A1"));
-            assertEquals(value, cell.getValue());
-            return cell;
-        } catch (Exception ex) {
-            return null;
         }
     }
 

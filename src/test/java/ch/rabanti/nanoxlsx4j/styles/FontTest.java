@@ -17,8 +17,7 @@ public class FontTest {
         exampleStyle = new Font();
         exampleStyle.setBold(true);
         exampleStyle.setItalic(true);
-        exampleStyle.setUnderline(true);
-        exampleStyle.setDoubleUnderline(true);
+        exampleStyle.setUnderline(Font.UnderlineValue.u_double);
         exampleStyle.setStrike(true);
         exampleStyle.setCharset("ASCII");
         exampleStyle.setSize(15);
@@ -83,27 +82,17 @@ public class FontTest {
     @DisplayName("Test of the get and set function of the underline field")
     @ParameterizedTest(name = "Given value {0} should lead to the defined field")
     @CsvSource({
-            "true",
-            "false",
+            "none",
+            "doubleAccounting",
+            "singleAccounting",
+            "u_double",
+            "u_single",
     })
-    void underlineTest(boolean value) {
+    void underlineTest(Font.UnderlineValue value) {
         Font font = new Font();
-        assertFalse(font.isUnderline());
+        assertEquals(Font.UnderlineValue.none, font.getUnderline());
         font.setUnderline(value);
-        assertEquals(value, font.isUnderline());
-    }
-
-    @DisplayName("Test of the get and set function of the doubleUnderline field")
-    @ParameterizedTest(name = "Given value {0} should lead to the defined field")
-    @CsvSource({
-            "true",
-            "false",
-    })
-    void doubleUnderlineTest(boolean value) {
-        Font font = new Font();
-        assertFalse(font.isDoubleUnderline());
-        font.setDoubleUnderline(value);
-        assertEquals(value, font.isDoubleUnderline());
+        assertEquals(value, font.getUnderline());
     }
 
     @DisplayName("Test of the get and set function of the strike field")
@@ -327,19 +316,9 @@ public class FontTest {
     @Test()
     void equalsTest2c() {
         Font style2 = (Font) exampleStyle.copy();
-        style2.setUnderline(false);
+        style2.setUnderline(Font.UnderlineValue.singleAccounting);
         assertFalse(exampleStyle.equals(style2));
     }
-
-
-    @DisplayName("Test of the equals method (inequality of doubleUnderline)")
-    @Test()
-    void equalsTest2d() {
-        Font style2 = (Font) exampleStyle.copy();
-        style2.setDoubleUnderline(false);
-        assertFalse(exampleStyle.equals(style2));
-    }
-
 
     @DisplayName("Test of the equals method (inequality of strike)")
     @Test()

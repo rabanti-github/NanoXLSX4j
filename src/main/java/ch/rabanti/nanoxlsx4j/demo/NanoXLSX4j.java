@@ -8,10 +8,7 @@ package ch.rabanti.nanoxlsx4j.demo;
 
 import ch.rabanti.nanoxlsx4j.*;
 import ch.rabanti.nanoxlsx4j.lowLevel.XmlDocument;
-import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
-import ch.rabanti.nanoxlsx4j.styles.CellXf;
-import ch.rabanti.nanoxlsx4j.styles.Fill;
-import ch.rabanti.nanoxlsx4j.styles.Style;
+import ch.rabanti.nanoxlsx4j.styles.*;
 
 import io.reactivex.*;
 import io.reactivex.Observable;
@@ -307,9 +304,9 @@ public class NanoXLSX4j {
         workbook.getCurrentWorksheet().addNextCell("B");                    // Add cell B3
         workbook.getCurrentWorksheet().addNextCell("C");                    // Add cell C3
 
-        Style s = new Style();                                              // Create new style
-        s.getFill().setColor("FF22FF11", Fill.FillType.fillColor);          // Set fill color
-        s.getFont().setDoubleUnderline(true);                               // Set double underline
+        Style s = new Style();                                                 // Create new style
+        s.getFill().setColor("FF22FF11", Fill.FillType.fillColor);       // Set fill color
+        s.getFont().setUnderline(Font.UnderlineValue.u_double);                // Set double underline
         s.getCellXf().setHorizontalAlign(CellXf.HorizontalAlignValue.center);  // Set alignment
 
         Style s2 = s.copyStyle();                                           // Copy the previously defined style

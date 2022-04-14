@@ -41,7 +41,7 @@ public class BasicStylesTest {
     void underlineTest() {
         Style style = BasicStyles.Underline();
         assertNotNull(style);
-        assertTrue(style.getFont().isUnderline());
+        assertEquals(Font.UnderlineValue.u_single, style.getFont().getUnderline());
     }
 
     @DisplayName("Test of the static DoubleUnderline style")
@@ -49,7 +49,7 @@ public class BasicStylesTest {
     void doubleUnderlineTest() {
         Style style = BasicStyles.DoubleUnderline();
         assertNotNull(style);
-        assertTrue(style.getFont().isDoubleUnderline());
+        assertEquals(Font.UnderlineValue.u_double, style.getFont().getUnderline());
     }
 
     @DisplayName("Test of the static Strike style")

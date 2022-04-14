@@ -101,13 +101,40 @@ public class Font extends AbstractStyle {
         SchemeValue(int value) {
             this.value = value;
         }
+    }
 
-        public int getValue() {
-            return value;
-        }
+    /**
+     * Enum for the style of the underline property of a stylized text
+     */
+    public enum UnderlineValue
+    {
+        /**
+         * Text contains a single underline
+         */
+        u_single,
+        /**
+         * Text contains a double underline
+         */
+        u_double,
+        /**
+         * Text contains a single, accounting underline
+         */
+        singleAccounting,
+        /**
+         * Text contains a double, accounting underline
+         */
+        doubleAccounting,
+        /**
+         * Text contains no underline (default)
+         */
+        none,
     }
 
     // ### P R I V A T E  F I E L D S ###
+    private boolean bold;
+    private boolean italic;
+    private boolean strike;
+    private UnderlineValue underline;
     private float size;
     private String name;
     private String family;
@@ -115,14 +142,81 @@ public class Font extends AbstractStyle {
     private String colorValue;
     private SchemeValue scheme;
     private VerticalAlignValue verticalAlign;
-    private boolean bold;
-    private boolean italic;
-    private boolean underline;
-    private boolean doubleUnderline;
-    private boolean strike;
     private String charset;
 
 // ### G E T T E R S  &  S E T T E R S ###
+
+    /**
+     * Gets the bold parameter of the font
+     *
+     * @return If true, the font is bold
+     */
+    public boolean isBold() {
+        return bold;
+    }
+
+    /**
+     * Sets the bold parameter of the font
+     *
+     * @param bold If true, the font is bold
+     */
+    public void setBold(boolean bold) {
+        this.bold = bold;
+    }
+
+    /**
+     * Gets the italic parameter of the font
+     *
+     * @return If true, the font is italic
+     */
+    public boolean isItalic() {
+        return italic;
+    }
+
+    /**
+     * Sets the italic parameter of the font
+     *
+     * @param italic If true, the font is italic
+     */
+    public void setItalic(boolean italic) {
+        this.italic = italic;
+    }
+
+    /**
+     * Gets whether the font is struck through
+     *
+     * @return If true, the font is declared as strike-through
+     */
+    public boolean isStrike() {
+        return strike;
+    }
+
+    /**
+     * Sets whether the font is struck through
+     *
+     * @param strike If true, the font is declared as strike-through
+     */
+    public void setStrike(boolean strike) {
+        this.strike = strike;
+    }
+
+    /**
+     * Gets the underline style of the font
+     * @return Underline value
+     * @apiNote If set to {@link UnderlineValue#none} no underline will be applied (default)
+     */
+    public UnderlineValue getUnderline() {
+        return underline;
+    }
+
+    /**
+     * Sets the underline style of the font
+     * @param underline Underline value
+     * @apiNote If set to {@link UnderlineValue#none} no underline will be applied (default)
+     */
+    public void setUnderline(UnderlineValue underline) {
+        this.underline = underline;
+    }
 
     /**
      * Gets the font size. Valid range is from 1.0 to 409.0
@@ -269,96 +363,6 @@ public class Font extends AbstractStyle {
     }
 
     /**
-     * Gets the bold parameter of the font
-     *
-     * @return If true, the font is bold
-     */
-    public boolean isBold() {
-        return bold;
-    }
-
-    /**
-     * Sets the bold parameter of the font
-     *
-     * @param bold If true, the font is bold
-     */
-    public void setBold(boolean bold) {
-        this.bold = bold;
-    }
-
-    /**
-     * Gets the italic parameter of the font
-     *
-     * @return If true, the font is italic
-     */
-    public boolean isItalic() {
-        return italic;
-    }
-
-    /**
-     * Sets the italic parameter of the font
-     *
-     * @param italic If true, the font is italic
-     */
-    public void setItalic(boolean italic) {
-        this.italic = italic;
-    }
-
-    /**
-     * Gets the underline parameter of the font
-     *
-     * @return If true, the font as one underline
-     */
-    public boolean isUnderline() {
-        return underline;
-    }
-
-    /**
-     * Sets the underline parameter of the font
-     *
-     * @param underline If true, the font as one underline
-     */
-    public void setUnderline(boolean underline) {
-        this.underline = underline;
-    }
-
-    /**
-     * Gets the double-underline parameter of the font
-     *
-     * @return If true, the font ha a double underline
-     */
-    public boolean isDoubleUnderline() {
-        return doubleUnderline;
-    }
-
-    /**
-     * Sets the double-underline parameter of the font
-     *
-     * @param doubleUnderline If true, the font ha a double underline
-     */
-    public void setDoubleUnderline(boolean doubleUnderline) {
-        this.doubleUnderline = doubleUnderline;
-    }
-
-    /**
-     * Gets whether the font is struck through
-     *
-     * @return If true, the font is declared as strike-through
-     */
-    public boolean isStrike() {
-        return strike;
-    }
-
-    /**
-     * Sets whether the font is struck through
-     *
-     * @param strike If true, the font is declared as strike-through
-     */
-    public void setStrike(boolean strike) {
-        this.strike = strike;
-    }
-
-    /**
      * Gets the charset of the Font (Default is empty)
      *
      * @return Charset of the Font
@@ -400,6 +404,7 @@ public class Font extends AbstractStyle {
         this.charset = "";
         this.scheme = DEFAULT_FONT_SCHEME;
         this.verticalAlign = DEFAULT_VERTICAL_ALIGN;
+        this.underline = UnderlineValue.none;
     }
 
     /**
@@ -416,7 +421,6 @@ public class Font extends AbstractStyle {
         addPropertyAsJson(sb, "ColorTheme", colorTheme);
         addPropertyAsJson(sb, "ColorValue", colorValue);
         addPropertyAsJson(sb, "VerticalAlign", verticalAlign);
-        addPropertyAsJson(sb, "DoubleUnderline", doubleUnderline);
         addPropertyAsJson(sb, "Family", family);
         addPropertyAsJson(sb, "Italic", italic);
         addPropertyAsJson(sb, "Name", name);
@@ -442,7 +446,6 @@ public class Font extends AbstractStyle {
         copy.setColorTheme(this.colorTheme);
         copy.setColorValue(this.colorValue);
         copy.setVerticalAlign(this.verticalAlign);
-        copy.setDoubleUnderline(this.doubleUnderline);
         copy.setFamily(this.family);
         copy.setItalic(this.italic);
         copy.setName(this.name);
@@ -469,10 +472,9 @@ public class Font extends AbstractStyle {
         result = 31 * result + (verticalAlign != null ? verticalAlign.hashCode() : 32);
         result = 31 * result + (bold ? 1 : 64);
         result = 31 * result + (italic ? 1 : 128);
-        result = 31 * result + (underline ? 1 : 256);
-        result = 31 * result + (doubleUnderline ? 1 : 512);
-        result = 31 * result + (strike ? 1 : 1024);
-        result = 31 * result + (charset != null ? charset.hashCode() : 2048);
+        result = 31 * result + (underline != null ? underline.hashCode() : 256);
+        result = 31 * result + (strike ? 1 : 512);
+        result = 31 * result + (charset != null ? charset.hashCode() : 1024);
         return result;
     }
 }

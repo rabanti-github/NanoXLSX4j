@@ -843,14 +843,15 @@ public class XlsxWriter {
             if (fontStyle.isItalic() == true) {
                 sb.append("<i/>");
             }
-            if (fontStyle.isUnderline() == true) {
-                sb.append("<u/>");
-            }
-            if (fontStyle.isDoubleUnderline() == true) {
-                sb.append("<u val=\"double\"/>");
-            }
             if (fontStyle.isStrike() == true) {
                 sb.append("<strike/>");
+            }
+            if (fontStyle.getUnderline() == null || fontStyle.getUnderline() != Font.UnderlineValue.none)
+            {
+                if (fontStyle.getUnderline() == Font.UnderlineValue.u_double) { sb.append("<u val=\"double\"/>"); }
+                else if (fontStyle.getUnderline() == Font.UnderlineValue.singleAccounting) { sb.append("<u val=\"singleAccounting\"/>"); }
+                else if (fontStyle.getUnderline() == Font.UnderlineValue.doubleAccounting) { sb.append("<u val=\"doubleAccounting\"/>"); }
+                else { sb.append("<u/>"); }
             }
             if (fontStyle.getVerticalAlign() == Font.VerticalAlignValue.subscript) {
                 sb.append("<vertAlign val=\"subscript\"/>");

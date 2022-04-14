@@ -27,7 +27,7 @@ public class FillWriteReadTest {
     {
         Style style = new Style();
         style.getFill().setForegroundColor(color);
-        Cell cell = createWorkbook(value, style);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(color, cell.getCellStyle().getFill().getForegroundColor());
         assertNotEquals(Fill.PatternValue.none, cell.getCellStyle().getFill().getPatternFill());
@@ -46,7 +46,7 @@ public class FillWriteReadTest {
         Style style = new Style();
         style.getFill().setBackgroundColor(color);
         style.getFill().setPatternFill(Fill.PatternValue.darkGray);
-        Cell cell = createWorkbook(value, style);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(color, cell.getCellStyle().getFill().getBackgroundColor());
         assertEquals(Fill.PatternValue.darkGray, cell.getCellStyle().getFill().getPatternFill());
@@ -67,25 +67,11 @@ public class FillWriteReadTest {
     {
         Style style = new Style();
         style.getFill().setPatternFill(pattern);
-        Cell cell = createWorkbook(value, style);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(pattern, cell.getCellStyle().getFill().getPatternFill());
     }
 
-    private static Cell createWorkbook(Object value, Style style) {
-        try {
-            Workbook workbook = new Workbook(false);
-            workbook.addWorksheet("sheet1");
-            workbook.getCurrentWorksheet().addCell(value, "A1", style);
 
-            Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
-
-            Cell cell = givenWorkbook.getCurrentWorksheet().getCell(new Address("A1"));
-            assertEquals(value, cell.getValue());
-            return cell;
-        } catch (Exception ex) {
-            return null;
-        }
-    }
 
 }

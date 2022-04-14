@@ -7,10 +7,7 @@
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
-import ch.rabanti.nanoxlsx4j.styles.Border;
-import ch.rabanti.nanoxlsx4j.styles.Fill;
-import ch.rabanti.nanoxlsx4j.styles.NumberFormat;
-import ch.rabanti.nanoxlsx4j.styles.Style;
+import ch.rabanti.nanoxlsx4j.styles.*;
 
 import java.io.InputStream;
 
@@ -65,6 +62,9 @@ public class StyleReader {
             }
             else if (node.getName().equalsIgnoreCase("fills")) { // handle fills
                 this.getFills(node);
+            }
+            else if (node.getName().equalsIgnoreCase("fonts")) { // handle fonts
+                this.getFonts(node);
             }
             // TODO: Implement other style components
         }
@@ -206,6 +206,58 @@ public class StyleReader {
         }
     }
 
+    private void getFonts(XmlDocument.XmlNode node) {
+        for (XmlDocument.XmlNode font : node.getChildNodes()) {
+            Font fontStyle = new Font();
+            XmlDocument.XmlNode boldNode = getChildNode(font, "b");
+            if (boldNode != null) {
+                fontStyle.setBold(true);
+            }
+            XmlDocument.XmlNode italicNode = getChildNode(font, "i");
+            if (italicNode != null) {
+                fontStyle.setItalic(true);
+            }
+            XmlDocument.XmlNode strikeNode = getChildNode(font, "strike");
+            if (strikeNode != null) {
+                fontStyle.setStrike(true);
+            }
+            XmlDocument.XmlNode underlineNode = getChildNode(font, "u");
+            if (underlineNode != null) {
+                fontStyle.setUnderline(Font.UnderlineValue.u_single); // default
+                String underlineValue = underlineNode.getAttribute("val");
+                if (underlineValue != null) {
+                    switch (underlineValue) {
+                        case "double":
+                            fontStyle.setUnderline(Font.UnderlineValue.u_double);
+                            break;
+                        case "singleAccounting":
+                            fontStyle.setUnderline(Font.UnderlineValue.singleAccounting);
+                            break;
+                        case "doubleAccounting":
+                            fontStyle.setUnderline(Font.UnderlineValue.doubleAccounting);
+                            break;
+                    }
+                }
+            }
+            XmlDocument.XmlNode vertAlignNode = getChildNode(font, "vertAlign");
+            if (vertAlignNode != null) {
+                String verticalAlign = vertAlignNode.getAttribute("val");
+                fontStyle.setVerticalAlign(getFontVerticalAlignEnumValue(verticalAlign));
+            }
+
+            XmlDocument.XmlNode sizeNode = getChildNode(font, "sz");
+            if (sizeNode != null) {
+                String size = sizeNode.getAttribute("val");
+                if (size != null){
+                    fontStyle.setSize(Float.parseFloat(size));
+                }
+            }
+
+                fontStyle.setInternalID(styleReaderContainer.getNextFontId());
+                styleReaderContainer.addStyleComponent(fontStyle);
+        }
+    }
+
     /**
      * Determines the cell XF entries in a XML node of the style document
      *
@@ -241,10 +293,18 @@ public class StyleReader {
                     fill = new Fill();
                     fill.setInternalID(styleReaderContainer.getNextFillId());
                 }
+                id = Integer.parseInt(childNode.getAttribute("fontId"));
+                Font font = styleReaderContainer.getFont(id, true);
+                if (font == null) {
+                    font = new Font();
+                    font.setInternalID(styleReaderContainer.getNextFontId());
+                }
+
                 // TODO: Implement other style information
                 style.setNumberFormat(format);
                 style.setBorder(border);
                 style.setFill(fill);
+                style.setFont(font);
                 style.setInternalID(this.styleReaderContainer.getNextStyleId());
 
                 this.styleReaderContainer.addStyleComponent(style);
@@ -300,7 +360,7 @@ public class StyleReader {
     }
 
     /**
-     * Tries to determine a pattern value type StyleValue enum entry from a string
+     * Tries to determine a pattern enum entry from a string
      *
      * @param styleValue String to check
      * @return Enum value or null if not found
@@ -308,6 +368,20 @@ public class StyleReader {
     private static Fill.PatternValue getFillPatternEnumValue(String styleValue) {
         try {
             return Fill.PatternValue.valueOf(styleValue);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Tries to determine a vertical align enum entry from a string
+     *
+     * @param styleValue String to check
+     * @return Enum value or null if not found
+     */
+    private static Font.VerticalAlignValue getFontVerticalAlignEnumValue(String styleValue) {
+        try {
+            return Font.VerticalAlignValue.valueOf(styleValue);
         } catch (Exception e) {
             return null;
         }

@@ -1,6 +1,7 @@
 package ch.rabanti.nanoxlsx4j;
 
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
+import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -157,6 +158,22 @@ public class TestUtils {
                 accept(l, r, s, t);
                 after.accept(l, r, s, t);
             };
+        }
+    }
+
+    public static Cell saveAndReadStyledCell(Object value, Style style, String targetCellAddress) {
+        try {
+            Workbook workbook = new Workbook(false);
+            workbook.addWorksheet("sheet1");
+            workbook.getCurrentWorksheet().addCell(value, targetCellAddress, style);
+
+            Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
+
+            Cell cell = givenWorkbook.getCurrentWorksheet().getCell(new Address(targetCellAddress));
+            assertEquals(value, cell.getValue());
+            return cell;
+        } catch (Exception ex) {
+            return null;
         }
     }
 

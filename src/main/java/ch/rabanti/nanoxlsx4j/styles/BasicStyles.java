@@ -231,14 +231,14 @@ public final class BasicStyles {
             case underline:
                 if (underline == null) {
                     underline = new Style();
-                    underline.getFont().setUnderline(true);
+                    underline.getFont().setUnderline(Font.UnderlineValue.u_single);
                 }
                 s = underline;
                 break;
             case doubleUnderline:
                 if (doubleUnderline == null) {
                     doubleUnderline = new Style();
-                    doubleUnderline.getFont().setDoubleUnderline(true);
+                    doubleUnderline.getFont().setUnderline(Font.UnderlineValue.u_double);
                 }
                 s = doubleUnderline;
                 break;
