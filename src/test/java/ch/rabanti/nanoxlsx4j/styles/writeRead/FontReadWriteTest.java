@@ -101,6 +101,94 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().getSize());
     }
 
+    @DisplayName("Test of the writing and reading of the theme font style value")
+    @ParameterizedTest(name = "Given font theme '{0}' with value {1} should lead to a cell with this theme")
+    @CsvSource({
+            "1, test",
+            "2, 0.5f",
+            "64, true",
+    })
+    void sizeFontTest(int styleValue, Object value)
+    {
+        Style style = new Style();
+        style.getFont().setColorTheme(styleValue);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
+        assertEquals(styleValue, cell.getCellStyle().getFont().getColorTheme());
+    }
+
+    @DisplayName("Test of the writing and reading of the colorValue font style value")
+    @ParameterizedTest(name = "Given font colorValue '{0}' with value {1} should lead to a cell with this colorValue")
+    @CsvSource({
+            "'FFAABBCC', test",
+            "'', 0.5f",
+    })
+    void colorValueFontTest(String styleValue, Object value)
+    {
+        Style style = new Style();
+        style.getFont().setColorValue(styleValue);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
+        assertEquals(styleValue, cell.getCellStyle().getFont().getColorValue());
+    }
+
+    @DisplayName("Test of the writing and reading of the name font style value")
+    @ParameterizedTest(name = "Given font name '{0}' with value {1} should lead to a cell with this name")
+    @CsvSource({
+            "' ', test",
+            "'test', 0.5f",
+    })
+    void nameFontTest(String styleValue, Object value)
+    {
+        Style style = new Style();
+        style.getFont().setName(styleValue);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
+        assertEquals(styleValue, cell.getCellStyle().getFont().getName());
+    }
+
+    @DisplayName("Test of the writing and reading of the family font style value")
+    @ParameterizedTest(name = "Given font family '{0}' with value {1} should lead to a cell with this family")
+    @CsvSource({
+            "' ', test",
+            "'test', 0.5f",
+            "'', true",
+    })
+    void familyFontTest(String styleValue, Object value)
+    {
+        Style style = new Style();
+        style.getFont().setFamily(styleValue);
+        style.getFont().setSize(22);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
+        assertEquals(styleValue, cell.getCellStyle().getFont().getFamily());
+    }
+
+    @DisplayName("Test of the writing and reading of the scheme font style value")
+    @ParameterizedTest(name = "Given font scheme '{0}' with value {1} should lead to a cell with this scheme")
+    @CsvSource({
+            "minor, test",
+            "major, 0.5f",
+    })
+    void schemeFontTest(Font.SchemeValue styleValue, Object value)
+    {
+        Style style = new Style();
+        style.getFont().setScheme(styleValue);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
+        assertEquals(styleValue, cell.getCellStyle().getFont().getScheme());
+    }
+
+    @DisplayName("Test of the writing and reading of the charset font style value")
+    @ParameterizedTest(name = "Given font charset '{0}' with value {1} should lead to a cell with this charset")
+    @CsvSource({
+            "' ', test",
+            "'test', 0.5f",
+            "'', true",
+    })
+    void charsetyFontTest(String styleValue, Object value)
+    {
+        Style style = new Style();
+        style.getFont().setCharset(styleValue);
+        style.getFont().setSize(22);
+        Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
+        assertEquals(styleValue, cell.getCellStyle().getFont().getCharset());
+    }
 
 
 }

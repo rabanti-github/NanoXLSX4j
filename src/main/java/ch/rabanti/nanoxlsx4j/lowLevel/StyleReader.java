@@ -6,6 +6,7 @@
  */
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
+import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.styles.*;
 
@@ -179,13 +180,9 @@ public class StyleReader {
             if (innerNode != null) {
                 String pattern = innerNode.getAttribute("patternType");
                 fillStyle.setPatternFill(getFillPatternEnumValue(pattern));
-                XmlDocument.XmlNode foregroundNode = getChildNode(innerNode, "fgColor");
-                if (foregroundNode != null){
-                    String foregroundRgba = foregroundNode.getAttribute("rgb");
-                    if (foregroundRgba != null)
-                    {
-                        fillStyle.setForegroundColor(foregroundRgba);
-                    }
+                LookupResult attribute = getAttributeOfChild(innerNode, "fgColor", "rgb");
+                if (attribute.attributeIsPresent){
+                    fillStyle.setForegroundColor(attribute.value);
                 }
                 XmlDocument.XmlNode backgroundNode = getChildNode(innerNode, "bgColor");
                 if (backgroundNode != null){
@@ -207,6 +204,7 @@ public class StyleReader {
     }
 
     private void getFonts(XmlDocument.XmlNode node) {
+        LookupResult attribute;
         for (XmlDocument.XmlNode font : node.getChildNodes()) {
             Font fontStyle = new Font();
             XmlDocument.XmlNode boldNode = getChildNode(font, "b");
@@ -221,36 +219,65 @@ public class StyleReader {
             if (strikeNode != null) {
                 fontStyle.setStrike(true);
             }
-            XmlDocument.XmlNode underlineNode = getChildNode(font, "u");
-            if (underlineNode != null) {
+            attribute = getAttributeOfChild(font, "u", "val");
+            if (attribute.nodeIsPresent){
                 fontStyle.setUnderline(Font.UnderlineValue.u_single); // default
-                String underlineValue = underlineNode.getAttribute("val");
-                if (underlineValue != null) {
-                    switch (underlineValue) {
-                        case "double":
-                            fontStyle.setUnderline(Font.UnderlineValue.u_double);
-                            break;
-                        case "singleAccounting":
-                            fontStyle.setUnderline(Font.UnderlineValue.singleAccounting);
-                            break;
-                        case "doubleAccounting":
-                            fontStyle.setUnderline(Font.UnderlineValue.doubleAccounting);
-                            break;
-                    }
-                }
             }
-            XmlDocument.XmlNode vertAlignNode = getChildNode(font, "vertAlign");
-            if (vertAlignNode != null) {
-                String verticalAlign = vertAlignNode.getAttribute("val");
-                fontStyle.setVerticalAlign(getFontVerticalAlignEnumValue(verticalAlign));
+            if (attribute.attributeIsPresent) {
+                switch (attribute.value) {
+                    case "double":
+                        fontStyle.setUnderline(Font.UnderlineValue.u_double);
+                        break;
+                    case "singleAccounting":
+                        fontStyle.setUnderline(Font.UnderlineValue.singleAccounting);
+                        break;
+                    case "doubleAccounting":
+                        fontStyle.setUnderline(Font.UnderlineValue.doubleAccounting);
+                        break;
+                }
             }
 
-            XmlDocument.XmlNode sizeNode = getChildNode(font, "sz");
-            if (sizeNode != null) {
-                String size = sizeNode.getAttribute("val");
-                if (size != null){
-                    fontStyle.setSize(Float.parseFloat(size));
+            attribute = getAttributeOfChild(font, "vertAlign", "val");
+            if (attribute.attributeIsPresent){
+                fontStyle.setVerticalAlign(getFontVerticalAlignEnumValue(attribute.value));
+            }
+            attribute = getAttributeOfChild(font, "sz", "val");
+            if (attribute.attributeIsPresent){
+                fontStyle.setSize(Float.parseFloat(attribute.value));
+            }
+            XmlDocument.XmlNode colorNode = getChildNode(font, "color");
+            if (colorNode != null) {
+                String theme = colorNode.getAttribute("theme");
+                if (theme != null){
+                    fontStyle.setColorTheme(Integer.parseInt(theme));
                 }
+                String rgb = colorNode.getAttribute("rgb");
+                if (rgb != null){
+                    fontStyle.setColorValue(rgb);
+                }
+            }
+            attribute = getAttributeOfChild(font, "name", "val");
+            if (attribute.attributeIsPresent){
+                fontStyle.setName(attribute.value);
+            }
+            attribute = getAttributeOfChild(font, "family", "val");
+            if (attribute.attributeIsPresent){
+                fontStyle.setFamily(attribute.value);
+            }
+            attribute = getAttributeOfChild(font, "scheme", "val");
+            if (attribute.attributeIsPresent){
+                switch (attribute.value){
+                    case "major":
+                        fontStyle.setScheme(Font.SchemeValue.major);
+                        break;
+                    case "minor":
+                        fontStyle.setScheme(Font.SchemeValue.minor);
+                        break;
+                }
+            }
+            attribute = getAttributeOfChild(font, "charset", "val");
+            if (attribute.attributeIsPresent){
+                fontStyle.setCharset(attribute.value);
             }
 
                 fontStyle.setInternalID(styleReaderContainer.getNextFontId());
@@ -384,6 +411,44 @@ public class StyleReader {
             return Font.VerticalAlignValue.valueOf(styleValue);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /**
+     * Gets the XML attribute from a child node of the passed XML node by its name and the name of the child node.
+     * This method simplifies the process of gathering one single child node attribute
+     * @param node XML node that contains the child node
+     * @param childNodeName Name of the child node
+     * @param attributeName Name of the attribute in the child node
+     * @return Result object with the state of the child node and the attribute, as well as the value (if available)
+     */
+    private static LookupResult getAttributeOfChild(XmlDocument.XmlNode node, String childNodeName, String attributeName){
+        XmlDocument.XmlNode childNode = getChildNode(node, childNodeName);
+        if (childNode != null) {
+            String value = childNode.getAttribute(attributeName);
+            return new LookupResult(value);
+        }
+        return new LookupResult();
+    }
+
+    /**
+     * Plain return class (struct-like) for node and attribute lookups
+     */
+    private static class LookupResult{
+        public final boolean attributeIsPresent;
+        public final boolean nodeIsPresent;
+        public final String value;
+
+        public LookupResult() {
+            this.attributeIsPresent = false;
+            this.nodeIsPresent = false;
+            this.value = null;
+        }
+
+        public LookupResult(String value) {
+            this.attributeIsPresent = value != null;
+            this.nodeIsPresent = true;
+            this.value = value;
         }
     }
 
