@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FontReadWriteTest {
 
-    @DisplayName("Test of the writing and reading of the bold font style value")
+    @DisplayName("Test of the 'bold' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font state for bold '{0}' with value {1} should lead to a cell with this bold state")
     @CsvSource({
             "true, test",
@@ -26,7 +26,7 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().isBold());
     }
 
-    @DisplayName("Test of the writing and reading of the italic font style value")
+    @DisplayName("Test of the 'italic' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font state for italic '{0}' with value {1} should lead to a cell with this italic state")
     @CsvSource({
             "true, test",
@@ -40,7 +40,7 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().isItalic());
     }
 
-    @DisplayName("Test of the writing and reading of the strike font style value")
+    @DisplayName("Test of the 'strike' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font state for strike '{0}' with value {1} should lead to a cell with this strike state")
     @CsvSource({
             "true, test",
@@ -54,7 +54,7 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().isStrike());
     }
 
-    @DisplayName("Test of the writing and reading of the underline font style value")
+    @DisplayName("Test of the 'underline' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font state '{0}' for underline with value {1} should lead to a cell with this underline state")
     @CsvSource({
             "u_single, test",
@@ -71,7 +71,7 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().getUnderline());
     }
 
-    @DisplayName("Test of the writing and reading of the vertical alignment font style value")
+    @DisplayName("Test of the 'vertical alignment' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font state '{0}' for vertical align with value {1} should lead to a cell with this vertical align state")
     @CsvSource({
             "subscript, test",
@@ -86,7 +86,7 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().getVerticalAlign());
     }
 
-    @DisplayName("Test of the writing and reading of the size font style value")
+    @DisplayName("Test of the 'size' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font size '{0}' with value {1} should lead to a cell with this size")
     @CsvSource({
             "10.5f, test",
@@ -101,7 +101,7 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().getSize());
     }
 
-    @DisplayName("Test of the writing and reading of the theme font style value")
+    @DisplayName("Test of the 'theme' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font theme '{0}' with value {1} should lead to a cell with this theme")
     @CsvSource({
             "1, test",
@@ -116,7 +116,7 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().getColorTheme());
     }
 
-    @DisplayName("Test of the writing and reading of the colorValue font style value")
+    @DisplayName("Test of the 'colorValue' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font colorValue '{0}' with value {1} should lead to a cell with this colorValue")
     @CsvSource({
             "'FFAABBCC', test",
@@ -130,7 +130,7 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().getColorValue());
     }
 
-    @DisplayName("Test of the writing and reading of the name font style value")
+    @DisplayName("Test of the 'name' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font name '{0}' with value {1} should lead to a cell with this name")
     @CsvSource({
             "' ', test",
@@ -144,7 +144,7 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().getName());
     }
 
-    @DisplayName("Test of the writing and reading of the family font style value")
+    @DisplayName("Test of the 'family' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font family '{0}' with value {1} should lead to a cell with this family")
     @CsvSource({
             "' ', test",
@@ -160,7 +160,7 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().getFamily());
     }
 
-    @DisplayName("Test of the writing and reading of the scheme font style value")
+    @DisplayName("Test of the 'scheme' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font scheme '{0}' with value {1} should lead to a cell with this scheme")
     @CsvSource({
             "minor, test",
@@ -174,14 +174,14 @@ public class FontReadWriteTest {
         assertEquals(styleValue, cell.getCellStyle().getFont().getScheme());
     }
 
-    @DisplayName("Test of the writing and reading of the charset font style value")
+    @DisplayName("Test of the 'charset' value when writing and reading a Font style")
     @ParameterizedTest(name = "Given font charset '{0}' with value {1} should lead to a cell with this charset")
     @CsvSource({
             "' ', test",
             "'test', 0.5f",
             "'', true",
     })
-    void charsetyFontTest(String styleValue, Object value)
+    void charsetFontTest(String styleValue, Object value)
     {
         Style style = new Style();
         style.getFont().setCharset(styleValue);

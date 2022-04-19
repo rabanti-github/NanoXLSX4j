@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class FillWriteReadTest {
 
-    @DisplayName("Test of the writing and reading of the foreground color style value")
+    @DisplayName("Test of the 'foreground' value when writing and reading a Fill style")
     @ParameterizedTest(name = "Given foreground color {0} with value {1} should lead to a cell with this color")
     @CsvSource({
             "FFAACC00, 'test'",
@@ -33,7 +33,7 @@ public class FillWriteReadTest {
         assertNotEquals(Fill.PatternValue.none, cell.getCellStyle().getFill().getPatternFill());
     }
 
-    @DisplayName("Test of the writing and reading of the background color style value")
+    @DisplayName("Test of the 'background' value when writing and reading a Fill style")
     @ParameterizedTest(name = "Given background color {0} with value {1} should lead to a cell with this color")
     @CsvSource({
             "FFAACC00, 'test'",
@@ -52,7 +52,7 @@ public class FillWriteReadTest {
         assertEquals(Fill.PatternValue.darkGray, cell.getCellStyle().getFill().getPatternFill());
     }
 
-    @DisplayName("Test of the writing and reading of the pattern value for fills styles")
+    @DisplayName("Test of the 'patternFill' value when writing and reading a Fill style")
     @ParameterizedTest(name = "Given pattern value {0} with value {1} should lead to a cell with this pattern")
     @CsvSource({
             "solid, 'test'",

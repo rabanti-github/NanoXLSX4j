@@ -178,7 +178,7 @@ public class StyleReaderContainer {
      * @return Next id of styles (collected in this class)
      */
     public int getNextStyleId() {
-        return this.styles.size() + 1;
+        return this.styles.size();
     }
 
     /**
@@ -188,7 +188,7 @@ public class StyleReaderContainer {
      * @return Next id of the component type (collected in this class)
      */
     public int getNextCellXFId() {
-        return this.cellXfs.size() + 1;
+        return this.cellXfs.size();
     }
 
     /**
@@ -197,7 +197,7 @@ public class StyleReaderContainer {
      * @return Next id of the component type (collected in this class)
      */
     public int getNextNumberFormatId() {
-        return this.numberFormats.size() + 1;
+        return this.numberFormats.size();
     }
 
     /**
@@ -207,7 +207,7 @@ public class StyleReaderContainer {
      * @return Next id of the component type (collected in this class)
      */
     public int getNextBorderId() {
-        return this.borders.size() + 1;
+        return this.borders.size();
     }
 
     /**
@@ -217,7 +217,7 @@ public class StyleReaderContainer {
      * @return Next id of the component type (collected in this class)
      */
     public int getNextFillId() {
-        return this.fills.size() + 1;
+        return this.fills.size();
     }
 
     /**
@@ -227,7 +227,7 @@ public class StyleReaderContainer {
      * @return Next id of the component type (collected in this class)
      */
     public int getNextFontId() {
-        return this.fonts.size() + 1;
+        return this.fonts.size() ;
     }
 
     /**

@@ -20,7 +20,7 @@ public class BorderWriteReadTest {
         Bottom
     }
 
-    @DisplayName("Test of the writing and reading of the diagonal color style value")
+    @DisplayName("Test of the 'diagonal' value when writing and reading a Border style")
     @ParameterizedTest(name = "Given value {0} should lead to a cell with this diagonal color style")
     @CsvSource({
             "'FFAACC00', 'STRING', 'test', true, true",
@@ -45,7 +45,7 @@ public class BorderWriteReadTest {
         assertEquals(diagonalDown, cell.getCellStyle().getBorder().isDiagonalDown());
     }
 
-    @DisplayName("Test of the writing and reading of the top color style value")
+    @DisplayName("Test of the 'top' value when writing and reading a Border style")
     @ParameterizedTest(name = "Given value {0} should lead to a cell with this top style")
     @CsvSource({
             "FFAACC00, test",
@@ -65,7 +65,7 @@ public class BorderWriteReadTest {
         assertEquals(Border.StyleValue.s_double, cell.getCellStyle().getBorder().getTopStyle());
     }
 
-    @DisplayName("Test of the writing and reading of the bottom color style value")
+    @DisplayName("Test of the 'bottom' value when writing and reading a Border style")
     @ParameterizedTest(name = "Given value {0} should lead to a cell with this bottom style")
     @CsvSource({
             "FFAACC00, test",
@@ -85,7 +85,7 @@ public class BorderWriteReadTest {
         assertEquals(Border.StyleValue.thin, cell.getCellStyle().getBorder().getBottomStyle());
     }
 
-    @DisplayName("Test of the writing and reading of the left color style value")
+    @DisplayName("Test of the 'left' value when writing and reading a Border style")
     @ParameterizedTest(name = "Given value {0} should lead to a cell with this left style")
     @CsvSource({
             "FFAACC00, test",
@@ -105,7 +105,7 @@ public class BorderWriteReadTest {
         assertEquals(Border.StyleValue.dashDotDot, cell.getCellStyle().getBorder().getLeftStyle());
     }
 
-    @DisplayName("Test of the writing and reading of the right color style value")
+    @DisplayName("Test of the 'right' value when writing and reading a Border style")
     @ParameterizedTest(name = "Given value {0} should lead to a cell with this right style")
     @CsvSource({
             "FFAACC00, test",
@@ -125,7 +125,7 @@ public class BorderWriteReadTest {
         assertEquals(Border.StyleValue.dashed, cell.getCellStyle().getBorder().getRightStyle());
     }
 
-    @DisplayName("Test of the writing and reading of border style value")
+    @DisplayName("Test of the 'styleValue' property when writing and reading a Font style")
     @ParameterizedTest(name = "Given value {0} should lead on the to a cell with a border style (direction {1}) of this vale")
     @CsvSource({
             "dashDotDot, Bottom",
