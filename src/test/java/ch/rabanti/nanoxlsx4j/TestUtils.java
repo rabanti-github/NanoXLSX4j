@@ -162,15 +162,19 @@ public class TestUtils {
     }
 
     public static Cell saveAndReadStyledCell(Object value, Style style, String targetCellAddress) {
+        return saveAndReadStyledCell(value, value, style, targetCellAddress);
+    }
+
+    public static Cell saveAndReadStyledCell(Object givenValue, Object expectedValue, Style style, String targetCellAddress) {
         try {
             Workbook workbook = new Workbook(false);
             workbook.addWorksheet("sheet1");
-            workbook.getCurrentWorksheet().addCell(value, targetCellAddress, style);
+            workbook.getCurrentWorksheet().addCell(givenValue, targetCellAddress, style);
 
             Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
 
             Cell cell = givenWorkbook.getCurrentWorksheet().getCell(new Address(targetCellAddress));
-            assertEquals(value, cell.getValue());
+            assertEquals(expectedValue, cell.getValue());
             return cell;
         } catch (Exception ex) {
             return null;

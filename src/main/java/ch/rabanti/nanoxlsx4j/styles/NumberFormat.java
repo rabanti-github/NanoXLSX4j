@@ -19,7 +19,7 @@ import java.util.Optional;
 public class NumberFormat extends AbstractStyle {
 // ### C O N S T A N T S ###
     /**
-     * Start ID for custom number formats as constant
+     * Start ID for custom number formats as constant (value 164)
      */
     public static final int CUSTOMFORMAT_START_NUMBER = 164;
 
