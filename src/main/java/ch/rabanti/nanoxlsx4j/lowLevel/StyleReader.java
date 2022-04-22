@@ -294,6 +294,29 @@ public class StyleReader {
 
         for (XmlDocument.XmlNode childNode : node.getChildNodes()) {
             if (childNode.getName().equalsIgnoreCase("xf")) {
+                CellXf cellXfStyle = new CellXf();
+                String attribute = childNode.getAttribute("applyAlignment");
+                if (attribute != null && attribute.equals("1"))
+                {
+                    cellXfStyle.setForceApplyAlignment(true);
+                }
+                XmlDocument.XmlNode protectionNode = getChildNode(childNode, "protection");
+                if (protectionNode != null){
+                    attribute = protectionNode.getAttribute("hidden");
+                    if (attribute != null && attribute.equals("1"))
+                    {
+                        cellXfStyle.setHidden(true);
+                    }
+                    attribute = protectionNode.getAttribute("locked");
+                    if (attribute != null && attribute.equals("1"))
+                    {
+                        cellXfStyle.setLocked(true);
+                    }
+                }
+
+                cellXfStyle.setInternalID(this.styleReaderContainer.getNextCellXFId());
+                this.styleReaderContainer.addStyleComponent(cellXfStyle);
+
                 Style style = new Style();
                 int id = Integer.parseInt(childNode.getAttribute("numFmtId"));
 
@@ -332,6 +355,7 @@ public class StyleReader {
                 style.setBorder(border);
                 style.setFill(fill);
                 style.setFont(font);
+                style.setCellXf(cellXfStyle);
                 style.setInternalID(this.styleReaderContainer.getNextStyleId());
 
                 this.styleReaderContainer.addStyleComponent(style);

@@ -1027,17 +1027,17 @@ public class XlsxWriter {
                 sb2.append("/>"); // </xf>
                 alignmentString = sb2.toString();
             }
-            if (style.getCellXf().isHidden() == true || style.getCellXf().isLocked() == true) {
-                if (style.getCellXf().isHidden() == true && style.getCellXf().isLocked() == true) {
+            if (style.getCellXf().isHidden()  || style.getCellXf().isLocked()) {
+                if (style.getCellXf().isHidden() && style.getCellXf().isLocked()) {
                     protectionString = "<protection locked=\"1\" hidden=\"1\"/>";
-                } else if (style.getCellXf().isHidden() == true && !style.getCellXf().isLocked()) {
+                } else if (style.getCellXf().isHidden() && !style.getCellXf().isLocked()) {
                     protectionString = "<protection hidden=\"1\" locked=\"0\"/>";
                 } else {
                     protectionString = "<protection hidden=\"0\" locked=\"1\"/>";
                 }
             }
             sb.append("<xf numFmtId=\"");
-            if (style.getNumberFormat().isCustomFormat() == true) {
+            if (style.getNumberFormat().isCustomFormat()) {
                 sb.append(style.getNumberFormat().getCustomFormatID());
             } else {
                 formatNumber = style.getNumberFormat().getNumber().getValue();
