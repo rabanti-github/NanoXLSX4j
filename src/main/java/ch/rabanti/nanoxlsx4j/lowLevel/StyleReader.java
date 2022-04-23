@@ -286,7 +286,7 @@ public class StyleReader {
     }
 
     /**
-     * Determines the cell XF entries in a XML node of the style document
+     * Determines the cell XF entries in an XML node of the style document
      *
      * @param node Cell XF root node
      */
@@ -296,9 +296,36 @@ public class StyleReader {
             if (childNode.getName().equalsIgnoreCase("xf")) {
                 CellXf cellXfStyle = new CellXf();
                 String attribute = childNode.getAttribute("applyAlignment");
-                if (attribute != null && attribute.equals("1"))
-                {
+                if (attribute != null && attribute.equals("1")) {
                     cellXfStyle.setForceApplyAlignment(true);
+                }
+                XmlDocument.XmlNode alignmentNode = getChildNode(childNode, "alignment");
+                if (alignmentNode != null){
+                    attribute = alignmentNode.getAttribute("shrinkToFit");
+                    if (attribute != null && attribute.equals("1")) {
+                        cellXfStyle.setAlignment(CellXf.TextBreakValue.shrinkToFit);
+                    }
+                    attribute = alignmentNode.getAttribute("wrapText");
+                    if (attribute != null && attribute.equals("1")) {
+                        cellXfStyle.setAlignment(CellXf.TextBreakValue.wrapText);
+                    }
+                    attribute = alignmentNode.getAttribute("horizontal");
+                    if (attribute != null){
+                        cellXfStyle.setHorizontalAlign(getCellXfHorizontalAlignEnumValue(attribute));
+                    }
+                    attribute = alignmentNode.getAttribute("vertical");
+                    if (attribute != null){
+                        cellXfStyle.setVerticalAlign(getCellXfVerticalAlignEnumValue(attribute));
+                    }
+                    attribute = alignmentNode.getAttribute("indent");
+                    if (attribute != null){
+                        cellXfStyle.setIndent(Integer.parseInt(attribute));
+                    }
+                    attribute = alignmentNode.getAttribute("textRotation");
+                    if (attribute != null){
+                        int rotation = Integer.parseInt(attribute);
+                        cellXfStyle.setTextRotation(rotation > 90 ? 90 - rotation : rotation);
+                    }
                 }
                 XmlDocument.XmlNode protectionNode = getChildNode(childNode, "protection");
                 if (protectionNode != null){
@@ -433,6 +460,34 @@ public class StyleReader {
     private static Font.VerticalAlignValue getFontVerticalAlignEnumValue(String styleValue) {
         try {
             return Font.VerticalAlignValue.valueOf(styleValue);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Tries to determine a horizontal align enum entry of cellXF from a string
+     *
+     * @param styleValue String to check
+     * @return Enum value or null if not found
+     */
+    private static CellXf.HorizontalAlignValue getCellXfHorizontalAlignEnumValue(String styleValue) {
+        try {
+            return CellXf.HorizontalAlignValue.valueOf(styleValue);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Tries to determine a vertical align enum entry of cellXF from a string
+     *
+     * @param styleValue String to check
+     * @return Enum value or null if not found
+     */
+    private static CellXf.VerticalAlignValue getCellXfVerticalAlignEnumValue(String styleValue) {
+        try {
+            return CellXf.VerticalAlignValue.valueOf(styleValue);
         } catch (Exception e) {
             return null;
         }

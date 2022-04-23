@@ -1010,6 +1010,15 @@ public class XlsxWriter {
                     }
                     sb2.append("\"");
                 }
+                if (style.getCellXf().getIndent() > 0 &&
+                        (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.left
+                                || style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.right
+                                || style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.distributed))
+                {
+                    sb2.append(" indent=\"");
+                    sb2.append(style.getCellXf().getIndent());
+                    sb2.append("\"");
+                }
 
                 if (style.getCellXf().getAlignment() != CellXf.TextBreakValue.none) {
                     if (style.getCellXf().getAlignment() == CellXf.TextBreakValue.shrinkToFit) {
