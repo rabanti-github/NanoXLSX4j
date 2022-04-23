@@ -10,6 +10,7 @@ import ch.rabanti.nanoxlsx4j.Address;
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.ImportOptions;
+import ch.rabanti.nanoxlsx4j.Range;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.io.IOException;
@@ -20,8 +21,15 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.*;
-import java.util.*;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static ch.rabanti.nanoxlsx4j.Cell.CellType.DATE;
 import static ch.rabanti.nanoxlsx4j.Cell.CellType.TIME;
@@ -44,6 +52,7 @@ public class WorksheetReader {
     private List<String> dateStyles;
     private List<String> timeStyles;
     private Map<String, Style> resolvedStyles;
+    private Range autoFilterRange = null;
 
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
@@ -56,10 +65,20 @@ public class WorksheetReader {
 
     /**
      * Gets the assignment of resolved styles to cell addresses
+     *
      * @return Map of cell address-style number tuples
      */
     public Map<String, String> getStyleAssignment() {
         return styleAssignment;
+    }
+
+    /**
+     * gets the auto filter range
+     *
+     * @return Auto filter range if defined, otherwise null
+     */
+    public Range getAutoFilterRange() {
+        return autoFilterRange;
     }
 
     /**
@@ -117,6 +136,13 @@ public class WorksheetReader {
                     }
                 }
             }
+            XmlDocument.XmlNodeList autoFilterRanges = xr.getDocumentElement().getElementsByTagName("autoFilter", true);
+            if (autoFilterRanges != null && autoFilterRanges.size() > 0) {
+                String auoFilterRef = autoFilterRanges.get(0).getAttribute("ref");
+                if (auoFilterRef != null) {
+                    this.autoFilterRange = new Range(auoFilterRef);
+                }
+            }
         } catch (Exception ex) {
             throw new IOException("The XML entry could not be read from the input stream. Please see the inner exception:", ex);
         } finally {
@@ -152,103 +178,78 @@ public class WorksheetReader {
             }
         }
         String key = address.toUpperCase();
-        styleAssignment.put(key,styleNumber);
+        styleAssignment.put(key, styleNumber);
         data.put(key, resolveCellData(value, type, styleNumber, address));
     }
 
     private Cell resolveCellData(String raw, String type, String styleNumber, String address) {
         Cell.CellType importedType = Cell.CellType.DEFAULT;
         Object rawValue;
-        if (checkType(type, "b"))
-        {
+        if (checkType(type, "b")) {
             rawValue = tryParseBool(raw);
-            if (rawValue != null)
-            {
+            if (rawValue != null) {
                 importedType = Cell.CellType.BOOL;
-            }
-            else
-            {
+            } else {
                 rawValue = getNumericValue(raw);
-                if (rawValue != null)
-                {
+                if (rawValue != null) {
                     importedType = Cell.CellType.NUMBER;
                 }
             }
-        }
-        else if (checkType(type, "s"))
-        {
+        } else if (checkType(type, "s")) {
             importedType = Cell.CellType.STRING;
             rawValue = resolveSharedString(raw);
-        }
-        else if (checkType(type, "str"))
-        {
+        } else if (checkType(type, "str")) {
             importedType = Cell.CellType.FORMULA;
             rawValue = raw;
-        }
-        else if (dateStyles.contains(styleNumber) && (checkType(type, null) || checkType(type, "") || checkType(type, "n")))
-        {
-            Result<Object, Cell.CellType> result = getDateTimeValue(raw,  DATE);
+        } else if (dateStyles.contains(styleNumber) && (checkType(type, null) || checkType(type, "") || checkType(type, "n"))) {
+            Result<Object, Cell.CellType> result = getDateTimeValue(raw, DATE);
             rawValue = result.result1;
             importedType = result.result2;
-        }
-        else if (timeStyles.contains(styleNumber) && (checkType(type, null) || checkType(type, "") || checkType(type, "n")))
-        {
-            Result<Object, Cell.CellType> result = getDateTimeValue(raw,  TIME);
+        } else if (timeStyles.contains(styleNumber) && (checkType(type, null) || checkType(type, "") || checkType(type, "n"))) {
+            Result<Object, Cell.CellType> result = getDateTimeValue(raw, TIME);
             rawValue = result.result1;
             importedType = result.result2;
-        }
-        else
-        {
+        } else {
             importedType = Cell.CellType.NUMBER;
             rawValue = getNumericValue(raw);
         }
-        if (rawValue == null && raw.equals(""))
-        {
+        if (rawValue == null && raw.equals("")) {
             importedType = Cell.CellType.EMPTY;
             rawValue = null;
-        }
-        else if (rawValue == null && raw.length() > 0)
-        {
+        } else if (rawValue == null && raw.length() > 0) {
             importedType = Cell.CellType.STRING;
             rawValue = raw;
         }
         Address cellAddress = new Address(address);
-        if (importOptions != null)
-        {
-            if (importOptions.getEnforcedColumnTypes().size() > 0)
-            {
+        if (importOptions != null) {
+            if (importOptions.getEnforcedColumnTypes().size() > 0) {
                 rawValue = getEnforcedColumnValue(rawValue, importedType, cellAddress);
             }
             rawValue = getGloballyEnforcedValue(rawValue, cellAddress);
             rawValue = getGloballyEnforcedFlagValues(rawValue, cellAddress);
             importedType = resolveType(rawValue, importedType);
-            if (importedType == Cell.CellType.DATE && rawValue instanceof Date && ((Date)rawValue).getTime() < Helper.FIRST_ALLOWED_EXCEL_DATE.getTime())
-            {
+            if (importedType == Cell.CellType.DATE && rawValue instanceof Date && ((Date) rawValue).getTime() < Helper.FIRST_ALLOWED_EXCEL_DATE.getTime()) {
                 // Fix conversion from time to date, where time has no days
-                rawValue =  addTemporalUnits((Date)rawValue, 1,0,0,0);
+                rawValue = addTemporalUnits((Date) rawValue, 1, 0, 0, 0);
             }
         }
         return createCell(rawValue, importedType, cellAddress, styleNumber);
     }
 
-    private boolean checkType(String type, String expectation){
-        if (type == null && expectation != null){
+    private boolean checkType(String type, String expectation) {
+        if (type == null && expectation != null) {
             return false;
-        }
-        else if (type == null){
+        } else if (type == null) {
             return true;
         }
         return expectation.equals(type);
     }
 
-    private Cell.CellType resolveType(Object value, Cell.CellType defaultType)
-    {
-        if (defaultType == Cell.CellType.FORMULA)
-        {
+    private Cell.CellType resolveType(Object value, Cell.CellType defaultType) {
+        if (defaultType == Cell.CellType.FORMULA) {
             return defaultType;
         }
-        if (value == null)
-        {
+        if (value == null) {
             return Cell.CellType.EMPTY;
         }
         Class<?> cls = value.getClass();
@@ -260,92 +261,67 @@ public class WorksheetReader {
             return TIME;
         } else if (Boolean.class.equals(cls)) {
             return Cell.CellType.BOOL;
-        }
-        else{
+        } else {
             return Cell.CellType.STRING;
         }
     }
 
-    private Object getGloballyEnforcedFlagValues(Object data, Address address)
-    {
-        if (address.Row < importOptions.getEnforcingStartRowNumber())
-        {
+    private Object getGloballyEnforcedFlagValues(Object data, Address address) {
+        if (address.Row < importOptions.getEnforcingStartRowNumber()) {
             return data;
         }
-        if (importOptions.isEnforceDateTimesAsNumbers())
-        {
-            if (data instanceof Date)
-            {
-                data = Helper.getOADate((Date)data, true);
-            }
-                else if (data instanceof Duration)
-            {
+        if (importOptions.isEnforceDateTimesAsNumbers()) {
+            if (data instanceof Date) {
+                data = Helper.getOADate((Date) data, true);
+            } else if (data instanceof Duration) {
                 data = Helper.getOATime((Duration) data);
             }
         }
-        if (importOptions.isEnforceEmptyValuesAsString())
-        {
-            if (data == null)
-            {
+        if (importOptions.isEnforceEmptyValuesAsString()) {
+            if (data == null) {
                 return "";
             }
         }
         return data;
     }
 
-    private Object getGloballyEnforcedValue(Object data, Address address)
-    {
-        if (address.Row < importOptions.getEnforcingStartRowNumber())
-        {
+    private Object getGloballyEnforcedValue(Object data, Address address) {
+        if (address.Row < importOptions.getEnforcingStartRowNumber()) {
             return data;
         }
-        if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToDouble))
-        {
+        if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToDouble)) {
             Object tempDouble = convertToDouble(data);
-            if (tempDouble != null)
-            {
+            if (tempDouble != null) {
                 return tempDouble;
             }
         }
-        if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToBigDecimal))
-        {
+        if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToBigDecimal)) {
             Object tempBigDecimal = convertToBigDecimal(data);
-            if (tempBigDecimal != null)
-            {
+            if (tempBigDecimal != null) {
                 return tempBigDecimal;
             }
-        }
-        else if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToInt))
-        {
+        } else if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToInt)) {
             Object tempInt = convertToInt(data);
-            if (tempInt != null)
-            {
+            if (tempInt != null) {
                 return tempInt;
             }
-        }
-        else if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.EverythingToString))
-        {
+        } else if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.EverythingToString)) {
             return convertToString(data);
         }
         return data;
     }
 
-    private Object getEnforcedColumnValue(Object data, Cell.CellType importedTyp, Address address)
-    {
-        if (address.Row < importOptions.getEnforcingStartRowNumber())
-        {
+    private Object getEnforcedColumnValue(Object data, Cell.CellType importedTyp, Address address) {
+        if (address.Row < importOptions.getEnforcingStartRowNumber()) {
             return data;
         }
-        if (!importOptions.getEnforcedColumnTypes().containsKey(address.Column))
-        {
+        if (!importOptions.getEnforcedColumnTypes().containsKey(address.Column)) {
             return data;
         }
-        if (importedTyp == Cell.CellType.FORMULA)
-        {
+        if (importedTyp == Cell.CellType.FORMULA) {
             return data;
         }
-        switch (importOptions.getEnforcedColumnTypes().get(address.Column))
-        {
+        switch (importOptions.getEnforcedColumnTypes().get(address.Column)) {
             case Numeric:
                 return getNumericValue(data, importedTyp);
             case BigDecimal:
@@ -363,9 +339,8 @@ public class WorksheetReader {
         }
     }
 
-    private Object convertToBool(Object data)
-    {
-        if (data == null){
+    private Object convertToBool(Object data) {
+        if (data == null) {
             return null;
         }
         Class<?> cls = data.getClass();
@@ -391,51 +366,47 @@ public class WorksheetReader {
         return data;
     }
 
-    private Boolean tryParseBool(String raw){
-        if (Helper.isNullOrEmpty(raw)){
+    private Boolean tryParseBool(String raw) {
+        if (Helper.isNullOrEmpty(raw)) {
             return null;
         }
         Object nValue = getNumericValue(raw);
-        if (nValue != null){
+        if (nValue != null) {
             Number n = (Number) nValue;
-            if (n.intValue() == 1 ){
+            if (n.intValue() == 1) {
                 return true;
-            }
-            else if (n.intValue() == 0){
+            } else if (n.intValue() == 0) {
                 return false;
-            }
-            else{
+            } else {
                 return null;
             }
         }
-        if (raw.equalsIgnoreCase("true")){
+        if (raw.equalsIgnoreCase("true")) {
             return true;
-        }
-        else if (raw.equalsIgnoreCase("false")){
+        } else if (raw.equalsIgnoreCase("false")) {
             return false;
         }
         return null;
     }
 
-    private  Object convertToDouble(Object data){
+    private Object convertToDouble(Object data) {
         Object value = convertToBigDecimal(data);
-        if (value instanceof  BigDecimal){
-            double tempDouble = ((BigDecimal)value).doubleValue();
-            if (Double.isFinite(tempDouble)){
+        if (value instanceof BigDecimal) {
+            double tempDouble = ((BigDecimal) value).doubleValue();
+            if (Double.isFinite(tempDouble)) {
                 return tempDouble;
             }
         }
         return value;
     }
 
-    private Object convertToBigDecimal(Object data)
-    {
-        if (data == null){
+    private Object convertToBigDecimal(Object data) {
+        if (data == null) {
             return null;
         }
         Class<?> cls = data.getClass();
         if (BigDecimal.class.equals(cls)) {
-            return  data;
+            return data;
         } else if (Long.class.equals(cls) || Short.class.equals(cls) || Float.class.equals(cls) || Double.class.equals(cls) || Byte.class.equals(cls) || Integer.class.equals(cls)) {
             Number number = (Number) data;
             return BigDecimal.valueOf(number.doubleValue());
@@ -467,9 +438,8 @@ public class WorksheetReader {
         return data;
     }
 
-    private Object convertToInt(Object data)
-    {
-        if (data == null){
+    private Object convertToInt(Object data) {
+        if (data == null) {
             return null;
         }
         double tempDouble;
@@ -496,9 +466,8 @@ public class WorksheetReader {
         return null;
     }
 
-    private Object convertToDate(Object data)
-    {
-        if (data == null){
+    private Object convertToDate(Object data) {
+        if (data == null) {
             return null;
         }
         Class<?> cls = data.getClass();
@@ -521,23 +490,20 @@ public class WorksheetReader {
         return data;
     }
 
-    private static Date tryParseDate(String raw, SimpleDateFormat formatter){
-        try{
+    private static Date tryParseDate(String raw, SimpleDateFormat formatter) {
+        try {
             Date date;
             date = formatter.parse(raw);
-            if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime())
-            {
+            if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()) {
                 return date;
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
         }
         return null;
     }
 
-    private Object convertToTime(Object data)
-    {
-        if (data == null){
+    private Object convertToTime(Object data) {
+        if (data == null) {
             return null;
         }
         Class<?> cls = data.getClass();
@@ -558,72 +524,58 @@ public class WorksheetReader {
     }
 
 
-    private static Duration tryParseTime(String raw, DateTimeFormatter formatter){
-        try{
+    private static Duration tryParseTime(String raw, DateTimeFormatter formatter) {
+        try {
             Duration time;
             time = Helper.parseTime(raw, formatter);
             double days = time.get(ChronoUnit.SECONDS) / 86400d;
             if (days >= 0d && days < Helper.MAX_OADATE_VALUE) {
                 return time;
-            }
-            else {
+            } else {
                 return null;
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             return null;
         }
     }
 
-    private Result<Object, Cell.CellType> getDateTimeValue(String raw, Cell.CellType valueType)
-    {
+    private Result<Object, Cell.CellType> getDateTimeValue(String raw, Cell.CellType valueType) {
         Double dValue = tryParseDouble(raw);
-        if (dValue == null)
-        {
+        if (dValue == null) {
             return new Result<>(raw, Cell.CellType.STRING);
         }
-        if ((valueType == Cell.CellType.DATE && (dValue < Helper.MIN_OADATE_VALUE || dValue > Helper.MAX_OADATE_VALUE)) || (valueType == Cell.CellType.TIME && (dValue < 0.0 || dValue > Helper.MAX_OADATE_VALUE)))
-        {
+        if ((valueType == Cell.CellType.DATE && (dValue < Helper.MIN_OADATE_VALUE || dValue > Helper.MAX_OADATE_VALUE)) || (valueType == Cell.CellType.TIME && (dValue < 0.0 || dValue > Helper.MAX_OADATE_VALUE))) {
             // fallback to number (cannot be anything else)
             return new Result<>(getNumericValue(raw), Cell.CellType.NUMBER);
         }
         Date tempDate = Helper.getDateFromOA(dValue);
-        if (dValue < 1.0)
-        {
-            tempDate = addTemporalUnits(tempDate, 1,0,0,0); // Modify wrong 1st date when < 1
+        if (dValue < 1.0) {
+            tempDate = addTemporalUnits(tempDate, 1, 0, 0, 0); // Modify wrong 1st date when < 1
         }
-        if (valueType == Cell.CellType.DATE)
-        {
+        if (valueType == Cell.CellType.DATE) {
             return new Result<>(tempDate, DATE);
-        }
-        else
-        {
+        } else {
             CALENDAR.setTime(tempDate);
             return new Result<>(Helper.createDuration(dValue.intValue(), CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)), TIME);
         }
     }
 
-    private Object convertDateFromDouble(Object data)
-    {
+    private Object convertDateFromDouble(Object data) {
         Object oaDate = convertToDouble(data);
-        if (oaDate instanceof Double && (Double)oaDate < Helper.MAX_OADATE_VALUE)
-        {
-            Date date = Helper.getDateFromOA((Double)oaDate);
-            if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime())
-            {
+        if (oaDate instanceof Double && (Double) oaDate < Helper.MAX_OADATE_VALUE) {
+            Date date = Helper.getDateFromOA((Double) oaDate);
+            if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()) {
                 return date;
             }
         }
         return data;
     }
 
-    private Object convertTimeFromDouble(Object data)
-    {
+    private Object convertTimeFromDouble(Object data) {
         Object oaDate = convertToDouble(data);
-        if (oaDate instanceof Double)
-        { double d = (Double)oaDate;
-            if (d >= Helper.MIN_OADATE_VALUE && d <= Helper.MAX_OADATE_VALUE)
-            {
+        if (oaDate instanceof Double) {
+            double d = (Double) oaDate;
+            if (d >= Helper.MIN_OADATE_VALUE && d <= Helper.MAX_OADATE_VALUE) {
                 Date date = Helper.getDateFromOA(d);
                 CALENDAR.setTime(date);
                 return Helper.createDuration((int) d, CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND));
@@ -632,25 +584,21 @@ public class WorksheetReader {
         return data;
     }
 
-    private Object tryConvertDoubleToInt(Object data)
-    {
-        Number number = (Number)data;
+    private Object tryConvertDoubleToInt(Object data) {
+        Number number = (Number) data;
         double dValue = number.doubleValue();
-        if (dValue > Integer.MIN_VALUE && dValue < Integer.MAX_VALUE)
-        {
-            return (int)Math.round(number.doubleValue());
+        if (dValue > Integer.MIN_VALUE && dValue < Integer.MAX_VALUE) {
+            return (int) Math.round(number.doubleValue());
         }
         return null;
     }
 
-    public Object convertDoubleToInt(Object data)
-    {
+    public Object convertDoubleToInt(Object data) {
         Number number = (Number) data;
-        return (int)Math.round(number.doubleValue());
+        return (int) Math.round(number.doubleValue());
     }
 
-    private String convertToString(Object data)
-    {
+    private String convertToString(Object data) {
         if (data == null) {
             return null;
         }
@@ -677,46 +625,39 @@ public class WorksheetReader {
         return data.toString();
     }
 
-    private Object getNumericValue(Object raw, Cell.CellType importedType)
-    {
-        if (raw == null)
-        {
+    private Object getNumericValue(Object raw, Cell.CellType importedType) {
+        if (raw == null) {
             return null;
         }
         Object tempObject;
-        switch (importedType)
-        {
+        switch (importedType) {
             case STRING:
                 String tempString = raw.toString();
                 tempObject = getNumericValue(tempString);
-                if (tempObject != null)
-                {
+                if (tempObject != null) {
                     return tempObject;
                 }
                 Date tempDate = tryParseDate(tempString, importOptions);
-                if (tempDate != null)
-                {
+                if (tempDate != null) {
                     return Helper.getOADate(tempDate);
                 }
                 Duration tempTime = tryParseTime(tempString, importOptions);
-                if (tempTime != null)
-                {
+                if (tempTime != null) {
                     return Helper.getOATime(tempTime);
                 }
                 tempObject = convertToBool(raw);
-                if (tempObject instanceof Boolean)
-            {
-                return (boolean)tempObject ? 1 : 0;
-            }
-            break;
+                if (tempObject instanceof Boolean) {
+                    return (boolean) tempObject ? 1 : 0;
+                }
+                break;
             case NUMBER:
                 return raw;
-            case  DATE:
-                return Helper.getOADate((Date)raw);
-            case  TIME:
+            case DATE:
+                return Helper.getOADate((Date) raw);
+            case TIME:
                 return Helper.getOATime((Duration) raw);
-            case  BOOL:
-                if ((boolean)raw){
+            case BOOL:
+                if ((boolean) raw) {
                     return 1;
                 }
                 return 0;
@@ -724,75 +665,70 @@ public class WorksheetReader {
         return raw;
     }
 
-    private Object getNumericValue(String raw)
-    {
+    private Object getNumericValue(String raw) {
         // integer section
         Integer iValue = tryParseInt(raw);
-        if (iValue != null)
-        {
+        if (iValue != null) {
             return iValue;
         }
         Long lValue = tryParseLong(raw);
-        if (lValue != null)
-        {
+        if (lValue != null) {
             return lValue;
         }
         // float section
         Number dcValue = tryParseDecimal(raw);
-        if (dcValue != null && dcValue instanceof Float){
+        if (dcValue != null && dcValue instanceof Float) {
             return dcValue.floatValue();
-        }
-        else if (dcValue != null && dcValue instanceof Double){
+        } else if (dcValue != null && dcValue instanceof Double) {
             return dcValue.doubleValue();
         }
         return null;
     }
 
-    private static class Result<R1, R2>{
+    private static class Result<R1, R2> {
         public final R1 result1;
         public final R2 result2;
+
         public Result(R1 result1, R2 result2) {
             this.result1 = result1;
             this.result2 = result2;
         }
     }
 
-    private static Date addTemporalUnits(Date root, int days, int hours, int minutes, int seconds){
+    private static Date addTemporalUnits(Date root, int days, int hours, int minutes, int seconds) {
         CALENDAR.setTime(root);
-        if (days != 0){
+        if (days != 0) {
             CALENDAR.add(Calendar.DATE, days);
         }
-        if (hours != 0){
+        if (hours != 0) {
             CALENDAR.add(Calendar.HOUR, hours);
         }
-        if (minutes != 0){
+        if (minutes != 0) {
             CALENDAR.add(Calendar.MINUTE, minutes);
         }
-        if (seconds != 0){
+        if (seconds != 0) {
             CALENDAR.add(Calendar.SECOND, seconds);
         }
         return CALENDAR.getTime();
     }
 
-    private static Double tryParseDouble(String raw){
+    private static Double tryParseDouble(String raw) {
         try {
             return Double.parseDouble(raw);
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             return null;
         }
     }
 
-    private static BigDecimal tryParseBigDecimal(String raw){
+    private static BigDecimal tryParseBigDecimal(String raw) {
         try {
             return new BigDecimal(raw);
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             return null;
         }
     }
 
-    private static boolean compareDouble(double d1, double d2){
+    private static boolean compareDouble(double d1, double d2) {
         final double epsilon = 0.000001d;
         return Math.abs(d1 - d2) < epsilon;
     }
@@ -808,7 +744,7 @@ public class WorksheetReader {
             double d = Double.parseDouble(value);
             String[] dString = DECIMAL_FORMAT.format(d).split("\\.");
             int numberOfDigits = 0;
-            if (dString.length == 2){
+            if (dString.length == 2) {
                 numberOfDigits = dString[1].length();
             }
             float f = Float.parseFloat(value);
@@ -894,15 +830,16 @@ public class WorksheetReader {
 
     /**
      * Creates a generic cell with style information
-     * @param value value of the cell
-     * @param type Cell type
-     * @param address Cell address
+     *
+     * @param value       value of the cell
+     * @param type        Cell type
+     * @param address     Cell address
      * @param styleNumber Style number of the cell
      * @return Resolved cell
      */
     private Cell createCell(Object value, Cell.CellType type, Address address, String styleNumber) {
         Cell cell = new Cell(value, type, address);
-        if (styleNumber != null && resolvedStyles.containsKey(styleNumber)){
+        if (styleNumber != null && resolvedStyles.containsKey(styleNumber)) {
             cell.setStyle(resolvedStyles.get(styleNumber));
         }
         return cell;
@@ -922,7 +859,7 @@ public class WorksheetReader {
             int hours = time.get(ChronoField.HOUR_OF_DAY);
             int minutes = time.get(ChronoField.MINUTE_OF_HOUR);
             int seconds = time.get(ChronoField.SECOND_OF_MINUTE);
-            Duration duration = Duration.ofSeconds(hours * 3600 + minutes * 60 + seconds, 0 );
+            Duration duration = Duration.ofSeconds(hours * 3600 + minutes * 60 + seconds, 0);
             return duration.plusDays(days);
         } catch (Exception ex) {
             return null;
@@ -932,7 +869,7 @@ public class WorksheetReader {
     /**
      * Class to represent the components of a time with an optional number of days
      */
-    private static class  TimeComponent{
+    private static class TimeComponent {
         private int hours;
         private int minutes;
         private int seconds;
@@ -955,10 +892,10 @@ public class WorksheetReader {
         }
 
         public TimeComponent(long totalSeconds) {
-            calculateComponents((int)totalSeconds);
+            calculateComponents((int) totalSeconds);
         }
 
-        private void calculateComponents(int totalSeconds){
+        private void calculateComponents(int totalSeconds) {
             this.days = totalSeconds / 86400;
             this.hours = (totalSeconds - (this.days * 86400)) / 3600;
             this.minutes = (totalSeconds - (this.days * 86400) - (this.hours * 3600)) / 60;

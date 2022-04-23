@@ -6,7 +6,11 @@
  */
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
-import ch.rabanti.nanoxlsx4j.*;
+import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Helper;
+import ch.rabanti.nanoxlsx4j.ImportOptions;
+import ch.rabanti.nanoxlsx4j.Workbook;
+import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 
@@ -84,7 +88,7 @@ public class XlsxReader {
                     }
                 }
             }
-            if (is == null){
+            if (is == null) {
                 throw new IOException("The entry '" + name + "' is missing in the file");
             }
             return is;
@@ -132,7 +136,7 @@ public class XlsxReader {
             WorksheetReader wr;
             String nameTemplate = "sheet" + worksheetIndex + ".xml";
             String name = "xl/worksheets/" + nameTemplate;
-            for (Map.Entry<Integer, WorkbookReader.WorksheetDefinition> definition: workbook.getWorksheetDefinitions().entrySet()) {
+            for (Map.Entry<Integer, WorkbookReader.WorksheetDefinition> definition : workbook.getWorksheetDefinitions().entrySet()) {
                 stream = getEntryStream(name, zf);
                 wr = new WorksheetReader(sharedStrings, styleReaderContainer, importOptions);
                 wr.read(stream);
@@ -159,18 +163,17 @@ public class XlsxReader {
         Workbook wb = new Workbook(false);
         wb.setImportState(true);
         Worksheet ws;
-        for (Map.Entry<Integer, WorksheetReader> reader : this.worksheets.entrySet())
-        {
+        for (Map.Entry<Integer, WorksheetReader> reader : this.worksheets.entrySet()) {
             WorkbookReader.WorksheetDefinition definition = workbook.getWorksheetDefinitions().get(reader.getKey());
             ws = new Worksheet(definition.getWorksheetName(), definition.getSheetId(), wb);
             ws.setHidden(definition.isHidden());
-            for (Map.Entry<String, Cell> cell : reader.getValue().getData().entrySet())
-            {
-                if (reader.getValue().getStyleAssignment().containsKey(cell.getKey()))
-                {
+            if (reader.getValue().getAutoFilterRange() != null) {
+                ws.setAutoFilter(reader.getValue().getAutoFilterRange().StartAddress.Column, reader.getValue().getAutoFilterRange().EndAddress.Column);
+            }
+            for (Map.Entry<String, Cell> cell : reader.getValue().getData().entrySet()) {
+                if (reader.getValue().getStyleAssignment().containsKey(cell.getKey())) {
                     Style style = styleReaderContainer.getStyle(reader.getValue().getStyleAssignment().get(cell.getKey()), true);
-                    if (style != null)
-                    {
+                    if (style != null) {
                         cell.getValue().setStyle(style);
                     }
                 }
