@@ -1,6 +1,10 @@
 package ch.rabanti.nanoxlsx4j.cells;
 
-import ch.rabanti.nanoxlsx4j.*;
+import ch.rabanti.nanoxlsx4j.Address;
+import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Range;
+import ch.rabanti.nanoxlsx4j.TestUtils;
+import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.cells.types.CellTypeUtils;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
@@ -19,7 +23,12 @@ import java.util.Date;
 import java.util.List;
 
 import static ch.rabanti.nanoxlsx4j.TestUtils.buildTime;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CellTest {
 

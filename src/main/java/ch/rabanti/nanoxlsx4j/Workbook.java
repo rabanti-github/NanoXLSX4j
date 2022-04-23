@@ -6,10 +6,21 @@
  */
 package ch.rabanti.nanoxlsx4j;
 
-import ch.rabanti.nanoxlsx4j.exceptions.*;
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
+import ch.rabanti.nanoxlsx4j.exceptions.IOException;
+import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
+import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
+import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
 import ch.rabanti.nanoxlsx4j.lowLevel.XlsxReader;
 import ch.rabanti.nanoxlsx4j.lowLevel.XlsxWriter;
-import ch.rabanti.nanoxlsx4j.styles.*;
+import ch.rabanti.nanoxlsx4j.styles.AbstractStyle;
+import ch.rabanti.nanoxlsx4j.styles.Border;
+import ch.rabanti.nanoxlsx4j.styles.CellXf;
+import ch.rabanti.nanoxlsx4j.styles.Fill;
+import ch.rabanti.nanoxlsx4j.styles.Font;
+import ch.rabanti.nanoxlsx4j.styles.NumberFormat;
+import ch.rabanti.nanoxlsx4j.styles.Style;
+import ch.rabanti.nanoxlsx4j.styles.StyleRepository;
 
 import java.io.InputStream;
 import java.io.OutputStream;

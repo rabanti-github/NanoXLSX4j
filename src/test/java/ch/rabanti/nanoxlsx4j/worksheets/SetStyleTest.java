@@ -1,6 +1,10 @@
 package ch.rabanti.nanoxlsx4j.worksheets;
 
-import ch.rabanti.nanoxlsx4j.*;
+import ch.rabanti.nanoxlsx4j.Address;
+import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Range;
+import ch.rabanti.nanoxlsx4j.TestUtils;
+import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
@@ -17,7 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SetStyleTest {
 

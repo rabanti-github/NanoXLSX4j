@@ -1,9 +1,7 @@
 package ch.rabanti.nanoxlsx4j.styles.writeRead;
 
-import ch.rabanti.nanoxlsx4j.Address;
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.TestUtils;
-import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.styles.Fill;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 import org.junit.jupiter.api.DisplayName;

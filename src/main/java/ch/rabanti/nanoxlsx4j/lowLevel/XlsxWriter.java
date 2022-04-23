@@ -6,17 +6,33 @@
  */
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
-import ch.rabanti.nanoxlsx4j.*;
+import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Column;
+import ch.rabanti.nanoxlsx4j.Helper;
+import ch.rabanti.nanoxlsx4j.Metadata;
+import ch.rabanti.nanoxlsx4j.Range;
+import ch.rabanti.nanoxlsx4j.Workbook;
+import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
-import ch.rabanti.nanoxlsx4j.styles.*;
+import ch.rabanti.nanoxlsx4j.styles.Border;
+import ch.rabanti.nanoxlsx4j.styles.CellXf;
+import ch.rabanti.nanoxlsx4j.styles.Fill;
+import ch.rabanti.nanoxlsx4j.styles.Font;
+import ch.rabanti.nanoxlsx4j.styles.NumberFormat;
+import ch.rabanti.nanoxlsx4j.styles.Style;
+import ch.rabanti.nanoxlsx4j.styles.StyleManager;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +43,15 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 /**

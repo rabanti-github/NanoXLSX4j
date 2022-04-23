@@ -6,9 +6,13 @@
  */
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
-import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
-import ch.rabanti.nanoxlsx4j.styles.*;
+import ch.rabanti.nanoxlsx4j.styles.Border;
+import ch.rabanti.nanoxlsx4j.styles.CellXf;
+import ch.rabanti.nanoxlsx4j.styles.Fill;
+import ch.rabanti.nanoxlsx4j.styles.Font;
+import ch.rabanti.nanoxlsx4j.styles.NumberFormat;
+import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.io.InputStream;
 

@@ -1,10 +1,17 @@
 package ch.rabanti.nanoxlsx4j.misc;
 
-import ch.rabanti.nanoxlsx4j.exceptions.*;
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
+import ch.rabanti.nanoxlsx4j.exceptions.IOException;
+import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
+import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
+import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ExceptionTest {
     // For code coverage

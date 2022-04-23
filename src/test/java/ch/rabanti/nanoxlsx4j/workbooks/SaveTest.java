@@ -10,7 +10,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SaveTest {
 

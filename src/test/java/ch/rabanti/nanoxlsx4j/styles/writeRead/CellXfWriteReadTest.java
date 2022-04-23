@@ -3,7 +3,6 @@ package ch.rabanti.nanoxlsx4j.styles.writeRead;
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.styles.CellXf;
-import ch.rabanti.nanoxlsx4j.styles.NumberFormat;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;

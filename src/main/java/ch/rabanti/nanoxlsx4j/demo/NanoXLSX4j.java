@@ -6,18 +6,27 @@
  */
 package ch.rabanti.nanoxlsx4j.demo;
 
-import ch.rabanti.nanoxlsx4j.*;
-import ch.rabanti.nanoxlsx4j.lowLevel.XmlDocument;
-import ch.rabanti.nanoxlsx4j.styles.*;
+import ch.rabanti.nanoxlsx4j.Address;
+import ch.rabanti.nanoxlsx4j.BasicFormulas;
+import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Range;
+import ch.rabanti.nanoxlsx4j.Workbook;
+import ch.rabanti.nanoxlsx4j.Worksheet;
+import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
+import ch.rabanti.nanoxlsx4j.styles.CellXf;
+import ch.rabanti.nanoxlsx4j.styles.Fill;
+import ch.rabanti.nanoxlsx4j.styles.Font;
+import ch.rabanti.nanoxlsx4j.styles.Style;
 
-import io.reactivex.*;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Demo Program for NanoXLSX4j

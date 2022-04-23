@@ -2,7 +2,6 @@ package ch.rabanti.nanoxlsx4j.misc;
 
 import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.TestUtils;
-import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,10 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HelperTest {
 
