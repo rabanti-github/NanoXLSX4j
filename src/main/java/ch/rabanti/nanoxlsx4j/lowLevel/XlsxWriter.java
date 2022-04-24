@@ -225,7 +225,8 @@ public class XlsxWriter {
                     }
                 }
                 col = Integer.toString(column.getKey() + 1); // Add 1 for Address
-                sb.append("<col customWidth=\"1\" width=\"").append(column.getValue().getWidth()).append("\" max=\"").append(col).append("\" min=\"").append(col).append("\"").append(hidden).append("/>");
+                float width = Helper.getInternalColumnWidth(column.getValue().getWidth());
+                sb.append("<col customWidth=\"1\" width=\"").append(width).append("\" max=\"").append(col).append("\" min=\"").append(col).append("\"").append(hidden).append("/>");
             }
             String value = sb.toString();
             if (value.length() > 0) {
@@ -1197,21 +1198,14 @@ public class XlsxWriter {
         sb.append(worksheet.getDefaultColumnWidth());
         sb.append("\"/>");
 
-        String colWidths = createColsString(worksheet);
-        if (!Helper.isNullOrEmpty(colWidths)) {
+        String colDefinitions = createColsString(worksheet);
+        if (!Helper.isNullOrEmpty(colDefinitions)) {
             sb.append("<cols>");
-            sb.append(colWidths);
+            sb.append(colDefinitions);
             sb.append("</cols>");
         }
         sb.append("<sheetData>");
         createRowsString(worksheet, sb);
-        /*
-        for (int i = 0; i < celldata.size(); i++) {
-            line = createRowString(celldata.get(i), worksheet);
-            sb.append(line);
-        }
-
-         */
         sb.append("</sheetData>");
 
         sb.append(createMergedCellsString(worksheet));
@@ -1220,7 +1214,6 @@ public class XlsxWriter {
             sb.append("<autoFilter ref=\"").append(worksheet.getAutoFilterRange().toString()).append("\"/>");
         }
         sb.append("</worksheet>");
-        //testing.Performance.SaveLoggedValues("LineLength.xlsx");
         return createXMLDocument(sb.toString(), "WORKSHEET: " + worksheet.getSheetName());
     }
 

@@ -7,6 +7,7 @@
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
 import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Column;
 import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.ImportOptions;
 import ch.rabanti.nanoxlsx4j.Workbook;
@@ -169,6 +170,14 @@ public class XlsxReader {
             ws.setHidden(definition.isHidden());
             if (reader.getValue().getAutoFilterRange() != null) {
                 ws.setAutoFilter(reader.getValue().getAutoFilterRange().StartAddress.Column, reader.getValue().getAutoFilterRange().EndAddress.Column);
+            }
+            for(Column column : reader.getValue().getColumns()){
+                if (column.getWidth() != Worksheet.DEFAULT_COLUMN_WIDTH){
+                    ws.setColumnWidth(column.getColumnAddress(), column.getWidth());
+                }
+                if (column.isHidden()){
+                    ws.addHiddenColumn(column.getNumber());
+                }
             }
             for (Map.Entry<String, Cell> cell : reader.getValue().getData().entrySet()) {
                 if (reader.getValue().getStyleAssignment().containsKey(cell.getKey())) {

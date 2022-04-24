@@ -8,9 +8,11 @@ package ch.rabanti.nanoxlsx4j.lowLevel;
 
 import ch.rabanti.nanoxlsx4j.Address;
 import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Column;
 import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.ImportOptions;
 import ch.rabanti.nanoxlsx4j.Range;
+import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.io.IOException;
@@ -53,6 +55,7 @@ public class WorksheetReader {
     private List<String> timeStyles;
     private Map<String, Style> resolvedStyles;
     private Range autoFilterRange = null;
+    private final List<Column> columns = new ArrayList<>();
 
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
@@ -79,6 +82,14 @@ public class WorksheetReader {
      */
     public Range getAutoFilterRange() {
         return autoFilterRange;
+    }
+
+    /**
+     * Gets a list of defined Columns
+     * @return List of columns
+     */
+    public List<Column> getColumns() {
+        return columns;
     }
 
     /**
@@ -136,18 +147,82 @@ public class WorksheetReader {
                     }
                 }
             }
-            XmlDocument.XmlNodeList autoFilterRanges = xr.getDocumentElement().getElementsByTagName("autoFilter", true);
-            if (autoFilterRanges != null && autoFilterRanges.size() > 0) {
-                String auoFilterRef = autoFilterRanges.get(0).getAttribute("ref");
-                if (auoFilterRef != null) {
-                    this.autoFilterRange = new Range(auoFilterRef);
-                }
-            }
+            getAutoFilters(xr);
+            getColumns(xr);
         } catch (Exception ex) {
             throw new IOException("The XML entry could not be read from the input stream. Please see the inner exception:", ex);
         } finally {
             if (stream != null) {
                 stream.close();
+            }
+        }
+    }
+
+    /**
+     * Gets the columns of the current worksheet
+     * @param xmlDocument XML document of the current worksheet
+     */
+    private void getColumns(XmlDocument xmlDocument){
+        XmlDocument.XmlNodeList columnsNodes = xmlDocument.getDocumentElement().getElementsByTagName("cols", true);
+        if (columnsNodes.size() == 0){
+            return;
+        }
+        for (XmlDocument.XmlNode columnNode : columnsNodes.get(0).getChildNodes())
+        {
+            Integer min = null;
+            Integer max = null;
+            List<Integer> indices = new ArrayList<>();
+            String attribute = columnNode.getAttribute("min");
+            if (attribute != null)
+            {
+                min = Integer.parseInt(attribute);
+                max = min;
+                indices.add(min);
+            }
+            attribute = columnNode.getAttribute("max");
+            if (attribute != null)
+            {
+                max = Integer.parseInt(attribute);
+            }
+            if (min != null && !max.equals(min))
+            {
+                for (int i = min; i <= max; i++)
+                {
+                    indices.add(i);
+                }
+            }
+            attribute = columnNode.getAttribute("width");
+            float width = Worksheet.DEFAULT_COLUMN_WIDTH;
+            if (attribute != null)
+            {
+                width = Float.parseFloat(attribute);
+            }
+            attribute = columnNode.getAttribute("hidden");
+            boolean hidden = false;
+            if (attribute != null && attribute.equals("1"))
+            {
+                hidden = true;
+            }
+            for (int index : indices)
+            {
+                Column column = new Column(index);
+                column.setWidth(width);
+                column.setHidden(hidden);
+                this.columns.add(column);
+            }
+        }
+    }
+
+    /**
+     * Gets the auto filters of the current worksheet
+     * @param xmlDocument XML document of the current worksheet
+     */
+    private void getAutoFilters(XmlDocument xmlDocument) {
+        XmlDocument.XmlNodeList autoFilterRanges = xmlDocument.getDocumentElement().getElementsByTagName("autoFilter", true);
+        if (autoFilterRanges != null && autoFilterRanges.size() > 0) {
+            String auoFilterRef = autoFilterRanges.get(0).getAttribute("ref");
+            if (auoFilterRef != null) {
+                this.autoFilterRange = new Range(auoFilterRef);
             }
         }
     }
