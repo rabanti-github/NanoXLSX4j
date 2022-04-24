@@ -171,6 +171,9 @@ public class XlsxReader {
             if (reader.getValue().getAutoFilterRange() != null) {
                 ws.setAutoFilter(reader.getValue().getAutoFilterRange().StartAddress.Column, reader.getValue().getAutoFilterRange().EndAddress.Column);
             }
+            if (reader.getValue().getDefaultColumnWidth() != null){
+                ws.setDefaultColumnWidth(reader.getValue().getDefaultColumnWidth());
+            }
             for(Column column : reader.getValue().getColumns()){
                 if (column.getWidth() != Worksheet.DEFAULT_COLUMN_WIDTH){
                     ws.setColumnWidth(column.getColumnAddress(), column.getWidth());

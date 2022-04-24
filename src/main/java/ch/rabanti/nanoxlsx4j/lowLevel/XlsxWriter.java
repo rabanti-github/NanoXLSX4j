@@ -1192,11 +1192,19 @@ public class XlsxWriter {
             createSheetViewString(worksheet, sb);
         }
 
-        sb.append("<sheetFormatPr x14ac:dyDescent=\"0.25\" defaultRowHeight=\"");
-        sb.append(worksheet.getDefaultRowHeight());
-        sb.append("\" baseColWidth=\"");
-        sb.append(worksheet.getDefaultColumnWidth());
-        sb.append("\"/>");
+        sb.append("<sheetFormatPr");
+        if (!hasPaneSplitting(worksheet))
+        {
+            // TODO: Find the right calculation to compensate baseColWidth when using pane splitting
+            sb.append(" defaultColWidth=\"")
+                    .append(worksheet.getDefaultColumnWidth())
+                    .append("\"");
+        }
+            sb.append(" defaultRowHeight=\"")
+            .append(worksheet.getDefaultRowHeight())
+            .append("\" baseColWidth=\"")
+            .append(worksheet.getDefaultColumnWidth())
+            .append("\" x14ac:dyDescent=\"0.25\"/>");
 
         String colDefinitions = createColsString(worksheet);
         if (!Helper.isNullOrEmpty(colDefinitions)) {
@@ -1215,6 +1223,20 @@ public class XlsxWriter {
         }
         sb.append("</worksheet>");
         return createXMLDocument(sb.toString(), "WORKSHEET: " + worksheet.getSheetName());
+    }
+
+    /**
+     * Checks whether pane splitting is applied in the given worksheet
+     * @param worksheet Checks whether pane splitting is applied in the given worksheet
+     * @return True if applied, otherwise false
+     */
+    private boolean hasPaneSplitting(Worksheet worksheet)
+    {
+        if (worksheet.getPaneSplitLeftWidth() == null && worksheet.getPaneSplitTopHeight() == null && worksheet.getPaneSplitAddress() == null)
+        {
+            return false;
+        }
+        return true;
     }
 
     private void createRowsString(Worksheet worksheet, StringBuilder sb) {

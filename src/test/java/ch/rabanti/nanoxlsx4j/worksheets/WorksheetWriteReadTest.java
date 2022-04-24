@@ -117,6 +117,32 @@ public class WorksheetWriteReadTest {
         }
     }
 
+    @DisplayName("Test of the 'DefaultColumnWidth' property when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given default column width {0} should lead to the same width in the read worksheet with the index {1}")
+    @CsvSource({
+            "1f, 0",
+            "11f, 0",
+            "55.55f, 0",
+            "1f, 1",
+            "11f, 2",
+            "55.55f, 3",
+    })
+    void defaultColumnWidthWriteReadTest(float width, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++)
+        {
+            if (sheetIndex == i)
+            {
+                workbook.setCurrentWorksheet(i);
+                workbook.getCurrentWorksheet().setDefaultColumnWidth(width);
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertTrue(Math.abs(givenWorksheet.getDefaultColumnWidth() - width) < 0.001);
+    }
+
+
+
     private static Workbook prepareWorkbook(int numberOfWorksheets, Object a1Data){
         Workbook workbook = new Workbook();
         for(int i = 0; i < numberOfWorksheets; i++){

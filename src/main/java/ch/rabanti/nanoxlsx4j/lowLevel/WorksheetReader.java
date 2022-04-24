@@ -56,6 +56,7 @@ public class WorksheetReader {
     private Map<String, Style> resolvedStyles;
     private Range autoFilterRange = null;
     private final List<Column> columns = new ArrayList<>();
+    private Float defaultColumnWidth;
 
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
@@ -90,6 +91,14 @@ public class WorksheetReader {
      */
     public List<Column> getColumns() {
         return columns;
+    }
+
+    /**
+     * Gets the default column width
+     * @return Default column width if defined, otherwise null
+     */
+    public Float getDefaultColumnWidth() {
+        return defaultColumnWidth;
     }
 
     /**
@@ -147,6 +156,7 @@ public class WorksheetReader {
                     }
                 }
             }
+            getSheetFormats(xr);
             getAutoFilters(xr);
             getColumns(xr);
         } catch (Exception ex) {
@@ -154,6 +164,34 @@ public class WorksheetReader {
         } finally {
             if (stream != null) {
                 stream.close();
+            }
+        }
+    }
+
+    /**
+     * Gets the sheet format information of the current worksheet
+     * @param xmlDocument XML document of the current worksheet
+     */
+    private void getSheetFormats(XmlDocument xmlDocument){
+        XmlDocument.XmlNodeList formatNodes = xmlDocument.getDocumentElement().getElementsByTagName("sheetFormatPr", true);
+        if (formatNodes != null && formatNodes.size() > 0) {
+            String attribute = formatNodes.get(0).getAttribute("defaultColWidth");
+            if (attribute != null) {
+                this.defaultColumnWidth = Float.parseFloat(attribute);
+            }
+        }
+    }
+
+    /**
+     * Gets the auto filters of the current worksheet
+     * @param xmlDocument XML document of the current worksheet
+     */
+    private void getAutoFilters(XmlDocument xmlDocument) {
+        XmlDocument.XmlNodeList autoFilterRanges = xmlDocument.getDocumentElement().getElementsByTagName("autoFilter", true);
+        if (autoFilterRanges != null && autoFilterRanges.size() > 0) {
+            String auoFilterRef = autoFilterRanges.get(0).getAttribute("ref");
+            if (auoFilterRef != null) {
+                this.autoFilterRange = new Range(auoFilterRef);
             }
         }
     }
@@ -209,20 +247,6 @@ public class WorksheetReader {
                 column.setWidth(width);
                 column.setHidden(hidden);
                 this.columns.add(column);
-            }
-        }
-    }
-
-    /**
-     * Gets the auto filters of the current worksheet
-     * @param xmlDocument XML document of the current worksheet
-     */
-    private void getAutoFilters(XmlDocument xmlDocument) {
-        XmlDocument.XmlNodeList autoFilterRanges = xmlDocument.getDocumentElement().getElementsByTagName("autoFilter", true);
-        if (autoFilterRanges != null && autoFilterRanges.size() > 0) {
-            String auoFilterRef = autoFilterRanges.get(0).getAttribute("ref");
-            if (auoFilterRef != null) {
-                this.autoFilterRange = new Range(auoFilterRef);
             }
         }
     }
