@@ -172,9 +172,9 @@ public class WorksheetReader {
                 if (rowAttribute != null)
                 {
                     String hiddenAttribute = row.getAttribute("hidden");
-                    RowDefinition.addHiddenRow(this.rows, rowAttribute, hiddenAttribute);
+                    RowDefinition.addRowDefinition(this.rows, rowAttribute, null, hiddenAttribute);
                     String heightAttribute = row.getAttribute("ht");
-                    RowDefinition.addRowHeight(this.rows, rowAttribute, heightAttribute);
+                    RowDefinition.addRowDefinition(this.rows, rowAttribute, heightAttribute, null);
                 }
                 if (row.hasChildNodes()) {
                     for (XmlDocument.XmlNode rowChild : row.getChildNodes()) {
@@ -1074,30 +1074,13 @@ public class WorksheetReader {
         }
 
         /**
-         * Adds a row definition or changes it, when a hidden property is defined
-         * @param rows Row map
-         * @param rowNumber Row number as string (directly resolved from the corresponding XML attribute)
-         * @param hiddenProperty  Hidden definition as string (directly resolved from the corresponding XML attribute)
-         */
-        static void addHiddenRow(Map<Integer,RowDefinition> rows, String rowNumber, String hiddenProperty){
-            int row = Integer.parseInt(rowNumber);
-            if (!rows.containsKey(row))
-            {
-                rows.put(row, new RowDefinition());
-            }
-            if (hiddenProperty != null && hiddenProperty.equals("1"))
-            {
-                rows.get(row).setHidden(true);
-            }
-        }
-
-        /**
-         * Adds a row definition or changes it, when a non-standard row height is defined
+         * Adds a row definition or changes it, when a non-standard row height and/or hidden state is defined
          * @param rows Row map
          * @param rowNumber Row number as string (directly resolved from the corresponding XML attribute)
          * @param heightProperty Row height as string (directly resolved from the corresponding XML attribute)
-         */        static void addRowHeight(Map<Integer,RowDefinition> rows, String rowNumber, String heightProperty){
-            int row = Integer.parseInt(rowNumber);
+         * @param hiddenProperty Hidden definition as string (directly resolved from the corresponding XML attribute)
+         */ static void addRowDefinition(Map<Integer,RowDefinition> rows, String rowNumber, String heightProperty, String hiddenProperty){
+            int row = Integer.parseInt(rowNumber) -1; // Transform to zero-based
             if (!rows.containsKey(row))
             {
                 rows.put(row, new RowDefinition());
@@ -1105,6 +1088,10 @@ public class WorksheetReader {
             if (heightProperty != null)
             {
                 rows.get(row).setHeight(Float.parseFloat(heightProperty));
+            }
+            if (hiddenProperty != null && hiddenProperty.equals("1"))
+            {
+                rows.get(row).setHidden(true);
             }
         }
 

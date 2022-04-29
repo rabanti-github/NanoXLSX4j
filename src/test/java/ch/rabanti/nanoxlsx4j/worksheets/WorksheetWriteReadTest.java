@@ -7,6 +7,7 @@ import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -204,7 +205,7 @@ public class WorksheetWriteReadTest {
         assertEquals(rowIndices.size(), givenWorksheet.getHiddenRows().size());
         for(Map.Entry<Integer, Boolean> hiddenRow : givenWorksheet.getHiddenRows().entrySet())
         {
-            assertTrue(rowIndices.stream().anyMatch(x -> x + 1 == hiddenRow.getKey())); // Not zero-based
+            assertTrue(rowIndices.stream().anyMatch(x -> x == hiddenRow.getKey()));
             assertTrue(hiddenRow.getValue());
         }
     }
@@ -247,10 +248,22 @@ public class WorksheetWriteReadTest {
         assertEquals(rows.size(), givenWorksheet.getRowHeights().size());
         for(Map.Entry<Integer, Float> rowHeight : givenWorksheet.getRowHeights().entrySet())
         {
-            assertTrue(rows.keySet().stream().anyMatch(x -> x + 1 == rowHeight.getKey())); // Not zero-based
-            float expectedHeight = Helper.getInternalRowHeight(rows.get(rowHeight.getKey() - 1));
+            assertTrue(rows.keySet().stream().anyMatch(x -> x == rowHeight.getKey()));
+            float expectedHeight = Helper.getInternalRowHeight(rows.get(rowHeight.getKey()));
             assertEquals(expectedHeight, rowHeight.getValue());
         }
+    }
+
+    @Test
+    @DisplayName("Test of the 'RowHeight' property when writing and reading a worksheet, if a row already exists")
+    void rowHeightsWriteReadTest2() throws Exception {
+        Workbook workbook = new Workbook("worksheet1");
+        workbook.getCurrentWorksheet().addCell(42, "C2");
+        workbook.getCurrentWorksheet().setRowHeight(2, 22.55f);
+        workbook.getCurrentWorksheet().addHiddenRow(2);
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, 0);
+        assertEquals(Helper.getInternalRowHeight(22.55f), givenWorksheet.getRowHeights().get(2));
+        assertTrue(givenWorksheet.getHiddenRows().get(2));
     }
 
     private static Workbook prepareWorkbook(int numberOfWorksheets, Object a1Data){
