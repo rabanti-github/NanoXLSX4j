@@ -57,6 +57,8 @@ public class WorksheetReader {
     private Range autoFilterRange = null;
     private final List<Column> columns = new ArrayList<>();
     private Float defaultColumnWidth;
+    private Float defaultRowHeight;
+    private Map<Integer, RowDefinition> rows = new HashMap<>();
 
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
@@ -99,6 +101,22 @@ public class WorksheetReader {
      */
     public Float getDefaultColumnWidth() {
         return defaultColumnWidth;
+    }
+
+    /**
+     * Gets the default row height
+     * @return Default row height if defined, otherwise null
+     */
+    public Float getDefaultRowHeight() {
+        return defaultRowHeight;
+    }
+
+    /**
+     * Gets a map of row definitions
+     * @return Map of row definitions, where the key is the row number and the value is an instance of {@link RowDefinition}
+     */
+    public Map<Integer, RowDefinition> getRows() {
+        return rows;
     }
 
     /**
@@ -150,6 +168,14 @@ public class WorksheetReader {
             XmlDocument.XmlNodeList rows = xr.getDocumentElement().getElementsByTagName("row", true);
             for (int i = 0; i < rows.size(); i++) {
                 XmlDocument.XmlNode row = rows.get(i);
+                String rowAttribute = row.getAttribute("r");
+                if (rowAttribute != null)
+                {
+                    String hiddenAttribute = row.getAttribute("hidden");
+                    RowDefinition.addHiddenRow(this.rows, rowAttribute, hiddenAttribute);
+                    String heightAttribute = row.getAttribute("ht");
+                    RowDefinition.addRowHeight(this.rows, rowAttribute, heightAttribute);
+                }
                 if (row.hasChildNodes()) {
                     for (XmlDocument.XmlNode rowChild : row.getChildNodes()) {
                         readCell(rowChild);
@@ -178,6 +204,10 @@ public class WorksheetReader {
             String attribute = formatNodes.get(0).getAttribute("defaultColWidth");
             if (attribute != null) {
                 this.defaultColumnWidth = Float.parseFloat(attribute);
+            }
+            attribute = formatNodes.get(0).getAttribute("defaultRowHeight");
+            if (attribute != null) {
+                this.defaultRowHeight = Float.parseFloat(attribute);
             }
         }
     }
@@ -999,6 +1029,83 @@ public class WorksheetReader {
             this.hours = (totalSeconds - (this.days * 86400)) / 3600;
             this.minutes = (totalSeconds - (this.days * 86400) - (this.hours * 3600)) / 60;
             this.seconds = (totalSeconds - (this.days * 86400) - (this.hours * 3600) - (this.minutes * 60));
+        }
+
+    }
+
+    /**
+     * Internal class to represent a row
+     */
+    static class RowDefinition{
+
+        private boolean hidden;
+        private Float height = null;
+
+        /**+
+         * Gets whether the row is hidden
+         * @return True if hidden, otherwise false
+         */
+        public boolean isHidden() {
+            return hidden;
+        }
+
+        /**
+         * Sets whether the row is hidden
+         * @param hidden True if hidden, otherwise false
+         */
+        public void setHidden(boolean hidden) {
+            this.hidden = hidden;
+        }
+
+        /**
+         * Gets the non-standard row-height
+         * @return Row height. If null, no specific height was defined (remains default)
+         */
+        public Float getHeight() {
+            return height;
+        }
+
+        /**
+         * Sets the non-standard row-height
+         * @param height  Row height. If null, no specific height was defined (remains default)
+         */
+        public void setHeight(Float height) {
+            this.height = height;
+        }
+
+        /**
+         * Adds a row definition or changes it, when a hidden property is defined
+         * @param rows Row map
+         * @param rowNumber Row number as string (directly resolved from the corresponding XML attribute)
+         * @param hiddenProperty  Hidden definition as string (directly resolved from the corresponding XML attribute)
+         */
+        static void addHiddenRow(Map<Integer,RowDefinition> rows, String rowNumber, String hiddenProperty){
+            int row = Integer.parseInt(rowNumber);
+            if (!rows.containsKey(row))
+            {
+                rows.put(row, new RowDefinition());
+            }
+            if (hiddenProperty != null && hiddenProperty.equals("1"))
+            {
+                rows.get(row).setHidden(true);
+            }
+        }
+
+        /**
+         * Adds a row definition or changes it, when a non-standard row height is defined
+         * @param rows Row map
+         * @param rowNumber Row number as string (directly resolved from the corresponding XML attribute)
+         * @param heightProperty Row height as string (directly resolved from the corresponding XML attribute)
+         */        static void addRowHeight(Map<Integer,RowDefinition> rows, String rowNumber, String heightProperty){
+            int row = Integer.parseInt(rowNumber);
+            if (!rows.containsKey(row))
+            {
+                rows.put(row, new RowDefinition());
+            }
+            if (heightProperty != null)
+            {
+                rows.get(row).setHeight(Float.parseFloat(heightProperty));
+            }
         }
 
     }

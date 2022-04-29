@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -141,7 +142,116 @@ public class WorksheetWriteReadTest {
         assertTrue(Math.abs(givenWorksheet.getDefaultColumnWidth() - width) < 0.001);
     }
 
+    @DisplayName("Test of the 'DefaultRowHeight' property when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given default row height {0} should lead to the same height in the read worksheet with the index {1}")
+    @CsvSource({
+            "1f, 0",
+            "11f, 0",
+            "55.55f, 0",
+            "1f, 1",
+            "11f, 2",
+            "55.55f, 3",
+    })
+    void defaultRowHeightWriteReadTest(float height, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++)
+        {
+            if (sheetIndex == i)
+            {
+                workbook.setCurrentWorksheet(i);
+                workbook.getCurrentWorksheet().setDefaultRowHeight(height);
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertTrue(Math.abs(givenWorksheet.getDefaultRowHeight() - height) < 0.001);
+    }
 
+    @DisplayName("Test of the 'HiddenRows' property when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given hidden row indices {0} with should lead to the same hidden rows in the read worksheet with the index {1}")
+    @CsvSource({
+            "'', 0",
+            "'0', 0",
+            "'0,1,2', 0",
+            "'1,3,5', 0",
+            "'', 1",
+            "'0', 1",
+            "'0,1,2', 2",
+            "'1,3,5', 3",
+    })
+    void hiddenRowsWriteReadTest(String rowDefinitions, int sheetIndex) throws Exception {
+        String[] tokens = rowDefinitions.split(",");
+        List<Integer> rowIndices = new ArrayList<>();
+        for (String token : tokens)
+        {
+            if (!token.equals(""))
+            {
+                rowIndices.add(Integer.parseInt(token));
+            }
+        }
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++)
+        {
+            if (sheetIndex == i)
+            {
+                workbook.setCurrentWorksheet(i);
+                for(int index : rowIndices)
+                {
+                        workbook.getCurrentWorksheet().addHiddenRow(index);
+                }
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(rowIndices.size(), givenWorksheet.getHiddenRows().size());
+        for(Map.Entry<Integer, Boolean> hiddenRow : givenWorksheet.getHiddenRows().entrySet())
+        {
+            assertTrue(rowIndices.stream().anyMatch(x -> x + 1 == hiddenRow.getKey())); // Not zero-based
+            assertTrue(hiddenRow.getValue());
+        }
+    }
+
+    @DisplayName("Test of the 'RowHeight' property when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given hidden row indices {0} with should lead to the same hidden rows in the read worksheet with the index {1}")
+    @CsvSource({
+            "'','',0",
+            "'0','17',0",
+            "'0,1,2','11,12,13.5',0",
+            "'','',1",
+            "'0','17.2',1",
+            "'0','17',0,1,2','11.05,12.1,13.55',2",
+            "'1,3,5','55.5,1.111,5.587',3",
+    })
+    void rowHeightsWriteReadTest(String rowDefinitions, String heightDefinitions, int sheetIndex) throws Exception {
+        String[] tokens = rowDefinitions.split(",");
+        String[] heightTokens = heightDefinitions.split(",");
+        Map<Integer,Float> rows = new HashMap<>();
+        for (int i = 0; i < tokens.length; i++)
+        {
+            if (!tokens[i].equals(""))
+            {
+                rows.put(Integer.parseInt(tokens[i]), Float.parseFloat(heightTokens[i]));
+            }
+        }
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++)
+        {
+            if (sheetIndex == i)
+            {
+                workbook.setCurrentWorksheet(i);
+                for(Map.Entry<Integer,Float> row : rows.entrySet())
+                {
+                    workbook.getCurrentWorksheet().setRowHeight(row.getKey(), row.getValue());
+                }
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(rows.size(), givenWorksheet.getRowHeights().size());
+        for(Map.Entry<Integer, Float> rowHeight : givenWorksheet.getRowHeights().entrySet())
+        {
+            assertTrue(rows.keySet().stream().anyMatch(x -> x + 1 == rowHeight.getKey())); // Not zero-based
+            float expectedHeight = Helper.getInternalRowHeight(rows.get(rowHeight.getKey() - 1));
+            assertEquals(expectedHeight, rowHeight.getValue());
+        }
+    }
 
     private static Workbook prepareWorkbook(int numberOfWorksheets, Object a1Data){
         Workbook workbook = new Workbook();

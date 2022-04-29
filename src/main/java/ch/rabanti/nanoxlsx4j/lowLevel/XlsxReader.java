@@ -174,6 +174,20 @@ public class XlsxReader {
             if (reader.getValue().getDefaultColumnWidth() != null){
                 ws.setDefaultColumnWidth(reader.getValue().getDefaultColumnWidth());
             }
+            if (reader.getValue().getDefaultRowHeight() != null){
+                ws.setDefaultRowHeight(reader.getValue().getDefaultRowHeight());
+            }
+            for(Map.Entry<Integer,WorksheetReader.RowDefinition> row : reader.getValue().getRows().entrySet())
+            {
+                if (row.getValue().isHidden())
+                {
+                    ws.addHiddenRow(row.getKey());
+                }
+                if (row.getValue().getHeight() != null)
+                {
+                    ws.setRowHeight(row.getKey(), row.getValue().getHeight());
+                }
+            }
             for(Column column : reader.getValue().getColumns()){
                 if (column.getWidth() != Worksheet.DEFAULT_COLUMN_WIDTH){
                     ws.setColumnWidth(column.getColumnAddress(), column.getWidth());
