@@ -60,6 +60,7 @@ public class WorksheetReader {
     private Float defaultRowHeight;
     private Map<Integer, RowDefinition> rows = new HashMap<>();
     private List<Range> mergedCells = new ArrayList<>();
+    private Range selectedCells = null;
 
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
@@ -129,6 +130,14 @@ public class WorksheetReader {
     }
 
     /**
+     * Gets the selected cells (panes are currently not considered)
+     * @return Selected cells range if defined, otherwise null
+     */
+    public Range getSelectedCells() {
+        return selectedCells;
+    }
+
+    /**
      * Constructor with parameters and import options
      *
      * @param sharedStrings        SharedStringsReader object
@@ -191,6 +200,7 @@ public class WorksheetReader {
                     }
                 }
             }
+            getSheetView(xr);
             getMergedCells(xr);
             getSheetFormats(xr);
             getAutoFilters(xr);
@@ -200,6 +210,32 @@ public class WorksheetReader {
         } finally {
             if (stream != null) {
                 stream.close();
+            }
+        }
+    }
+
+    /**
+     * Gets the selected cells of the current worksheet
+     * @param xmlDocument XML document of the current worksheet
+     */
+    private void getSheetView(XmlDocument xmlDocument){
+        XmlDocument.XmlNodeList sheetViewsNodes = xmlDocument.getDocumentElement().getElementsByTagName("sheetViews", true);
+        if (sheetViewsNodes != null && sheetViewsNodes.size() > 0){
+            XmlDocument.XmlNodeList sheetViewNodes = sheetViewsNodes.get(0).getChildNodes();
+            // Go through all possible views
+            for(XmlDocument.XmlNode sheetView : sheetViewNodes){
+                if (sheetView.getName().equalsIgnoreCase("sheetView")) {
+                    XmlDocument.XmlNodeList selectionNodes = sheetView.getElementsByTagName("selection", true);
+                    if (selectionNodes != null && selectionNodes.size() > 0){
+                        for (XmlDocument.XmlNode selectionNode : selectionNodes){
+                            // TODO: Panes are currently not considered
+                            String attribute = selectionNode.getAttribute("sqref");
+                            if (attribute != null){
+                                this.selectedCells = new Range(attribute);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

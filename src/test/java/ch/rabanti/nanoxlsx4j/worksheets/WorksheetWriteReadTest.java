@@ -270,6 +270,47 @@ public class WorksheetWriteReadTest {
     @ParameterizedTest(name = "Given range {0} should lead to the same range in the read worksheet with the index {1}")
     @CsvSource({
             ", 0",
+            "'A1:A1', 0",
+            "'A1:C1', 0",
+            "'B1:D1', 0",
+            "'B1:D1,E5:E7', 0",
+            ", 1",
+            "'A1:A1', 1",
+            "'A1:C1', 2",
+            "'B1:D1', 3",
+            "'B1:D1,E5:E7', 3",
+    })
+    void mergedCellsWriteReadTest(String mergedCellsRanges, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        List<Range>ranges = new ArrayList<>();
+        if (mergedCellsRanges != null) {
+            String[] split = mergedCellsRanges.split(",");
+            for(String range : split){
+              ranges.add(new Range(range));
+            }
+            for (int i = 0; i <= sheetIndex; i++) {
+                if (sheetIndex == i) {
+                    workbook.setCurrentWorksheet(i);
+                    for(Range range: ranges){
+                        workbook.getCurrentWorksheet().mergeCells(range);
+                    }
+                }
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        if (mergedCellsRanges == null) {
+            assertEquals(0, givenWorksheet.getMergedCells().size());
+        } else {
+            for(Range range : ranges){
+                assertEquals(range, givenWorksheet.getMergedCells().get(range.toString()));
+            }
+        }
+    }
+
+    @DisplayName("Test of the 'SelectedCells' property when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given range {0} should lead to the same range in the read worksheet with the index {1}")
+    @CsvSource({
+            ", 0",
             "A1:A1, 0",
             "A1:C1, 0",
             "B1:D1, 0",
@@ -278,23 +319,23 @@ public class WorksheetWriteReadTest {
             "A1:C1, 2",
             "B1:D1, 3",
     })
-    void mergedCellsWriteReadTest(String mergedCellsRange, int sheetIndex) throws Exception {
+    void selectedCellsWriteReadTest(String selectedCellsRange, int sheetIndex) throws Exception {
         Workbook workbook = prepareWorkbook(4, "test");
         Range range = null;
-        if (mergedCellsRange != null) {
-            range = new Range(mergedCellsRange);
+        if (selectedCellsRange != null) {
+            range = new Range(selectedCellsRange);
             for (int i = 0; i <= sheetIndex; i++) {
                 if (sheetIndex == i) {
                     workbook.setCurrentWorksheet(i);
-                    workbook.getCurrentWorksheet().mergeCells(range);
+                    workbook.getCurrentWorksheet().setSelectedCells(range);
                 }
             }
         }
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
-        if (mergedCellsRange == null) {
-            assertEquals(0, givenWorksheet.getMergedCells().size());
+        if (selectedCellsRange == null) {
+            assertNull(givenWorksheet.getSelectedCells());
         } else {
-            assertEquals(range, givenWorksheet.getMergedCells().get(mergedCellsRange));
+            assertEquals(range, givenWorksheet.getSelectedCells());
         }
     }
 

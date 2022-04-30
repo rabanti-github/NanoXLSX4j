@@ -178,6 +178,9 @@ public class XlsxReader {
             if (reader.getValue().getDefaultRowHeight() != null){
                 ws.setDefaultRowHeight(reader.getValue().getDefaultRowHeight());
             }
+            if (reader.getValue().getSelectedCells() != null){
+                ws.setSelectedCells(reader.getValue().getSelectedCells());
+            }
             for(Range range : reader.getValue().getMergedCells()){
                 ws.mergeCells(range);
             }
