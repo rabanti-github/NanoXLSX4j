@@ -107,7 +107,7 @@ public class WorksheetWriteReadTest {
         assertEquals(columnIndices.size(), givenWorksheet.getColumns().size());
         for(Map.Entry<Integer, Column> column : givenWorksheet.getColumns().entrySet())
         {
-            assertTrue(columnIndices.stream().anyMatch(x -> x + 1 == column.getValue().getNumber())); // Not zero-based
+            assertTrue(columnIndices.stream().anyMatch(x -> x == column.getValue().getNumber()));
             if (setWidth)
             {
                 assertTrue(Math.abs(column.getValue().getWidth() - Helper.getInternalColumnWidth(99)) < 0.001);

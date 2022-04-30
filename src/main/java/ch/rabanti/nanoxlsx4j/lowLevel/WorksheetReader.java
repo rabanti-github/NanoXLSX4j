@@ -273,7 +273,7 @@ public class WorksheetReader {
             }
             for (int index : indices)
             {
-                Column column = new Column(index);
+                Column column = new Column(index - 1); // transform to zero-based
                 column.setWidth(width);
                 column.setHidden(hidden);
                 this.columns.add(column);
