@@ -59,6 +59,7 @@ public class WorksheetReader {
     private Float defaultColumnWidth;
     private Float defaultRowHeight;
     private Map<Integer, RowDefinition> rows = new HashMap<>();
+    private List<Range> mergedCells = new ArrayList<>();
 
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
@@ -117,6 +118,14 @@ public class WorksheetReader {
      */
     public Map<Integer, RowDefinition> getRows() {
         return rows;
+    }
+
+    /**
+     * Gets a list of merged cells
+     * @return List of Range definitions
+     */
+    public List<Range> getMergedCells() {
+        return mergedCells;
     }
 
     /**
@@ -182,6 +191,7 @@ public class WorksheetReader {
                     }
                 }
             }
+            getMergedCells(xr);
             getSheetFormats(xr);
             getAutoFilters(xr);
             getColumns(xr);
@@ -190,6 +200,25 @@ public class WorksheetReader {
         } finally {
             if (stream != null) {
                 stream.close();
+            }
+        }
+    }
+
+    /**
+     * Gets the merged cells of the current worksheet
+     * @param xmlDocument XML document of the current worksheet
+     */
+    private void getMergedCells(XmlDocument xmlDocument){
+        XmlDocument.XmlNodeList mergedCellsNodes = xmlDocument.getDocumentElement().getElementsByTagName("mergeCells", true);
+        if (mergedCellsNodes != null && mergedCellsNodes.size() > 0){
+            XmlDocument.XmlNodeList mergedCellNodes = mergedCellsNodes.get(0).getChildNodes();
+            if (mergedCellNodes != null && mergedCellNodes.size() > 0){
+                for(XmlDocument.XmlNode mergedCells : mergedCellNodes){
+                    String attribute = mergedCells.getAttribute("ref");
+                    if (attribute != null){
+                        this.mergedCells.add(new Range(attribute));
+                    }
+                }
             }
         }
     }

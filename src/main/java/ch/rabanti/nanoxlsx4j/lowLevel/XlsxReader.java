@@ -10,6 +10,7 @@ import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Column;
 import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.ImportOptions;
+import ch.rabanti.nanoxlsx4j.Range;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
@@ -176,6 +177,9 @@ public class XlsxReader {
             }
             if (reader.getValue().getDefaultRowHeight() != null){
                 ws.setDefaultRowHeight(reader.getValue().getDefaultRowHeight());
+            }
+            for(Range range : reader.getValue().getMergedCells()){
+                ws.mergeCells(range);
             }
             for(Map.Entry<Integer,WorksheetReader.RowDefinition> row : reader.getValue().getRows().entrySet())
             {

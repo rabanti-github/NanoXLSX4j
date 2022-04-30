@@ -266,6 +266,38 @@ public class WorksheetWriteReadTest {
         assertTrue(givenWorksheet.getHiddenRows().get(2));
     }
 
+    @DisplayName("Test of the 'MergedCells' property when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given range {0} should lead to the same range in the read worksheet with the index {1}")
+    @CsvSource({
+            ", 0",
+            "A1:A1, 0",
+            "A1:C1, 0",
+            "B1:D1, 0",
+            ", 1",
+            "A1:A1, 1",
+            "A1:C1, 2",
+            "B1:D1, 3",
+    })
+    void mergedCellsWriteReadTest(String mergedCellsRange, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        Range range = null;
+        if (mergedCellsRange != null) {
+            range = new Range(mergedCellsRange);
+            for (int i = 0; i <= sheetIndex; i++) {
+                if (sheetIndex == i) {
+                    workbook.setCurrentWorksheet(i);
+                    workbook.getCurrentWorksheet().mergeCells(range);
+                }
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        if (mergedCellsRange == null) {
+            assertEquals(0, givenWorksheet.getMergedCells().size());
+        } else {
+            assertEquals(range, givenWorksheet.getMergedCells().get(mergedCellsRange));
+        }
+    }
+
     private static Workbook prepareWorkbook(int numberOfWorksheets, Object a1Data){
         Workbook workbook = new Workbook();
         for(int i = 0; i < numberOfWorksheets; i++){

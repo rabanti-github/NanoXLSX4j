@@ -339,7 +339,7 @@ public class Worksheet {
         this.defaultColumnWidth = defaultColumnWidth;
     }
 
-    /*
+    /**
      * Gets the default Row height
      * @return Default Row height
      */
@@ -370,21 +370,21 @@ public class Worksheet {
     }
 
     /**
-     * Gets the merged cells (only references) as map with the cell address as key and the range object as value
-     *
-     * @return Hashmap with merged cell references
-     */
-    public Map<String, Range> getMergedCells() {
-        return mergedCells;
-    }
-
-    /**
      * Gets defined row heights as map with the zero-based row number as key and the height (float from 0 to 409.5) as value
      *
      * @return Map of row heights
      */
     public Map<Integer, Float> getRowHeights() {
         return rowHeights;
+    }
+
+    /**
+     * Gets the merged cells (only references) as map with the cell address as key and the range object as value
+     *
+     * @return Hashmap with merged cell references
+     */
+    public Map<String, Range> getMergedCells() {
+        return mergedCells;
     }
 
     /**
