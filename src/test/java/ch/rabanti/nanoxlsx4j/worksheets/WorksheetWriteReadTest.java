@@ -6,6 +6,7 @@ import ch.rabanti.nanoxlsx4j.Range;
 import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
+import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -337,6 +338,54 @@ public class WorksheetWriteReadTest {
         } else {
             assertEquals(range, givenWorksheet.getSelectedCells());
         }
+    }
+
+    @DisplayName("Test of the 'SheetID'  property when writing and reading a worksheet")
+    @Test()
+    void sheetIDWriteReadTest() throws Exception {
+        Workbook workbook = new Workbook();
+        String sheetName1 = "sheet_a";
+        String sheetName2 = "sheet_b";
+        String sheetName3 = "sheet_c";
+        String sheetName4 = "sheet_d";
+        int id1, id2, id3, id4;
+        workbook.addWorksheet(sheetName1);
+        id1 = workbook.getCurrentWorksheet().getSheetID();
+        workbook.addWorksheet(sheetName2);
+        id2 = workbook.getCurrentWorksheet().getSheetID();
+        workbook.addWorksheet(sheetName3);
+        id3 = workbook.getCurrentWorksheet().getSheetID();
+        workbook.addWorksheet(sheetName4);
+        id4 = workbook.getCurrentWorksheet().getSheetID();
+        Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
+        assertEquals(id1, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName1)).findFirst().map(Worksheet::getSheetID).get());
+        assertEquals(id2, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName2)).findFirst().map(Worksheet::getSheetID).get());
+        assertEquals(id3, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName3)).findFirst().map(Worksheet::getSheetID).get());
+        assertEquals(id4, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName4)).findFirst().map(Worksheet::getSheetID).get());
+    }
+
+    @DisplayName("Test of the 'SheetName'  property when writing and reading a worksheet")
+    @Test()
+    void sheetNameWriteReadTest() throws Exception {
+        Workbook workbook = new Workbook();
+        String sheetName1 = "sheet_a";
+        String sheetName2 = "sheet_b";
+        String sheetName3 = "sheet_c";
+        String sheetName4 = "sheet_d";
+        int id1, id2, id3, id4;
+        workbook.addWorksheet(sheetName1);
+        id1 = workbook.getCurrentWorksheet().getSheetID();
+        workbook.addWorksheet(sheetName2);
+        id2 = workbook.getCurrentWorksheet().getSheetID();
+        workbook.addWorksheet(sheetName3);
+        id3 = workbook.getCurrentWorksheet().getSheetID();
+        workbook.addWorksheet(sheetName4);
+        id4 = workbook.getCurrentWorksheet().getSheetID();
+        Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
+        assertEquals(sheetName1, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id1).findFirst().map(Worksheet::getSheetName).get());
+        assertEquals(sheetName2, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id2).findFirst().map(Worksheet::getSheetName).get());
+        assertEquals(sheetName3, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id3).findFirst().map(Worksheet::getSheetName).get());
+        assertEquals(sheetName4, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id4).findFirst().map(Worksheet::getSheetName).get());
     }
 
     private static Workbook prepareWorkbook(int numberOfWorksheets, Object a1Data){
