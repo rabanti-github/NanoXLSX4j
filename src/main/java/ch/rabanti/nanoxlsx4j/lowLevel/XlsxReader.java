@@ -184,6 +184,14 @@ public class XlsxReader {
             for(Range range : reader.getValue().getMergedCells()){
                 ws.mergeCells(range);
             }
+            for(Map.Entry<Worksheet.SheetProtectionValue, Integer> sheetProtection : reader.getValue().getWorksheetProtection().entrySet())
+            {
+                ws.getSheetProtectionValues().add(sheetProtection.getKey());
+            }
+            if (!reader.getValue().getWorksheetProtection().isEmpty())
+            {
+                ws.setUseSheetProtection(true);
+            }
             for(Map.Entry<Integer,WorksheetReader.RowDefinition> row : reader.getValue().getRows().entrySet())
             {
                 if (row.getValue().isHidden())

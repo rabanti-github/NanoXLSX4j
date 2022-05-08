@@ -61,6 +61,7 @@ public class WorksheetReader {
     private Map<Integer, RowDefinition> rows = new HashMap<>();
     private List<Range> mergedCells = new ArrayList<>();
     private Range selectedCells = null;
+    private Map<Worksheet.SheetProtectionValue, Integer> worksheetProtection = new HashMap<>();
 
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
@@ -138,6 +139,14 @@ public class WorksheetReader {
     }
 
     /**
+     * Gets the applicable worksheet protection values
+     * @return Map of {@link Worksheet.SheetProtectionValue} objects
+     */
+    public Map<Worksheet.SheetProtectionValue, Integer> getWorksheetProtection() {
+        return worksheetProtection;
+    }
+
+    /**
      * Constructor with parameters and import options
      *
      * @param sharedStrings        SharedStringsReader object
@@ -205,6 +214,7 @@ public class WorksheetReader {
             getSheetFormats(xr);
             getAutoFilters(xr);
             getColumns(xr);
+            getSheetProtection(xr);
         } catch (Exception ex) {
             throw new IOException("The XML entry could not be read from the input stream. Please see the inner exception:", ex);
         } finally {
@@ -237,6 +247,51 @@ public class WorksheetReader {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Gets the sheet protection values of the current worksheets
+     * @param xmlDocument XML document of the current worksheet
+     */
+    private void getSheetProtection(XmlDocument xmlDocument)
+    {
+        XmlDocument.XmlNodeList sheetProtectionNodes = xmlDocument.getDocumentElement().getElementsByTagName("sheetProtection", true);
+        if (sheetProtectionNodes != null && sheetProtectionNodes.size() > 0)
+        {
+            XmlDocument.XmlNode sheetProtectionNode = sheetProtectionNodes.get(0);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.autoFilter);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.deleteColumns);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.deleteRows);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.formatCells);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.formatColumns);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.formatRows);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.insertColumns);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.insertHyperlinks);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.insertRows);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.objects);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.pivotTables);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.scenarios);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.selectLockedCells);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.selectUnlockedCells);
+            manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.sort);
+        }
+
+    }
+
+    /**
+     * Manages particular sheet protection values if defined
+     * @param node Sheet protection node
+     * @param sheetProtectionValue Value to check and maintain (if defined)
+     */
+    private void manageSheetProtection(XmlDocument.XmlNode node, Worksheet.SheetProtectionValue sheetProtectionValue)
+    {
+        String attributeName = sheetProtectionValue.name();
+        String attribute = node.getAttribute(attributeName);
+        if (attribute != null)
+        {
+            int value = Integer.parseInt(attribute);
+            worksheetProtection.put(sheetProtectionValue, value);
         }
     }
 

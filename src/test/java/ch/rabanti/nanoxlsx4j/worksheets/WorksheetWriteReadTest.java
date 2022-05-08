@@ -388,6 +388,96 @@ public class WorksheetWriteReadTest {
         assertEquals(sheetName4, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id4).findFirst().map(Worksheet::getSheetName).get());
     }
 
+    @DisplayName("Test of the 'SheetProtectionValues'  and 'UseSheetProtection' property when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given values {1} and enabled protection: {0} should lead to the values {2} in worksheet {3}")
+    @CsvSource({
+            "false, '', '', 0",
+            "false, 'autoFilter:0,sort:0', '', 0",
+            "true, '', 'objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'autoFilter:0', 'autoFilter:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'pivotTables:0', 'pivotTables:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'sort:0', 'sort:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'deleteRows:0', 'deleteRows:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'deleteColumns:0', 'deleteColumns:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'insertHyperlinks:0', 'insertHyperlinks:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'insertRows:0', 'insertRows:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'insertColumns:0', 'insertColumns:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'formatRows:0', 'formatRows:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'formatColumns:0', 'formatColumns:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'formatCells:0', 'formatCells:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'objects:0', 'scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'scenarios:0', 'objects:1,selectLockedCells:1,selectUnlockedCells:1', 0",
+            "true, 'selectLockedCells:0', 'objects:1,scenarios:1', 0",
+            "true, 'selectUnlockedCells:0', 'objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:0', 0",
+            "false, '', '', 1",
+            "false, 'autoFilter:0', '', 2",
+            "true, '', 'objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 3",
+            "true, 'autoFilter:0', 'autoFilter:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 1",
+            "true, 'pivotTables:0,sort:0', 'pivotTables:0,sort:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 2",
+            "true, 'sort:0,deleteColumns:0,formatCells:0', 'sort:0,deleteColumns:0,formatCells:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 3",
+            "true, 'deleteRows:0,formatCells:0', 'deleteRows:0,formatCells:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 1",
+            "true, 'deleteColumns:0,formatColumns:0,formatRows:0', 'deleteColumns:0,formatColumns:0,formatRows:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 2",
+            "true, 'insertHyperlinks:0,formatCells:0', 'insertHyperlinks:0,formatCells:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 3",
+            "true, 'insertRows:0,formatRows:0', 'insertRows:0,formatRows:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 1",
+            "true, 'insertColumns:0,formatColumns:0', 'insertColumns:0,formatColumns:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 2",
+            "true, 'formatRows:0,formatColumns:0', 'formatRows:0,formatColumns:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 3",
+            "true, 'formatColumns:0,formatCells:0', 'formatColumns:0,formatCells:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 1",
+
+    })
+    void sheetProtectionWriteReadTest(boolean useSheetProtection, String givenProtectionValues, String expectedProtectionValues, int sheetIndex) throws Exception {
+        Map<Worksheet.SheetProtectionValue, Boolean> expectedProtection = prepareSheetProtectionValues(expectedProtectionValues);
+        Map<Worksheet.SheetProtectionValue, Boolean> givenProtection = prepareSheetProtectionValues(givenProtectionValues);
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++)
+        {
+            if (sheetIndex == i)
+            {
+                workbook.setCurrentWorksheet(i);
+                for (Map.Entry<Worksheet.SheetProtectionValue, Boolean> item : givenProtection.entrySet())
+                {
+                    workbook.getCurrentWorksheet().addAllowedActionOnSheetProtection(item.getKey());
+                }
+                // adding values will enable sheet protection in any case, can be deactivated afterwards
+                workbook.getCurrentWorksheet().setUseSheetProtection(useSheetProtection);
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(expectedProtection.size(), givenWorksheet.getSheetProtectionValues().size());
+        assertEquals(useSheetProtection, givenWorksheet.isUseSheetProtection());
+        for (Map.Entry<Worksheet.SheetProtectionValue, Boolean> item : expectedProtection.entrySet())
+        {
+            if (item.getValue())
+            {
+                assertTrue(givenWorksheet.getSheetProtectionValues().stream().anyMatch(x -> item.getKey() == x));
+            }
+        }
+    }
+
+    private static Map<Worksheet.SheetProtectionValue, Boolean> prepareSheetProtectionValues(String tokenString)
+    {
+        Map<Worksheet.SheetProtectionValue, Boolean> map = new HashMap<>();
+        String[] tokens = tokenString.split(",");
+        for (String token : tokens)
+        {
+            if (token.equals(""))
+            {
+                continue;
+            }
+            String[] subTokens = token.split(":");
+            Worksheet.SheetProtectionValue value = Worksheet.SheetProtectionValue.valueOf(subTokens[0]);
+            if (subTokens[1].equals("1"))
+            {
+                map.put(value, true);
+            }
+            else
+            {
+                map.put(value, false);
+            }
+        }
+        return map;
+    }
+
+
     private static Workbook prepareWorkbook(int numberOfWorksheets, Object a1Data){
         Workbook workbook = new Workbook();
         for(int i = 0; i < numberOfWorksheets; i++){
