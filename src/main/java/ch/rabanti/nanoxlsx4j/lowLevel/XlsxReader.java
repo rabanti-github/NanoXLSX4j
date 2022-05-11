@@ -192,6 +192,10 @@ public class XlsxReader {
             {
                 ws.setUseSheetProtection(true);
             }
+            if (!Helper.isNullOrEmpty(reader.getValue().getWorksheetProtectionHash()))
+            {
+                ws.setSheetProtectionPasswordHash(reader.getValue().getWorksheetProtectionHash());
+            }
             for(Map.Entry<Integer,WorksheetReader.RowDefinition> row : reader.getValue().getRows().entrySet())
             {
                 if (row.getValue().isHidden())

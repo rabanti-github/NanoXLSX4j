@@ -396,4 +396,18 @@ public class HelperTest {
         assertThrows(FormatException.class, () -> Helper.createDuration(days,hours,minutes,seconds));
     }
 
+    @DisplayName("Test of the generatePasswordHash function")
+    @ParameterizedTest(name = "Given password \"{0}\" should lead to the hash \"{1}\"")
+    @CsvSource({
+            "'x','CEBA'",
+            "'Test@1-2,3!','F767'",
+            "' ','CE0A'",
+            "'',''",
+            ",''",
+    })
+    void generatePasswordHashTest(String givenVPassword, String expectedHash) {
+        String hash = Helper.generatePasswordHash(givenVPassword);
+        assertEquals(expectedHash, hash);
+    }
+
 }

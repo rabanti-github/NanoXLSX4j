@@ -404,6 +404,32 @@ public class Helper {
     }
 
     /**
+     * Method to generate an Excel internal password hash to protect workbooks or worksheets<br>
+     * This method is derived from the c++ implementation by Kohei Yoshida (<a href="http://kohei.us/2008/01/18/excel-sheet-protection-password-hash/">http://kohei.us/2008/01/18/excel-sheet-protection-password-hash/</a>)<br>
+     * <b>WARNING!</b> Do not use this method to encrypt 'real' passwords or data outside from PicoXLSX4j. This is only a minor security feature. Use a proper cryptography method instead.
+     *
+     * @param password Password as plain text
+     * @return Encoded password
+     */
+    public static String generatePasswordHash(String password) {
+        if (Helper.isNullOrEmpty(password)) {
+            return "";
+        }
+        int passwordLength = password.length();
+        int passwordHash = 0;
+        char character;
+        for (int i = passwordLength; i > 0; i--) {
+            character = password.charAt(i - 1);
+            passwordHash = ((passwordHash >> 14) & 0x01) | ((passwordHash << 1) & 0x7fff);
+            passwordHash ^= character;
+        }
+        passwordHash = ((passwordHash >> 14) & 0x01) | ((passwordHash << 1) & 0x7fff);
+        passwordHash ^= (0x8000 | ('N' << 8) | 'K');
+        passwordHash ^= passwordLength;
+        return Integer.toHexString(passwordHash).toUpperCase();
+    }
+
+    /**
      * Method to check a string whether its reference is null or the content is empty
      *
      * @param value value / reference to check

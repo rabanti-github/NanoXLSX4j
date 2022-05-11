@@ -733,9 +733,8 @@ public class XlsxWriter {
             temp = item.getKey().name();// Note! If the enum names differs from the OOXML definitions, this method will cause invalid OOXML entries
             sb.append(" ").append(temp).append("=\"").append(item.getValue()).append("\"");
         }
-        if (!Helper.isNullOrEmpty(sheet.getSheetProtectionPassword())) {
-            String hash = generatePasswordHash(sheet.getSheetProtectionPassword());
-            sb.append(" password=\"").append(hash).append("\"");
+        if (!Helper.isNullOrEmpty(sheet.getSheetProtectionPasswordHash())) {
+            sb.append(" password=\"").append(sheet.getSheetProtectionPasswordHash()).append("\"");
         }
         sb.append(" sheet=\"1\"/>");
         return sb.toString();
@@ -1167,7 +1166,7 @@ public class XlsxWriter {
             }
             if (!Helper.isNullOrEmpty(workbook.getWorkbookProtectionPassword())) {
                 sb.append("workbookPassword=\"");
-                sb.append(generatePasswordHash(workbook.getWorkbookProtectionPassword()));
+                sb.append(Helper.generatePasswordHash(workbook.getWorkbookProtectionPassword()));
                 sb.append("\"");
             }
             sb.append("/>");
@@ -1631,32 +1630,6 @@ public class XlsxWriter {
         }
         sb.append(input.substring(lastIndex));
         return sb.toString();
-    }
-
-    /**
-     * Method to generate an Excel internal password hash to protect workbooks or worksheets<br>
-     * This method is derived from the c++ implementation by Kohei Yoshida (<a href="http://kohei.us/2008/01/18/excel-sheet-protection-password-hash/">http://kohei.us/2008/01/18/excel-sheet-protection-password-hash/</a>)<br>
-     * <b>WARNING!</b> Do not use this method to encrypt 'real' passwords or data outside from PicoXLSX4j. This is only a minor security feature. Use a proper cryptography method instead.
-     *
-     * @param password Password as plain text
-     * @return Encoded password
-     */
-    private static String generatePasswordHash(String password) {
-        if (Helper.isNullOrEmpty(password)) {
-            return "";
-        }
-        int passwordLength = password.length();
-        int passwordHash = 0;
-        char character;
-        for (int i = passwordLength; i > 0; i--) {
-            character = password.charAt(i - 1);
-            passwordHash = ((passwordHash >> 14) & 0x01) | ((passwordHash << 1) & 0x7fff);
-            passwordHash ^= character;
-        }
-        passwordHash = ((passwordHash >> 14) & 0x01) | ((passwordHash << 1) & 0x7fff);
-        passwordHash ^= (0x8000 | ('N' << 8) | 'K');
-        passwordHash ^= passwordLength;
-        return Integer.toHexString(passwordHash).toUpperCase();
     }
 
     // ### H E L P E R   C L A S S E S ###

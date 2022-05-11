@@ -453,6 +453,37 @@ public class WorksheetWriteReadTest {
         }
     }
 
+    @DisplayName("Test of the 'sheetProtectionPasswordHash' property when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given password \"{0}\" should lead to the same hash on worksheet {1} when writing and reading a worksheet")
+    @CsvSource({
+            "'x', 0",
+            "'@test-1,23', 0",
+            "'', 0",
+            ", 0",
+            "'x', 1",
+            "'@test-1,23', 2",
+            "'', 3",
+            ", 4",
+    })
+    void sheetProtectionPasswordHashWriteReadTest(String givenPassword, int sheetIndex) throws Exception {
+        String hash = null;
+        Workbook workbook = prepareWorkbook(5, "test");
+        for (int i = 0; i <= sheetIndex; i++)
+        {
+            if (sheetIndex == i)
+            {
+                workbook.setCurrentWorksheet(i);
+                workbook.getCurrentWorksheet().addAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.deleteRows);
+                workbook.getCurrentWorksheet().setSheetProtectionPassword(givenPassword);
+                hash = workbook.getCurrentWorksheet().getSheetProtectionPasswordHash();
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(hash, givenWorksheet.getSheetProtectionPasswordHash());
+    }
+
+
+
     private static Map<Worksheet.SheetProtectionValue, Boolean> prepareSheetProtectionValues(String tokenString)
     {
         Map<Worksheet.SheetProtectionValue, Boolean> map = new HashMap<>();

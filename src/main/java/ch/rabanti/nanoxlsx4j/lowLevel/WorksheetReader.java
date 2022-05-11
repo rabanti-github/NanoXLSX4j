@@ -62,7 +62,7 @@ public class WorksheetReader {
     private List<Range> mergedCells = new ArrayList<>();
     private Range selectedCells = null;
     private Map<Worksheet.SheetProtectionValue, Integer> worksheetProtection = new HashMap<>();
-
+    private String worksheetProtectionHash;
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
      *
@@ -144,6 +144,14 @@ public class WorksheetReader {
      */
     public Map<Worksheet.SheetProtectionValue, Integer> getWorksheetProtection() {
         return worksheetProtection;
+    }
+
+    /**
+     * Gets the (legacy) password hash of a worksheet if protection values are applied with a password
+     * @return Hash value as string or null / empty if not defined
+     */
+    public String getWorksheetProtectionHash() {
+        return worksheetProtectionHash;
     }
 
     /**
@@ -275,6 +283,10 @@ public class WorksheetReader {
             manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.selectLockedCells);
             manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.selectUnlockedCells);
             manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.sort);
+            String legacyPasswordHash = sheetProtectionNode.getAttribute("password");
+            if (legacyPasswordHash != null){
+                this.worksheetProtectionHash = legacyPasswordHash;
+            }
         }
 
     }
