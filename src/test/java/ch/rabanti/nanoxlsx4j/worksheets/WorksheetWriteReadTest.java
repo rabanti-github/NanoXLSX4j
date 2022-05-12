@@ -1,5 +1,6 @@
 package ch.rabanti.nanoxlsx4j.worksheets;
 
+import ch.rabanti.nanoxlsx4j.Address;
 import ch.rabanti.nanoxlsx4j.Column;
 import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.Range;
@@ -482,7 +483,53 @@ public class WorksheetWriteReadTest {
         assertEquals(hash, givenWorksheet.getSheetProtectionPasswordHash());
     }
 
+    @DisplayName("Test of the 'Hidden' property when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given hidden state: {0} should lead to the same state on worksheet {1} when writing and reading a worksheet")
+    @CsvSource({
+            "false, 0",
+            "true, 0",
+            "false, 1",
+            "true, 1",
+            "false, 2",
+            "true, 2",
+    })
+    void hiddenWriteReadTest(boolean hidden, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++)
+        {
+            if (i == 0 && i == sheetIndex)
+            {
+                // Prevents setting selected worksheet as hidden
+                workbook.setSelectedWorksheet(1);
+            }
+            if (sheetIndex == i)
+            {
+                workbook.setCurrentWorksheet(i);
+                workbook.getCurrentWorksheet().setHidden(hidden);
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(hidden, givenWorksheet.isHidden());
+    }
 
+    @DisplayName("Test of the 'PaneSplitTopHeight' property when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given height {0} should lead to same value on worksheet {1} when writing and reading a worksheet")
+    @CsvSource({
+            "27f, 0",
+    })
+    void paneSplitTopHeightWriteReadTest(float height, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++)
+        {
+            if (sheetIndex == i)
+            {
+                workbook.setCurrentWorksheet(i);
+                workbook.getCurrentWorksheet().setHorizontalSplit(height, new Address("A1"), Worksheet.WorksheetPane.topLeft);
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(height, givenWorksheet.getPaneSplitTopHeight());
+    }
 
     private static Map<Worksheet.SheetProtectionValue, Boolean> prepareSheetProtectionValues(String tokenString)
     {

@@ -249,7 +249,12 @@ public class WorksheetReader {
                             // TODO: Panes are currently not considered
                             String attribute = selectionNode.getAttribute("sqref");
                             if (attribute != null){
-                                this.selectedCells = new Range(attribute);
+                                if (attribute.contains(":")){
+                                    this.selectedCells = new Range(attribute);
+                                }
+                                else {
+                                    this.selectedCells = new Range(attribute + ":" + attribute);
+                                }
                             }
                         }
                     }

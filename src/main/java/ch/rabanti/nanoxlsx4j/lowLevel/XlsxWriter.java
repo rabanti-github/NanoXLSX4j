@@ -79,42 +79,6 @@ public class XlsxWriter {
     private final Workbook workbook;
     private StyleManager styles;
     private boolean interceptDocuments;
-    private HashMap<String, Document> interceptedDocuments;
-
-// ### G E T T E R S   &   S E T T E R S ###
-
-    /**
-     * Gets whether XML documents are intercepted during creation
-     *
-     * @return If true, documents will be intercepted and stored into interceptedDocuments
-     */
-    public boolean getDocumentInterception() {
-        return interceptDocuments;
-    }
-
-    /**
-     * Set whether XML documents are intercepted during creation
-     *
-     * @param interceptDocuments If true, documents will be intercepted and stored into interceptedDocuments
-     */
-    public void setDocumentInterception(boolean interceptDocuments) {
-        this.interceptDocuments = interceptDocuments;
-        if (interceptDocuments == true && this.interceptedDocuments == null) {
-            this.interceptedDocuments = new HashMap<>();
-        } else if (!interceptDocuments) {
-            this.interceptedDocuments = null;
-        }
-    }
-
-    /**
-     * Gets the intercepted documents if interceptDocuments is set to true
-     *
-     * @return HashMap with a String as key and a XML document as value
-     */
-    public HashMap<String, Document> getInterceptedDocuments() {
-        return interceptedDocuments;
-    }
-
 
 // ### C O N S T R U C T O R S ###
 
@@ -1403,7 +1367,6 @@ public class XlsxWriter {
             doc.setXmlVersion("1.0");
             doc.setXmlStandalone(true);
             if (this.interceptDocuments) {
-                this.interceptedDocuments.put(title, doc);
                 System.out.println("DEBUG: Document '" + title + "' was intercepted");
             }
             return doc;
