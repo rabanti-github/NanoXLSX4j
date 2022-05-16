@@ -404,6 +404,25 @@ public class Helper {
     }
 
     /**
+     * Calculates the height of a split pane in a worksheet, based on the internal value (calculated by {@link Helper#getInternalPaneSplitHeight(float)})
+     * @param internalHeight Internal pane height stored in a worksheet. The minimal value is defined by {@link Helper#SPLIT_HEIGHT_POINT_OFFSET}
+     * @return Actual pane height
+     * @apiNote Depending on the initial height, the result value of {@link Helper#getInternalPaneSplitHeight(float)} may not lead back to the initial value,
+     * since rounding is applied when calculating the internal height
+     */
+    public static float getPaneSplitHeight(float internalHeight)
+    {
+        if (internalHeight < 300f)
+        {
+            return 0;
+        }
+        else
+        {
+            return (internalHeight - SPLIT_HEIGHT_POINT_OFFSET) / SPLIT_POINT_DIVIDER;
+        }
+    }
+
+    /**
      * Method to generate an Excel internal password hash to protect workbooks or worksheets<br>
      * This method is derived from the c++ implementation by Kohei Yoshida (<a href="http://kohei.us/2008/01/18/excel-sheet-protection-password-hash/">http://kohei.us/2008/01/18/excel-sheet-protection-password-hash/</a>)<br>
      * <b>WARNING!</b> Do not use this method to encrypt 'real' passwords or data outside from PicoXLSX4j. This is only a minor security feature. Use a proper cryptography method instead.

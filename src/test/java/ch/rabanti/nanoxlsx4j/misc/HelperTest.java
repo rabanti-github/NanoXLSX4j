@@ -267,6 +267,27 @@ public class HelperTest {
         assertEquals(expectedSplitHeight, splitHeight);
     }
 
+    @DisplayName("Test of the getPaneSplitHeight function")
+    @ParameterizedTest(name = "Given value {0} should lead to the height {1}")
+    @CsvSource({
+            "301f, 0.05f",
+            "320f, 1f",
+            "600f, 15f",
+            "310f, 0.5f",
+            "8490f, 409.5",
+            "10300f, 500",
+            "300f, 0",
+            "299.9, 0",
+            "-10, 0",
+    })
+    void getPaneSplitHeightTest(float height, float expectedSplitHeight)
+    {
+        float splitHeight = Helper.getPaneSplitHeight(height);
+        assertEquals(expectedSplitHeight, splitHeight);
+    }
+
+
+
     @DisplayName("Test of the getDateFromOA function")
     @ParameterizedTest(name = "Given value {0} should lead to the date {1}")
     @CsvSource({

@@ -78,7 +78,6 @@ public class XlsxWriter {
     private int sharedStringsTotalCount;
     private final Workbook workbook;
     private StyleManager styles;
-    private boolean interceptDocuments;
 
 // ### C O N S T R U C T O R S ###
 
@@ -1366,9 +1365,6 @@ public class XlsxWriter {
             Document doc = docBuilder.parse(input);
             doc.setXmlVersion("1.0");
             doc.setXmlStandalone(true);
-            if (this.interceptDocuments) {
-                System.out.println("DEBUG: Document '" + title + "' was intercepted");
-            }
             return doc;
         } catch (Exception e) {
             throw new IOException("There was an error while creating the XML document. Please see the inner exception.", e);

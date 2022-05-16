@@ -224,6 +224,14 @@ public class XlsxReader {
                 }
                 ws.addCell(cell.getValue(), cell.getKey());
             }
+            if (reader.getValue().getPaneSplitValue() != null){
+                WorksheetReader.PaneDefinition pane = reader.getValue().getPaneSplitValue();
+                ws.setSplit(null, pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
+                if (pane.isYSplitDefined())
+                {
+                    ws.setHorizontalSplit(pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
+                }
+            }
             wb.addWorksheet(ws);
         }
         wb.setImportState(false);

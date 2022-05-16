@@ -63,6 +63,7 @@ public class WorksheetReader {
     private Range selectedCells = null;
     private Map<Worksheet.SheetProtectionValue, Integer> worksheetProtection = new HashMap<>();
     private String worksheetProtectionHash;
+    private PaneDefinition paneSplitValue;
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
      *
@@ -152,6 +153,14 @@ public class WorksheetReader {
      */
     public String getWorksheetProtectionHash() {
         return worksheetProtectionHash;
+    }
+
+    /**
+     * Gets the definition of pane split-related information
+     * @return PaneDefinition object
+     */
+    public PaneDefinition getPaneSplitValue() {
+        return paneSplitValue;
     }
 
     /**
@@ -257,6 +266,28 @@ public class WorksheetReader {
                                 }
                             }
                         }
+                    }
+                    XmlDocument.XmlNodeList paneNodes = sheetView.getElementsByTagName("pane", true);
+                    if (paneNodes != null && paneNodes.size() > 0)
+                    {
+                        this.paneSplitValue = new PaneDefinition();
+                        String attribute = paneNodes.get(0).getAttribute("ySplit");
+                        if (attribute != null)
+                        {
+                            this.paneSplitValue.ySplitDefined = true;
+                            this.paneSplitValue.paneSplitHeight = Helper.getPaneSplitHeight(Float.parseFloat(attribute));
+                        }
+                        attribute = paneNodes.get(0).getAttribute("topLeftCell");
+                        if (attribute != null)
+                        {
+                            this.paneSplitValue.topLeftCell = new Address(attribute);
+                        }
+                        attribute = paneNodes.get(0).getAttribute("activePane");
+                        if (attribute != null)
+                        {
+                            this.paneSplitValue.setActivePane(attribute);
+                        }
+
                     }
                 }
             }
@@ -1168,6 +1199,73 @@ public class WorksheetReader {
             this.seconds = (totalSeconds - (this.days * 86400) - (this.hours * 3600) - (this.minutes * 60));
         }
 
+    }
+
+    /**
+     * Class represents information about pane splitting
+     */
+    public static class PaneDefinition
+    {
+        private Float paneSplitHeight;
+        private Address topLeftCell;
+        private Worksheet.WorksheetPane activePane;
+        private boolean ySplitDefined;
+        private boolean xSplitDefined;
+
+        /**
+         * Gets the pane split height of a worksheet split
+         * @return Pane split height
+         */
+        public Float getPaneSplitHeight() {
+            return paneSplitHeight;
+        }
+
+        /**
+         * Gets the top Left cell address of the bottom right pane
+         * @return Top left cell address
+         */
+        public Address getTopLeftCell() {
+            return topLeftCell;
+        }
+
+        /**
+         * Gets the active pane in the split window
+         * @return Active pane split value
+         */
+        public Worksheet.WorksheetPane getActivePane() {
+            return activePane;
+        }
+
+        /**
+         * Gets whether an X split was defined
+         * @return True if an x split is defined
+         */
+        public boolean isYSplitDefined() {
+            return ySplitDefined;
+        }
+
+        /**
+         * Gets whether an Y split was defined
+         * @return True if an Y split is defined
+         */
+        public boolean isXSplitDefined() {
+            return xSplitDefined;
+        }
+
+        public PaneDefinition()
+        {
+            activePane = Worksheet.WorksheetPane.topLeft;
+            topLeftCell = new Address(0, 0);
+        }
+
+        /**
+         * Parses and sets the active pane from a string value
+         * @param value Raw enum value as string
+         */
+        public void setActivePane(String value)
+        {
+            this.activePane = Worksheet.WorksheetPane.valueOf(value);
+        }
     }
 
     /**
