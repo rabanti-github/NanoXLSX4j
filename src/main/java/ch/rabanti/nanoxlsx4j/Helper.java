@@ -405,20 +405,52 @@ public class Helper {
 
     /**
      * Calculates the height of a split pane in a worksheet, based on the internal value (calculated by {@link Helper#getInternalPaneSplitHeight(float)})
+     *
      * @param internalHeight Internal pane height stored in a worksheet. The minimal value is defined by {@link Helper#SPLIT_HEIGHT_POINT_OFFSET}
      * @return Actual pane height
      * @apiNote Depending on the initial height, the result value of {@link Helper#getInternalPaneSplitHeight(float)} may not lead back to the initial value,
      * since rounding is applied when calculating the internal height
      */
-    public static float getPaneSplitHeight(float internalHeight)
-    {
-        if (internalHeight < 300f)
-        {
+    public static float getPaneSplitHeight(float internalHeight) {
+        if (internalHeight < 300f) {
             return 0;
-        }
-        else
-        {
+        } else {
             return (internalHeight - SPLIT_HEIGHT_POINT_OFFSET) / SPLIT_POINT_DIVIDER;
+        }
+    }
+
+
+    /**
+     * Calculates the width of a split pane in a worksheet, based on the internal value (calculated by {@link Helper#getInternalPaneSplitWidth(float, float, float)})
+     *
+     * @param internalWidth Internal pane width stored in a worksheet. The minimal value is defined by {@link Helper#SPLIT_WIDTH_POINT_OFFSET}
+     * @return Actual pane width
+     * @apiNote Depending on the initial width, the result value of {@link Helper#getInternalPaneSplitWidth(float)} or
+     * {@link Helper#getInternalPaneSplitWidth(float, float, float)} may not lead back to the initial value,
+     * since rounding is applied when calculating the internal width
+     */
+    public static float getPaneSplitWidth(float internalWidth) {
+        return getPaneSplitWidth(internalWidth, 7f, 5f);
+    }
+
+    /**
+     * Calculates the width of a split pane in a worksheet, based on the internal value (calculated by {@link Helper#getInternalPaneSplitWidth(float, float, float)})
+     *
+     * @param internalWidth Internal pane width stored in a worksheet. The minimal value is defined by {@link Helper#SPLIT_WIDTH_POINT_OFFSET}
+     * @param maxDigitWidth Maximum digit with of the default font (default is 7.0 for Calibri, size 11)
+     * @param textPadding   Text padding of the default font (default is 5.0 for Calibri, size 11)
+     * @return Actual pane width
+     * @apiNote Depending on the initial width, the result value of {@link Helper#getInternalPaneSplitWidth(float)} or
+     * {@link Helper#getInternalPaneSplitWidth(float, float, float)} may not lead back to the initial value,
+     * since rounding is applied when calculating the internal width
+     */
+    public static float getPaneSplitWidth(float internalWidth, float maxDigitWidth, float textPadding) {
+        float points = (internalWidth - SPLIT_WIDTH_POINT_OFFSET) / SPLIT_POINT_DIVIDER;
+        if (points < 0.001f) {
+            return 0;
+        } else {
+            float width = points / SPLIT_WIDTH_POINT_MULTIPLIER;
+            return (width - textPadding - SPLIT_WIDTH_OFFSET) / maxDigitWidth;
         }
     }
 

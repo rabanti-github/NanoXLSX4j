@@ -277,6 +277,14 @@ public class WorksheetReader {
                             this.paneSplitValue.ySplitDefined = true;
                             this.paneSplitValue.paneSplitHeight = Helper.getPaneSplitHeight(Float.parseFloat(attribute));
                         }
+
+                        attribute = paneNodes.get(0).getAttribute("xSplit");
+                        if (attribute != null)
+                        {
+                            this.paneSplitValue.xSplitDefined = true;
+                            this.paneSplitValue.paneSplitWidth = Helper.getPaneSplitWidth(Float.parseFloat(attribute));
+                        }
+
                         attribute = paneNodes.get(0).getAttribute("topLeftCell");
                         if (attribute != null)
                         {
@@ -1207,6 +1215,7 @@ public class WorksheetReader {
     public static class PaneDefinition
     {
         private Float paneSplitHeight;
+        private Float paneSplitWidth;
         private Address topLeftCell;
         private Worksheet.WorksheetPane activePane;
         private boolean ySplitDefined;
@@ -1218,6 +1227,14 @@ public class WorksheetReader {
          */
         public Float getPaneSplitHeight() {
             return paneSplitHeight;
+        }
+
+        /**
+         * Gets the pane split width of a worksheet split
+         * @return Pane split width
+         */
+        public Float getPaneSplitWidth() {
+            return paneSplitWidth;
         }
 
         /**
