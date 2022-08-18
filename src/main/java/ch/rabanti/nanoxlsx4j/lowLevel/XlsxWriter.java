@@ -1128,7 +1128,7 @@ public class XlsxWriter {
                 sb.append(" lockStructure=\"1\"");
             }
             if (!Helper.isNullOrEmpty(workbook.getWorkbookProtectionPassword())) {
-                sb.append("workbookPassword=\"");
+                sb.append(" workbookPassword=\"");
                 sb.append(Helper.generatePasswordHash(workbook.getWorkbookProtectionPassword()));
                 sb.append("\"");
             }

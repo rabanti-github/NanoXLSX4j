@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class StyleRepositoryTest {
 
     @BeforeEach
-    private void flush() {
+    public void flush() {
         StyleRepository.getInstance().getStyles().clear();
     }
 

@@ -1223,13 +1223,27 @@ public class Worksheet {
      *
      * @param address Address of the cell
      * @return Cell object
-     * @throws WorksheetException Throws a WorksheetException if the cell was not found on the cell table of this worksheet
+     * @throws WorksheetException Throws a WorksheetException if the cell was null or not found on the cell table of this worksheet
      */
     public Cell getCell(Address address) {
-        if (!this.cells.containsKey(address.getAddress())) {
-            throw new WorksheetException("The cell with the address " + address.getAddress() + " does not exist in this worksheet");
+        if (address == null){
+            throw new WorksheetException("No address to get was provided");
         }
-        return this.cells.get(address.getAddress());
+        return getCell(address.getAddress());
+    }
+
+     /**
+     * Gets the cell of the specified address as String
+     *
+     * @param address Address string of the cell
+     * @return Cell object
+     * @throws WorksheetException Throws a WorksheetException if the cell was not found on the cell table of this worksheet
+     */
+    public Cell getCell(String address) {
+        if (!this.cells.containsKey(address)) {
+            throw new WorksheetException("The cell with the address " + address + " does not exist in this worksheet");
+        }
+        return this.cells.get(address);
     }
 
     /**

@@ -92,19 +92,8 @@ public class StyleReader {
                 int id = Integer.parseInt(childNode.getAttribute("numFmtId")); // Default/null will (justified) throw an exception
 
                 String code = childNode.getAttribute("formatCode", "");
-
-                if (id < NumberFormat.CUSTOMFORMAT_START_NUMBER) {
-                    NumberFormat.NumberFormatEvaluation enumValue = NumberFormat.tryParseFormatNumber(id);
-                    if (enumValue.getRange() == NumberFormat.NumberFormatEvaluation.FormatRange.defined_format) {
-                        numberFormat.setNumber(enumValue.getFormatNumber());
-                    } else {
-                        numberFormat.setCustomFormatID(id);
-                        numberFormat.setNumber(NumberFormat.FormatNumber.custom);
-                    }
-                } else {
-                    numberFormat.setCustomFormatID(id);
-                    numberFormat.setNumber(NumberFormat.FormatNumber.custom);
-                }
+                numberFormat.setCustomFormatID(id);
+                numberFormat.setNumber(NumberFormat.FormatNumber.custom);
                 numberFormat.setInternalID(id);
                 numberFormat.setCustomFormatCode(code);
                 this.styleReaderContainer.addStyleComponent(numberFormat);
@@ -431,13 +420,13 @@ public class StyleReader {
      * Tries to determine a border StyleValue enum entry from a string
      *
      * @param styleValue String to check
-     * @return Enum value or null if not found
+     * @return Enum value or {@link Border.StyleValue#none} if not found
      */
     private static Border.StyleValue getBorderEnumValue(String styleValue) {
         try {
             return Border.StyleValue.valueOf(styleValue);
         } catch (Exception e) {
-            return null;
+            return Border.StyleValue.none;
         }
     }
 
@@ -445,13 +434,13 @@ public class StyleReader {
      * Tries to determine a pattern enum entry from a string
      *
      * @param styleValue String to check
-     * @return Enum value or null if not found
+     * @return Enum value or {@link Fill.PatternValue#none} if not found
      */
     private static Fill.PatternValue getFillPatternEnumValue(String styleValue) {
         try {
             return Fill.PatternValue.valueOf(styleValue);
         } catch (Exception e) {
-            return null;
+            return Fill.PatternValue.none;
         }
     }
 
@@ -459,13 +448,13 @@ public class StyleReader {
      * Tries to determine a vertical align enum entry from a string
      *
      * @param styleValue String to check
-     * @return Enum value or null if not found
+     * @return Enum value or {@link Font.VerticalAlignValue#none} if not found
      */
     private static Font.VerticalAlignValue getFontVerticalAlignEnumValue(String styleValue) {
         try {
             return Font.VerticalAlignValue.valueOf(styleValue);
         } catch (Exception e) {
-            return null;
+            return Font.VerticalAlignValue.none;
         }
     }
 
@@ -473,13 +462,13 @@ public class StyleReader {
      * Tries to determine a horizontal align enum entry of cellXF from a string
      *
      * @param styleValue String to check
-     * @return Enum value or null if not found
+     * @return Enum value or {@link CellXf.HorizontalAlignValue#none} if not found
      */
     private static CellXf.HorizontalAlignValue getCellXfHorizontalAlignEnumValue(String styleValue) {
         try {
             return CellXf.HorizontalAlignValue.valueOf(styleValue);
         } catch (Exception e) {
-            return null;
+            return CellXf.HorizontalAlignValue.none;
         }
     }
 
@@ -487,13 +476,13 @@ public class StyleReader {
      * Tries to determine a vertical align enum entry of cellXF from a string
      *
      * @param styleValue String to check
-     * @return Enum value or null if not found
+     * @return Enum value or {@link CellXf.VerticalAlignValue#none} if not found
      */
     private static CellXf.VerticalAlignValue getCellXfVerticalAlignEnumValue(String styleValue) {
         try {
             return CellXf.VerticalAlignValue.valueOf(styleValue);
         } catch (Exception e) {
-            return null;
+            return CellXf.VerticalAlignValue.none;
         }
     }
 
