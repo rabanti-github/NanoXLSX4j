@@ -187,7 +187,7 @@ public class WorksheetReader {
         this.resolvedStyles = new HashMap<>();
         for (int i = 0; i < styleReaderContainer.getStyleCount(); i++) {
             String index = Integer.toString(i);
-            StyleReaderContainer.StyleResult result = styleReaderContainer.evaluateDateTimeStyle(i, true);
+            StyleReaderContainer.StyleResult result = styleReaderContainer.evaluateDateTimeStyle(i);
             if (result.isDateStyle()) {
                 this.dateStyles.add(index);
             }

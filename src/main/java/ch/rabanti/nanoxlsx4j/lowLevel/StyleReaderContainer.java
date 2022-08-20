@@ -51,7 +51,6 @@ public class StyleReaderContainer {
      * Adds a style component and determines the appropriate type of it automatically
      *
      * @param component Style component to add to the collections
-     * @throws StyleException Thrown if an unknown style component type was passed
      */
     public void addStyleComponent(AbstractStyle component) {
         if (component instanceof CellXf) {
@@ -66,8 +65,6 @@ public class StyleReaderContainer {
             this.fills.add((Fill) component);
         } else if (component instanceof Font) {
             this.fonts.add((Font) component);
-        } else {
-            throw new StyleException("The style definition of the type '" + component.getClass().getName() + "' is unknown or not implemented yet");
         }
     }
 
@@ -75,21 +72,15 @@ public class StyleReaderContainer {
      * Returns a whole style by its index
      *
      * @param index            Index of the style
-     * @param returnNullOnFail If true, null will be returned if the style could not be retrieved. Otherwise an exception will be thrown
-     * @return Style object or null if parameter returnNullOnFail was set to true and the component could not be retrieved
-     * @throws StyleException Thrown StyleException if the style was not found and the parameter returnNullOnFail was set to false
+     * @return Style object or null if the component could not be retrieved
      */
-    public Style getStyle(String index, boolean returnNullOnFail) {
+    public Style getStyle(String index) {
         int number;
         try {
             number = Integer.parseInt(index);
-            return (Style) getComponent(Style.class, number, returnNullOnFail);
+            return (Style) getComponent(Style.class, number);
         } catch (Exception ex) {
-            if (returnNullOnFail) {
                 return null;
-            } else {
-                throw new StyleException("The style definition could not be retrieved, because of the invalid style index '" + index + "'");
-            }
         }
     }
 
@@ -97,12 +88,10 @@ public class StyleReaderContainer {
      * Returns a whole style by its index. It also returns information about the type of the style, regarding dates or times
      *
      * @param index            Index of the style
-     * @param returnNullOnFail If true, null will be returned if the style could not be retrieved. Otherwise an exception will be thrown
-     * @return Style object or null if parameter returnNullOnFail was set to true and the component could not be retrieved
-     * @throws StyleException Thrown StyleException if the style was not found and the parameter returnNullOnFail was set to false
+     * @return Style object or null if the component could not be retrieved
      */
-    public StyleResult evaluateDateTimeStyle(int index, boolean returnNullOnFail) {
-        Style style = (Style) getComponent(Style.class, index, returnNullOnFail);
+    public StyleResult evaluateDateTimeStyle(int index) {
+        Style style = (Style) getComponent(Style.class, index);
         StyleResult result = new StyleResult(style);
         if (style != null) {
             result.setDateStyle(NumberFormat.isDateFormat(style.getNumberFormat().getNumber()));
@@ -115,67 +104,54 @@ public class StyleReaderContainer {
     }
 
     /**
-     * Returns a cell XF component by its index.<br>
-     * Note: The method is currently not used but prepared for usage when the style reader is fully implemented
+     * Returns a cell XF component by its index
      *
      * @param index            Internal index of the style component
-     * @param returnNullOnFail If true, null will be returned if the component could not be retrieved. Otherwise an exception will be thrown
-     * @return Style component or null if parameter returnNullOnFail was set to true and the component could not be retrieved
-     * @throws StyleException Thrown if the component was not found and the parameter returnNullOnFail was set to false
+     * @return Style component or null if the component could not be retrieved
      */
-    public CellXf getCellXF(int index, boolean returnNullOnFail) {
-        return (CellXf) getComponent(CellXf.class, index, returnNullOnFail);
+    public CellXf getCellXF(int index) {
+        return (CellXf) getComponent(CellXf.class, index);
     }
 
     /**
-     * Returns a number format component by its index.<br>
+     * Returns a number format component by its index
      *
      * @param index            Internal index of the style component
-     * @param returnNullOnFail If true, null will be returned if the component could not be retrieved. Otherwise an exception will be thrown
-     * @return Style component or null if parameter returnNullOnFail was set to true and the component could not be retrieved
-     * @throws StyleException Thrown if the component was not found and the parameter returnNullOnFail was set to false
+     * @return Style component or null if the component could not be retrieved
+     * @throws StyleException Thrown if the component was not found
      */
-    public NumberFormat getNumberFormat(int index, boolean returnNullOnFail) {
-        return (NumberFormat) getComponent(NumberFormat.class, index, returnNullOnFail);
+    public NumberFormat getNumberFormat(int index) {
+        return (NumberFormat) getComponent(NumberFormat.class, index);
     }
 
     /**
-     * Returns a border component by its index.<br>
-     * Note: The method is currently not used but prepared for usage when the style reader is fully implemented
+     * Returns a border component by its index
      *
      * @param index            Internal index of the style component
-     * @param returnNullOnFail If true, null will be returned if the component could not be retrieved. Otherwise an exception will be thrown
-     * @return Style component or null if parameter returnNullOnFail was set to true and the component could not be retrieved
-     * @throws StyleException Thrown if the component was not found and the parameter returnNullOnFail was set to false
+     * @return Style component or null if the component could not be retrieved
      */
-    public Border getBorder(int index, boolean returnNullOnFail) {
-        return (Border) getComponent(Border.class, index, returnNullOnFail);
+    public Border getBorder(int index) {
+        return (Border) getComponent(Border.class, index);
     }
 
     /**
-     * Returns a fill component by its index.<br>
-     * Note: The method is currently not used but prepared for usage when the style reader is fully implemented
+     * Returns a fill component by its index
      *
      * @param index            Internal index of the style component
-     * @param returnNullOnFail If true, null will be returned if the component could not be retrieved. Otherwise an exception will be thrown
-     * @return Style component or null if parameter returnNullOnFail was set to true and the component could not be retrieved
-     * @throws StyleException Thrown if the component was not found and the parameter returnNullOnFail was set to false
+     * @return Style component or null if the component could not be retrieved
      */
-    public Fill getFill(int index, boolean returnNullOnFail) {
-        return (Fill) getComponent(Fill.class, index, returnNullOnFail);
+    public Fill getFill(int index) {
+        return (Fill) getComponent(Fill.class, index);
     }
 
     /**
-     * Returns a font component by its index.<br>
-     * Note: The method is currently not used but prepared for usage when the style reader is fully implemented
+     * Returns a font component by its index
      *
      * @param index            Internal index of the style component
-     * @param returnNullOnFail If true, null will be returned if the component could not be retrieved. Otherwise an exception will be thrown
-     * @return Style component or null if parameter returnNullOnFail was set to true and the component could not be retrieved
-     * @throws StyleException Thrown if the component was not found and the parameter returnNullOnFail was set to false
+     * @return Style component or null if the component could not be retrieved
      */
-    public Font getFont(int index, boolean returnNullOnFail) {
-        return (Font) getComponent(Font.class, index, returnNullOnFail);
+    public Font getFont(int index) {
+        return (Font) getComponent(Font.class, index);
     }
 
     /**
@@ -241,11 +217,9 @@ public class StyleReaderContainer {
      *
      * @param cls              Class of the style component
      * @param index            Internal index of the style components
-     * @param returnNullOnFail If true, null will be returned if the component could not be retrieved. Otherwise an exception will be thrown
-     * @return Style component or null if parameter returnNullOnFail was set to true and the component could not be retrieved
-     * @throws StyleException Thrown if the component was not found and the parameter returnNullOnFail was set to false
+     * @return Style component or null if the component could not be retrieved
      */
-    private <T> AbstractStyle getComponent(T cls, int index, boolean returnNullOnFail) {
+    private <T> AbstractStyle getComponent(T cls, int index) {
         try {
             if (cls.equals(CellXf.class)) {
                 return this.cellXfs.get(index);
@@ -265,16 +239,11 @@ public class StyleReaderContainer {
                 return this.fills.get(index);
             } else if (cls.equals(Font.class)) {
                 return this.fonts.get(index);
-            } else {
-                throw new StyleException("The style definition of the type '" + cls.getClass().getName() + "' is unknown or not implemented yet");
             }
         } catch (Exception ex) {
-            if (returnNullOnFail) {
-                return null;
-            } else {
-                throw new StyleException("The style definition could not be retrieved. Please see inner exception:", ex);
-            }
+            // ignore
         }
+        return null;
     }
 
     // ### S U B - C L A S S E S ###

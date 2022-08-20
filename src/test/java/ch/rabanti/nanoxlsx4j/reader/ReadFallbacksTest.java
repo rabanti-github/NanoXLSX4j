@@ -1,6 +1,7 @@
 package ch.rabanti.nanoxlsx4j.reader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 
@@ -66,6 +67,21 @@ public class ReadFallbacksTest {
         // This causes neither in Excel a crash, nor should the library crash
         Cell cell = getCell("unknown_style_enums.xlsx");
         assertEquals(CellXf.VerticalAlignValue.none, cell.getCellStyle().getCellXf().getVerticalAlign());
+    }
+
+    @DisplayName("Test of the fallback behavior on missing ID references in the CellXF section")
+    @Test()
+    void ignoreMissingStyleRefsTest() throws Exception {
+        // The file contains 5 complex styles (and 1 default style), assigned to 5 cells. In the CellXF
+        // section is for each style one particular reference ID (e.g. fontId) omitted. This should not
+        // lead to a crash
+        InputStream stream = TestUtils.getResource("omitted_style_refs.xlsx");
+        Workbook workbook = Workbook.load(stream);
+        assertNotNull(workbook.getWorksheets().get(0).getCell("A1").getCellStyle());
+        assertNotNull(workbook.getWorksheets().get(0).getCell("A2").getCellStyle());
+        assertNotNull(workbook.getWorksheets().get(0).getCell("A3").getCellStyle());
+        assertNotNull(workbook.getWorksheets().get(0).getCell("A4").getCellStyle());
+        assertNotNull(workbook.getWorksheets().get(0).getCell("A5").getCellStyle());
     }
 
     private static Cell getCell(String resourceName) throws IOException, java.io.IOException {

@@ -35,15 +35,6 @@ public class StyleReader {
     }
 
     /**
-     * Sets the container for raw style components of the reader.
-     *
-     * @param styleReaderContainer Style reader container with resolved style components
-     */
-    public void setStyleReaderContainer(StyleReaderContainer styleReaderContainer) {
-        this.styleReaderContainer = styleReaderContainer;
-    }
-
-    /**
      * Default constructor
      */
     public StyleReader() {
@@ -338,12 +329,12 @@ public class StyleReader {
                 this.styleReaderContainer.addStyleComponent(cellXfStyle);
 
                 Style style = new Style();
-                int id = Integer.parseInt(childNode.getAttribute("numFmtId"));
+                IntParser id;
 
-
-                NumberFormat format = this.styleReaderContainer.getNumberFormat(id, true);
-                if (format == null) {
-                    NumberFormat.NumberFormatEvaluation evaluation = NumberFormat.tryParseFormatNumber(id); // Validity is neglected here to prevent unhandled crashes. If invalid, the format will be declared as 'none'                                          // Invalid values should not occur at all (malformed Excel files); Undefined values may occur if the file was saved by an Excel version that has implemented yet unknown format numbers (undefined in NanoXLSX)
+                id = IntParser.tryParse(childNode.getAttribute("numFmtId"));
+                NumberFormat format = this.styleReaderContainer.getNumberFormat(id.value);
+                if (!id.hasValue || format == null) {
+                    NumberFormat.NumberFormatEvaluation evaluation = NumberFormat.tryParseFormatNumber(id.value); // Validity is neglected here to prevent unhandled crashes. If invalid, the format will be declared as 'none'                                          // Invalid values should not occur at all (malformed Excel files); Undefined values may occur if the file was saved by an Excel version that has implemented yet unknown format numbers (undefined in NanoXLSX)
                     // Invalid values should not occur at all (malformed Excel files).
                     // Undefined values may occur if the file was saved by an Excel version that has implemented yet unknown format numbers (undefined in NanoXLSX)
                     format = new NumberFormat();
@@ -351,21 +342,21 @@ public class StyleReader {
                     format.setInternalID(this.styleReaderContainer.getNextNumberFormatId());
                     this.styleReaderContainer.addStyleComponent(format);
                 }
-                id = Integer.parseInt(childNode.getAttribute("borderId"));
-                Border border = styleReaderContainer.getBorder(id, true);
-                if (border == null) {
+                id = IntParser.tryParse(childNode.getAttribute("borderId"));
+                Border border = styleReaderContainer.getBorder(id.value);
+                if (!id.hasValue || border == null) {
                     border = new Border();
                     border.setInternalID(styleReaderContainer.getNextBorderId());
                 }
-                id = Integer.parseInt(childNode.getAttribute("fillId"));
-                Fill fill = styleReaderContainer.getFill(id, true);
-                if (fill == null) {
+                id = IntParser.tryParse(childNode.getAttribute("fillId"));
+                Fill fill = styleReaderContainer.getFill(id.value);
+                if (!id.hasValue || fill == null) {
                     fill = new Fill();
                     fill.setInternalID(styleReaderContainer.getNextFillId());
                 }
-                id = Integer.parseInt(childNode.getAttribute("fontId"));
-                Font font = styleReaderContainer.getFont(id, true);
-                if (font == null) {
+                id = IntParser.tryParse(childNode.getAttribute("fontId"));
+                Font font = styleReaderContainer.getFont(id.value);
+                if (!id.hasValue || font == null) {
                     font = new Font();
                     font.setInternalID(styleReaderContainer.getNextFontId());
                 }
@@ -382,6 +373,7 @@ public class StyleReader {
             }
         }
     }
+
 
     /**
      * Resolves a color value from an XML node, when a rgb attribute exists
@@ -521,6 +513,26 @@ public class StyleReader {
             this.attributeIsPresent = value != null;
             this.nodeIsPresent = true;
             this.value = value;
+        }
+    }
+
+    /**
+     * Parser class to handle nullable integers
+     */
+    private static class IntParser{
+        public boolean hasValue;
+        public int value;
+        public IntParser(String rawValue){
+            try{
+                value = Integer.parseInt(rawValue);
+                hasValue = true;
+            }catch (Exception e){
+                value = 0;
+                hasValue = false;
+            }
+        }
+        public static IntParser tryParse(String rawValue){
+            return new IntParser(rawValue);
         }
     }
 

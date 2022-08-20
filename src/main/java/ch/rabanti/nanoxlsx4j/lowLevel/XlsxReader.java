@@ -217,7 +217,7 @@ public class XlsxReader {
             }
             for (Map.Entry<String, Cell> cell : reader.getValue().getData().entrySet()) {
                 if (reader.getValue().getStyleAssignment().containsKey(cell.getKey())) {
-                    Style style = styleReaderContainer.getStyle(reader.getValue().getStyleAssignment().get(cell.getKey()), true);
+                    Style style = styleReaderContainer.getStyle(reader.getValue().getStyleAssignment().get(cell.getKey()));
                     if (style != null) {
                         cell.getValue().setStyle(style);
                     }
