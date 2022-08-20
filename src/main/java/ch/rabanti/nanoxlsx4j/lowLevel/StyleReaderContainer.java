@@ -96,21 +96,8 @@ public class StyleReaderContainer {
         if (style != null) {
             result.setDateStyle(NumberFormat.isDateFormat(style.getNumberFormat().getNumber()));
             result.setTimeStyle(NumberFormat.isTimeFormat(style.getNumberFormat().getNumber()));
-        } else {
-            result.setDateStyle(false);
-            result.setTimeStyle(false);
         }
         return result;
-    }
-
-    /**
-     * Returns a cell XF component by its index
-     *
-     * @param index            Internal index of the style component
-     * @return Style component or null if the component could not be retrieved
-     */
-    public CellXf getCellXF(int index) {
-        return (CellXf) getComponent(CellXf.class, index);
     }
 
     /**
@@ -213,7 +200,8 @@ public class StyleReaderContainer {
     }
 
     /**
-     * Internal method to retrieve style components
+     * Internal method to retrieve style components.<br>
+     * Note: CellXF is not handled, since retrieved in the style reader in a different way
      *
      * @param cls              Class of the style component
      * @param index            Internal index of the style components
@@ -221,9 +209,7 @@ public class StyleReaderContainer {
      */
     private <T> AbstractStyle getComponent(T cls, int index) {
         try {
-            if (cls.equals(CellXf.class)) {
-                return this.cellXfs.get(index);
-            } else if (cls.equals(NumberFormat.class)) {
+            if (cls.equals(NumberFormat.class)) {
                 //Number format entries are handles differently, since identified by 'numFmtId'. Other components are identified by its entry index
                 Optional<NumberFormat> result = numberFormats.stream().filter(x -> x.getInternalID() == index).findFirst();
                 if (result.isPresent()) {
@@ -237,7 +223,7 @@ public class StyleReaderContainer {
                 return this.borders.get(index);
             } else if (cls.equals(Fill.class)) {
                 return this.fills.get(index);
-            } else if (cls.equals(Font.class)) {
+            } else { // must be font (CellXF is not handled here)
                 return this.fonts.get(index);
             }
         } catch (Exception ex) {
@@ -253,8 +239,8 @@ public class StyleReaderContainer {
      */
     public static class StyleResult {
 
-        private boolean isDateStyle;
-        private boolean isTimeStyle;
+        private boolean isDateStyle = false;
+        private boolean isTimeStyle = false;
         private Style result;
 
         /**
@@ -300,15 +286,6 @@ public class StyleReaderContainer {
          */
         public Style getResult() {
             return result;
-        }
-
-        /**
-         * Sets the style as result
-         *
-         * @param result Style component
-         */
-        public void setResult(Style result) {
-            this.result = result;
         }
 
         /**
