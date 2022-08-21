@@ -1255,7 +1255,7 @@ public class WorksheetReader {
 
         /**
          * Gets whether an X split was defined
-         * @return True if an x split is defined
+         * @return True if an X split is defined
          */
         public boolean isYSplitDefined() {
             return ySplitDefined;
@@ -1271,7 +1271,7 @@ public class WorksheetReader {
 
         public PaneDefinition()
         {
-            activePane = Worksheet.WorksheetPane.topLeft;
+            activePane = null;
             topLeftCell = new Address(0, 0);
         }
 

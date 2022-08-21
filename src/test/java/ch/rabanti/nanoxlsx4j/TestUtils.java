@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestUtils {
 
-    private static final Calendar CALENADR;
+    private static final Calendar CALENDAR;
 
     static {
-        CALENADR = new GregorianCalendar();
+        CALENDAR = new GregorianCalendar();
     }
 
     public static Object createInstance(String sourceType, String stringValue) {
@@ -200,9 +200,9 @@ public class TestUtils {
     }
 
     public static Date buildDate(int year, int month, int day, int hour, int minute, int second, int millisSecond) {
-        CALENADR.set(year, month, day, hour, minute, second);
-        CALENADR.set(Calendar.MILLISECOND, millisSecond);
-        return CALENADR.getTime();
+        CALENDAR.set(year, month, day, hour, minute, second);
+        CALENDAR.set(Calendar.MILLISECOND, millisSecond);
+        return CALENDAR.getTime();
     }
 
     public static Duration buildTimeWithDays(int days, int hour, int minute, int second) {

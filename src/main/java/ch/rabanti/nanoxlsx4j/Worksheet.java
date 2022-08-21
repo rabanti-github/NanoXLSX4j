@@ -1686,7 +1686,7 @@ public class Worksheet {
      *
      * @param topPaneHeight Height (similar to row height) from top of the worksheet to the split line in characters
      * @param topLeftCell   Top Left cell address of the bottom right pane (if applicable). Only the row component is important in a horizontal split
-     * @param activePane    Active pane in the split window
+     * @param activePane    Active pane in the split window (can be null) (can be null)
      */
     public void setHorizontalSplit(float topPaneHeight, Address topLeftCell, WorksheetPane activePane) {
         setSplit(null, topPaneHeight, topLeftCell, activePane);
@@ -1698,7 +1698,7 @@ public class Worksheet {
      * @param numberOfRowsFromTop Number of rows from top of the worksheet to the split line. The particular row heights are considered
      * @param freeze              If true, all panes are frozen, otherwise remains movable
      * @param topLeftCell         Top Left cell address of the bottom right pane (if applicable). Only the row component is important in a horizontal split
-     * @param activePane          Active pane in the split window
+     * @param activePane          Active pane in the split window (can be null)
      * @throws WorksheetException WorksheetException Thrown if the row number of the top left cell is smaller the split panes number of rows from top, if freeze is applied
      */
     public void setHorizontalSplit(int numberOfRowsFromTop, boolean freeze, Address topLeftCell, WorksheetPane activePane) {
@@ -1711,7 +1711,7 @@ public class Worksheet {
      * @param numberOfColumnsFromLeft Number of columns from left of the worksheet to the split line. The particular column widths are considered
      * @param freeze                  If true, all panes are frozen, otherwise remains movable
      * @param topLeftCell             Top Left cell address of the bottom right pane (if applicable). Only the column component is important in a vertical split
-     * @param activePane              Active pane in the split window
+     * @param activePane              Active pane in the split window (can be null)
      * @throws WorksheetException Thrown if the column number of the top left cell is smaller the split panes number of columns from left, if freeze is applied
      */
     public void setVerticalSplit(int numberOfColumnsFromLeft, boolean freeze, Address topLeftCell, WorksheetPane activePane) {
@@ -1723,7 +1723,7 @@ public class Worksheet {
      *
      * @param leftPaneWidth Width (similar to column width) from left of the worksheet to the split line in characters
      * @param topLeftCell   Top Left cell address of the bottom right pane (if applicable). Only the column component is important in a vertical split
-     * @param activePane    Active pane in the split window
+     * @param activePane    Active pane in the split window (can be null)
      */
     public void setVerticalSplit(float leftPaneWidth, Address topLeftCell, WorksheetPane activePane) {
         setSplit(leftPaneWidth, null, topLeftCell, activePane);
@@ -1738,7 +1738,7 @@ public class Worksheet {
      *                                The parameter is nullable. If left null, the method acts identical to {@link #setVerticalSplit(int, boolean, Address, WorksheetPane)}
      * @param freeze                  If true, all panes are frozen, otherwise remains movable
      * @param topLeftCell             Top Left cell address of the bottom right pane (if applicable)
-     * @param activePane              Active pane in the split window
+     * @param activePane              Active pane in the split window (can be null)
      * @throws WorksheetException Thrown if the address of the top left cell is smaller the split panes address, if freeze is applied
      */
     public void setSplit(Integer numberOfColumnsFromLeft, Integer numberOfRowsFromTop, boolean freeze, Address topLeftCell, WorksheetPane activePane) {
@@ -1770,7 +1770,7 @@ public class Worksheet {
      * @param topPaneHeight Height (similar to row height) from top of the worksheet to the split line in characters.<br/>
      *                      The parameter is nullable. If left null, the method acts identical to {@link #setVerticalSplit(float, Address, WorksheetPane)}
      * @param topLeftCell   Top Left cell address of the bottom right pane (if applicable)
-     * @param activePane    Active pane in the split window
+     * @param activePane    Active pane in the split window (can be null)
      */
     public void setSplit(Float leftPaneWidth, Float topPaneHeight, Address topLeftCell, WorksheetPane activePane) {
         this.paneSplitLeftWidth = leftPaneWidth;

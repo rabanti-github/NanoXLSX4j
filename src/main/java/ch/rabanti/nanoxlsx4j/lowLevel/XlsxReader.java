@@ -226,7 +226,6 @@ public class XlsxReader {
             }
             if (reader.getValue().getPaneSplitValue() != null){
                 WorksheetReader.PaneDefinition pane = reader.getValue().getPaneSplitValue();
-                ws.setSplit(null, pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
                 if (pane.isYSplitDefined() && !pane.isXSplitDefined())
                 {
                     ws.setHorizontalSplit(pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
@@ -237,8 +236,7 @@ public class XlsxReader {
                 }
                 else if (pane.isYSplitDefined() && pane.isXSplitDefined())
                 {
-                    ws.setHorizontalSplit(pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
-                    ws.setVerticalSplit(pane.getPaneSplitWidth(), pane.getTopLeftCell(), pane.getActivePane());
+                    ws.setSplit(pane.getPaneSplitWidth(), pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
                 }
             }
             wb.addWorksheet(ws);

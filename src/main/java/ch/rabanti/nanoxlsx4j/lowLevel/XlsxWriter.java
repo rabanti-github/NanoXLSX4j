@@ -1281,7 +1281,7 @@ public class XlsxWriter {
                 applyYSplit = true;
             }
         }
-        if (applyXSplit && applyYSplit) {
+        if ((applyXSplit || applyYSplit) && worksheet.getActivePane() != null) {
             switch (worksheet.getActivePane()) {
                 case bottomLeft:
                     sb.append(" activePane=\"bottomLeft\"");

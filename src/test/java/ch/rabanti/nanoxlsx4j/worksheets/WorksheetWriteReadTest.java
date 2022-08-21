@@ -512,25 +512,6 @@ public class WorksheetWriteReadTest {
         assertEquals(hidden, givenWorksheet.isHidden());
     }
 
-    @DisplayName("Test of the 'PaneSplitTopHeight' property when writing and reading a worksheet")
-    @ParameterizedTest(name = "Given height {0} should lead to same value on worksheet {1} when writing and reading a worksheet")
-    @CsvSource({
-            "27f, 0",
-    })
-    void paneSplitTopHeightWriteReadTest(float height, int sheetIndex) throws Exception {
-        Workbook workbook = prepareWorkbook(4, "test");
-        for (int i = 0; i <= sheetIndex; i++)
-        {
-            if (sheetIndex == i)
-            {
-                workbook.setCurrentWorksheet(i);
-                workbook.getCurrentWorksheet().setHorizontalSplit(height, new Address("A1"), Worksheet.WorksheetPane.topLeft);
-            }
-        }
-        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
-        assertEquals(height, givenWorksheet.getPaneSplitTopHeight());
-    }
-
     private static Map<Worksheet.SheetProtectionValue, Boolean> prepareSheetProtectionValues(String tokenString)
     {
         Map<Worksheet.SheetProtectionValue, Boolean> map = new HashMap<>();
@@ -554,7 +535,6 @@ public class WorksheetWriteReadTest {
         }
         return map;
     }
-
 
     private static Workbook prepareWorkbook(int numberOfWorksheets, Object a1Data){
         Workbook workbook = new Workbook();
