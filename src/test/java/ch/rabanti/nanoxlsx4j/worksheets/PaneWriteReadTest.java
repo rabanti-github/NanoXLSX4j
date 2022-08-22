@@ -1,6 +1,7 @@
 package ch.rabanti.nanoxlsx4j.worksheets;
 
 import ch.rabanti.nanoxlsx4j.Address;
+import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
@@ -38,6 +39,37 @@ public class PaneWriteReadTest {
         assertEquals(height, givenWorksheet.getPaneSplitTopHeight());
     }
 
+    @DisplayName("Test of the 'PaneSplitTopHeight' property defined by a split address, when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given row number {0}, freeze state {1}, top left cell address {2} and active pane {3} should lead to same value on worksheet {4} when writing and reading a worksheet")
+    @CsvSource({
+            "0, false, A2, NULL, 0",
+            "1, false, A2, NULL, 0",
+            "15, false, A18, NULL, 0",
+            "0, false, A2, topLeft, 0",
+            "1, false, A2, bottomLeft, 0",
+            "15, false, A18, topRight, 0",
+            "0, true, A2, NULL, 0",
+            "1, true, A2, NULL, 0",
+            "15, true, A18, NULL, 0",
+            "0, true, A2, topLeft, 0",
+            "1, true, A2, bottomLeft, 0",
+            "15, true, A18, topRight, 0",
+    })
+    void paneSplitTopHeightWriteReadTest2(int rowNumber, boolean freeze, String topLeftCellAddress, String activePaneString, int sheetIndex) throws Exception {
+
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++)
+        {
+            if (sheetIndex == i)
+            {
+                workbook.setCurrentWorksheet(i);
+                workbook.getCurrentWorksheet().setHorizontalSplit(rowNumber, freeze, new Address(topLeftCellAddress), parsePane(activePaneString));
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertRowSplit(rowNumber, freeze, givenWorksheet);
+    }
+
     @DisplayName("Test of the 'PaneSplitLeftWidth' property when writing and reading a worksheet")
     @ParameterizedTest(name = "Given width {0} and active pane {1} should lead to same value on worksheet {2} when writing and reading a worksheet")
     @CsvSource({
@@ -65,6 +97,37 @@ public class PaneWriteReadTest {
         assertTrue(delta < 0.1);
     }
 
+    @DisplayName("Test of the 'PaneSplitLeftWidth' property defined by a split address, when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given column number {0}, freeze state {1}, top left cell address {2} and active pane {3} should lead to same value on worksheet {4} when writing and reading a worksheet")
+    @CsvSource({
+            "0, false, A2, NULL, 0",
+            "1, false, B2, NULL, 0",
+            "5, false, G2, NULL, 0",
+            "0, false, A2, topLeft, 0",
+            "1, false, B2, bottomLeft, 0",
+            "5, false, G2, topRight, 0",
+            "0, true, A2, NULL, 0",
+            "1, true, B2, NULL, 0",
+            "5, true, G2, NULL, 0",
+            "0, true, A2, topLeft, 0",
+            "1, true, B2, bottomLeft, 0",
+            "5, true, G2, topRight, 0",
+    })
+    void paneSplitLeftWidthWriteReadTest2(int columnNumber, boolean freeze, String topLeftCellAddress, String activePaneString, int sheetIndex) throws Exception {
+
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++)
+        {
+            if (sheetIndex == i)
+            {
+                workbook.setCurrentWorksheet(i);
+                workbook.getCurrentWorksheet().setVerticalSplit(columnNumber, freeze, new Address(topLeftCellAddress), parsePane(activePaneString));
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertColumnSplit(columnNumber, freeze, givenWorksheet, false);
+    }
+    
     @DisplayName("Test of the 'ActivePane' property when writing and reading a worksheet")
     @ParameterizedTest(name = "Given height {0} and active pane {1} should lead to same value on worksheet {2} when writing and reading a worksheet")
     @CsvSource({
@@ -116,9 +179,6 @@ public class PaneWriteReadTest {
         assertEquals(topLeftCell, givenWorksheet.getPaneSplitTopLeftCell());
     }
 
-
-
-
     @DisplayName("Test of the the 'PaneSplitTopHeight' and 'PaneSplitLeftWidth' properties (combined X/Y-Split) when writing and reading a worksheet")
     @ParameterizedTest(name = "Given width {0}, height {1} and active pane {2} should lead to same value on worksheet {3} when writing and reading a worksheet")
     @CsvSource({
@@ -167,6 +227,100 @@ public class PaneWriteReadTest {
             assertTrue(delta < 0.1);
         }
     }
+
+    @DisplayName("Test of the 'PaneSplitLeftWidth' and the 'PaneSplitLeftWidth' properties (combined X/Y-Split) defined by a split address, when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given column number {0}, row number {1},freeze state {2}, top left cell address {3} and active pane {4} should lead to same value on worksheet {5} when writing and reading a worksheet")
+    @CsvSource({
+            "0, 0, false, A2, NULL, 0",
+            "1, 0, false, B2, NULL, 0",
+            "5, 0, false, G2, NULL, 0",
+            "0, 0, false, A2, topLeft, 0",
+            "1, 0, false, B2, bottomLeft, 0",
+            "5, 0, false, G2, topRight, 0",
+            "0, 1, true, A2, NULL, 0",
+            "1, 1, true, B2, NULL, 0",
+            "5, 1, true, G2, NULL, 0",
+            "0, 1, true, A2, topLeft, 0",
+            "1, 1, true, B2, bottomLeft, 0",
+            "5, 1, true, G2, topRight, 0",
+            "0, 15, false, A20, NULL, 0",
+            "1, 15, false, B20, NULL, 0",
+            "5, 15, false, G20, NULL, 0",
+            "0, 15, false, A20, topLeft, 0",
+            "1, 15, false, B20, bottomLeft, 0",
+            "5, 15, false, G20, topRight, 0",
+    })
+    void paneSplitWidthHeightWriteReadTest2(int columnNumber, int rowNumber, boolean freeze, String topLeftCellAddress, String activePaneString, int sheetIndex) throws Exception {
+
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++)
+        {
+            if (sheetIndex == i)
+            {
+                workbook.setCurrentWorksheet(i);
+                workbook.getCurrentWorksheet().setSplit(columnNumber, rowNumber, freeze, new Address(topLeftCellAddress), parsePane(activePaneString));
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertColumnSplit(columnNumber, freeze, givenWorksheet, true);
+        assertRowSplit(rowNumber, freeze, givenWorksheet);
+    }
+
+    private static void assertColumnSplit(int columnNumber, boolean freeze, Worksheet givenWorksheet, boolean xyApplied) {
+        if (columnNumber == 0 && !xyApplied)
+        {
+            // No split at all (row 0)
+            assertNull(givenWorksheet.getPaneSplitAddress());
+            assertNull(givenWorksheet.getFreezeSplitPanes());
+        }
+        else
+        {
+            if (freeze)
+            {
+                assertEquals(columnNumber, givenWorksheet.getPaneSplitAddress().Column);
+                assertEquals(freeze, givenWorksheet.getFreezeSplitPanes());
+            }
+            else
+            {
+                float width = Helper.getInternalColumnWidth(Worksheet.DEFAULT_COLUMN_WIDTH) * columnNumber;
+                if (width == 0){
+                    // Not applied as x split
+                    assertNull(givenWorksheet.getPaneSplitLeftWidth());
+                }
+                else{
+                    // There may be a deviation by rounding
+                    float delta = Math.abs(width -  givenWorksheet.getPaneSplitLeftWidth());
+                    assertTrue(delta < 0.1);
+                }
+                assertNull(givenWorksheet.getFreezeSplitPanes());
+            }
+        }
+    }
+
+    private static void assertRowSplit(int rowNumber, boolean freeze, Worksheet givenWorksheet) {
+        if (rowNumber == 0)
+        {
+            // No split at all (row 0)
+            assertNull(givenWorksheet.getPaneSplitAddress());
+            assertNull(givenWorksheet.getFreezeSplitPanes());
+        }
+        else
+        {
+            if (freeze)
+            {
+                assertEquals(rowNumber, givenWorksheet.getPaneSplitAddress().Row);
+                assertEquals(freeze, givenWorksheet.getFreezeSplitPanes());
+            }
+            else
+            {
+                float height = Worksheet.DEFAULT_ROW_HEIGHT * rowNumber;
+                assertEquals(height, givenWorksheet.getPaneSplitTopHeight());
+                assertNull(givenWorksheet.getFreezeSplitPanes());
+            }
+
+        }
+    }
+
 
     private static Worksheet.WorksheetPane parsePane(String activePaneString) {
         if (activePaneString == null || activePaneString.equalsIgnoreCase("null")){

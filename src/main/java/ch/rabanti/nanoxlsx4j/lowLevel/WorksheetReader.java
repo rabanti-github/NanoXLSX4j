@@ -255,7 +255,6 @@ public class WorksheetReader {
                     XmlDocument.XmlNodeList selectionNodes = sheetView.getElementsByTagName("selection", true);
                     if (selectionNodes != null && selectionNodes.size() > 0){
                         for (XmlDocument.XmlNode selectionNode : selectionNodes){
-                            // TODO: Panes are currently not considered
                             String attribute = selectionNode.getAttribute("sqref");
                             if (attribute != null){
                                 if (attribute.contains(":")){
@@ -270,19 +269,36 @@ public class WorksheetReader {
                     XmlDocument.XmlNodeList paneNodes = sheetView.getElementsByTagName("pane", true);
                     if (paneNodes != null && paneNodes.size() > 0)
                     {
+                        String attribute = paneNodes.get(0).getAttribute("state");
+                        boolean useNumbers = false;
                         this.paneSplitValue = new PaneDefinition();
-                        String attribute = paneNodes.get(0).getAttribute("ySplit");
+                        if (attribute != null)
+                        {
+                            this.paneSplitValue.setFrozenState(attribute);
+                            useNumbers = this.paneSplitValue.getFrozenState();
+                        }
+                        attribute = paneNodes.get(0).getAttribute("ySplit");
                         if (attribute != null)
                         {
                             this.paneSplitValue.ySplitDefined = true;
-                            this.paneSplitValue.paneSplitHeight = Helper.getPaneSplitHeight(Float.parseFloat(attribute));
+                            if (useNumbers){
+                                this.paneSplitValue.paneSplitRowIndex = Integer.parseInt(attribute);
+                            }
+                            else{
+                                this.paneSplitValue.paneSplitHeight = Helper.getPaneSplitHeight(Float.parseFloat(attribute));
+                            }
                         }
 
                         attribute = paneNodes.get(0).getAttribute("xSplit");
                         if (attribute != null)
                         {
                             this.paneSplitValue.xSplitDefined = true;
-                            this.paneSplitValue.paneSplitWidth = Helper.getPaneSplitWidth(Float.parseFloat(attribute));
+                            if (useNumbers){
+                                this.paneSplitValue.paneSplitColumnIndex = Integer.parseInt(attribute);
+                            }
+                            else{
+                                this.paneSplitValue.paneSplitWidth = Helper.getPaneSplitWidth(Float.parseFloat(attribute));
+                            }
                         }
 
                         attribute = paneNodes.get(0).getAttribute("topLeftCell");
@@ -295,6 +311,7 @@ public class WorksheetReader {
                         {
                             this.paneSplitValue.setActivePane(attribute);
                         }
+
 
                     }
                 }
@@ -1216,10 +1233,13 @@ public class WorksheetReader {
     {
         private Float paneSplitHeight;
         private Float paneSplitWidth;
+        private Integer paneSplitRowIndex;
+        private Integer paneSplitColumnIndex;
         private Address topLeftCell;
         private Worksheet.WorksheetPane activePane;
         private boolean ySplitDefined;
         private boolean xSplitDefined;
+        private boolean frozenState;
 
         /**
          * Gets the pane split height of a worksheet split
@@ -1230,11 +1250,27 @@ public class WorksheetReader {
         }
 
         /**
+         * Gets the row index of a worksheet split
+         * @return Row index of the split
+         */
+        public Integer getPaneSplitRowIndex() {
+            return paneSplitRowIndex;
+        }
+
+        /**
          * Gets the pane split width of a worksheet split
          * @return Pane split width
          */
         public Float getPaneSplitWidth() {
             return paneSplitWidth;
+        }
+
+        /**
+         * Gets the column index of a worksheet split
+         * @return Column index of the split
+         */
+        public Integer getPaneSplitColumnIndex() {
+            return paneSplitColumnIndex;
         }
 
         /**
@@ -1251,6 +1287,14 @@ public class WorksheetReader {
          */
         public Worksheet.WorksheetPane getActivePane() {
             return activePane;
+        }
+
+        /**
+         * Gets the frozen state of the split window
+         * @return True if panes are frozen
+         */
+        public boolean getFrozenState() {
+            return frozenState;
         }
 
         /**
@@ -1282,6 +1326,16 @@ public class WorksheetReader {
         public void setActivePane(String value)
         {
             this.activePane = Worksheet.WorksheetPane.valueOf(value);
+        }
+
+        /**
+         * Sets the frozen state of the split window if defined
+         * @param value raw attribute value
+         */
+        public void setFrozenState(String value){
+            if (value.equalsIgnoreCase("frozen") || value.equalsIgnoreCase("frozensplit")){
+                this.frozenState = true;
+            }
         }
     }
 

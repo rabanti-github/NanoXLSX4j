@@ -226,17 +226,33 @@ public class XlsxReader {
             }
             if (reader.getValue().getPaneSplitValue() != null){
                 WorksheetReader.PaneDefinition pane = reader.getValue().getPaneSplitValue();
-                if (pane.isYSplitDefined() && !pane.isXSplitDefined())
-                {
-                    ws.setHorizontalSplit(pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
+                if (pane.getFrozenState()){
+                    if (pane.isYSplitDefined() && !pane.isXSplitDefined())
+                    {
+                        ws.setHorizontalSplit(pane.getPaneSplitRowIndex(), pane.getFrozenState(), pane.getTopLeftCell(), pane.getActivePane());
+                    }
+                    if (!pane.isYSplitDefined() && pane.isXSplitDefined())
+                    {
+                        ws.setVerticalSplit(pane.getPaneSplitColumnIndex(), pane.getFrozenState(), pane.getTopLeftCell(), pane.getActivePane());
+                    }
+                    else if (pane.isYSplitDefined() && pane.isXSplitDefined())
+                    {
+                        ws.setSplit(pane.getPaneSplitColumnIndex(), pane.getPaneSplitRowIndex(), pane.getFrozenState(), pane.getTopLeftCell(), pane.getActivePane());
+                    }
                 }
-                if (!pane.isYSplitDefined() && pane.isXSplitDefined())
-                {
-                    ws.setVerticalSplit(pane.getPaneSplitWidth(), pane.getTopLeftCell(), pane.getActivePane());
-                }
-                else if (pane.isYSplitDefined() && pane.isXSplitDefined())
-                {
-                    ws.setSplit(pane.getPaneSplitWidth(), pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
+                else {
+                    if (pane.isYSplitDefined() && !pane.isXSplitDefined())
+                    {
+                        ws.setHorizontalSplit(pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
+                    }
+                    if (!pane.isYSplitDefined() && pane.isXSplitDefined())
+                    {
+                        ws.setVerticalSplit(pane.getPaneSplitWidth(), pane.getTopLeftCell(), pane.getActivePane());
+                    }
+                    else if (pane.isYSplitDefined() && pane.isXSplitDefined())
+                    {
+                        ws.setSplit(pane.getPaneSplitWidth(), pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
+                    }
                 }
             }
             wb.addWorksheet(ws);
