@@ -1,10 +1,13 @@
 package ch.rabanti.nanoxlsx4j.workbooks;
 
+import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +31,85 @@ public class WorkbookWriteReadTest {
         assertEquals("FF" + color1, mruColors.get(0));
         assertEquals("FF" + color2, mruColors.get(1));
     }
+
+    @DisplayName("Test of the 'Hidden' property when writing and reading a workbook")
+    @ParameterizedTest(name = "Given state {0} should lead to a loaded workbook with this state")
+    @CsvSource({
+            "true",
+            "false",
+    })
+    void readWorkbookHiddenTest(boolean hidden) throws Exception {
+        Workbook workbook = new Workbook();
+        workbook.setHidden(hidden);
+        Workbook givenWorkbook = writeAndReadWorkbook(workbook);
+        assertEquals(hidden, givenWorkbook.isHidden());
+    }
+
+    @DisplayName("Test of the 'SelectedWorksheet' property when writing and reading a workbook")
+    @ParameterizedTest(name = "Given index {0} should lead to a loaded workbook with this index")
+    @CsvSource({
+            "0",
+            "1",
+            "2",
+    })
+    void readWorkbookSelectedWorksheetTest(int index) throws Exception {
+        Workbook workbook = new Workbook("sheet1");
+        workbook.addWorksheet("sheet2");
+        workbook.addWorksheet("sheet3");
+        workbook.addWorksheet("sheet4");
+        workbook.setSelectedWorksheet(index);
+        Workbook givenWorkbook = writeAndReadWorkbook(workbook);
+        assertEquals(index, givenWorkbook.getSelectedWorksheet());
+    }
+
+    @DisplayName("Test of the 'LockWindowsIfProtected' property when writing and reading a workbook")
+    @ParameterizedTest(name = "Given state {0} should lead to a loaded workbook with this state")
+    @CsvSource({
+            "true",
+            "false",
+    })
+    void readWorkbookLockWindowsTest(boolean locked) throws Exception {
+        Workbook workbook = new Workbook("sheet1");
+        workbook.setWorkbookProtection(true, locked, false, null);
+        Workbook givenWorkbook = writeAndReadWorkbook(workbook);
+        assertEquals(locked, givenWorkbook.isWindowsLockedIfProtected());
+    }
+
+    @DisplayName("Test of the 'LockStructureIfProtected' property when writing and reading a workbook")
+    @ParameterizedTest(name = "Given state {0} should lead to a loaded workbook with this state")
+    @CsvSource({
+            "true",
+            "false",
+    })
+    void readWorkbookLockStructureTest(boolean locked) throws Exception {
+        Workbook workbook = new Workbook("sheet1");
+        workbook.setWorkbookProtection(true, false, locked, null);
+        Workbook givenWorkbook = writeAndReadWorkbook(workbook);
+        assertEquals(locked, givenWorkbook.isStructureLockedIfProtected());
+    }
+
+    @DisplayName("Test of the 'WorkbookProtectionPasswordHash' property when writing and reading a workbook")
+    @ParameterizedTest(name = "Given password {0} should lead to a loaded workbook with a hash of this value")
+    @CsvSource({
+            "NULL, null",
+            "STRING, ''",
+            "STRING,A",
+            "STRING,123",
+            "STRING,test",
+    })
+    void readWorkbookPasswordHashTest(String sourceType, String sourceValue) throws Exception {
+        String plainText = (String)TestUtils.createInstance(sourceType, sourceValue);
+        Workbook workbook = new Workbook("sheet1");
+        workbook.setWorkbookProtection(true, false, true, plainText);
+        Workbook givenWorkbook = writeAndReadWorkbook(workbook);
+        String hash = Helper.generatePasswordHash(plainText);
+        if (hash.equals(""))
+        {
+            hash = null;
+        }
+        assertEquals(hash, givenWorkbook.getWorkbookProtectionPasswordHash());
+    }
+
 
     private static Workbook writeAndReadWorkbook(Workbook workbook) throws Exception {
         return TestUtils.saveAndLoadWorkbook(workbook, null);

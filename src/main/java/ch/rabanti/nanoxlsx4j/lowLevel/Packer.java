@@ -111,7 +111,7 @@ public class Packer {
             sb.append("\" />\r\n");
         }
         sb.append("</Types>");
-        Document d = this.xlsxWriterReference.createXMLDocument(sb.toString(), "CONTENTTYPE");
+        Document d = this.xlsxWriterReference.createXMLDocument(sb.toString());
         return XlsxWriter.createBytesFromDocument(d);
     }
 
@@ -147,7 +147,7 @@ public class Packer {
             sb.append("\"/>\r\n");
         }
         sb.append("</Relationships>");
-        Document d = this.xlsxWriterReference.createXMLDocument(sb.toString(), "REL: " + rel.currentId);
+        Document d = this.xlsxWriterReference.createXMLDocument(sb.toString());
         return XlsxWriter.createBytesFromDocument(d);
     }
 
@@ -191,7 +191,7 @@ public class Packer {
     /**
      * Nested class representing a relationship (MSXML)
      */
-    public class Relationship {
+    public static class Relationship {
         private final String rootFolder;
         private final List<String> targetList;
         private final List<String> typeList;

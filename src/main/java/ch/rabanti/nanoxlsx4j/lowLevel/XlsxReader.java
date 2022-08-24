@@ -257,10 +257,16 @@ public class XlsxReader {
             }
             wb.addWorksheet(ws);
         }
-        if (styleReaderContainer.getMruColors().size() > 0){
+        if (!styleReaderContainer.getMruColors().isEmpty()){
             for (String color : styleReaderContainer.getMruColors()){
                 wb.addMruColor(color);
             }
+        }
+        wb.setHidden(workbook.isHidden());
+        wb.setSelectedWorksheet(workbook.getSelectedWorksheet());
+        if (workbook.isProtected()){
+            wb.setWorkbookProtection(workbook.isProtected(), workbook.isLockWindows(), workbook.isLockStructure(), null);
+            wb.setWorkbookProtectionPasswordHash(workbook.getPasswordHash());
         }
         wb.setImportState(false);
         return wb;

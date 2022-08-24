@@ -19,6 +19,12 @@ import java.util.Map;
  */
 public class WorkbookReader {
     private final Map<Integer, WorksheetDefinition> worksheetDefinitions;
+    private boolean hidden;
+    private int selectedWorksheet;
+    private boolean wbProtected;
+    private boolean lockWindows;
+    private boolean lockStructure;
+    private String passwordHash;
 
     /**
      * Hashmap of worksheet definitions. The key is the worksheet number and the value is a WorksheetDefinition object
@@ -28,6 +34,54 @@ public class WorkbookReader {
      */
     public Map<Integer, WorksheetDefinition> getWorksheetDefinitions() {
         return worksheetDefinitions;
+    }
+
+    /**
+     * Hidden state of the workbook
+     * @return True if hidden
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /**
+     * Selected worksheet of the workbook
+     * @return Index of the worksheet
+     */
+    public int getSelectedWorksheet() {
+        return selectedWorksheet;
+    }
+
+    /**
+     * Protection state of the workbook
+     * @return True if protected
+     */
+    public boolean isProtected() {
+        return wbProtected;
+    }
+
+    /**
+     * Lock state of the windows
+     * @return True if locked
+     */
+    public boolean isLockWindows() {
+        return lockWindows;
+    }
+
+    /**
+     * Lock state of the structural elements
+     * @return True if locked
+     */
+    public boolean isLockStructure() {
+        return lockStructure;
+    }
+
+    /**
+     * Password hash if available
+     * @return Hash as string
+     */
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
     /**
@@ -48,7 +102,16 @@ public class WorkbookReader {
             XmlDocument xr = new XmlDocument();
             xr.load(stream);
             for (XmlDocument.XmlNode node : xr.getDocumentElement().getChildNodes()) {
-                getWorkbookInformation(node);
+                if (node.getName().equalsIgnoreCase("sheets") && node.hasChildNodes()){
+                    getWorksheetInformation(node.getChildNodes());
+                }
+                else if (node.getName().equalsIgnoreCase("bookViews") && node.hasChildNodes()){
+                    getViewInformation(node.getChildNodes());
+                }
+                else if (node.getName().equalsIgnoreCase("workbookProtection")){
+                    getProtectionInformation(node);
+                }
+
             }
         } catch (Exception ex) {
             throw new IOException("The XML entry could not be read from the input stream. Please see the inner exception:", ex);
@@ -60,32 +123,66 @@ public class WorkbookReader {
     }
 
     /**
-     * Finds the workbook information recursively
-     *
+     * Gets the workbook protection information
      * @param node Root node to check
-     * @throws IOException Thrown if the workbook information could not be determined
      */
-    private void getWorkbookInformation(XmlDocument.XmlNode node) throws IOException {
-        if (node.getName().equalsIgnoreCase("sheet")) {
-            try {
-                String sheetName = node.getAttribute("name", "worksheet1");
-                int id = Integer.parseInt(node.getAttribute("sheetId")); // Default will rightly throw an exception
-                String state = node.getAttribute("state");
-                boolean hidden = false;
-                if (state != null && state.equalsIgnoreCase("hidden"))
-                {
-                    hidden = true;
-                }
-                WorksheetDefinition definition = new WorksheetDefinition(id, sheetName);
-                definition.setHidden(hidden);
-                worksheetDefinitions.put(id, definition);
-            } catch (Exception e) {
-                throw new IOException("The workbook information could not be resolved. Please see the inner exception:", e);
+    private void getProtectionInformation(XmlDocument.XmlNode node) {
+        this.wbProtected = true;
+        String attribute = node.getAttribute("lockWindows");
+        if (attribute != null && attribute.equals("1")){
+            this.lockWindows = true;
+        }
+        attribute = node.getAttribute("lockStructure");
+        if (attribute != null && attribute.equals("1")){
+            this.lockStructure = true;
+        }
+        attribute = node.getAttribute("workbookPassword");
+        if (attribute != null){
+            this.passwordHash = attribute;
+        }
+    }
+
+    /**
+     * Gets the workbook view information
+     * @param nodes View nodes to check
+     */
+    private void getViewInformation(XmlDocument.XmlNodeList nodes) {
+        for(XmlDocument.XmlNode node : nodes){
+            String attribute = node.getAttribute("visibility");
+            if (attribute != null && attribute.equalsIgnoreCase("hidden")){
+                this.hidden = true;
+            }
+            attribute = node.getAttribute("activeTab");
+            if (attribute != null && !attribute.isEmpty()){
+                this.selectedWorksheet = Integer.parseInt(attribute);
             }
         }
-        if (node.hasChildNodes()) {
-            for (XmlDocument.XmlNode childNode : node.getChildNodes()) {
-                getWorkbookInformation(childNode);
+    }
+
+    /**
+     * Gets the worksheet information
+     *
+     * @param nodes Sheet nodes to check
+     * @throws IOException Thrown if the workbook information could not be determined
+     */
+    private void getWorksheetInformation(XmlDocument.XmlNodeList nodes) throws IOException {
+        for(XmlDocument.XmlNode node : nodes){
+            if (node.getName().equalsIgnoreCase("sheet")) {
+                try {
+                    String sheetName = node.getAttribute("name", "worksheet1");
+                    int id = Integer.parseInt(node.getAttribute("sheetId")); // Default will rightly throw an exception
+                    String state = node.getAttribute("state");
+                    boolean hidden = false;
+                    if (state != null && state.equalsIgnoreCase("hidden"))
+                    {
+                        hidden = true;
+                    }
+                    WorksheetDefinition definition = new WorksheetDefinition(id, sheetName);
+                    definition.setHidden(hidden);
+                    worksheetDefinitions.put(id, definition);
+                } catch (Exception e) {
+                    throw new IOException("The workbook information could not be resolved. Please see the inner exception:", e);
+                }
             }
         }
     }

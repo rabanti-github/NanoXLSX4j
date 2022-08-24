@@ -138,7 +138,7 @@ public class XlsxWriter {
         sb.append("<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\">");
         sb.append(createAppString());
         sb.append("</Properties>");
-        return createXMLDocument(sb.toString(), "APPPROPERTIES");
+        return createXMLDocument(sb.toString());
     }
 
     /**
@@ -213,7 +213,7 @@ public class XlsxWriter {
         sb.append("<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:dcmitype=\"http://purl.org/dc/dcmitype/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
         sb.append(createCorePropertiesString());
         sb.append("</cp:coreProperties>");
-        return createXMLDocument(sb.toString(), "COREPROPERTIES");
+        return createXMLDocument(sb.toString());
     }
 
     /**
@@ -566,7 +566,7 @@ public class XlsxWriter {
             appendSharedString(sb, keys.get(i));
         }
         sb.append("</sst>");
-        return createXMLDocument(sb.toString(), "SHAREDSTRINGS");
+        return createXMLDocument(sb.toString());
     }
 
     private void appendSharedString(StringBuilder sb, String value) {
@@ -918,7 +918,7 @@ public class XlsxWriter {
             }
         }
         sb.append("</styleSheet>");
-        return createXMLDocument(sb.toString(), "STYLESHEET");
+        return createXMLDocument(sb.toString());
     }
 
     /**
@@ -1092,7 +1092,7 @@ public class XlsxWriter {
         }
         sb.append("</sheets>");
         sb.append("</workbook>");
-        return createXMLDocument(sb.toString(), "WORKBOOK");
+        return createXMLDocument(sb.toString());
     }
 
     /**
@@ -1111,7 +1111,7 @@ public class XlsxWriter {
             }
             if (!Helper.isNullOrEmpty(workbook.getWorkbookProtectionPassword())) {
                 sb.append(" workbookPassword=\"");
-                sb.append(Helper.generatePasswordHash(workbook.getWorkbookProtectionPassword()));
+                sb.append(workbook.getWorkbookProtectionPasswordHash());
                 sb.append("\"");
             }
             sb.append("/>");
@@ -1128,7 +1128,6 @@ public class XlsxWriter {
     private Document createWorksheetPart(Worksheet worksheet) throws IOException {
         worksheet.recalculateAutoFilter();
         worksheet.recalculateColumns();
-        List<DynamicRow> celldata = getSortedSheetData(worksheet);
         StringBuilder sb = new StringBuilder();
         sb.append("<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac\" xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\">");
 
@@ -1166,7 +1165,7 @@ public class XlsxWriter {
             sb.append("<autoFilter ref=\"").append(worksheet.getAutoFilterRange().toString()).append("\"/>");
         }
         sb.append("</worksheet>");
-        return createXMLDocument(sb.toString(), "WORKSHEET: " + worksheet.getSheetName());
+        return createXMLDocument(sb.toString());
     }
 
     /**
@@ -1331,14 +1330,13 @@ public class XlsxWriter {
     }
 
     /**
-     * Creates a XML document from a string
+     * Creates an XML document from a string
      *
      * @param rawInput String to process
-     * @param title    Title for interception / debugging purpose
      * @return Formatted XML document
      * @throws IOException Thrown in case of an error while creating the XML document
      */
-    public Document createXMLDocument(String rawInput, String title) throws IOException {
+    public Document createXMLDocument(String rawInput) throws IOException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = factory.newDocumentBuilder();
