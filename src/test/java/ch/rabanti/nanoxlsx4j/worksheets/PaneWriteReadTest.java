@@ -6,6 +6,7 @@ import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -70,6 +71,34 @@ public class PaneWriteReadTest {
         assertRowSplit(rowNumber, freeze, givenWorksheet);
     }
 
+    @DisplayName("Test of the 'PaneSplitTopHeight' property defined by a split address with custom row heights, when writing and reading a worksheet")
+    @Test()
+    void paneSplitTopHeightWriteReadTest3() throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        workbook.setCurrentWorksheet(0);
+        workbook.getCurrentWorksheet().setRowHeight(0, 18f);
+        workbook.getCurrentWorksheet().setRowHeight(2, 22.5f);
+        workbook.getCurrentWorksheet().setHorizontalSplit(4, false, new Address("D1"), Worksheet.WorksheetPane.topLeft);
+
+        float expectedHeight = 0f;
+        for(int i = 0; i < 4; i++)
+        {
+            if (workbook.getCurrentWorksheet().getRowHeights().containsKey(i))
+            {
+                expectedHeight += Helper.getInternalRowHeight(workbook.getCurrentWorksheet().getRowHeights().get(i));
+            }
+            else
+            {
+                expectedHeight += Helper.getInternalRowHeight(Worksheet.DEFAULT_ROW_HEIGHT);
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, 0);
+        // There may be a deviation by rounding
+        float delta = Math.abs(expectedHeight - givenWorksheet.getPaneSplitTopHeight());
+        assertTrue(delta < 0.15);
+        assertNull(givenWorksheet.getFreezeSplitPanes());
+    }
+
     @DisplayName("Test of the 'PaneSplitLeftWidth' property when writing and reading a worksheet")
     @ParameterizedTest(name = "Given width {0} and active pane {1} should lead to same value on worksheet {2} when writing and reading a worksheet")
     @CsvSource({
@@ -127,7 +156,36 @@ public class PaneWriteReadTest {
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
         assertColumnSplit(columnNumber, freeze, givenWorksheet, false);
     }
-    
+
+    @DisplayName("Test of the 'PaneSplitLeftWidth' property defined by a split address with custom column widths, when writing and reading a worksheet")
+    @Test()
+    void paneSplitLeftWidthWriteReadTest3() throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        workbook.setCurrentWorksheet(0);
+        workbook.getCurrentWorksheet().setColumnWidth(0, 18f);
+        workbook.getCurrentWorksheet().setColumnWidth(2, 22.5f);
+        workbook.getCurrentWorksheet().setVerticalSplit(4, false, new Address("D1"), Worksheet.WorksheetPane.topLeft);
+
+        float expectedWidth = 0f;
+        for(int i = 0; i < 4; i++)
+        {
+            if (workbook.getCurrentWorksheet().getColumns().keySet().contains(i))
+            {
+                expectedWidth += Helper.getInternalColumnWidth(workbook.getCurrentWorksheet().getColumns().get(i).getWidth());
+            }
+            else
+            {
+                expectedWidth += Helper.getInternalColumnWidth(Worksheet.DEFAULT_COLUMN_WIDTH);
+            }
+
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, 0);
+        // There may be a deviation by rounding
+        float delta = Math.abs(expectedWidth - givenWorksheet.getPaneSplitLeftWidth());
+        assertTrue(delta < 0.15);
+        assertNull(givenWorksheet.getFreezeSplitPanes());
+    }
+
     @DisplayName("Test of the 'ActivePane' property when writing and reading a worksheet")
     @ParameterizedTest(name = "Given height {0} and active pane {1} should lead to same value on worksheet {2} when writing and reading a worksheet")
     @CsvSource({
