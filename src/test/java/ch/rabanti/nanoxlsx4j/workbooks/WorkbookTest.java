@@ -2,9 +2,11 @@ package ch.rabanti.nanoxlsx4j.workbooks;
 
 import ch.rabanti.nanoxlsx4j.Address;
 import ch.rabanti.nanoxlsx4j.Metadata;
+import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
+import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.File;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -558,6 +561,58 @@ public class WorkbookTest {
         assertEquals(expectedLockStructureState, workbook.isStructureLockedIfProtected());
         assertEquals(expectedProtectionState, workbook.isWorkbookProtectionUsed());
         assertEquals(password, workbook.getWorkbookProtectionPassword());
+    }
+
+    @DisplayName("Test of the addMruColor function")
+    @Test()
+    void addMruColorTest()
+    {
+        Workbook workbook = new Workbook();
+        assertEquals(0, workbook.getMruColors().size());
+        workbook.addMruColor("AABBCC");
+        assertEquals(1, workbook.getMruColors().size());
+        assertEquals("FFAABBCC", workbook.getMruColors().get(0));
+    }
+
+    @DisplayName("Test of the failing addMruColor function when adding an invalid color value")
+    @ParameterizedTest(name = "Given value {0} should lead to an exception")
+    @CsvSource({
+            "NULL, ''",
+            "STRING, ''",
+            "STRING, ' '",
+            "STRING, 'GGGGGG'",
+            "STRING, 'AABBCCDD22'",
+    })
+    void addMruColorFailTest(String sourceType, String rawValue)
+    {
+        String value = (String)TestUtils.createInstance(sourceType, rawValue);
+        Workbook workbook = new Workbook("worksheet1");
+        assertThrows(StyleException.class, () -> workbook.addMruColor(value));
+    }
+
+    @DisplayName("Test of the clearMruColors function")
+    @Test()
+    void clearMruColorsTest()
+    {
+        Workbook workbook = new Workbook();
+        workbook.addMruColor("00AAFF");
+        workbook.addMruColor("AABBCC");
+        assertEquals(2, workbook.getMruColors().size());
+        workbook.clearMruColors();
+        assertEquals(0, workbook.getMruColors().size());
+    }
+
+    @DisplayName("Test of the getMruColors function")
+    @Test()
+    void getMruColorsTest()
+    {
+        Workbook workbook = new Workbook();
+        workbook.addMruColor("00AAFF");
+        workbook.addMruColor("AABBCC");
+        List<String> list = workbook.getMruColors();
+        assertEquals(2, workbook.getMruColors().size());
+        assertEquals("FF00AAFF", workbook.getMruColors().get(0));
+        assertEquals("FFAABBCC", workbook.getMruColors().get(1));
     }
 
     private <T> void assertWorksheetRemoval(Workbook workbook, Consumer<T> removalFunction, int worksheetCount, String currentWorksheet, int selectedWorksheetIndex, T worksheetToRemove, String expectedCurrentWorksheet, int expectedSelectedWorksheetIndex) {

@@ -257,6 +257,11 @@ public class XlsxReader {
             }
             wb.addWorksheet(ws);
         }
+        if (styleReaderContainer.getMruColors().size() > 0){
+            for (String color : styleReaderContainer.getMruColors()){
+                wb.addMruColor(color);
+            }
+        }
         wb.setImportState(false);
         return wb;
     }

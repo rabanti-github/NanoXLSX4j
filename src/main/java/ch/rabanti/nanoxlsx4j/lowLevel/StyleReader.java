@@ -6,6 +6,7 @@
  */
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
+import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.styles.Border;
 import ch.rabanti.nanoxlsx4j.styles.CellXf;
@@ -61,6 +62,9 @@ public class StyleReader {
             }
             else if (node.getName().equalsIgnoreCase("fonts")) { // handle fonts
                 this.getFonts(node);
+            }
+            else if (node.getName().equalsIgnoreCase("colors")) { // handle MRU colors
+                this.getColors(node);
             }
             // TODO: Implement other style components
         }
@@ -374,6 +378,19 @@ public class StyleReader {
         }
     }
 
+    private void getColors(XmlDocument.XmlNode node){
+        for (XmlDocument.XmlNode color : node.getChildNodes()){
+            XmlDocument.XmlNode mruColor = getChildNode(color, "color");
+            if (color.getName().equals("mruColors") && mruColor != null){
+                for(XmlDocument.XmlNode value : color.getChildNodes()){
+                    String attribute = value.getAttribute("rgb");
+                    if(attribute != null){
+                        styleReaderContainer.addMruColor(attribute);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Resolves a color value from an XML node, when a rgb attribute exists

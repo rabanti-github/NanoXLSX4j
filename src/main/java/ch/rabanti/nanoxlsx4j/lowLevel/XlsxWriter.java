@@ -278,35 +278,14 @@ public class XlsxWriter {
      * @return String with formatted XML data
      */
     private String createMruColorsString() {
-        Font[] fonts = this.styles.getFonts();
-        Fill[] fills = this.styles.getFills();
         StringBuilder sb = new StringBuilder();
         List<String> tempColors = new ArrayList<>();
-        for (Font font : fonts) {
-            if (Helper.isNullOrEmpty(font.getColorValue()) == true) {
+        for (String item : this.workbook.getMruColors()) {
+            if (item.equals(Fill.DEFAULT_COLOR)) {
                 continue;
             }
-            if (font.getColorValue().equals(Fill.DEFAULT_COLOR)) {
-                continue;
-            }
-            if (!tempColors.contains(font.getColorValue())) {
-                tempColors.add(font.getColorValue());
-            }
-        }
-        for (Fill fill : fills) {
-            if (!Helper.isNullOrEmpty(fill.getBackgroundColor())) {
-                if (!fill.getBackgroundColor().equals(Fill.DEFAULT_COLOR)) {
-                    if (!tempColors.contains(fill.getBackgroundColor())) {
-                        tempColors.add(fill.getBackgroundColor());
-                    }
-                }
-            }
-            if (!Helper.isNullOrEmpty(fill.getForegroundColor())) {
-                if (!fill.getForegroundColor().equals(Fill.DEFAULT_COLOR)) {
-                    if (!tempColors.contains(fill.getForegroundColor())) {
-                        tempColors.add(fill.getForegroundColor());
-                    }
-                }
+            if (!tempColors.contains(item)) {
+                tempColors.add(item);
             }
         }
         if (tempColors.size() > 0) {
@@ -932,7 +911,7 @@ public class XlsxWriter {
         sb.append("\">");
         sb.append(xfsStings).append("</cellXfs>");
         if (this.workbook.getWorkbookMetadata() != null) {
-            if (!Helper.isNullOrEmpty(mruColorString) && this.workbook.getWorkbookMetadata().isUseColorMRU() == true) {
+            if (!Helper.isNullOrEmpty(mruColorString)) {
                 sb.append("<colors>");
                 sb.append(mruColorString);
                 sb.append("</colors>");
@@ -1085,9 +1064,6 @@ public class XlsxWriter {
      * @throws IOException    Thrown in case of an error while creating the XML document
      */
     private Document createWorkbookDocument() throws IOException {
-        if (workbook.getWorksheets().isEmpty()) {
-            throw new RangeException("The workbook can not be created because no worksheet was defined.");
-        }
         StringBuilder sb = new StringBuilder();
         sb.append("<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">");
         if (workbook.getSelectedWorksheet() > 0 || workbook.isHidden()) {
@@ -1101,12 +1077,18 @@ public class XlsxWriter {
         }
         createWorkbookProtectionString(sb);
         sb.append("<sheets>");
-        for (Worksheet item : workbook.getWorksheets()) {
-            sb.append("<sheet r:id=\"rId").append(item.getSheetID()).append("\" sheetId=\"").append(item.getSheetID()).append("\" name=\"").append(escapeXMLAttributeChars(item.getSheetName())).append("\"");
-            if (item.isHidden()) {
-                sb.append(" state=\"hidden\"");
+        if (!workbook.getWorksheets().isEmpty()) {
+            for (Worksheet item : workbook.getWorksheets()) {
+                sb.append("<sheet r:id=\"rId").append(item.getSheetID()).append("\" sheetId=\"").append(item.getSheetID()).append("\" name=\"").append(escapeXMLAttributeChars(item.getSheetName())).append("\"");
+                if (item.isHidden()) {
+                    sb.append(" state=\"hidden\"");
+                }
+                sb.append("/>");
             }
-            sb.append("/>");
+        }
+        else{
+            // Fallback on empty workbook
+            sb.append("<sheet r:id=\"rId1\" sheetId=\"1\" name=\"sheet1\"/>");
         }
         sb.append("</sheets>");
         sb.append("</workbook>");
@@ -1470,13 +1452,23 @@ public class XlsxWriter {
             rel.addRelationshipEntry("/docProps/core.xml", "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties");
             rel.addRelationshipEntry("/docProps/app.xml", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties");
             rel = p.createRelationship("xl/_rels/workbook.xml.rels");
-            for (int i = 0; i < this.workbook.getWorksheets().size(); i++) {
-                sheet = this.workbook.getWorksheets().get(i);
-                doc = createWorksheetPart(sheet);
-                file = "sheet" + sheet.getSheetID() + ".xml";
+            if (!workbook.getWorksheets().isEmpty()){
+                for (int i = 0; i < this.workbook.getWorksheets().size(); i++) {
+                    sheet = this.workbook.getWorksheets().get(i);
+                    doc = createWorksheetPart(sheet);
+                    file = "sheet" + sheet.getSheetID() + ".xml";
+                    rel.addRelationshipEntry("/xl/worksheets/" + file, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet");
+                    p.addPart("xl/worksheets/" + file, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml", doc);
+                }
+            }
+            else{
+                //  Fallback on empty workbook
+                doc = createWorksheetPart(new Worksheet());
+                file = "sheet1.xml";
                 rel.addRelationshipEntry("/xl/worksheets/" + file, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet");
                 p.addPart("xl/worksheets/" + file, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml", doc);
             }
+
             rel.addRelationshipEntry("/xl/styles.xml", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles");
             rel.addRelationshipEntry("/xl/sharedStrings.xml", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings");
             p.addPart("docProps/core.xml", "application/vnd.openxmlformats-package.core-properties+xml", core);

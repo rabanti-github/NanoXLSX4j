@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * Class to manage all styles at runtime, before writing XLSX files. The main purpose is deduplication and decoupling of styles from workbooks at runtime
+ * @apiNote Be careful when changing style data in this class. It may lead to inconsistencies
  */
 public class StyleRepository {
 

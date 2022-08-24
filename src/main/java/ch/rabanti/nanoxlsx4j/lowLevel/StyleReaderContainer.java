@@ -29,12 +29,13 @@ public class StyleReaderContainer {
 
     // ### P R I V A T E  F I E L D S ###
 
-    private List<CellXf> cellXfs = new ArrayList<>();
-    private List<NumberFormat> numberFormats = new ArrayList<>();
-    private List<Style> styles = new ArrayList<>();
-    private List<Border> borders = new ArrayList<>();
-    private List<Fill> fills = new ArrayList<>();
-    private List<Font> fonts = new ArrayList<>();
+    private final List<CellXf> cellXfs = new ArrayList<>();
+    private final List<NumberFormat> numberFormats = new ArrayList<>();
+    private final List<Style> styles = new ArrayList<>();
+    private final List<Border> borders = new ArrayList<>();
+    private final List<Fill> fills = new ArrayList<>();
+    private final List<Font> fonts = new ArrayList<>();
+    private final List<String> mruColors = new ArrayList<>();
 
     // ### M E T H O D S ###
 
@@ -230,6 +231,22 @@ public class StyleReaderContainer {
             // ignore
         }
         return null;
+    }
+
+    /**
+     * Adds a color value to the MRU list
+     * @param value ARGB value
+     */
+    void addMruColor(String value){
+        this.mruColors.add(value);
+    }
+
+    /**
+     * Gets the MRU colors as list
+     * @return ARGB values
+     */
+    List<String> getMruColors(){
+        return this.mruColors;
     }
 
     // ### S U B - C L A S S E S ###

@@ -161,17 +161,6 @@ public class MetadataTest {
         assertEquals("test", metadata.getTitle());
     }
 
-
-    @DisplayName("Test of the get and set function of the useColorMRU field ")
-    @Test()
-    void useColorMRUTest() {
-        Metadata metadata = new Metadata();
-        assertFalse(metadata.isUseColorMRU());
-        metadata.setUseColorMRU(true);
-        assertTrue(metadata.isUseColorMRU());
-    }
-
-
     @DisplayName("Test of the Constructor")
     @Test()
     void constructorTest() {

@@ -25,6 +25,7 @@ import ch.rabanti.nanoxlsx4j.styles.StyleRepository;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +48,7 @@ public class Workbook {
     private List<Worksheet> worksheets;
     private boolean hidden;
     private boolean importInProgress = false;
+    private final List<String> mruColors = new ArrayList<>();
 
     /**
      * Shortener omits getter and setter to simplify the access (Can throw a WorksheetException if not defined)
@@ -250,6 +252,32 @@ public class Workbook {
 
 // ### M E T H O D S ###
 
+    /**
+     * Adds a color value (HEX; 6-digit RGB or 8-digit RGBA) to the MRU list
+     * @param color RGB code in hex format (either 6 characters, e.g. FF00AC or 8 characters with leading alpha value). Alpha will be set to full opacity (FF) in case of 6 characters
+     */
+    public void addMruColor(String color){
+        if (color != null && color.length() == 6){
+            color = "FF" + color;
+        }
+        Fill.validateColor(color, true);
+        mruColors.add(color.toUpperCase());
+    }
+
+    /**
+     * Gets the MRU color list
+     * @return Immutable list of color values
+     */
+    public List<String> getMruColors(){
+        return new ArrayList<>(mruColors);
+    }
+
+    /**
+     * Clears the MRU color list
+     */
+    public void clearMruColors(){
+        mruColors.clear();
+    }
 
     /**
      * Adds a style to the style manager

@@ -28,7 +28,6 @@ public class Metadata {
     private String manager;
     private String subject;
     private String title;
-    private boolean useColorMRU;
 
 // ### G E T T E R S  &  S E T T E R S ###
 
@@ -251,31 +250,12 @@ public class Metadata {
         this.title = title;
     }
 
-    /**
-     * If true, custom defined colors (in styles) will be added as recent colors (MRU)
-     *
-     * @return True if color MRU is used
-     */
-    public boolean isUseColorMRU() {
-        return useColorMRU;
-    }
-
-    /**
-     * If true, custom defined colors (in styles) will be added as recent colors (MRU)
-     *
-     * @param useColorMRU True if color MRU is used otherwise false
-     */
-    public void setUseColorMRU(boolean useColorMRU) {
-        this.useColorMRU = useColorMRU;
-    }
-
 // ### C O N S T R U C T O R S ###
 
     /**
      * Default constructor
      */
     public Metadata() {
-        this.useColorMRU = false;
         this.application = Version.APPLICATIONNAME;
         this.applicationVersion = Version.VERSION;
 
