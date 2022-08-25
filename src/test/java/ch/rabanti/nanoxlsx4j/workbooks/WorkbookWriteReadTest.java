@@ -3,7 +3,6 @@ package ch.rabanti.nanoxlsx4j.workbooks;
 import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
-import ch.rabanti.nanoxlsx4j.Worksheet;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,7 +23,7 @@ public class WorkbookWriteReadTest {
         String color2 = "FFDD22";
         workbook.addMruColor(color1);
         workbook.addMruColor(color2);
-        Workbook givenWorkbook = writeAndReadWorkbook(workbook);
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
         List<String> mruColors = ((List<String>)givenWorkbook.getMruColors());
         Collections.sort(mruColors);
         assertEquals(2, mruColors.size());
@@ -41,7 +40,7 @@ public class WorkbookWriteReadTest {
     void readWorkbookHiddenTest(boolean hidden) throws Exception {
         Workbook workbook = new Workbook();
         workbook.setHidden(hidden);
-        Workbook givenWorkbook = writeAndReadWorkbook(workbook);
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
         assertEquals(hidden, givenWorkbook.isHidden());
     }
 
@@ -58,7 +57,7 @@ public class WorkbookWriteReadTest {
         workbook.addWorksheet("sheet3");
         workbook.addWorksheet("sheet4");
         workbook.setSelectedWorksheet(index);
-        Workbook givenWorkbook = writeAndReadWorkbook(workbook);
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
         assertEquals(index, givenWorkbook.getSelectedWorksheet());
     }
 
@@ -71,7 +70,7 @@ public class WorkbookWriteReadTest {
     void readWorkbookLockWindowsTest(boolean locked) throws Exception {
         Workbook workbook = new Workbook("sheet1");
         workbook.setWorkbookProtection(true, locked, false, null);
-        Workbook givenWorkbook = writeAndReadWorkbook(workbook);
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
         assertEquals(locked, givenWorkbook.isWindowsLockedIfProtected());
     }
 
@@ -84,7 +83,7 @@ public class WorkbookWriteReadTest {
     void readWorkbookLockStructureTest(boolean locked) throws Exception {
         Workbook workbook = new Workbook("sheet1");
         workbook.setWorkbookProtection(true, false, locked, null);
-        Workbook givenWorkbook = writeAndReadWorkbook(workbook);
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
         assertEquals(locked, givenWorkbook.isStructureLockedIfProtected());
     }
 
@@ -101,7 +100,7 @@ public class WorkbookWriteReadTest {
         String plainText = (String)TestUtils.createInstance(sourceType, sourceValue);
         Workbook workbook = new Workbook("sheet1");
         workbook.setWorkbookProtection(true, false, true, plainText);
-        Workbook givenWorkbook = writeAndReadWorkbook(workbook);
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
         String hash = Helper.generatePasswordHash(plainText);
         if (hash.equals(""))
         {
@@ -111,7 +110,4 @@ public class WorkbookWriteReadTest {
     }
 
 
-    private static Workbook writeAndReadWorkbook(Workbook workbook) throws Exception {
-        return TestUtils.saveAndLoadWorkbook(workbook, null);
-    }
 }

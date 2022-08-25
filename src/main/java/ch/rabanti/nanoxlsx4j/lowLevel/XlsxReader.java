@@ -37,6 +37,7 @@ public class XlsxReader {
     private ByteArrayInputStream memoryStream;
     private final Map<Integer, WorksheetReader> worksheets;
     private WorkbookReader workbook;
+    private MetaDataReader metaDataReader;
     private ImportOptions importOptions;
     private StyleReaderContainer styleReaderContainer;
 
@@ -133,6 +134,12 @@ public class XlsxReader {
             this.workbook = new WorkbookReader();
             stream = getEntryStream("xl/workbook.xml", zf);
             this.workbook.read(stream);
+
+            metaDataReader = new MetaDataReader();
+            stream = getEntryStream("docProps/app.xml", zf);
+            this.metaDataReader.ReadAppData(stream);
+            stream = getEntryStream("docProps/core.xml", zf);
+            this.metaDataReader.ReadCoreData(stream);
 
             int worksheetIndex = 1;
             WorksheetReader wr;
@@ -268,6 +275,7 @@ public class XlsxReader {
             wb.setWorkbookProtection(workbook.isProtected(), workbook.isLockWindows(), workbook.isLockStructure(), null);
             wb.setWorkbookProtectionPasswordHash(workbook.getPasswordHash());
         }
+        wb.getWorkbookMetadata().setApplication(metaDataReader.getApplication());
         wb.setImportState(false);
         return wb;
     }
