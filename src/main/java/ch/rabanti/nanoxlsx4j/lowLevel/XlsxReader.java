@@ -276,6 +276,11 @@ public class XlsxReader {
             wb.setWorkbookProtectionPasswordHash(workbook.getPasswordHash());
         }
         wb.getWorkbookMetadata().setApplication(metaDataReader.getApplication());
+        wb.getWorkbookMetadata().setApplicationVersion(metaDataReader.getApplicationVersion());
+        wb.getWorkbookMetadata().setCreator(metaDataReader.getCreator());
+        wb.getWorkbookMetadata().setCategory(metaDataReader.getCategory());
+        wb.getWorkbookMetadata().setCompany(metaDataReader.getCompany());
+        wb.getWorkbookMetadata().setContentStatus(metaDataReader.getContentStatus());
         wb.setImportState(false);
         return wb;
     }
