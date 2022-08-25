@@ -21,6 +21,12 @@ public class MetaDataReader {
     private String company;
     private String contentStatus;
     private String creator;
+    private String description;
+    private String hyperlinkBase;
+    private String keywords;
+    private String manager;
+    private String subject;
+    private String title;
 
     /**
      * Gets the application that has created an XLSX file. This is an arbitrary text and the default of this library is "NanoXLSX4j"
@@ -47,27 +53,11 @@ public class MetaDataReader {
     }
 
     /**
-     * Sets the version of the application that has created an XLSX file
-     * @param applicationVersion Version number as string
-     */
-    public void setApplicationVersion(String applicationVersion) {
-        this.applicationVersion = applicationVersion;
-    }
-
-    /**
      * Gets the document category of an XLSX file
      * @return Document category
      */
     public String getCategory() {
         return category;
-    }
-
-    /**
-     * Sets the document category of an XLSX file
-     * @param category Document category
-     */
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     /**
@@ -79,27 +69,11 @@ public class MetaDataReader {
     }
 
     /**
-     * Sets the responsible company of an XLSX file
-     * @param company Company name
-     */
-    public void setCompany(String company) {
-        this.company = company;
-    }
-
-    /**
      * Gets the content status of an XLSX file
      * @return Content status
      */
     public String getContentStatus() {
         return contentStatus;
-    }
-
-    /**
-     * Sets the content status of an XLSX file
-     * @param contentStatus Content status
-     */
-    public void setContentStatus(String contentStatus) {
-        this.contentStatus = contentStatus;
     }
 
     /**
@@ -111,11 +85,51 @@ public class MetaDataReader {
     }
 
     /**
-     * Sets the creator of an XLSX file
-     * @param creator Creator name
+     * Gets the description of an XLSX file
+     * @return Description text
      */
-    public void setCreator(String creator) {
-        this.creator = creator;
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Gets the hyperlink base of an XLSX file
+     * @return Hyperlink base of the document
+     */
+    public String getHyperlinkBase() {
+        return hyperlinkBase;
+    }
+
+    /**
+     * Gets the keywords of an XLSX file
+     * @return Keywords
+     */
+    public String getKeywords() {
+        return keywords;
+    }
+
+    /**
+     * Gets the manager (responsible) of an XLSX file
+     * @return Manager (responsible)
+     */
+    public String getManager() {
+        return manager;
+    }
+
+    /**
+     * Gets the subject of an XLSX file
+     * @return Subject text
+     */
+    public String getSubject() {
+        return subject;
+    }
+
+    /**
+     * Gets the title of an XLSX file
+     * @return Tile text
+     */
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -135,6 +149,12 @@ public class MetaDataReader {
                 }
                 else if (node.getName().equalsIgnoreCase("Company")){
                     this.company = node.getInnerText();
+                }
+                else if (node.getName().equalsIgnoreCase("HyperlinkBase")){
+                    this.hyperlinkBase = node.getInnerText();
+                }
+                else if (node.getName().equalsIgnoreCase("Manager")){
+                    this.manager = node.getInnerText();
                 }
             }
         } catch (Exception ex) {
@@ -163,6 +183,18 @@ public class MetaDataReader {
                 }
                 else if (node.getName().equalsIgnoreCase("Creator")){
                     this.creator = node.getInnerText();
+                }
+                else if (node.getName().equalsIgnoreCase("Description")){
+                    this.description = node.getInnerText();
+                }
+                else if (node.getName().equalsIgnoreCase("Keywords")){
+                    this.keywords = node.getInnerText();
+                }
+                else if (node.getName().equalsIgnoreCase("Subject")){
+                    this.subject = node.getInnerText();
+                }
+                else if (node.getName().equalsIgnoreCase("Title")){
+                    this.title = node.getInnerText();
                 }
             }
         } catch (Exception ex) {

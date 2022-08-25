@@ -281,6 +281,12 @@ public class XlsxReader {
         wb.getWorkbookMetadata().setCategory(metaDataReader.getCategory());
         wb.getWorkbookMetadata().setCompany(metaDataReader.getCompany());
         wb.getWorkbookMetadata().setContentStatus(metaDataReader.getContentStatus());
+        wb.getWorkbookMetadata().setDescription(metaDataReader.getDescription());
+        wb.getWorkbookMetadata().setHyperlinkBase(metaDataReader.getHyperlinkBase());
+        wb.getWorkbookMetadata().setKeywords(metaDataReader.getKeywords());
+        wb.getWorkbookMetadata().setManager(metaDataReader.getManager());
+        wb.getWorkbookMetadata().setSubject(metaDataReader.getSubject());
+        wb.getWorkbookMetadata().setTitle(metaDataReader.getTitle());
         wb.setImportState(false);
         return wb;
     }

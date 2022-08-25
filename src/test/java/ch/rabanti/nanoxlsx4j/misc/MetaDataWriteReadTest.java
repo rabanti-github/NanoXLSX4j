@@ -64,5 +64,58 @@ public class MetaDataWriteReadTest {
         assertEquals("creator1", givenWorkbook.getWorkbookMetadata().getCreator());
     }
 
+    @DisplayName("Test of the 'Description' property when writing and reading a workbook")
+    @Test()
+    void readDescriptionTest() throws Exception {
+        Workbook workbook = new Workbook();
+        workbook.getWorkbookMetadata().setDescription("description1");
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
+        assertEquals("description1", givenWorkbook.getWorkbookMetadata().getDescription());
+    }
+
+    @DisplayName("Test of the 'HyperlinkBase' property when writing and reading a workbook")
+    @Test()
+    void readHyperlinkBaseTest() throws Exception {
+        Workbook workbook = new Workbook();
+        workbook.getWorkbookMetadata().setHyperlinkBase("hyperlinkBase1");
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
+        assertEquals("hyperlinkBase1", givenWorkbook.getWorkbookMetadata().getHyperlinkBase());
+    }
+
+    @DisplayName("Test of the 'Keywords' property when writing and reading a workbook")
+    @Test()
+    void readKeywordsTest() throws Exception {
+        Workbook workbook = new Workbook();
+        workbook.getWorkbookMetadata().setKeywords("keyword1;keyword2");
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
+        assertEquals("keyword1;keyword2", givenWorkbook.getWorkbookMetadata().getKeywords());
+    }
+
+    @DisplayName("Test of the 'Manager' property when writing and reading a workbook")
+    @Test()
+    void readManagerTest() throws Exception {
+        Workbook workbook = new Workbook();
+        workbook.getWorkbookMetadata().setManager("manager1");
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
+        assertEquals("manager1", givenWorkbook.getWorkbookMetadata().getManager());
+    }
+
+    @DisplayName("Test of the 'Subject' property when writing and reading a workbook")
+    @Test()
+    void readSubjectTest() throws Exception {
+        Workbook workbook = new Workbook();
+        workbook.getWorkbookMetadata().setSubject("subject1");
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
+        assertEquals("subject1", givenWorkbook.getWorkbookMetadata().getSubject());
+    }
+
+    @DisplayName("Test of the 'Title' property when writing and reading a workbook")
+    @Test()
+    void readTitleTest() throws Exception {
+        Workbook workbook = new Workbook();
+        workbook.getWorkbookMetadata().setTitle("title1");
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
+        assertEquals("title1", givenWorkbook.getWorkbookMetadata().getTitle());
+    }
 
 }
