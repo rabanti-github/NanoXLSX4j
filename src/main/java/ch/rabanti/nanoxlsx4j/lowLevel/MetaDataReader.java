@@ -37,14 +37,6 @@ public class MetaDataReader {
     }
 
     /**
-     * Sets the application that has created an XLSX file
-     * @param application Application name
-     */
-    public void setApplication(String application) {
-        this.application = application;
-    }
-
-    /**
      * Gets the version of the application that has created an XLSX file
      * @return Version number as string
      */

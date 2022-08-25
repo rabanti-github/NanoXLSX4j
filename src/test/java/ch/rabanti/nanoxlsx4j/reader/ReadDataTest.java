@@ -255,6 +255,8 @@ public class ReadDataTest {
             "invalid_workbook_sheet-definition.xlsx",
             "invalid_worksheet.xlsx",
             "invalid_style.xlsx",
+            "invalid_metadata_app.xlsx",
+            "invalid_metadata_core.xlsx",
             "invalid_sharedStrings.xlsx",
             "invalid_sharedStrings2.xlsx",
             "missing_worksheet.xlsx",

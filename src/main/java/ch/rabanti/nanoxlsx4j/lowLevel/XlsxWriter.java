@@ -420,133 +420,6 @@ public class XlsxWriter {
         sb.append("</row>");
         return sb.toString();
     }
-    /*
-    private String createRowString(DynamicRow dynamicRow, Worksheet worksheet) {
-        int rowNumber = dynamicRow.getRowNumber();
-        String height = "";
-        String hidden = "";
-        if (worksheet.getRowHeights().containsKey(rowNumber)) {
-            if (worksheet.getRowHeights().get(rowNumber) != worksheet.getDefaultRowHeight()) {
-                height = " x14ac:dyDescent=\"0.25\" customHeight=\"1\" ht=\"" + worksheet.getRowHeights().get(rowNumber) + "\"";
-            }
-        }
-        if (worksheet.getHiddenRows().containsKey(rowNumber)) {
-            if (worksheet.getHiddenRows().get(rowNumber) == true) {
-                hidden = " hidden=\"1\"";
-            }
-        }
-        int colNum = columnFields.size();
-        StringBuilder sb = new StringBuilder(43 * colNum); // A row string size is according to statistics (random value) 43 times the column number
-        //StringBuilder sb = new StringBuilder();
-        if (colNum > 0) {
-            sb.append("<row r=\"");
-            sb.append((rowNumber + 1));
-            sb.append("\"").append(height).append(hidden).append(">");
-        } else {
-            sb.append("<row").append(height).append(">");
-        }
-        String typeAttribute;
-        String sValue, tValue;
-        String value = "";
-        boolean bVal;
-
-        int col = 0;
-        Cell item;
-        for (int i = 0; i < colNum; i++) {
-            item = columnFields.get(i);
-            tValue = " ";
-            if (item.getCellStyle() != null) {
-                sValue = " s=\"" + item.getCellStyle().getInternalID() + "\" ";
-            } else {
-                sValue = "";
-            }
-            item.resolveCellType(); // Recalculate the type (for handling DEFAULT)
-            if (item.getDataType() == Cell.CellType.BOOL) {
-                typeAttribute = "b";
-                tValue = " t=\"" + typeAttribute + "\" ";
-                bVal = (boolean) item.getValue();
-                if (bVal == true) {
-                    value = "1";
-                } else {
-                    value = "0";
-                }
-
-            }
-            // Number casting
-            else if (item.getDataType() == Cell.CellType.NUMBER) {
-                typeAttribute = "n";
-                tValue = " t=\"" + typeAttribute + "\" ";
-                Object o = item.getValue();
-                if (o instanceof Byte) {
-                    value = Byte.toString((byte) item.getValue());
-                } else if (o instanceof BigDecimal) {
-                    value = item.getValue().toString();
-                } else if (o instanceof Double) {
-                    value = Double.toString((double) item.getValue());
-                } else if (o instanceof Float) {
-                    value = Float.toString((float) item.getValue());
-                } else if (o instanceof Integer) {
-                    value = Integer.toString((int) item.getValue());
-                } else if (o instanceof Long) {
-                    value = Long.toString((long) item.getValue());
-                } else if (o instanceof Short) {
-                    value = Short.toString((short) item.getValue());
-                }
-            }
-            // Date parsing
-            else if (item.getDataType() == Cell.CellType.DATE) {
-                typeAttribute = "d";
-                Date dVal = (Date) item.getValue();
-                value = Helper.getOADateString(dVal);
-            }
-            // Time parsing
-            else if (item.getDataType() == Cell.CellType.TIME) {
-                typeAttribute = "d";
-                LocalTime ltVal = (LocalTime) item.getValue();
-                value = Helper.getOATimeString(ltVal);
-            }
-            // String parsing
-            else {
-                if (item.getValue() == null) {
-                    typeAttribute = "str";
-                    value = "";
-                } else // handle shared Strings
-                {
-                    //  value = item.getValue().toString();
-                    if (item.getDataType() == Cell.CellType.FORMULA) {
-                        typeAttribute = "str";
-                        value = item.getValue().toString();
-                    } else {
-                        typeAttribute = "s";
-                        value = item.getValue().toString();
-                        if (!this.sharedStrings.containsKey(value)) {
-                            this.sharedStrings.add(value, Integer.toString(sharedStrings.size()));
-                        }
-                        value = this.sharedStrings.get(value);
-                        this.sharedStringsTotalCount++;
-                    }
-                }
-                tValue = " t=\"" + typeAttribute + "\" ";
-            }
-            if (item.getDataType() != Cell.CellType.EMPTY) {
-                sb.append("<c").append(tValue).append("r=\"").append(item.getCellAddress()).append("\"").append(sValue).append(">");
-                if (item.getDataType() == Cell.CellType.FORMULA) {
-                    sb.append("<f>").append(XlsxWriter.escapeXMLChars(item.getValue().toString())).append("</f>");
-                } else {
-                    sb.append("<v>").append(XlsxWriter.escapeXMLChars(value)).append("</v>");
-                }
-                sb.append("</c>");
-            } else // Empty cell
-            {
-                sb.append("<c").append(tValue).append("r=\"").append(item.getCellAddress()).append("\"").append(sValue).append("/>");
-            }
-            col++;
-        }
-        sb.append("</row>");
-        return sb.toString();
-    }
-
-     */
 
     /**
      * Method to create shared strings as XML document
@@ -1033,7 +906,7 @@ public class XlsxWriter {
             if (!style.getBorder().isEmpty()) {
                 sb.append("\" applyBorder=\"1");
             }
-            if (!alignmentString.isEmpty() || style.getCellXf().isForceApplyAlignment() == true) {
+            if (!alignmentString.isEmpty() || style.getCellXf().isForceApplyAlignment()) {
                 sb.append("\" applyAlignment=\"1");
             }
             if (!protectionString.isEmpty()) {
