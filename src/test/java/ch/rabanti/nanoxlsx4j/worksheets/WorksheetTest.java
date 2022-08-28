@@ -593,6 +593,16 @@ public class WorksheetTest {
         assertEquals(exceptionName, exception.getClass().getSimpleName());
     }
 
+    @DisplayName("Test of the failing getCell function with null as address object")
+    @Test
+    void getCellFailTest3() {
+        Worksheet worksheet = new Worksheet();
+        Address address = null;
+        Exception exception = assertThrows(Exception.class, () -> worksheet.getCell(address));
+        assertEquals("WorksheetException", exception.getClass().getSimpleName());
+    }
+
+
     @DisplayName("Test of the hasCell function with an Address object")
     @ParameterizedTest(name = "Given addresses {0} should lead to {2} with address {1}")
     @CsvSource({

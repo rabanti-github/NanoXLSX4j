@@ -8,6 +8,9 @@ import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
+import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
+import ch.rabanti.nanoxlsx4j.styles.CellXf;
+import ch.rabanti.nanoxlsx4j.styles.Style;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -510,6 +514,29 @@ public class WorksheetWriteReadTest {
         }
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
         assertEquals(hidden, givenWorksheet.isHidden());
+    }
+
+    @DisplayName("Test of the replacement of the CellXF style part, applied on merged cells, when saving a workbook")
+    @Test()
+    void mixedCellsCellXfTest() throws Exception {
+        Workbook workbook = new Workbook("Sheet1");
+        Style xfStyle = new Style();
+        xfStyle.getCellXf().setAlignment(CellXf.TextBreakValue.shrinkToFit);
+        Style style = BasicStyles.Bold().append(xfStyle);
+        workbook.getCurrentWorksheet().addCell("", "A1", style);
+        workbook.getCurrentWorksheet().addCell("B", "A2", style);
+        workbook.getCurrentWorksheet().addCell("", "A3", style);
+        workbook.getCurrentWorksheet().mergeCells(new Range("A1:A3"));
+        assertFalse(workbook.getCurrentWorksheet().getCell("A1").getCellStyle().getCellXf().isForceApplyAlignment());
+        assertFalse(workbook.getCurrentWorksheet().getCell("A2").getCellStyle().getCellXf().isForceApplyAlignment());
+        assertFalse(workbook.getCurrentWorksheet().getCell("A3").getCellStyle().getCellXf().isForceApplyAlignment());
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, 0);
+        assertTrue(givenWorksheet.getCell("A1").getCellStyle().getCellXf().isForceApplyAlignment());
+        assertEquals(CellXf.TextBreakValue.shrinkToFit, givenWorksheet.getCell("A1").getCellStyle().getCellXf().getAlignment());
+        assertTrue(givenWorksheet.getCell("A2").getCellStyle().getCellXf().isForceApplyAlignment());
+        assertEquals(CellXf.TextBreakValue.shrinkToFit, givenWorksheet.getCell("A2").getCellStyle().getCellXf().getAlignment());
+        assertTrue(givenWorksheet.getCell("A3").getCellStyle().getCellXf().isForceApplyAlignment());
+        assertEquals(CellXf.TextBreakValue.shrinkToFit, givenWorksheet.getCell("A3").getCellStyle().getCellXf().getAlignment());
     }
 
     private static Map<Worksheet.SheetProtectionValue, Boolean> prepareSheetProtectionValues(String tokenString)
