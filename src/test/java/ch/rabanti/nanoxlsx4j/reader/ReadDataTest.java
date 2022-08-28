@@ -123,6 +123,50 @@ public class ReadDataTest {
         assertValues(cells, ReadDataTest::assertEqualsFunction);
     }
 
+    @DisplayName("Test of the reader functionality for byte values (cast to int)")
+    @Test()
+    public void ReadByteTest() throws Exception {
+        Map<String, Byte> cells = new HashMap<>();
+        cells.put("A1", (byte)0);
+        cells.put("A2", (byte)10);
+        cells.put("A3", (byte)-10);
+        cells.put("A4", (byte)127);
+        cells.put("A5", (byte)-127);
+        cells.put("A6", Byte.MIN_VALUE);
+        cells.put("A7", Byte.MAX_VALUE);
+        Map<String, Integer> expected = new HashMap<>();
+        expected.put("A1", 0);
+        expected.put("A2", 10);
+        expected.put("A3", -10);
+        expected.put("A4", 127);
+        expected.put("A5", -127);
+        expected.put("A6", (int)Byte.MIN_VALUE);
+        expected.put("A7", (int)Byte.MAX_VALUE);
+        assertValuesCast(cells, ReadDataTest::assertEqualsFunction, expected);
+    }
+
+    @DisplayName("Test of the reader functionality for short values (cast to int)")
+    @Test()
+    public void ReadShortTest() throws Exception {
+        Map<String, Short> cells = new HashMap<>();
+        cells.put("A1", (short)0);
+        cells.put("A2", (short)10);
+        cells.put("A3", (short)-10);
+        cells.put("A4", (short)32767);
+        cells.put("A5", (short)-32768);
+        cells.put("A6", Short.MIN_VALUE);
+        cells.put("A7", Short.MAX_VALUE);
+        Map<String, Integer> expected = new HashMap<>();
+        expected.put("A1", 0);
+        expected.put("A2", 10);
+        expected.put("A3", -10);
+        expected.put("A4", 32767);
+        expected.put("A5", -32768);
+        expected.put("A6", (int)Short.MIN_VALUE);
+        expected.put("A7", (int)Short.MAX_VALUE);
+        assertValuesCast(cells, ReadDataTest::assertEqualsFunction, expected);
+    }
+
     @DisplayName("Test of the reader functionality for float values")
     @Test()
     void readFloatTest() throws Exception {
@@ -294,15 +338,7 @@ public class ReadDataTest {
     }
 
     private static <T> void assertValues(Map<String, T> givenCells, BiConsumer<T, T> assertionConsumer, Map<String, T> expectedCells) throws Exception {
-        Workbook workbook = new Workbook("worksheet1");
-        for (Map.Entry<String, T> cell : givenCells.entrySet()) {
-            workbook.getCurrentWorksheet().addCell(cell.getValue(), cell.getKey());
-        }
-        Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
-
-        assertNotNull(givenWorkbook);
-        Worksheet givenWorksheet = givenWorkbook.setCurrentWorksheet(0);
-        assertEquals("worksheet1", givenWorksheet.getSheetName());
+        Worksheet givenWorksheet = getWorksheet(givenCells);
         for (String address : givenCells.keySet()) {
             Cell givenCell = givenWorksheet.getCell(new Address(address));
             T value;
@@ -318,5 +354,32 @@ public class ReadDataTest {
                 assertionConsumer.accept(value, (T) givenCell.getValue());
             }
         }
+    }
+
+    private static <T,D> void assertValuesCast(Map<String, T> givenCells, BiConsumer<D, D> assertionConsumer, Map<String, D> expectedCells) throws Exception {
+        Worksheet givenWorksheet = getWorksheet(givenCells);
+        for (String address : givenCells.keySet()) {
+            Cell givenCell = givenWorksheet.getCell(new Address(address));
+            D givenValue = (D)givenCell.getValue();
+            D expectedValue = expectedCells.get(address);
+            if (givenValue == null) {
+                assertEquals(Cell.CellType.EMPTY, givenCell.getDataType());
+            } else {
+                assertionConsumer.accept(givenValue, expectedValue);
+            }
+        }
+    }
+
+    private static <T> Worksheet getWorksheet(Map<String, T> givenCells) throws IOException, java.io.IOException {
+        Workbook workbook = new Workbook("worksheet1");
+        for (Map.Entry<String, T> cell : givenCells.entrySet()) {
+            workbook.getCurrentWorksheet().addCell(cell.getValue(), cell.getKey());
+        }
+        Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
+
+        assertNotNull(givenWorkbook);
+        Worksheet givenWorksheet = givenWorkbook.setCurrentWorksheet(0);
+        assertEquals("worksheet1", givenWorksheet.getSheetName());
+        return givenWorksheet;
     }
 }

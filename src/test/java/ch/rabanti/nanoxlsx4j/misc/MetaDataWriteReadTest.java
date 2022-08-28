@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MetaDataWriteReadTest {
 
@@ -116,6 +117,17 @@ public class MetaDataWriteReadTest {
         workbook.getWorkbookMetadata().setTitle("title1");
         Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
         assertEquals("title1", givenWorkbook.getWorkbookMetadata().getTitle());
+    }
+
+    @DisplayName("Test of writing and reading a workbook with a null WorkbookMetadata object")
+    @Test()
+    void readNullTest() throws Exception {
+        Workbook workbook = new Workbook();
+        workbook.setWorkbookMetadata(null);
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
+        assertNull(givenWorkbook.getWorkbookMetadata().getApplication());
+        assertNull(givenWorkbook.getWorkbookMetadata().getCreator());
+        assertNull(givenWorkbook.getWorkbookMetadata().getTitle());
     }
 
 }

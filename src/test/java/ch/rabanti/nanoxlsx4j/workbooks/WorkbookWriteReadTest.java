@@ -3,6 +3,7 @@ package ch.rabanti.nanoxlsx4j.workbooks;
 import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
+import ch.rabanti.nanoxlsx4j.styles.Fill;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,6 +31,22 @@ public class WorkbookWriteReadTest {
         assertEquals("FF" + color1, mruColors.get(0));
         assertEquals("FF" + color2, mruColors.get(1));
     }
+
+    @DisplayName("Test of the (virtual) 'MruColors' property when writing and reading a workbook, neglecting the default color")
+    @Test()
+    void readMruColorsTest2() throws Exception {
+        Workbook workbook = new Workbook();
+        String color1 = "AACC00";
+        String color2 = Fill.DEFAULT_COLOR; // Should not be added (black)
+        workbook.addMruColor(color1);
+        workbook.addMruColor(color2);
+        Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
+        List<String> mruColors = ((List<String>)givenWorkbook.getMruColors());
+        Collections.sort(mruColors);
+        assertEquals(1, mruColors.size());
+        assertEquals("FF" + color1, mruColors.get(0));
+    }
+
 
     @DisplayName("Test of the 'Hidden' property when writing and reading a workbook")
     @ParameterizedTest(name = "Given state {0} should lead to a loaded workbook with this state")

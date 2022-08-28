@@ -106,9 +106,6 @@ public class XlsxWriter {
         if (Helper.isNullOrEmpty(value)) {
             return;
         }
-        if (sb == null || Helper.isNullOrEmpty(tagName)) {
-            return;
-        }
         boolean hasNoNs = Helper.isNullOrEmpty(nameSpace);
         sb.append('<');
         if (!hasNoNs) {
@@ -411,9 +408,6 @@ public class XlsxWriter {
             } else if (value == null || item.getDataType().equals(Cell.CellType.EMPTY)) // Empty cell
             {
                 sb.append("<c r=\"").append(item.getCellAddress()).append("\"").append(styleDef).append("/>");
-            } else // All other, unexpected cases
-            {
-                sb.append("<c").append(typeDef).append("r=\"").append(item.getCellAddress()).append("\"").append(styleDef).append("/>");
             }
             col++;
         }
