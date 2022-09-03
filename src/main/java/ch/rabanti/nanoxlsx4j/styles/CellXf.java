@@ -1,12 +1,14 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.styles;
 
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
+import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 /**
  * Class representing an XF entry. The XF entry is used to make reference to other style instances like Border or Fill and for the positioning of the cell content
@@ -14,6 +16,24 @@ import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
  * @author Raphael Stoeckli
  */
 public class CellXf extends AbstractStyle {
+
+// ### C O N S T A N T S ###
+    /**
+     * Default horizontal align value as constant
+     */
+    public static final HorizontalAlignValue DEFAULT_HORIZONTAL_ALIGNMENT = HorizontalAlignValue.none;
+    /**
+     * Default text break value as constant
+     */
+    public static final TextBreakValue DEFAULT_ALIGNMENT = TextBreakValue.none;
+    /**
+     * Default text direction value as constant
+     */
+    public static final TextDirectionValue DEFAULT_TEXT_DIRECTION = TextDirectionValue.horizontal;
+    /**
+     * Default vertical align value as constant
+     */
+    public static final VerticalAlignValue DEFAULT_VERTICAL_ALIGNMENT = VerticalAlignValue.none;
 // ### E N U M S ###
 
     /**
@@ -169,6 +189,7 @@ public class CellXf extends AbstractStyle {
     private boolean locked;
     private boolean hidden;
     private boolean forceApplyAlignment;
+    private int indent;
 
 // ### G E T T E R S  &  S E T T E R S ###
 
@@ -321,17 +342,40 @@ public class CellXf extends AbstractStyle {
         this.forceApplyAlignment = forceApplyAlignment;
     }
 
-// ### C O N S T R U C T O R S ###
+    /**
+     * Gets the indentation in case of left, right or distributed alignment. If 0, no alignment is applied
+     *
+     * @return Indentation level
+     */
+    public int getIndent() {
+        return indent;
+    }
+
+    /**
+     * Sets the indentation in case of left, right or distributed alignment. If 0, no alignment is applied
+     *
+     * @param indent Indentation level
+     */
+    public void setIndent(int indent) {
+        if (indent >= 0) {
+            this.indent = indent;
+        } else {
+            throw new StyleException("The indent value '" + indent + "' is not valid. It must be >= 0");
+        }
+    }
+
+    // ### C O N S T R U C T O R S ###
 
     /**
      * Default constructor
      */
     public CellXf() {
-        this.horizontalAlign = HorizontalAlignValue.none;
-        this.alignment = TextBreakValue.none;
-        this.textDirection = TextDirectionValue.horizontal;
-        this.verticalAlign = VerticalAlignValue.none;
-        this.textRotation = 0;
+        horizontalAlign = DEFAULT_HORIZONTAL_ALIGNMENT;
+        alignment = DEFAULT_ALIGNMENT;
+        textDirection = DEFAULT_TEXT_DIRECTION;
+        verticalAlign = DEFAULT_VERTICAL_ALIGNMENT;
+        textRotation = 0;
+        indent = 0;
     }
 
 // ### M E T H O D S ###
@@ -339,15 +383,16 @@ public class CellXf extends AbstractStyle {
     /**
      * Method to calculate the internal text rotation. The text direction and rotation are handled internally by the text rotation value
      *
-     * @return Returns the valid rotation in degrees for internal uses (LowLevel)
+     * @return Returns the valid rotation in degrees for internal use (LowLevel)
      * @throws RangeException Thrown if the rotation is out of range
      */
     public int calculateInternalRotation() {
         if (this.textRotation < -90 || this.textRotation > 90) {
-            throw new RangeException("RotationRangeException", "The rotation value (" + this.textRotation + "°) is out of range. Range is form -90° to +90°");
+            throw new FormatException("The rotation value (" + this.textRotation + "°) is out of range. Range is form -90° to +90°");
         }
         if (this.textDirection == TextDirectionValue.vertical) {
-            return 255;
+            this.textRotation = 255;
+            return this.textRotation;
         } else {
             if (this.textRotation >= 0) {
                 return this.textRotation;
@@ -364,7 +409,20 @@ public class CellXf extends AbstractStyle {
      */
     @Override
     public String toString() {
-        return "StyleXF:" + this.hashCode();
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"StyleXF\": {\n");
+        addPropertyAsJson(sb, "HorizontalAlign", horizontalAlign);
+        addPropertyAsJson(sb, "Alignment", alignment);
+        addPropertyAsJson(sb, "TextDirection", textDirection);
+        addPropertyAsJson(sb, "TextRotation", textRotation);
+        addPropertyAsJson(sb, "VerticalAlign", verticalAlign);
+        addPropertyAsJson(sb, "ForceApplyAlignment", forceApplyAlignment);
+        addPropertyAsJson(sb, "Locked", locked);
+        addPropertyAsJson(sb, "Hidden", hidden);
+        addPropertyAsJson(sb, "Indent", indent);
+        addPropertyAsJson(sb, "HashCode", this.hashCode(), true);
+        sb.append("\n}");
+        return sb.toString();
     }
 
     /**
@@ -380,13 +438,10 @@ public class CellXf extends AbstractStyle {
         copy.setForceApplyAlignment(this.forceApplyAlignment);
         copy.setLocked(this.locked);
         copy.setHidden(this.hidden);
-        try {
-            copy.setTextDirection(this.textDirection);
-            copy.setTextRotation(this.textRotation);
-        } catch (Exception e) {
-            // Should never happen. Error will be thrown earlier on setting rotation in this instance
-        }
+        copy.setTextDirection(this.textDirection);
+        copy.setTextRotation(this.textRotation);
         copy.setVerticalAlign(this.verticalAlign);
+        copy.setIndent(this.indent);
         return copy;
     }
 
@@ -394,21 +449,19 @@ public class CellXf extends AbstractStyle {
      * Override method to calculate the hash of this component
      *
      * @return Calculated hash as string
+     * @implNote Note that autogenerated hashcode algorithms may cause collisions. Do not use 0 as fallback value for every field
      */
     @Override
     public int hashCode() {
-        int p = 269;
-        int r = 1;
-        r *= p + this.horizontalAlign.value;
-        r *= p + this.verticalAlign.value;
-        r *= p + this.alignment.value;
-        r *= p + this.textDirection.value;
-        r *= p + this.textRotation;
-        r *= p + (this.forceApplyAlignment ? 0 : 1);
-        r *= p + (this.locked ? 0 : 1);
-        r *= p + (this.hidden ? 0 : 1);
-        return r;
+        int result = textRotation;
+        result = 31 * result + (textDirection != null ? textDirection.hashCode() : 1);
+        result = 31 * result + (horizontalAlign != null ? horizontalAlign.hashCode() : 2);
+        result = 31 * result + (verticalAlign != null ? verticalAlign.hashCode() : 4);
+        result = 31 * result + (alignment != null ? alignment.hashCode() : 8);
+        result = 31 * result + (locked ? 1 : 16);
+        result = 31 * result + (hidden ? 1 : 32);
+        result = 31 * result + (forceApplyAlignment ? 1 : 64);
+        result = 31 * result + indent;
+        return result;
     }
-
-
-}  
+}

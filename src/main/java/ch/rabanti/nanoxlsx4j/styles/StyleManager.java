@@ -1,18 +1,21 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.styles;
 
-import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
+import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Workbook;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 /**
- * Class representing a style manager to maintain all styles and its components of a workbook
+ * Class representing a style manager to maintain all styles and its components of a workbook.<br/>
+ * This class is only internally used to compose the style environment right before saving an XLSX file
  *
  * @author Raphael Stockeli
  */
@@ -25,8 +28,6 @@ public class StyleManager {
     private final ArrayList<AbstractStyle> fonts;
     private final ArrayList<AbstractStyle> numberFormats;
     private final ArrayList<AbstractStyle> styles;
-    private final ArrayList<String> styleNames;
-    //private final Map<String, AbstractStyle> internalStyleCache;
 
 // ### C O N S T R U C T O R S ###
 
@@ -40,8 +41,6 @@ public class StyleManager {
         this.fonts = new ArrayList<>();
         this.numberFormats = new ArrayList<>();
         this.styles = new ArrayList<>();
-        this.styleNames = new ArrayList<>();
-        //this.internalStyleCache = new HashMap<>();
     }
 
 // ###  M E T H O D S ###
@@ -64,21 +63,6 @@ public class StyleManager {
     }
 
     /**
-     * Gets a border by its hash
-     *
-     * @param hash Hash of the border
-     * @return Determined border
-     * @throws StyleException Throws a StyleException if the border was not found in the style manager
-     */
-    public Border getBorderByHash(int hash) {
-        AbstractStyle component = getComponentByHash(this.borders, hash);
-        if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style component with the hash '" + hash + "' was not found");
-        }
-        return (Border) component;
-    }
-
-    /**
      * Gets all borders of the style manager
      *
      * @return Array of borders
@@ -94,54 +78,6 @@ public class StyleManager {
      */
     public int getBorderStyleNumber() {
         return this.borders.size();
-    }
-
-    /**
-     * Gets a cellXf by its hash
-     *
-     * @param hash Hash of the cellXf
-     * @return Determined cellXf
-     * @throws StyleException Throws a StyleException if the cellXf was not found in the style manager
-     */
-    public CellXf getCellXfByHash(int hash) {
-        AbstractStyle component = getComponentByHash(this.cellXfs, hash);
-        if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style component with the hash '" + hash + "' was not found");
-        }
-        return (CellXf) component;
-    }
-
-    /**
-     * Gets all cellXfs of the style manager
-     *
-     * @return Array of cellXfs
-     */
-    public CellXf[] getCellXfs() {
-        return this.cellXfs.toArray(new CellXf[this.cellXfs.size()]);
-    }
-
-    /**
-     * Gets the number of cellXfs in the style manager
-     *
-     * @return Number of stored cellXfs
-     */
-    public int getCellXfStyleNumber() {
-        return this.cellXfs.size();
-    }
-
-    /**
-     * Gets a font by its hash
-     *
-     * @param hash Hash of the font
-     * @return Determined font
-     * @throws StyleException Throws a StyleException if the font was not found in the style manager
-     */
-    public Fill getFillByHash(int hash) {
-        AbstractStyle component = getComponentByHash(this.fills, hash);
-        if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style component with the hash '" + hash + "' was not found");
-        }
-        return (Fill) component;
     }
 
     /**
@@ -163,21 +99,6 @@ public class StyleManager {
     }
 
     /**
-     * Gets a font by its hash
-     *
-     * @param hash Hash of the font
-     * @return Determined font
-     * @throws StyleException Throws a StyleException if the font was not found in the style manager
-     */
-    public Font getFontByHash(int hash) {
-        AbstractStyle component = getComponentByHash(this.fonts, hash);
-        if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style component with the hash '" + hash + "' was not found");
-        }
-        return (Font) component;
-    }
-
-    /**
      * Gets all fonts of the style manager
      *
      * @return Array of fonts
@@ -196,21 +117,6 @@ public class StyleManager {
     }
 
     /**
-     * Gets a number format by its hash
-     *
-     * @param hash Hash of the number format
-     * @return Determined number format
-     * @throws StyleException Throws a StyleException if the number format was not found in the style manager
-     */
-    public NumberFormat getNumberFormatByHash(int hash) {
-        AbstractStyle component = getComponentByHash(this.numberFormats, hash);
-        if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style component with the hash '" + hash + "' was not found");
-        }
-        return (NumberFormat) component;
-    }
-
-    /**
      * Gets all number formats of the style manager
      *
      * @return Array of number formats
@@ -219,46 +125,6 @@ public class StyleManager {
         return this.numberFormats.toArray(new NumberFormat[this.numberFormats.size()]);
     }
 
-    /**
-     * Gets the number of number formats in the style manager
-     *
-     * @return Number of stored number formats
-     */
-    public int getNumberFormatStyleNumber() {
-        return this.numberFormats.size();
-    }
-
-    /**
-     * Gets a style by its name
-     *
-     * @param name Name of the style
-     * @return Determined style
-     * @throws StyleException Throws a StyleException if the style was not found in the style manager
-     */
-    public Style getStyleByName(String name) {
-        int len = this.styles.size();
-        for (int i = 0; i < len; i++) {
-            if (((Style) this.styles.get(i)).getName().equals(name)) {
-                return (Style) this.styles.get(i);
-            }
-        }
-        throw new StyleException("MissingReferenceException", "The style with the name '" + name + "' was not found");
-    }
-
-    /**
-     * Gets a style by its hash
-     *
-     * @param hash Hash of the style
-     * @return Determined style
-     * @throws StyleException Throws a StyleException if the style was not found in the style manager
-     */
-    public Style getStyleByHash(int hash) {
-        AbstractStyle component = getComponentByHash(this.styles, hash);
-        if (component == null) {
-            throw new StyleException("MissingReferenceException", "The style with the hash '" + hash + "' was not found");
-        }
-        return (Style) component;
-    }
 
     /**
      * Gets all styles of the style manager
@@ -337,9 +203,6 @@ public class StyleManager {
             reorganize(numberFormats);
         } else if (style instanceof Style) {
             Style s = (Style) style;
-            if (this.styleNames.contains(s.getName()) == true) {
-                throw new StyleException("StyleAlreadyExistsException", "The style with the name '" + s.getName() + "' already exists");
-            }
             if (this.getComponentByHash(this.styles, hash) == null) {
                 Integer id;
                 if (s.getInternalID() == null) {
@@ -367,29 +230,28 @@ public class StyleManager {
     }
 
     /**
-     * Removes a style and all its components from the style manager
+     * Method to gather all styles of the cells in all worksheets
      *
-     * @param styleName Name of the style to remove
-     * @throws StyleException Throws a StyleException if the style was not found in the style manager
+     * @param workbook Workbook to get all cells with possible style definitions
+     * @return StyleManager object, to be processed by the save methods
      */
-    public void removeStyle(String styleName) {
-//        String hash = null;
-        boolean match = false;
-        int len = this.styles.size();
-        int index = -1;
-        for (int i = 0; i < len; i++) {
-            if (((Style) this.styles.get(i)).getName().equals(styleName) == true) {
-                match = true;
-//                hash = ((Style)this.styles.get(i)).getHash();
-                index = i;
-                break;
+    public static StyleManager getManagedStyles(Workbook workbook) {
+        StyleManager styleManager = new StyleManager();
+        styleManager.addStyle(new Style("default", 0, true));
+        Style borderStyle = new Style("default_border_style", 1, true);
+        borderStyle.setBorder(BasicStyles.DottedFill_0_125().getBorder());
+        borderStyle.setFill(BasicStyles.DottedFill_0_125().getFill());
+        styleManager.addStyle(borderStyle);
+
+        for (int i = 0; i < workbook.getWorksheets().size(); i++) {
+            for (Map.Entry<String, Cell> cell : workbook.getWorksheets().get(i).getCells().entrySet()) {
+                if (cell.getValue().getCellStyle() != null) {
+                    Style resolvedStyle = styleManager.addStyle(cell.getValue().getCellStyle());
+                    workbook.getWorksheets().get(i).getCells().get(cell.getKey()).setStyle(resolvedStyle, true);
+                }
             }
         }
-        if (match == false) {
-            throw new StyleException("MissingReferenceException", "The style with the name '" + styleName + "' was not found in the style manager");
-        }
-        this.styles.remove(index);
-        cleanupStyleComponents();
+        return styleManager;
     }
 
     /**
@@ -405,98 +267,5 @@ public class StyleManager {
             list.get(i).setInternalID(id);
             id++;
         }
-    }
-
-    /**
-     * Method to cleanup style components in the style manager
-     */
-    private void cleanupStyleComponents() {
-        Border border;
-        CellXf cellXf;
-        Fill fill;
-        Font font;
-        NumberFormat numberFormat;
-        int len = this.borders.size();
-        int i;
-        for (i = len; i >= 0; i--) {
-            border = (Border) this.borders.get(i);
-            if (isUsedByStyle(border) == false) {
-                this.borders.remove(i);
-            }
-        }
-        len = this.cellXfs.size();
-        for (i = len; i >= 0; i--) {
-            cellXf = (CellXf) this.cellXfs.get(i);
-            if (isUsedByStyle(cellXf) == false) {
-                this.cellXfs.remove(i);
-            }
-        }
-        len = this.fills.size();
-        for (i = len; i >= 0; i--) {
-            fill = (Fill) this.fills.get(i);
-            if (isUsedByStyle(fill) == false) {
-                this.fills.remove(i);
-            }
-        }
-        len = this.fonts.size();
-        for (i = len; i >= 0; i--) {
-            font = (Font) this.fonts.get(i);
-            if (isUsedByStyle(font) == false) {
-                this.fonts.remove(i);
-            }
-        }
-        len = this.numberFormats.size();
-        for (i = len; i >= 0; i--) {
-            numberFormat = (NumberFormat) this.numberFormats.get(i);
-            if (isUsedByStyle(numberFormat) == false) {
-                this.numberFormats.remove(i);
-            }
-        }
-    }
-
-    /**
-     * Checks whether a style component in the style manager is used by a style
-     *
-     * @param component Component to check
-     * @return If true, the component is in use
-     */
-    private boolean isUsedByStyle(AbstractStyle component) {
-        Style s;
-        boolean match = false;
-        int hash = component.hashCode();
-        int len = this.styles.size();
-        for (int i = 0; i < len; i++) {
-            s = (Style) this.styles.get(i);
-            if (component instanceof Border) {
-                if (s.getBorder().hashCode() == hash) {
-                    match = true;
-                    break;
-                }
-            } else if (component instanceof CellXf) {
-                if (s.getCellXf().hashCode() == hash) {
-                    match = true;
-                    break;
-                }
-            }
-            if (component instanceof Fill) {
-                if (s.getFill().hashCode() == hash) {
-                    match = true;
-                    break;
-                }
-            }
-            if (component instanceof Font) {
-                if (s.getFont().hashCode() == hash) {
-                    match = true;
-                    break;
-                }
-            }
-            if (component instanceof NumberFormat) {
-                if (s.getNumberFormat().hashCode() == hash) {
-                    match = true;
-                    break;
-                }
-            }
-        }
-        return match;
     }
 }

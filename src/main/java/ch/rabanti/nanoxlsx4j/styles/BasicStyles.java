@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -48,6 +48,10 @@ public final class BasicStyles {
          */
         dateFormat,
         /**
+         * Format number as time
+         */
+        timeFormat,
+        /**
          * Rounds number as an integer
          */
         roundFormat,
@@ -70,7 +74,7 @@ public final class BasicStyles {
     }
 
     // ### P R I V A T E   S T A T I C  F I E L D S ###
-    private static Style bold, italic, boldItalic, underline, doubleUnderline, strike, dateFormat, roundFormat, borderFrame, borderFrameHeader, dottedFill_0_125, mergeCellStyle;
+    private static Style bold, italic, boldItalic, underline, doubleUnderline, strike, dateFormat, timeFormat, roundFormat, borderFrame, borderFrameHeader, dottedFill_0_125, mergeCellStyle;
 
 // ### P U B L I C   S T A T I C  F I E L D S ###
 
@@ -135,6 +139,15 @@ public final class BasicStyles {
      */
     public static Style DateFormat() {
         return getStyle(StyleEnum.dateFormat);
+    }
+
+    /**
+     * Gets the time format style
+     *
+     * @return Style object
+     */
+    public static Style TimeFormat() {
+        return getStyle(StyleEnum.timeFormat);
     }
 
     /**
@@ -218,14 +231,14 @@ public final class BasicStyles {
             case underline:
                 if (underline == null) {
                     underline = new Style();
-                    underline.getFont().setUnderline(true);
+                    underline.getFont().setUnderline(Font.UnderlineValue.u_single);
                 }
                 s = underline;
                 break;
             case doubleUnderline:
                 if (doubleUnderline == null) {
                     doubleUnderline = new Style();
-                    doubleUnderline.getFont().setDoubleUnderline(true);
+                    doubleUnderline.getFont().setUnderline(Font.UnderlineValue.u_double);
                 }
                 s = doubleUnderline;
                 break;
@@ -243,6 +256,15 @@ public final class BasicStyles {
                 }
                 s = dateFormat;
                 break;
+
+            case timeFormat:
+                if (timeFormat == null) {
+                    timeFormat = new Style();
+                    timeFormat.getNumberFormat().setNumber(NumberFormat.FormatNumber.format_21);
+                }
+                s = timeFormat;
+                break;
+
             case roundFormat:
                 if (roundFormat == null) {
                     roundFormat = new Style();
@@ -286,9 +308,6 @@ public final class BasicStyles {
                 }
                 s = mergeCellStyle;
                 break;
-
-            default:
-                break;
         }
         return s.copyStyle(); // Copy makes basic styles immutable
     }
@@ -300,6 +319,7 @@ public final class BasicStyles {
      * @return Style with Font color definition
      */
     public static Style colorizedText(String rgb) {
+        Fill.validateColor(rgb, false);
         Style s = new Style();
         s.getFont().setColorValue("FF" + rgb.toUpperCase());
         return s;
@@ -312,6 +332,7 @@ public final class BasicStyles {
      * @return Style with background color definition
      */
     public static Style colorizedBackground(String rgb) {
+        Fill.validateColor(rgb, false);
         Style s = new Style();
         s.getFill().setColor("FF" + rgb.toUpperCase(), Fill.FillType.fillColor);
         return s;
@@ -334,7 +355,7 @@ public final class BasicStyles {
      * @param fontSize Size of the Font in points
      * @return Style with Font definition
      */
-    public static Style font(String fontName, int fontSize) {
+    public static Style font(String fontName, float fontSize) {
         return BasicStyles.font(fontName, fontSize, false, false);
     }
 
@@ -346,7 +367,7 @@ public final class BasicStyles {
      * @param isBold   If true, the Font will be bold
      * @return Style with Font definition
      */
-    public static Style font(String fontName, int fontSize, boolean isBold) {
+    public static Style font(String fontName, float fontSize, boolean isBold) {
         return BasicStyles.font(fontName, fontSize, isBold, false);
     }
 
@@ -359,7 +380,7 @@ public final class BasicStyles {
      * @param isItalic If true, the Font will be italic
      * @return Style with Font definition
      */
-    public static Style font(String fontName, int fontSize, boolean isBold, boolean isItalic) {
+    public static Style font(String fontName, float fontSize, boolean isBold, boolean isItalic) {
         Style s = new Style();
         s.getFont().setName(fontName);
         s.getFont().setSize(fontSize);

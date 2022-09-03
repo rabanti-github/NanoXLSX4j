@@ -11,41 +11,66 @@ Project website: [https://picoxlsx.rabanti.ch](https://picoxlsx.rabanti.ch)
 
 See the **[Change Log](https://github.com/rabanti-github/NanoXLSX4j/blob/master/Changelog.md)** for recent updates.
 
-# Reader Support
-Currently, only basic reader functionality is available:
+## What's new in version 2.x
 
-- Reading and casting of cell values into the appropriate data types
-- Reading of several worksheets in on workbook with names
-- No processing of styles (when reading) at the moment
-- No support of other objects than spreadsheet data at the moment
+There are some additional functions for workbooks and worksheets, as well as support of further data types.
+The biggest change is the full capable reader support for workbook, worksheet and style information. Also, all features are now fully unit tested. This means, that nanoXLSX is no longer in Beta state. Some key features are:
 
+* Full reader support for styles
+* Copy functions for worksheets
+* Advance import options for the reader
+* Several additional checks, exception handling and updated documentation
 
-# Requirements
-NanoXLSX4j was created with Java 8 and may contain lambda expressions which are not available in Java 7<br>
-The only requirement for developments are a current JDK to develop and JRE to run.
+## Roadmap
+Version 2.x of NanoXLSX4j was completely overhauled and a high number of (partially parametrized) unit tests with a code coverage of >90% were written to improve the quality of the library.
+However, it is not planned as a LTS version. The upcoming v3.x is supposed to introduce some important functions, like in-line cell formatting, better formula handling and additional worksheet features.
+Furthermore, it is planned to introduce more modern OOXML features like the SHA256 implementation of worksheet passwords.
 
-# Installation
-## As JAR
-Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-1.2.8.jar**) into the lib folder of your project and create a library reference to it in your IDE.
-## As source files
+## Reader Support
+
+The reader is of NanoXLS4j follows the principle of "What You Can Write Is What You Can Read". Therefore, all information about workbooks, worksheets, cells and styles that can be written into an XLSX file by NanoXLSX, can also be read by it.
+There are some limitations:
+
+* A workbook or worksheet password cannot be recovered, only its hash
+* Information that is not supported by the library will be discarded
+* There are some approximations for floating point numbers. These values (e.g. pane split widths) may deviate from the originally written values
+* Numeric values are cast to the appropriate Java types with the best effort. There are import options available to enforce specific types
+* No support of other objects than spreadsheet data at the moment
+## Requirements
+
+NanoXLSX4j was initially created with Java 8 and currently build with OpenJDK 11
+The only requirement for development is an up-to-date Java environment (OpenJDK 11 or higher recommended)
+
+## Installation
+
+### As JAR
+
+Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-2.0.0.jar**) into the lib folder of your project and create a library reference to it in your IDE.
+
+### As source files
+
 Place all .java files from the NanoXLSX4j source folder into your project. The folder structure defines the packages. Please use refactoring if you want to relocate the files.
-## Maven ##
-Add the following information to your POM file within the <code>&lt;dependencies&gt;</code> tag:
+
+### Maven
+
+Add the following information to your POM file within the ```<dependencies>``` tag:
+
 ```xml
 <dependency>
     <groupId>ch.rabanti</groupId>
     <artifactId>nanoxlsx4j</artifactId>
-    <version>1.2.8</version>
+    <version>2.0.0</version>
 </dependency>
-``` 
+```
 
 **Important:** The version number may change.
 Please see the version number of Maven Central [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.rabanti/nanoxlsx4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.rabanti/nanoxlsx4j)
- or check the [Change Log](https://github.com/rabanti-github/NanoXLSX4j/blob/master/Changelog.md) for the most recent version. The keywords ```LATEST```  and ```RELEASE``` are only valid in Maven 2, not 3 and newer. 
+ or check the [Change Log](https://github.com/rabanti-github/NanoXLSX4j/blob/master/Changelog.md) for the most recent version. The keywords ```LATEST```  and ```RELEASE``` are only valid in Maven 2, not 3 and newer.
 
+## Usage
 
-# Usage
-## Quick Start (shortened syntax)
+### Quick Start (shortened syntax)
+
 ```java
  Workbook workbook = new Workbook("myWorkbook.xlsx", "Sheet1");         // Create new workbook with a worksheet called Sheet1
  workbook.WS.value("Some Data");                                        // Add cell A1
@@ -57,7 +82,8 @@ Please see the version number of Maven Central [![Maven Central](https://maven-b
  } catch (Exception ex) {}
 ```
 
-## Quick Start (regular syntax)
+### Quick Start (regular syntax)
+
 ```java
  Workbook workbook = new Workbook("myWorkbook.xlsx", "Sheet1");       // Create new workbook with a worksheet called Sheet1
  workbook.getCurrentWorksheet().addNextCell("Some Data");             // Add cell A1
@@ -69,7 +95,8 @@ Please see the version number of Maven Central [![Maven Central](https://maven-b
  } catch (Exception ex) {}
 ```
 
-## Quick Start (read)
+### Quick Start (read)
+
 ```java
 try
 {
@@ -86,5 +113,6 @@ catch (Exception ex)
 ```
 
 ## Further References
-See the full <b>API-Documentation</b> at: [https://rabanti-github.github.io/NanoXLSX4j/](https://rabanti-github.github.io/NanoXLSX4j/).<br>
-The [Demo class](https://github.com/rabanti-github/NanoXLSX4j/blob/master/src/main/java/ch/rabanti/nanoxlsx4j/demo/NanoXLSX4j.java) contains 14 simple use cases. You can also look at the full API documentation or the Javadoc annotations in the particular .java files.<br>
+
+See the full <b>API-Documentation</b> at: [https://rabanti-github.github.io/NanoXLSX4j/](https://rabanti-github.github.io/NanoXLSX4j/).
+The [Demo class](https://github.com/rabanti-github/NanoXLSX4j/blob/master/src/main/java/ch/rabanti/nanoxlsx4j/demo/NanoXLSX4j.java) contains 14 simple use cases. You can also look at the full API documentation or the Javadoc annotations in the particular .java files.

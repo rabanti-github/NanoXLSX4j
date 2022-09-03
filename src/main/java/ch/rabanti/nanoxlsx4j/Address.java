@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -11,7 +11,7 @@ import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 import static ch.rabanti.nanoxlsx4j.Cell.resolveCellAddress;
 
 /**
- * C class representing a cell address (no getters and setters to simplify handling)
+ * Class representing a cell address (no getters and setters to simplify handling)
  *
  * @author Raphael Stoeckli
  */
@@ -32,31 +32,14 @@ public class Address implements Comparable<Address> {
 // ### C O N S T R U C T O R S ###
 
     /**
-     * Constructor with with row and column as arguments
+     * Constructor with with row and column as arguments. The referencing type of the address is default (e.g. 'C20')
      *
      * @param column Column of the address (zero-based)
      * @param row    Row of the address (zero-based)
      * @throws RangeException Thrown if the resolved address is out of range
      */
     public Address(int column, int row) {
-        Cell.validateRowNumber(row);
-        Cell.validateColumnNumber(column);
-        this.Column = column;
-        this.Row = row;
-        this.Type = Cell.AddressType.Default;
-    }
-
-    /**
-     * Constructor with address as string
-     *
-     * @param address Address string (e.g. 'A1:B12')
-     * @throws RangeException Thrown if the resolved address is out of range
-     */
-    public Address(String address) {
-        Address a = Cell.resolveCellCoordinate(address);
-        this.Column = a.Column;
-        this.Row = a.Row;
-        this.Type = a.Type;
+        this(column, row, Cell.AddressType.Default);
     }
 
     /**
@@ -76,10 +59,23 @@ public class Address implements Comparable<Address> {
     }
 
     /**
-     * Constructor with address as string and address type. The address type overrides possible address variations in the string
+     * Constructor with address as string. If no referencing modifiers ($) are defined, the address is of referencing type default (e.g. 'C23')
      *
-     * @param address Address string (e.g. 'A1:B12')
-     * @param type    Optional referencing type of the address
+     * @param address Address string (e.g. 'B12')
+     * @throws RangeException Thrown if the resolved address is out of range
+     */
+    public Address(String address) {
+        Address a = Cell.resolveCellCoordinate(address);
+        this.Column = a.Column;
+        this.Row = a.Row;
+        this.Type = a.Type;
+    }
+
+    /**
+     * Constructor with address as string. All referencing modifiers ($) are ignored and only the defined referencing type considered
+     *
+     * @param address Address string (e.g. 'B12')
+     * @param type    Referencing type of the address
      * @throws RangeException Thrown if the resolved address is out of range
      */
     public Address(String address, Cell.AddressType type) {
@@ -90,42 +86,6 @@ public class Address implements Comparable<Address> {
     }
 
 // ### M E T H O D S ###
-
-    /**
-     * Compares two addresses whether they are equal. The address type id neglected, only the row and column is considered
-     *
-     * @param o Address to compare
-     * @return True if equal
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        }
-        if (!(o instanceof Address)) {
-            return false;
-        }
-        Address address = (Address) o;
-        return this.Row == address.Row && this.Column == address.Column;
-    }
-
-    /**
-     * Compares two addresses and returns whether the passed one is bigger or not. Bigger means: Higher column number and / or higher row number
-     *
-     * @param other Other address to compare
-     * @return 1 If the other address is bigger, -1 if it is smaller and 0 ist it is equal
-     */
-    @Override
-    public int compareTo(Address other) {
-        if (this.equals(other)) {
-            return 0;
-        }
-        if (this.Column <= other.Column && this.Row <= other.Row) {
-            return -1;
-        } else {
-            return 1;
-        }
-    }
 
     /**
      * Gets the address as string
@@ -156,5 +116,44 @@ public class Address implements Comparable<Address> {
         return getAddress(); // Validity already checked in method
     }
 
+    /**
+     * Compares two addresses whether they are equal. The address type id neglected, only the row and column is considered
+     *
+     * @param o Address to compare
+     * @return True if equal
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof Address)) {
+            return false;
+        }
+        Address address = (Address) o;
+        return this.Row == address.Row && this.Column == address.Column && this.Type == address.Type;
+    }
+
+    /**
+     * Compares two addresses and returns whether the passed one is bigger or not. Bigger means: Higher column number and / or higher row number
+     *
+     * @param other Other address to compare
+     * @return 1 If the other address is bigger, -1 if it is smaller and 0 ist it is equal
+     */
+    @Override
+    public int compareTo(Address other) {
+        long thisCoordinate = (long) Column * (long) Worksheet.MAX_ROW_NUMBER + Row;
+        long otherCoordinate = (long) other.Column * (long) Worksheet.MAX_ROW_NUMBER + other.Row;
+        return Long.compare(thisCoordinate, otherCoordinate);
+    }
+
+    /**
+     * Creates a (dereferenced, if applicable) deep copy of this address
+     *
+     * @return Copy of this range
+     */
+    Address copy() {
+        return new Address(this.Column, this.Row, this.Type);
+    }
 
 }

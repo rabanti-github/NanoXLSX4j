@@ -1,15 +1,21 @@
 /*
  * NanoXLSX4j is a small Java library to generate XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.demo;
 
-import ch.rabanti.nanoxlsx4j.*;
+import ch.rabanti.nanoxlsx4j.Address;
+import ch.rabanti.nanoxlsx4j.BasicFormulas;
+import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Range;
+import ch.rabanti.nanoxlsx4j.Workbook;
+import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
 import ch.rabanti.nanoxlsx4j.styles.CellXf;
 import ch.rabanti.nanoxlsx4j.styles.Fill;
+import ch.rabanti.nanoxlsx4j.styles.Font;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.io.File;
@@ -17,7 +23,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Demo Program for NanoXLSX4j
@@ -36,7 +45,7 @@ public class NanoXLSX4j {
     public static void main(String[] args) {
 
         /** PROVIDING OUTPUT FOLDER **/
-        if (Files.exists(Paths.get(outputFolder)) == false)                     // Check existence of output folder
+        if (!Files.exists(Paths.get(outputFolder)))                     // Check existence of output folder
         {
             File dir = new File(outputFolder);                                  // Create new folder if not existing
             dir.mkdirs();
@@ -47,8 +56,11 @@ public class NanoXLSX4j {
         /* *********************** */
 
         /** DEMOS **/
-        basicDemo();
+        // bug();
+
+        // basicDemo();
         read();
+        /*
         shortenerDemo();
         streamDemo();
         demo1();
@@ -61,7 +73,40 @@ public class NanoXLSX4j {
         demo8();
         demo9();
         demo10();
+        */
     }
+
+    /*
+    private static void bug(){
+
+
+        Workbook data = new Workbook(false);
+
+        Observable mCheckPermissionUseCase = Observable.empty();
+
+        mCheckPermissionUseCase
+                .execute(Permission.WriteExternalStorage)
+                .doOnTerminate(() -> {
+                    if (view != null) {
+                        view.progressBarLoading(false);
+                    }
+                })
+                .compose(bindToLifecycle())
+                .subscribe(result -> {
+                            view.storagePermissionGranted();
+                            try (FileOutputStream out = context.openFileOutput(fileName, Context.MODE_PRIVATE)) {
+                                data.saveAsStream(out);
+                                File file = new File(context.getFilesDir(), fileName);
+                                view.openShareFileIntent(file, fileFormat);
+                            } catch (Exception ex) {
+                                // noop
+                            }
+
+
+                });
+    }
+*/
+
 
     /**
      * This is a very basic demo (adding three values and save the workbook)
@@ -78,6 +123,7 @@ public class NanoXLSX4j {
             System.out.println(e.getMessage());
         }
     }
+
 
     /**
      * This is a demo to read the previously created basic.xlsx file
@@ -267,9 +313,9 @@ public class NanoXLSX4j {
         workbook.getCurrentWorksheet().addNextCell("B");                    // Add cell B3
         workbook.getCurrentWorksheet().addNextCell("C");                    // Add cell C3
 
-        Style s = new Style();                                              // Create new style
-        s.getFill().setColor("FF22FF11", Fill.FillType.fillColor);          // Set fill color
-        s.getFont().setDoubleUnderline(true);                               // Set double underline
+        Style s = new Style();                                                 // Create new style
+        s.getFill().setColor("FF22FF11", Fill.FillType.fillColor);       // Set fill color
+        s.getFont().setUnderline(Font.UnderlineValue.u_double);                // Set double underline
         s.getCellXf().setHorizontalAlign(CellXf.HorizontalAlignValue.center);  // Set alignment
 
         Style s2 = s.copyStyle();                                           // Copy the previously defined style

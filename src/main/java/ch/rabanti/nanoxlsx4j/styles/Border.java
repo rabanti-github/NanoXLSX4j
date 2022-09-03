@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -12,7 +12,19 @@ package ch.rabanti.nanoxlsx4j.styles;
  * @author Raphael Stoeckli
  */
 public class Border extends AbstractStyle {
-// ### E N U M S ###
+
+    // ### C O N S T A N T S ###
+    /**
+     * Default border style as constant
+     */
+    public static final StyleValue DEFAULT_BORDER_STYLE = StyleValue.none;
+
+    /**
+     * Default border color as constant
+     */
+    public static final String DEFAULT_BORDER_COLOR = "";
+
+    // ### E N U M S ###
 
     /**
      * Enum for the border style
@@ -95,10 +107,8 @@ public class Border extends AbstractStyle {
     public static String getStyleName(StyleValue style) {
         String output = "";
         switch (style) {
-            case none:
-                output = "";
-                break;
             case hair:
+                output = "hair";
                 break;
             case dotted:
                 output = "dotted";
@@ -136,9 +146,7 @@ public class Border extends AbstractStyle {
             case s_double:
                 output = "double";
                 break;
-            default:
-                output = "";
-                break;
+            // Default / none is already handled (ignored)
         }
         return output;
     }
@@ -300,6 +308,7 @@ public class Border extends AbstractStyle {
      * @param leftColor Color code (ARGB)
      */
     public void setLeftColor(String leftColor) {
+        Fill.validateColor(leftColor, true, true);
         this.leftColor = leftColor;
     }
 
@@ -318,6 +327,7 @@ public class Border extends AbstractStyle {
      * @param rightColor Color code (ARGB)
      */
     public void setRightColor(String rightColor) {
+        Fill.validateColor(rightColor, true, true);
         this.rightColor = rightColor;
     }
 
@@ -336,6 +346,7 @@ public class Border extends AbstractStyle {
      * @param topColor Color code (ARGB)
      */
     public void setTopColor(String topColor) {
+        Fill.validateColor(topColor, true, true);
         this.topColor = topColor;
     }
 
@@ -354,6 +365,7 @@ public class Border extends AbstractStyle {
      * @param bottomColor Color code (ARGB)
      */
     public void setBottomColor(String bottomColor) {
+        Fill.validateColor(bottomColor, true, true);
         this.bottomColor = bottomColor;
     }
 
@@ -372,6 +384,7 @@ public class Border extends AbstractStyle {
      * @param diagonalColor Color code (ARGB)
      */
     public void setDiagonalColor(String diagonalColor) {
+        Fill.validateColor(diagonalColor, true, true);
         this.diagonalColor = diagonalColor;
     }
 
@@ -381,16 +394,16 @@ public class Border extends AbstractStyle {
      * Default constructor
      */
     public Border() {
-        this.bottomColor = "";
-        this.topColor = "";
-        this.leftColor = "";
-        this.rightColor = "";
-        this.diagonalColor = "";
-        this.leftStyle = StyleValue.none;
-        this.rightStyle = StyleValue.none;
-        this.topStyle = StyleValue.none;
-        this.bottomStyle = StyleValue.none;
-        this.diagonalStyle = StyleValue.none;
+        this.bottomColor = DEFAULT_BORDER_COLOR;
+        this.topColor = DEFAULT_BORDER_COLOR;
+        this.leftColor = DEFAULT_BORDER_COLOR;
+        this.rightColor = DEFAULT_BORDER_COLOR;
+        this.diagonalColor = DEFAULT_BORDER_COLOR;
+        this.leftStyle = DEFAULT_BORDER_STYLE;
+        this.rightStyle = DEFAULT_BORDER_STYLE;
+        this.topStyle = DEFAULT_BORDER_STYLE;
+        this.bottomStyle = DEFAULT_BORDER_STYLE;
+        this.diagonalStyle = DEFAULT_BORDER_STYLE;
         this.diagonalDown = false;
         this.diagonalUp = false;
     }
@@ -404,40 +417,40 @@ public class Border extends AbstractStyle {
      */
     public boolean isEmpty() {
         boolean state = true;
-        if (this.bottomColor.length() != 0) {
+        if (!DEFAULT_BORDER_COLOR.equals(this.bottomColor)) {
             state = false;
         }
-        if (this.topColor.length() != 0) {
+        if (!DEFAULT_BORDER_COLOR.equals(this.topColor)) {
             state = false;
         }
-        if (this.leftColor.length() != 0) {
+        if (!DEFAULT_BORDER_COLOR.equals(this.leftColor)) {
             state = false;
         }
-        if (this.rightColor.length() != 0) {
+        if (!DEFAULT_BORDER_COLOR.equals(this.rightColor)) {
             state = false;
         }
-        if (this.diagonalColor.length() != 0) {
+        if (!DEFAULT_BORDER_COLOR.equals(this.diagonalColor)) {
             state = false;
         }
-        if (this.leftStyle != StyleValue.none) {
+        if (this.leftStyle != DEFAULT_BORDER_STYLE) {
             state = false;
         }
-        if (this.rightStyle != StyleValue.none) {
+        if (this.rightStyle != DEFAULT_BORDER_STYLE) {
             state = false;
         }
-        if (this.topStyle != StyleValue.none) {
+        if (this.topStyle != DEFAULT_BORDER_STYLE) {
             state = false;
         }
-        if (this.bottomStyle != StyleValue.none) {
+        if (this.bottomStyle != DEFAULT_BORDER_STYLE) {
             state = false;
         }
-        if (this.diagonalStyle != StyleValue.none) {
+        if (this.diagonalStyle != DEFAULT_BORDER_STYLE) {
             state = false;
         }
-        if (this.diagonalDown != false) {
+        if (this.diagonalDown) {
             state = false;
         }
-        if (this.diagonalUp != false) {
+        if (this.diagonalUp) {
             state = false;
         }
         return state;
@@ -450,7 +463,22 @@ public class Border extends AbstractStyle {
      */
     @Override
     public String toString() {
-        return "Border:" + this.hashCode();
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"Border\": {\n");
+        addPropertyAsJson(sb, "BottomStyle", bottomStyle);
+        addPropertyAsJson(sb, "DiagonalColor", diagonalColor);
+        addPropertyAsJson(sb, "DiagonalDown", diagonalDown);
+        addPropertyAsJson(sb, "DiagonalStyle", diagonalStyle);
+        addPropertyAsJson(sb, "DiagonalUp", diagonalUp);
+        addPropertyAsJson(sb, "LeftColor", leftColor);
+        addPropertyAsJson(sb, "LeftStyle", leftStyle);
+        addPropertyAsJson(sb, "RightColor", rightColor);
+        addPropertyAsJson(sb, "RightStyle", rightStyle);
+        addPropertyAsJson(sb, "TopColor", topColor);
+        addPropertyAsJson(sb, "TopStyle", topStyle);
+        addPropertyAsJson(sb, "HashCode", this.hashCode(), true);
+        sb.append("\n}");
+        return sb.toString();
     }
 
     /**
@@ -480,24 +508,22 @@ public class Border extends AbstractStyle {
      * Override method to calculate the hash of this component
      *
      * @return Calculated hash as string
+     * @implNote Note that autogenerated hashcode algorithms may cause collisions. Do not use 0 as fallback value for every field
      */
     @Override
     public int hashCode() {
-        int p = 271;
-        int r = 1;
-        r *= p + this.bottomStyle.value;
-        r *= p + this.diagonalStyle.value;
-        r *= p + this.topStyle.value;
-        r *= p + this.leftStyle.value;
-        r *= p + this.rightStyle.value;
-        r *= p + this.bottomColor.hashCode();
-        r *= p + this.diagonalColor.hashCode();
-        r *= p + this.topColor.hashCode();
-        r *= p + this.leftColor.hashCode();
-        r *= p + this.rightColor.hashCode();
-        r *= p + (this.diagonalDown ? 0 : 1);
-        r *= p + (this.diagonalUp ? 0 : 1);
-        return r;
+        int result = leftStyle != null ? leftStyle.hashCode() : 1;
+        result = 31 * result + (rightStyle != null ? rightStyle.hashCode() : 2);
+        result = 31 * result + (topStyle != null ? topStyle.hashCode() : 4);
+        result = 31 * result + (bottomStyle != null ? bottomStyle.hashCode() : 8);
+        result = 31 * result + (diagonalStyle != null ? diagonalStyle.hashCode() : 16);
+        result = 31 * result + (diagonalDown ? 1 : 32);
+        result = 31 * result + (diagonalUp ? 1 : 64);
+        result = 31 * result + (leftColor != null ? leftColor.hashCode() : 128);
+        result = 31 * result + (rightColor != null ? rightColor.hashCode() : 256);
+        result = 31 * result + (topColor != null ? topColor.hashCode() : 512);
+        result = 31 * result + (bottomColor != null ? bottomColor.hashCode() : 1024);
+        result = 31 * result + (diagonalColor != null ? diagonalColor.hashCode() : 2048);
+        return result;
     }
-
 }

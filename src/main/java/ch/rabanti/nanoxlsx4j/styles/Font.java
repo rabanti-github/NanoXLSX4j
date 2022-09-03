@@ -1,10 +1,12 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2019
+ * Copyright Raphael Stoeckli © 2021
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.styles;
+
+import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 /**
  * Class representing a Font entry. The Font entry is used to define text formatting
@@ -16,7 +18,37 @@ public class Font extends AbstractStyle {
     /**
      * Default font family as constant
      */
-    public static final String DEFAULTFONT = "Calibri";
+    public static final String DEFAULT_FONT_NAME = "Calibri";
+
+    /**
+     * Maximum possible font size
+     */
+    public static final float MIN_FONT_SIZE = 1f;
+
+    /**
+     * Minimum possible font size
+     */
+    public static final float MAX_FONT_SIZE = 409f;
+
+    /**
+     * Default font size
+     */
+    public static final float DEFAULT_FONT_SIZE = 11f;
+
+    /**
+     * Default font family
+     */
+    public static final String DEFAULT_FONT_FAMILY = "2";
+
+    /**
+     * Default font scheme
+     */
+    public static final SchemeValue DEFAULT_FONT_SCHEME = SchemeValue.minor;
+
+    /**
+     * Default vertical alignment
+     */
+    public static final VerticalAlignValue DEFAULT_VERTICAL_ALIGN = VerticalAlignValue.none;
 
     /**
      * Enum for the vertical alignment of the text from base line
@@ -69,48 +101,143 @@ public class Font extends AbstractStyle {
         SchemeValue(int value) {
             this.value = value;
         }
+    }
 
-        public int getValue() {
-            return value;
-        }
+    /**
+     * Enum for the style of the underline property of a stylized text
+     */
+    public enum UnderlineValue {
+        /**
+         * Text contains a single underline
+         */
+        u_single,
+        /**
+         * Text contains a double underline
+         */
+        u_double,
+        /**
+         * Text contains a single, accounting underline
+         */
+        singleAccounting,
+        /**
+         * Text contains a double, accounting underline
+         */
+        doubleAccounting,
+        /**
+         * Text contains no underline (default)
+         */
+        none,
     }
 
     // ### P R I V A T E  F I E L D S ###
-    private int size;
+    private boolean bold;
+    private boolean italic;
+    private boolean strike;
+    private UnderlineValue underline;
+    private float size;
     private String name;
     private String family;
     private int colorTheme;
     private String colorValue;
     private SchemeValue scheme;
     private VerticalAlignValue verticalAlign;
-    private boolean bold;
-    private boolean italic;
-    private boolean underline;
-    private boolean doubleUnderline;
-    private boolean strike;
     private String charset;
 
 // ### G E T T E R S  &  S E T T E R S ###
 
     /**
-     * Gets the font size. Valid range is from 8 to 75
+     * Gets the bold parameter of the font
+     *
+     * @return If true, the font is bold
+     */
+    public boolean isBold() {
+        return bold;
+    }
+
+    /**
+     * Sets the bold parameter of the font
+     *
+     * @param bold If true, the font is bold
+     */
+    public void setBold(boolean bold) {
+        this.bold = bold;
+    }
+
+    /**
+     * Gets the italic parameter of the font
+     *
+     * @return If true, the font is italic
+     */
+    public boolean isItalic() {
+        return italic;
+    }
+
+    /**
+     * Sets the italic parameter of the font
+     *
+     * @param italic If true, the font is italic
+     */
+    public void setItalic(boolean italic) {
+        this.italic = italic;
+    }
+
+    /**
+     * Gets whether the font is struck through
+     *
+     * @return If true, the font is declared as strike-through
+     */
+    public boolean isStrike() {
+        return strike;
+    }
+
+    /**
+     * Sets whether the font is struck through
+     *
+     * @param strike If true, the font is declared as strike-through
+     */
+    public void setStrike(boolean strike) {
+        this.strike = strike;
+    }
+
+    /**
+     * Gets the underline style of the font
+     *
+     * @return Underline value
+     * @apiNote If set to {@link UnderlineValue#none} no underline will be applied (default)
+     */
+    public UnderlineValue getUnderline() {
+        return underline;
+    }
+
+    /**
+     * Sets the underline style of the font
+     *
+     * @param underline Underline value
+     * @apiNote If set to {@link UnderlineValue#none} no underline will be applied (default)
+     */
+    public void setUnderline(UnderlineValue underline) {
+        this.underline = underline;
+    }
+
+    /**
+     * Gets the font size. Valid range is from 1.0 to 409.0
      *
      * @return Font size
      */
-    public int getSize() {
+    public float getSize() {
         return size;
     }
 
     /**
-     * Sets the Font size. Valid range is from 8 to 75
+     * Sets the Font size. Valid range is from 1 to 409
      *
      * @param size Font size
      */
-    public void setSize(int size) {
-        if (size < 8) {
-            this.size = 8;
-        } else if (size > 75) {
-            this.size = 72;
+    public void setSize(float size) {
+        if (size < MIN_FONT_SIZE) {
+            this.size = MIN_FONT_SIZE;
+        } else if (size > MAX_FONT_SIZE) {
+            this.size = MAX_FONT_SIZE;
         } else {
             this.size = size;
         }
@@ -129,8 +256,13 @@ public class Font extends AbstractStyle {
      * Sets the font name (Default is Calibri)
      *
      * @param name Font name
+     * @throws StyleException thrown if the name is null or empty.
+     * @apiNote Note that the font name is not validated whether it is a valid or existing font
      */
     public void setName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new StyleException("The font name was null or empty");
+        }
         this.name = name;
     }
 
@@ -165,8 +297,12 @@ public class Font extends AbstractStyle {
      * Sets the font color theme (Default is 1)
      *
      * @param colorTheme Font color theme
+     * @throws StyleException thrown if the number is below 1
      */
     public void setColorTheme(int colorTheme) {
+        if (colorTheme < 1) {
+            throw new StyleException("The color theme number " + colorTheme + " is invalid. Should be >0");
+        }
         this.colorTheme = colorTheme;
     }
 
@@ -180,11 +316,14 @@ public class Font extends AbstractStyle {
     }
 
     /**
-     * Sets the font color (default is empty)
+     * Sets the color code of the font color. The value is expressed as hex string with the format AARRGGBB. AA (Alpha) is usually FF.<br>
+     * To omit the color, an empty string can be set. Empty is also default.
      *
      * @param colorValue Font color
+     * @throws StyleException thrown if the passed ARGB value is not valid
      */
     public void setColorValue(String colorValue) {
+        Fill.validateColor(colorValue, true, true);
         this.colorValue = colorValue;
     }
 
@@ -225,96 +364,6 @@ public class Font extends AbstractStyle {
     }
 
     /**
-     * Gets the bold parameter of the font
-     *
-     * @return If true, the font is bold
-     */
-    public boolean isBold() {
-        return bold;
-    }
-
-    /**
-     * Sets the bold parameter of the font
-     *
-     * @param bold If true, the font is bold
-     */
-    public void setBold(boolean bold) {
-        this.bold = bold;
-    }
-
-    /**
-     * Gets the italic parameter of the font
-     *
-     * @return If true, the font is italic
-     */
-    public boolean isItalic() {
-        return italic;
-    }
-
-    /**
-     * Sets the italic parameter of the font
-     *
-     * @param italic If true, the font is italic
-     */
-    public void setItalic(boolean italic) {
-        this.italic = italic;
-    }
-
-    /**
-     * Gets the underline parameter of the font
-     *
-     * @return If true, the font as one underline
-     */
-    public boolean isUnderline() {
-        return underline;
-    }
-
-    /**
-     * Sets the underline parameter of the font
-     *
-     * @param underline If true, the font as one underline
-     */
-    public void setUnderline(boolean underline) {
-        this.underline = underline;
-    }
-
-    /**
-     * Gets the double-underline parameter of the font
-     *
-     * @return If true, the font ha a double underline
-     */
-    public boolean isDoubleUnderline() {
-        return doubleUnderline;
-    }
-
-    /**
-     * Sets the double-underline parameter of the font
-     *
-     * @param doubleUnderline If true, the font ha a double underline
-     */
-    public void setDoubleUnderline(boolean doubleUnderline) {
-        this.doubleUnderline = doubleUnderline;
-    }
-
-    /**
-     * Gets whether the font is struck through
-     *
-     * @return If true, the font is declared as strike-through
-     */
-    public boolean isStrike() {
-        return strike;
-    }
-
-    /**
-     * Sets whether the font is struck through
-     *
-     * @param strike If true, the font is declared as strike-through
-     */
-    public void setStrike(boolean strike) {
-        this.strike = strike;
-    }
-
-    /**
      * Gets the charset of the Font (Default is empty)
      *
      * @return Charset of the Font
@@ -348,14 +397,15 @@ public class Font extends AbstractStyle {
      * Default constructor
      */
     public Font() {
-        this.size = 11;
-        this.name = DEFAULTFONT;
-        this.family = "2";
+        this.size = DEFAULT_FONT_SIZE;
+        this.name = DEFAULT_FONT_NAME;
+        this.family = DEFAULT_FONT_FAMILY;
         this.colorTheme = 1;
         this.colorValue = "";
         this.charset = "";
-        this.scheme = SchemeValue.minor;
-        this.verticalAlign = VerticalAlignValue.none;
+        this.scheme = DEFAULT_FONT_SCHEME;
+        this.verticalAlign = DEFAULT_VERTICAL_ALIGN;
+        this.underline = UnderlineValue.none;
     }
 
     /**
@@ -365,7 +415,23 @@ public class Font extends AbstractStyle {
      */
     @Override
     public String toString() {
-        return "Font:" + this.hashCode();
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"Font\": {\n");
+        addPropertyAsJson(sb, "Bold", bold);
+        addPropertyAsJson(sb, "Charset", charset);
+        addPropertyAsJson(sb, "ColorTheme", colorTheme);
+        addPropertyAsJson(sb, "ColorValue", colorValue);
+        addPropertyAsJson(sb, "VerticalAlign", verticalAlign);
+        addPropertyAsJson(sb, "Family", family);
+        addPropertyAsJson(sb, "Italic", italic);
+        addPropertyAsJson(sb, "Name", name);
+        addPropertyAsJson(sb, "Scheme", scheme);
+        addPropertyAsJson(sb, "Size", size);
+        addPropertyAsJson(sb, "Strike", strike);
+        addPropertyAsJson(sb, "Underline", underline);
+        addPropertyAsJson(sb, "HashCode", this.hashCode(), true);
+        sb.append("\n}");
+        return sb.toString();
     }
 
     /**
@@ -381,7 +447,6 @@ public class Font extends AbstractStyle {
         copy.setColorTheme(this.colorTheme);
         copy.setColorValue(this.colorValue);
         copy.setVerticalAlign(this.verticalAlign);
-        copy.setDoubleUnderline(this.doubleUnderline);
         copy.setFamily(this.family);
         copy.setItalic(this.italic);
         copy.setName(this.name);
@@ -396,26 +461,22 @@ public class Font extends AbstractStyle {
      * Override method to calculate the hash of this component
      *
      * @return Calculated hash as string
+     * @implNote Note that autogenerated hashcode algorithms may cause collisions. Do not use 0 as fallback value for every field
      */
     @Override
     public int hashCode() {
-        int p = 257;
-        int r = 1;
-        r *= p + (this.bold ? 0 : 1);
-        r *= p + (this.italic ? 0 : 1);
-        r *= p + (this.underline ? 0 : 1);
-        r *= p + (this.doubleUnderline ? 0 : 1);
-        r *= p + (this.strike ? 0 : 1);
-        r *= p + this.colorTheme;
-        r *= p + this.colorValue.hashCode();
-        r *= p + this.family.hashCode();
-        r *= p + this.name.hashCode();
-        r *= p + this.scheme.getValue();
-        r *= p + this.verticalAlign.value;
-        r *= p + this.charset.hashCode();
-        r *= p + this.size;
-        return r;
+        int result = (size != +0.0f ? Float.floatToIntBits(size) : 1);
+        result = 31 * result + (name != null ? name.hashCode() : 2);
+        result = 31 * result + (family != null ? family.hashCode() : 4);
+        result = 31 * result + colorTheme;
+        result = 31 * result + (colorValue != null ? colorValue.hashCode() : 8);
+        result = 31 * result + (scheme != null ? scheme.hashCode() : 16);
+        result = 31 * result + (verticalAlign != null ? verticalAlign.hashCode() : 32);
+        result = 31 * result + (bold ? 1 : 64);
+        result = 31 * result + (italic ? 1 : 128);
+        result = 31 * result + (underline != null ? underline.hashCode() : 256);
+        result = 31 * result + (strike ? 1 : 512);
+        result = 31 * result + (charset != null ? charset.hashCode() : 1024);
+        return result;
     }
-
-
 }
