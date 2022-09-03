@@ -179,46 +179,40 @@ public class XlsxReader {
             if (reader.getValue().getAutoFilterRange() != null) {
                 ws.setAutoFilter(reader.getValue().getAutoFilterRange().StartAddress.Column, reader.getValue().getAutoFilterRange().EndAddress.Column);
             }
-            if (reader.getValue().getDefaultColumnWidth() != null){
+            if (reader.getValue().getDefaultColumnWidth() != null) {
                 ws.setDefaultColumnWidth(reader.getValue().getDefaultColumnWidth());
             }
-            if (reader.getValue().getDefaultRowHeight() != null){
+            if (reader.getValue().getDefaultRowHeight() != null) {
                 ws.setDefaultRowHeight(reader.getValue().getDefaultRowHeight());
             }
-            if (reader.getValue().getSelectedCells() != null){
+            if (reader.getValue().getSelectedCells() != null) {
                 ws.setSelectedCells(reader.getValue().getSelectedCells());
             }
-            for(Range range : reader.getValue().getMergedCells()){
+            for (Range range : reader.getValue().getMergedCells()) {
                 ws.mergeCells(range);
             }
-            for(Map.Entry<Worksheet.SheetProtectionValue, Integer> sheetProtection : reader.getValue().getWorksheetProtection().entrySet())
-            {
+            for (Map.Entry<Worksheet.SheetProtectionValue, Integer> sheetProtection : reader.getValue().getWorksheetProtection().entrySet()) {
                 ws.getSheetProtectionValues().add(sheetProtection.getKey());
             }
-            if (!reader.getValue().getWorksheetProtection().isEmpty())
-            {
+            if (!reader.getValue().getWorksheetProtection().isEmpty()) {
                 ws.setUseSheetProtection(true);
             }
-            if (!Helper.isNullOrEmpty(reader.getValue().getWorksheetProtectionHash()))
-            {
+            if (!Helper.isNullOrEmpty(reader.getValue().getWorksheetProtectionHash())) {
                 ws.setSheetProtectionPasswordHash(reader.getValue().getWorksheetProtectionHash());
             }
-            for(Map.Entry<Integer,WorksheetReader.RowDefinition> row : reader.getValue().getRows().entrySet())
-            {
-                if (row.getValue().isHidden())
-                {
+            for (Map.Entry<Integer, WorksheetReader.RowDefinition> row : reader.getValue().getRows().entrySet()) {
+                if (row.getValue().isHidden()) {
                     ws.addHiddenRow(row.getKey());
                 }
-                if (row.getValue().getHeight() != null)
-                {
+                if (row.getValue().getHeight() != null) {
                     ws.setRowHeight(row.getKey(), row.getValue().getHeight());
                 }
             }
-            for(Column column : reader.getValue().getColumns()){
-                if (column.getWidth() != Worksheet.DEFAULT_COLUMN_WIDTH){
+            for (Column column : reader.getValue().getColumns()) {
+                if (column.getWidth() != Worksheet.DEFAULT_COLUMN_WIDTH) {
                     ws.setColumnWidth(column.getColumnAddress(), column.getWidth());
                 }
-                if (column.isHidden()){
+                if (column.isHidden()) {
                     ws.addHiddenColumn(column.getNumber());
                 }
             }
@@ -231,47 +225,38 @@ public class XlsxReader {
                 }
                 ws.addCell(cell.getValue(), cell.getKey());
             }
-            if (reader.getValue().getPaneSplitValue() != null){
+            if (reader.getValue().getPaneSplitValue() != null) {
                 WorksheetReader.PaneDefinition pane = reader.getValue().getPaneSplitValue();
-                if (pane.getFrozenState()){
-                    if (pane.isYSplitDefined() && !pane.isXSplitDefined())
-                    {
+                if (pane.getFrozenState()) {
+                    if (pane.isYSplitDefined() && !pane.isXSplitDefined()) {
                         ws.setHorizontalSplit(pane.getPaneSplitRowIndex(), pane.getFrozenState(), pane.getTopLeftCell(), pane.getActivePane());
                     }
-                    if (!pane.isYSplitDefined() && pane.isXSplitDefined())
-                    {
+                    if (!pane.isYSplitDefined() && pane.isXSplitDefined()) {
                         ws.setVerticalSplit(pane.getPaneSplitColumnIndex(), pane.getFrozenState(), pane.getTopLeftCell(), pane.getActivePane());
-                    }
-                    else if (pane.isYSplitDefined() && pane.isXSplitDefined())
-                    {
+                    } else if (pane.isYSplitDefined() && pane.isXSplitDefined()) {
                         ws.setSplit(pane.getPaneSplitColumnIndex(), pane.getPaneSplitRowIndex(), pane.getFrozenState(), pane.getTopLeftCell(), pane.getActivePane());
                     }
-                }
-                else {
-                    if (pane.isYSplitDefined() && !pane.isXSplitDefined())
-                    {
+                } else {
+                    if (pane.isYSplitDefined() && !pane.isXSplitDefined()) {
                         ws.setHorizontalSplit(pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
                     }
-                    if (!pane.isYSplitDefined() && pane.isXSplitDefined())
-                    {
+                    if (!pane.isYSplitDefined() && pane.isXSplitDefined()) {
                         ws.setVerticalSplit(pane.getPaneSplitWidth(), pane.getTopLeftCell(), pane.getActivePane());
-                    }
-                    else if (pane.isYSplitDefined() && pane.isXSplitDefined())
-                    {
+                    } else if (pane.isYSplitDefined() && pane.isXSplitDefined()) {
                         ws.setSplit(pane.getPaneSplitWidth(), pane.getPaneSplitHeight(), pane.getTopLeftCell(), pane.getActivePane());
                     }
                 }
             }
             wb.addWorksheet(ws);
         }
-        if (!styleReaderContainer.getMruColors().isEmpty()){
-            for (String color : styleReaderContainer.getMruColors()){
+        if (!styleReaderContainer.getMruColors().isEmpty()) {
+            for (String color : styleReaderContainer.getMruColors()) {
                 wb.addMruColor(color);
             }
         }
         wb.setHidden(workbook.isHidden());
         wb.setSelectedWorksheet(workbook.getSelectedWorksheet());
-        if (workbook.isProtected()){
+        if (workbook.isProtected()) {
             wb.setWorkbookProtection(workbook.isProtected(), workbook.isLockWindows(), workbook.isLockStructure(), null);
             wb.setWorkbookProtectionPasswordHash(workbook.getPasswordHash());
         }

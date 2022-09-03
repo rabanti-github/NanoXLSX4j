@@ -72,7 +72,7 @@ public class StyleReaderContainer {
     /**
      * Returns a whole style by its index
      *
-     * @param index            Index of the style
+     * @param index Index of the style
      * @return Style object or null if the component could not be retrieved
      */
     public Style getStyle(String index) {
@@ -81,14 +81,14 @@ public class StyleReaderContainer {
             number = Integer.parseInt(index);
             return (Style) getComponent(Style.class, number);
         } catch (Exception ex) {
-                return null;
+            return null;
         }
     }
 
     /**
      * Returns a whole style by its index. It also returns information about the type of the style, regarding dates or times
      *
-     * @param index            Index of the style
+     * @param index Index of the style
      * @return Style object or null if the component could not be retrieved
      */
     public StyleResult evaluateDateTimeStyle(int index) {
@@ -104,7 +104,7 @@ public class StyleReaderContainer {
     /**
      * Returns a number format component by its index
      *
-     * @param index            Internal index of the style component
+     * @param index Internal index of the style component
      * @return Style component or null if the component could not be retrieved
      * @throws StyleException Thrown if the component was not found
      */
@@ -115,7 +115,7 @@ public class StyleReaderContainer {
     /**
      * Returns a border component by its index
      *
-     * @param index            Internal index of the style component
+     * @param index Internal index of the style component
      * @return Style component or null if the component could not be retrieved
      */
     public Border getBorder(int index) {
@@ -125,7 +125,7 @@ public class StyleReaderContainer {
     /**
      * Returns a fill component by its index
      *
-     * @param index            Internal index of the style component
+     * @param index Internal index of the style component
      * @return Style component or null if the component could not be retrieved
      */
     public Fill getFill(int index) {
@@ -135,7 +135,7 @@ public class StyleReaderContainer {
     /**
      * Returns a font component by its index
      *
-     * @param index            Internal index of the style component
+     * @param index Internal index of the style component
      * @return Style component or null if the component could not be retrieved
      */
     public Font getFont(int index) {
@@ -197,15 +197,15 @@ public class StyleReaderContainer {
      * @return Next id of the component type (collected in this class)
      */
     public int getNextFontId() {
-        return this.fonts.size() ;
+        return this.fonts.size();
     }
 
     /**
      * Internal method to retrieve style components.<br>
      * Note: CellXF is not handled, since retrieved in the style reader in a different way
      *
-     * @param cls              Class of the style component
-     * @param index            Internal index of the style components
+     * @param cls   Class of the style component
+     * @param index Internal index of the style components
      * @return Style component or null if the component could not be retrieved
      */
     private <T> AbstractStyle getComponent(T cls, int index) {
@@ -235,17 +235,19 @@ public class StyleReaderContainer {
 
     /**
      * Adds a color value to the MRU list
+     *
      * @param value ARGB value
      */
-    void addMruColor(String value){
+    void addMruColor(String value) {
         this.mruColors.add(value);
     }
 
     /**
      * Gets the MRU colors as list
+     *
      * @return ARGB values
      */
-    List<String> getMruColors(){
+    List<String> getMruColors() {
         return this.mruColors;
     }
 

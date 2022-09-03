@@ -6,7 +6,6 @@
  */
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
-import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.styles.Border;
 import ch.rabanti.nanoxlsx4j.styles.CellXf;
@@ -56,14 +55,11 @@ public class StyleReader {
                 this.getNumberFormats(node);
             } else if (node.getName().equalsIgnoreCase("borders")) { // handle borders
                 this.getBorders(node);
-            }
-            else if (node.getName().equalsIgnoreCase("fills")) { // handle fills
+            } else if (node.getName().equalsIgnoreCase("fills")) { // handle fills
                 this.getFills(node);
-            }
-            else if (node.getName().equalsIgnoreCase("fonts")) { // handle fonts
+            } else if (node.getName().equalsIgnoreCase("fonts")) { // handle fonts
                 this.getFonts(node);
-            }
-            else if (node.getName().equalsIgnoreCase("colors")) { // handle MRU colors
+            } else if (node.getName().equalsIgnoreCase("colors")) { // handle MRU colors
                 this.getColors(node);
             }
             // TODO: Implement other style components
@@ -144,16 +140,14 @@ public class StyleReader {
 
     /**
      * Tries to parse a border style
+     *
      * @param innerNode Border sub-node
      * @return Border type or non if parsing was not successful
      */
-    private static Border.StyleValue parseBorderStyle(XmlDocument.XmlNode innerNode)
-    {
+    private static Border.StyleValue parseBorderStyle(XmlDocument.XmlNode innerNode) {
         String value = innerNode.getAttribute("style");
-        if (value != null)
-        {
-            if (value.equalsIgnoreCase("double"))
-            {
+        if (value != null) {
+            if (value.equalsIgnoreCase("double")) {
                 return Border.StyleValue.s_double; // special handling, since double is not a valid enum value
             }
             return getBorderEnumValue(value);
@@ -169,19 +163,17 @@ public class StyleReader {
                 String pattern = innerNode.getAttribute("patternType");
                 fillStyle.setPatternFill(getFillPatternEnumValue(pattern));
                 LookupResult attribute = getAttributeOfChild(innerNode, "fgColor", "rgb");
-                if (attribute.attributeIsPresent){
+                if (attribute.attributeIsPresent) {
                     fillStyle.setForegroundColor(attribute.value);
                 }
                 XmlDocument.XmlNode backgroundNode = getChildNode(innerNode, "bgColor");
-                if (backgroundNode != null){
+                if (backgroundNode != null) {
                     String backgroundRgba = backgroundNode.getAttribute("rgb");
-                    if (backgroundRgba != null)
-                    {
+                    if (backgroundRgba != null) {
                         fillStyle.setBackgroundColor(backgroundRgba);
                     }
                     String backgroundIndex = backgroundNode.getAttribute("indexed");
-                    if (backgroundIndex != null)
-                    {
+                    if (backgroundIndex != null) {
                         fillStyle.setIndexedColor(Integer.parseInt(backgroundIndex));
                     }
                 }
@@ -208,7 +200,7 @@ public class StyleReader {
                 fontStyle.setStrike(true);
             }
             attribute = getAttributeOfChild(font, "u", "val");
-            if (attribute.nodeIsPresent){
+            if (attribute.nodeIsPresent) {
                 fontStyle.setUnderline(Font.UnderlineValue.u_single); // default
             }
             if (attribute.attributeIsPresent) {
@@ -226,35 +218,35 @@ public class StyleReader {
             }
 
             attribute = getAttributeOfChild(font, "vertAlign", "val");
-            if (attribute.attributeIsPresent){
+            if (attribute.attributeIsPresent) {
                 fontStyle.setVerticalAlign(getFontVerticalAlignEnumValue(attribute.value));
             }
             attribute = getAttributeOfChild(font, "sz", "val");
-            if (attribute.attributeIsPresent){
+            if (attribute.attributeIsPresent) {
                 fontStyle.setSize(Float.parseFloat(attribute.value));
             }
             XmlDocument.XmlNode colorNode = getChildNode(font, "color");
             if (colorNode != null) {
                 String theme = colorNode.getAttribute("theme");
-                if (theme != null){
+                if (theme != null) {
                     fontStyle.setColorTheme(Integer.parseInt(theme));
                 }
                 String rgb = colorNode.getAttribute("rgb");
-                if (rgb != null){
+                if (rgb != null) {
                     fontStyle.setColorValue(rgb);
                 }
             }
             attribute = getAttributeOfChild(font, "name", "val");
-            if (attribute.attributeIsPresent){
+            if (attribute.attributeIsPresent) {
                 fontStyle.setName(attribute.value);
             }
             attribute = getAttributeOfChild(font, "family", "val");
-            if (attribute.attributeIsPresent){
+            if (attribute.attributeIsPresent) {
                 fontStyle.setFamily(attribute.value);
             }
             attribute = getAttributeOfChild(font, "scheme", "val");
-            if (attribute.attributeIsPresent){
-                switch (attribute.value){
+            if (attribute.attributeIsPresent) {
+                switch (attribute.value) {
                     case "major":
                         fontStyle.setScheme(Font.SchemeValue.major);
                         break;
@@ -264,12 +256,12 @@ public class StyleReader {
                 }
             }
             attribute = getAttributeOfChild(font, "charset", "val");
-            if (attribute.attributeIsPresent){
+            if (attribute.attributeIsPresent) {
                 fontStyle.setCharset(attribute.value);
             }
 
-                fontStyle.setInternalID(styleReaderContainer.getNextFontId());
-                styleReaderContainer.addStyleComponent(fontStyle);
+            fontStyle.setInternalID(styleReaderContainer.getNextFontId());
+            styleReaderContainer.addStyleComponent(fontStyle);
         }
     }
 
@@ -288,7 +280,7 @@ public class StyleReader {
                     cellXfStyle.setForceApplyAlignment(true);
                 }
                 XmlDocument.XmlNode alignmentNode = getChildNode(childNode, "alignment");
-                if (alignmentNode != null){
+                if (alignmentNode != null) {
                     attribute = alignmentNode.getAttribute("shrinkToFit");
                     if (attribute != null && attribute.equals("1")) {
                         cellXfStyle.setAlignment(CellXf.TextBreakValue.shrinkToFit);
@@ -298,33 +290,31 @@ public class StyleReader {
                         cellXfStyle.setAlignment(CellXf.TextBreakValue.wrapText);
                     }
                     attribute = alignmentNode.getAttribute("horizontal");
-                    if (attribute != null){
+                    if (attribute != null) {
                         cellXfStyle.setHorizontalAlign(getCellXfHorizontalAlignEnumValue(attribute));
                     }
                     attribute = alignmentNode.getAttribute("vertical");
-                    if (attribute != null){
+                    if (attribute != null) {
                         cellXfStyle.setVerticalAlign(getCellXfVerticalAlignEnumValue(attribute));
                     }
                     attribute = alignmentNode.getAttribute("indent");
-                    if (attribute != null){
+                    if (attribute != null) {
                         cellXfStyle.setIndent(Integer.parseInt(attribute));
                     }
                     attribute = alignmentNode.getAttribute("textRotation");
-                    if (attribute != null){
+                    if (attribute != null) {
                         int rotation = Integer.parseInt(attribute);
                         cellXfStyle.setTextRotation(rotation > 90 ? 90 - rotation : rotation);
                     }
                 }
                 XmlDocument.XmlNode protectionNode = getChildNode(childNode, "protection");
-                if (protectionNode != null){
+                if (protectionNode != null) {
                     attribute = protectionNode.getAttribute("hidden");
-                    if (attribute != null && attribute.equals("1"))
-                    {
+                    if (attribute != null && attribute.equals("1")) {
                         cellXfStyle.setHidden(true);
                     }
                     attribute = protectionNode.getAttribute("locked");
-                    if (attribute != null && attribute.equals("1"))
-                    {
+                    if (attribute != null && attribute.equals("1")) {
                         cellXfStyle.setLocked(true);
                     }
                 }
@@ -378,13 +368,13 @@ public class StyleReader {
         }
     }
 
-    private void getColors(XmlDocument.XmlNode node){
-        for (XmlDocument.XmlNode color : node.getChildNodes()){
+    private void getColors(XmlDocument.XmlNode node) {
+        for (XmlDocument.XmlNode color : node.getChildNodes()) {
             XmlDocument.XmlNode mruColor = getChildNode(color, "color");
-            if (color.getName().equals("mruColors") && mruColor != null){
-                for(XmlDocument.XmlNode value : color.getChildNodes()){
+            if (color.getName().equals("mruColors") && mruColor != null) {
+                for (XmlDocument.XmlNode value : color.getChildNodes()) {
                     String attribute = value.getAttribute("rgb");
-                    if(attribute != null){
+                    if (attribute != null) {
                         styleReaderContainer.addMruColor(attribute);
                     }
                 }
@@ -498,12 +488,13 @@ public class StyleReader {
     /**
      * Gets the XML attribute from a child node of the passed XML node by its name and the name of the child node.
      * This method simplifies the process of gathering one single child node attribute
-     * @param node XML node that contains the child node
+     *
+     * @param node          XML node that contains the child node
      * @param childNodeName Name of the child node
      * @param attributeName Name of the attribute in the child node
      * @return Result object with the state of the child node and the attribute, as well as the value (if available)
      */
-    private static LookupResult getAttributeOfChild(XmlDocument.XmlNode node, String childNodeName, String attributeName){
+    private static LookupResult getAttributeOfChild(XmlDocument.XmlNode node, String childNodeName, String attributeName) {
         XmlDocument.XmlNode childNode = getChildNode(node, childNodeName);
         if (childNode != null) {
             String value = childNode.getAttribute(attributeName);
@@ -515,7 +506,7 @@ public class StyleReader {
     /**
      * Plain return class (struct-like) for node and attribute lookups
      */
-    private static class LookupResult{
+    private static class LookupResult {
         public final boolean attributeIsPresent;
         public final boolean nodeIsPresent;
         public final String value;
@@ -536,19 +527,21 @@ public class StyleReader {
     /**
      * Parser class to handle nullable integers
      */
-    private static class IntParser{
+    private static class IntParser {
         public boolean hasValue;
         public int value;
-        public IntParser(String rawValue){
-            try{
+
+        public IntParser(String rawValue) {
+            try {
                 value = Integer.parseInt(rawValue);
                 hasValue = true;
-            }catch (Exception e){
+            } catch (Exception e) {
                 value = 0;
                 hasValue = false;
             }
         }
-        public static IntParser tryParse(String rawValue){
+
+        public static IntParser tryParse(String rawValue) {
             return new IntParser(rawValue);
         }
     }

@@ -151,4 +151,19 @@ public class Column {
         this.setNumber(number);
     }
 
+    /**
+     * Creates a deep copy of this column
+     *
+     * @return Copy of this column
+     */
+    Column copy() {
+        Column copy = new Column();
+        copy.setHidden(this.hidden);
+        copy.setWidth(this.width);
+        copy.setAutoFilter(this.autoFilter);
+        copy.columnAddress = this.columnAddress;
+        copy.number = this.number;
+        return copy;
+    }
+
 }

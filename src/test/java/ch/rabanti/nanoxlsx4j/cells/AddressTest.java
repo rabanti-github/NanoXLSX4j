@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class AddressTest {
+public class AddressTest {
 
     @DisplayName("Constructor call with string as parameter")
     @ParameterizedTest(name = "Given address string:{0} should lead to the column: {1}, the row: {2} and the type: {3}")

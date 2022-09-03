@@ -8,7 +8,6 @@ package ch.rabanti.nanoxlsx4j.styles;
 
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Workbook;
-import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 import java.util.ArrayList;
 import java.util.Collections;

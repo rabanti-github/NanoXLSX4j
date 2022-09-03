@@ -49,14 +49,13 @@ public class SharedStringsReader {
 
     /**
      * Constructor with parameters
+     *
      * @param importOptions Import options instance
      */
     public SharedStringsReader(ImportOptions importOptions) {
-        if (importOptions != null)
-        {
+        if (importOptions != null) {
             this.capturePhoneticCharacters = importOptions.isEnforcePhoneticCharacterImport();
-            if (this.capturePhoneticCharacters)
-            {
+            if (this.capturePhoneticCharacters) {
                 this.phoneticsInfo = new ArrayList<>();
             }
         }
@@ -78,10 +77,9 @@ public class SharedStringsReader {
                 if (node.getName().equalsIgnoreCase("si")) {
                     sb = new StringBuilder();
                     getTextToken(node, sb);
-                    if (this.capturePhoneticCharacters){
+                    if (this.capturePhoneticCharacters) {
                         this.sharedStrings.add(processPhoneticCharacters(sb));
-                    }
-                    else{
+                    } else {
                         this.sharedStrings.add(sb.toString());
                     }
                 }
@@ -102,9 +100,9 @@ public class SharedStringsReader {
      * @param sb   StringBuilder reference
      */
     private void getTextToken(XmlDocument.XmlNode node, StringBuilder sb) {
-        if (node.getName().equalsIgnoreCase("rPh")){
-            if (this.capturePhoneticCharacters){
-                if (node.hasChildNodes() && node.getChildNodes().get(0).getName().equalsIgnoreCase("t") && !Helper.isNullOrEmpty(node.getChildNodes().get(0).getInnerText())){
+        if (node.getName().equalsIgnoreCase("rPh")) {
+            if (this.capturePhoneticCharacters) {
+                if (node.hasChildNodes() && node.getChildNodes().get(0).getName().equalsIgnoreCase("t") && !Helper.isNullOrEmpty(node.getChildNodes().get(0).getInnerText())) {
                     String start = node.getAttribute("sb");
                     String end = node.getAttribute("eb");
                     this.phoneticsInfo.add(new PhoneticInfo(node.getChildNodes().get(0).getInnerText(), start, end));
@@ -127,17 +125,18 @@ public class SharedStringsReader {
 
     /**
      * Function to add determined phonetic tokens
+     *
      * @param sb Original StringBuilder
      * @return Text with added phonetic characters (after particular characters, in brackets)
      */
-    private String processPhoneticCharacters(StringBuilder sb){
-        if (this.phoneticsInfo.isEmpty()){
+    private String processPhoneticCharacters(StringBuilder sb) {
+        if (this.phoneticsInfo.isEmpty()) {
             return sb.toString();
         }
         String text = sb.toString();
         StringBuilder sb2 = new StringBuilder();
         int currentTextIndex = 0;
-        for(PhoneticInfo info : this.phoneticsInfo){
+        for (PhoneticInfo info : this.phoneticsInfo) {
             sb2.append(text.substring(currentTextIndex, info.getStartIndex() + info.length));
             sb2.append("(").append(info.getValue()).append(")");
             currentTextIndex = info.getStartIndex() + info.getLength();
@@ -150,15 +149,17 @@ public class SharedStringsReader {
 
     /**
      * Class to represent a phonetic transcription of character sequence.
+     *
      * @implNote Invalid values will lead to a crash. The specifications requires a start index, an end index and a value
      */
-    private static class PhoneticInfo{
+    private static class PhoneticInfo {
         private final String value;
         private final int startIndex;
         private final int length;
 
         /**
          * Gets the transcription value
+         *
          * @return Transcription (phonetic characters)
          */
         public String getValue() {
@@ -167,6 +168,7 @@ public class SharedStringsReader {
 
         /**
          * Gets the absolute start index within the original string
+         *
          * @return Zero-based start index
          */
         public int getStartIndex() {
@@ -175,6 +177,7 @@ public class SharedStringsReader {
 
         /**
          * Gets the number of characters of the original string that are described by this transcription token
+         *
          * @return Number of characters
          */
         public int getLength() {
@@ -183,13 +186,14 @@ public class SharedStringsReader {
 
         /**
          * Constructor with parameters
+         *
          * @param value Transcription value
          * @param start Absolute start index as string
-         * @param end Absolute end index as string
+         * @param end   Absolute end index as string
          */
         public PhoneticInfo(String value, String start, String end) {
             this.value = value;
-            this.startIndex =  Integer.parseInt(start);
+            this.startIndex = Integer.parseInt(start);
             this.length = Integer.parseInt(end) - this.startIndex;
         }
     }

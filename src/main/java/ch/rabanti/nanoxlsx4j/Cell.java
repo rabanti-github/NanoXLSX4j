@@ -486,6 +486,25 @@ public class Cell implements Comparable<Cell> {
         return this.cellStyle;
     }
 
+    /**
+     * Copies this cell into a new one. The style is considered if not null.
+     *
+     * @return Copy of this cell
+     */
+    Cell copy() {
+        Cell copy = new Cell();
+        copy.setValue(this.value);
+        copy.setDataType(this.dataType);
+        copy.setColumnNumber(this.columnNumber);
+        copy.setRowNumber(this.rowNumber);
+        copy.setCellAddressType(this.cellAddressType);
+        if (this.cellStyle != null) {
+            copy.setStyle(this.cellStyle, true);
+        }
+        return copy;
+    }
+
+
 // ### S T A T I C   M E T H O D S ###
 
     /**

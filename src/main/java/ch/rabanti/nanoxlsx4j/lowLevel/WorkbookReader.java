@@ -38,6 +38,7 @@ public class WorkbookReader {
 
     /**
      * Hidden state of the workbook
+     *
      * @return True if hidden
      */
     public boolean isHidden() {
@@ -46,6 +47,7 @@ public class WorkbookReader {
 
     /**
      * Selected worksheet of the workbook
+     *
      * @return Index of the worksheet
      */
     public int getSelectedWorksheet() {
@@ -54,6 +56,7 @@ public class WorkbookReader {
 
     /**
      * Protection state of the workbook
+     *
      * @return True if protected
      */
     public boolean isProtected() {
@@ -62,6 +65,7 @@ public class WorkbookReader {
 
     /**
      * Lock state of the windows
+     *
      * @return True if locked
      */
     public boolean isLockWindows() {
@@ -70,6 +74,7 @@ public class WorkbookReader {
 
     /**
      * Lock state of the structural elements
+     *
      * @return True if locked
      */
     public boolean isLockStructure() {
@@ -78,6 +83,7 @@ public class WorkbookReader {
 
     /**
      * Password hash if available
+     *
      * @return Hash as string
      */
     public String getPasswordHash() {
@@ -102,13 +108,11 @@ public class WorkbookReader {
             XmlDocument xr = new XmlDocument();
             xr.load(stream);
             for (XmlDocument.XmlNode node : xr.getDocumentElement().getChildNodes()) {
-                if (node.getName().equalsIgnoreCase("sheets") && node.hasChildNodes()){
+                if (node.getName().equalsIgnoreCase("sheets") && node.hasChildNodes()) {
                     getWorksheetInformation(node.getChildNodes());
-                }
-                else if (node.getName().equalsIgnoreCase("bookViews") && node.hasChildNodes()){
+                } else if (node.getName().equalsIgnoreCase("bookViews") && node.hasChildNodes()) {
                     getViewInformation(node.getChildNodes());
-                }
-                else if (node.getName().equalsIgnoreCase("workbookProtection")){
+                } else if (node.getName().equalsIgnoreCase("workbookProtection")) {
                     getProtectionInformation(node);
                 }
 
@@ -124,36 +128,38 @@ public class WorkbookReader {
 
     /**
      * Gets the workbook protection information
+     *
      * @param node Root node to check
      */
     private void getProtectionInformation(XmlDocument.XmlNode node) {
         this.wbProtected = true;
         String attribute = node.getAttribute("lockWindows");
-        if (attribute != null && attribute.equals("1")){
+        if (attribute != null && attribute.equals("1")) {
             this.lockWindows = true;
         }
         attribute = node.getAttribute("lockStructure");
-        if (attribute != null && attribute.equals("1")){
+        if (attribute != null && attribute.equals("1")) {
             this.lockStructure = true;
         }
         attribute = node.getAttribute("workbookPassword");
-        if (attribute != null){
+        if (attribute != null) {
             this.passwordHash = attribute;
         }
     }
 
     /**
      * Gets the workbook view information
+     *
      * @param nodes View nodes to check
      */
     private void getViewInformation(XmlDocument.XmlNodeList nodes) {
-        for(XmlDocument.XmlNode node : nodes){
+        for (XmlDocument.XmlNode node : nodes) {
             String attribute = node.getAttribute("visibility");
-            if (attribute != null && attribute.equalsIgnoreCase("hidden")){
+            if (attribute != null && attribute.equalsIgnoreCase("hidden")) {
                 this.hidden = true;
             }
             attribute = node.getAttribute("activeTab");
-            if (attribute != null && !attribute.isEmpty()){
+            if (attribute != null && !attribute.isEmpty()) {
                 this.selectedWorksheet = Integer.parseInt(attribute);
             }
         }
@@ -166,15 +172,14 @@ public class WorkbookReader {
      * @throws IOException Thrown if the workbook information could not be determined
      */
     private void getWorksheetInformation(XmlDocument.XmlNodeList nodes) throws IOException {
-        for(XmlDocument.XmlNode node : nodes){
+        for (XmlDocument.XmlNode node : nodes) {
             if (node.getName().equalsIgnoreCase("sheet")) {
                 try {
                     String sheetName = node.getAttribute("name", "worksheet1");
                     int id = Integer.parseInt(node.getAttribute("sheetId")); // Default will rightly throw an exception
                     String state = node.getAttribute("state");
                     boolean hidden = false;
-                    if (state != null && state.equalsIgnoreCase("hidden"))
-                    {
+                    if (state != null && state.equalsIgnoreCase("hidden")) {
                         hidden = true;
                     }
                     WorksheetDefinition definition = new WorksheetDefinition(id, sheetName);
@@ -192,13 +197,14 @@ public class WorkbookReader {
     /**
      * Class for worksheet Mata-data on import
      */
-    public static class WorksheetDefinition{
+    public static class WorksheetDefinition {
         private final String worksheetName;
         private final int sheetId;
         private boolean hidden;
 
         /**
          * Sets the hidden state of the worksheet
+         *
          * @param hidden True if hidden
          */
         public void setHidden(boolean hidden) {
@@ -207,6 +213,7 @@ public class WorkbookReader {
 
         /**
          * Gets the hidden state of the worksheet
+         *
          * @return True if hidden
          */
         public boolean isHidden() {
@@ -215,6 +222,7 @@ public class WorkbookReader {
 
         /**
          * gets the worksheet name
+         *
          * @return Name as string
          */
         public String getWorksheetName() {
@@ -223,6 +231,7 @@ public class WorkbookReader {
 
         /**
          * Internal worksheet ID
+         *
          * @return Intenal id
          */
         public int getSheetId() {
@@ -231,8 +240,9 @@ public class WorkbookReader {
 
         /**
          * Default constructor with parameters
+         *
          * @param worksheetName Worksheet name
-         * @param sheetId Internal ID
+         * @param sheetId       Internal ID
          */
         public WorksheetDefinition(int sheetId, String worksheetName) {
             this.worksheetName = worksheetName;

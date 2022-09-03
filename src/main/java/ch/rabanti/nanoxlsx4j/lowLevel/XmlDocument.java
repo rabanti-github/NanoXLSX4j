@@ -77,19 +77,6 @@ public class XmlDocument {
     }
 
     /**
-     * Gets a list of sub-nodes with the defined name
-     *
-     * @param name        (Tag) name of the XML node
-     * @param recursively If true, all levels are considered, otherwise only the current level (sub-nodes of current node)
-     * @return XmlNodeList object
-     */
-    public XmlNodeList getElementsByTagName(String name, boolean recursively) {
-        XmlNodeList list = new XmlNodeList();
-        this.documentElement.getElementsByTagName(name, recursively);
-        return list;
-    }
-
-    /**
      * Class representing an iterable list of XML nodes
      */
     public static class XmlNodeList implements Iterable<XmlNode>, Iterator<XmlNode> {
@@ -189,15 +176,6 @@ public class XmlDocument {
 
 
         /**
-         * Gets the attributes of the XML node
-         *
-         * @return List of XML attributes
-         */
-        public XmlAttributeCollection getAttributes() {
-            return this.attributes;
-        }
-
-        /**
          * Gets the child nodes of this node
          *
          * @return List of XML nodes
@@ -286,11 +264,6 @@ public class XmlDocument {
             return list;
         }
 
-        @Override
-        public String toString() {
-            return this.name;
-        }
-
         /**
          * Static method to resolve attributes and sub-nodes recursively
          *
@@ -333,44 +306,8 @@ public class XmlDocument {
      */
     public static class XmlAttribute {
 
-        private String name;
-        private String value;
-
-        /**
-         * Gets the name of the attribute
-         *
-         * @return Name as String
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * Sets the name of the attribute
-         *
-         * @param name Name as String
-         */
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        /**
-         * Gets the value of the attribute
-         *
-         * @return Value as String
-         */
-        public String getValue() {
-            return value;
-        }
-
-        /**
-         * Sets the value of the attribute
-         *
-         * @param value Value as String
-         */
-        public void setValue(String value) {
-            this.value = value;
-        }
+        private final String name;
+        private final String value;
 
         /**
          * Constructor with full declaration
@@ -381,11 +318,6 @@ public class XmlDocument {
         public XmlAttribute(String name, String value) {
             this.name = name;
             this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return this.name + ": " + this.value;
         }
     }
 
@@ -438,14 +370,6 @@ public class XmlDocument {
             }
         }
 
-        /**
-         * Gets the size of XML attribute list
-         *
-         * @return Number of elements
-         */
-        public int size() {
-            return items.size();
-        }
 
         /**
          * Ads an XML attribute to the node list
@@ -454,16 +378,6 @@ public class XmlDocument {
          */
         public void add(XmlAttribute attribute) {
             this.items.add(attribute);
-        }
-
-        /**
-         * Gets an XML attribute at the given index
-         *
-         * @param index Index of the attribute
-         * @return XML attribute
-         */
-        public XmlAttribute get(int index) {
-            return this.items.get(index);
         }
 
         /**

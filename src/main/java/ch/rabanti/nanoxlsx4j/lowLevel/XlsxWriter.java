@@ -679,12 +679,16 @@ public class XlsxWriter {
             if (fontStyle.isStrike() == true) {
                 sb.append("<strike/>");
             }
-            if (fontStyle.getUnderline() == null || fontStyle.getUnderline() != Font.UnderlineValue.none)
-            {
-                if (fontStyle.getUnderline() == Font.UnderlineValue.u_double) { sb.append("<u val=\"double\"/>"); }
-                else if (fontStyle.getUnderline() == Font.UnderlineValue.singleAccounting) { sb.append("<u val=\"singleAccounting\"/>"); }
-                else if (fontStyle.getUnderline() == Font.UnderlineValue.doubleAccounting) { sb.append("<u val=\"doubleAccounting\"/>"); }
-                else { sb.append("<u/>"); }
+            if (fontStyle.getUnderline() == null || fontStyle.getUnderline() != Font.UnderlineValue.none) {
+                if (fontStyle.getUnderline() == Font.UnderlineValue.u_double) {
+                    sb.append("<u val=\"double\"/>");
+                } else if (fontStyle.getUnderline() == Font.UnderlineValue.singleAccounting) {
+                    sb.append("<u val=\"singleAccounting\"/>");
+                } else if (fontStyle.getUnderline() == Font.UnderlineValue.doubleAccounting) {
+                    sb.append("<u val=\"doubleAccounting\"/>");
+                } else {
+                    sb.append("<u/>");
+                }
             }
             if (fontStyle.getVerticalAlign() == Font.VerticalAlignValue.subscript) {
                 sb.append("<vertAlign val=\"subscript\"/>");
@@ -846,8 +850,7 @@ public class XlsxWriter {
                 if (style.getCellXf().getIndent() > 0 &&
                         (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.left
                                 || style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.right
-                                || style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.distributed))
-                {
+                                || style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.distributed)) {
                     sb2.append(" indent=\"");
                     sb2.append(style.getCellXf().getIndent());
                     sb2.append("\"");
@@ -869,7 +872,7 @@ public class XlsxWriter {
                 sb2.append("/>"); // </xf>
                 alignmentString = sb2.toString();
             }
-            if (style.getCellXf().isHidden()  || style.getCellXf().isLocked()) {
+            if (style.getCellXf().isHidden() || style.getCellXf().isLocked()) {
                 if (style.getCellXf().isHidden() && style.getCellXf().isLocked()) {
                     protectionString = "<protection locked=\"1\" hidden=\"1\"/>";
                 } else if (style.getCellXf().isHidden() && !style.getCellXf().isLocked()) {
@@ -952,8 +955,7 @@ public class XlsxWriter {
                 }
                 sb.append("/>");
             }
-        }
-        else{
+        } else {
             // Fallback on empty workbook
             sb.append("<sheet r:id=\"rId1\" sheetId=\"1\" name=\"sheet1\"/>");
         }
@@ -1003,18 +1005,17 @@ public class XlsxWriter {
         }
 
         sb.append("<sheetFormatPr");
-        if (!hasPaneSplitting(worksheet))
-        {
+        if (!hasPaneSplitting(worksheet)) {
             // TODO: Find the right calculation to compensate baseColWidth when using pane splitting
             sb.append(" defaultColWidth=\"")
                     .append(worksheet.getDefaultColumnWidth())
                     .append("\"");
         }
-            sb.append(" defaultRowHeight=\"")
-            .append(worksheet.getDefaultRowHeight())
-            .append("\" baseColWidth=\"")
-            .append(worksheet.getDefaultColumnWidth())
-            .append("\" x14ac:dyDescent=\"0.25\"/>");
+        sb.append(" defaultRowHeight=\"")
+                .append(worksheet.getDefaultRowHeight())
+                .append("\" baseColWidth=\"")
+                .append(worksheet.getDefaultColumnWidth())
+                .append("\" x14ac:dyDescent=\"0.25\"/>");
 
         String colDefinitions = createColsString(worksheet);
         if (!Helper.isNullOrEmpty(colDefinitions)) {
@@ -1037,13 +1038,12 @@ public class XlsxWriter {
 
     /**
      * Checks whether pane splitting is applied in the given worksheet
+     *
      * @param worksheet Checks whether pane splitting is applied in the given worksheet
      * @return True if applied, otherwise false
      */
-    private boolean hasPaneSplitting(Worksheet worksheet)
-    {
-        if (worksheet.getPaneSplitLeftWidth() == null && worksheet.getPaneSplitTopHeight() == null && worksheet.getPaneSplitAddress() == null)
-        {
+    private boolean hasPaneSplitting(Worksheet worksheet) {
+        if (worksheet.getPaneSplitLeftWidth() == null && worksheet.getPaneSplitTopHeight() == null && worksheet.getPaneSplitAddress() == null) {
             return false;
         }
         return true;
@@ -1317,7 +1317,7 @@ public class XlsxWriter {
             rel.addRelationshipEntry("/docProps/core.xml", "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties");
             rel.addRelationshipEntry("/docProps/app.xml", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties");
             rel = p.createRelationship("xl/_rels/workbook.xml.rels");
-            if (!workbook.getWorksheets().isEmpty()){
+            if (!workbook.getWorksheets().isEmpty()) {
                 for (int i = 0; i < this.workbook.getWorksheets().size(); i++) {
                     sheet = this.workbook.getWorksheets().get(i);
                     doc = createWorksheetPart(sheet);
@@ -1325,8 +1325,7 @@ public class XlsxWriter {
                     rel.addRelationshipEntry("/xl/worksheets/" + file, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet");
                     p.addPart("xl/worksheets/" + file, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml", doc);
                 }
-            }
-            else{
+            } else {
                 //  Fallback on empty workbook
                 doc = createWorksheetPart(new Worksheet());
                 file = "sheet1.xml";

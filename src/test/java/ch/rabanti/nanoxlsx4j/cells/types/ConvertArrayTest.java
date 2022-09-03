@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class ConvertArrayTest {
+public class ConvertArrayTest {
 
     @DisplayName("Test of the convertArray method on boolean")
     @Test()

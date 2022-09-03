@@ -130,31 +130,26 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
         }
     }
 
-    static void addPropertyAsJson(StringBuilder sb, String name, Object value)
-    {
-        addPropertyAsJson(sb, name,value, false);
+    static void addPropertyAsJson(StringBuilder sb, String name, Object value) {
+        addPropertyAsJson(sb, name, value, false);
     }
 
     /**
      * Append a JSON property for debug purpose (used in the ToString methods) to the passed string builder
-     * @param sb String builder
-     * @param name Property name
-     * @param value Property value
+     *
+     * @param sb        String builder
+     * @param name      Property name
+     * @param value     Property value
      * @param terminate If true, no comma and newline will be appended
      */
-    static void addPropertyAsJson(StringBuilder sb, String name, Object value, boolean terminate)
-    {
+    static void addPropertyAsJson(StringBuilder sb, String name, Object value, boolean terminate) {
         sb.append("\"").append(name).append("\": ");
-        if (value == null)
-        {
+        if (value == null) {
             sb.append("\"\"");
-        }
-        else
-        {
+        } else {
             sb.append("\"").append(value.toString().replace("\"", "\\\"")).append("\"");
         }
-        if (!terminate)
-        {
+        if (!terminate) {
             sb.append(",\n");
         }
     }

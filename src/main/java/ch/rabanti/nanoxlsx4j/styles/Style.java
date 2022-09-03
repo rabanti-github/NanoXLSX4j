@@ -134,9 +134,9 @@ public class Style extends AbstractStyle {
 
     /**
      * Sets the name of the style. If not defined, the automatically calculated hash will be used as name
-     * @apiNote The name is informal and not considered as an identifier, when collecting all styles for a workbook
      *
      * @param name Name
+     * @apiNote The name is informal and not considered as an identifier, when collecting all styles for a workbook
      */
     public void setName(String name) {
         this.name = name;

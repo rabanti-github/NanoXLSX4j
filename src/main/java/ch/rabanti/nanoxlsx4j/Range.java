@@ -96,4 +96,13 @@ public class Range {
         Range range = (Range) o;
         return this.StartAddress.equals(range.StartAddress) && this.EndAddress.equals(range.EndAddress);
     }
+
+    /**
+     * Creates a (dereferenced, if applicable) deep copy of this range
+     *
+     * @return Copy of this range
+     */
+    Range copy() {
+        return new Range(this.StartAddress.copy(), this.EndAddress.copy());
+    }
 }

@@ -12,7 +12,7 @@ import static ch.rabanti.nanoxlsx4j.TestUtils.buildTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DateTimeCellTest {
+public class DateTimeCellTest {
 
     CellTypeUtils dateUtils;
     CellTypeUtils timeUtils;

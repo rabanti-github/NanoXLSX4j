@@ -11,27 +11,41 @@ Project website: [https://picoxlsx.rabanti.ch](https://picoxlsx.rabanti.ch)
 
 See the **[Change Log](https://github.com/rabanti-github/NanoXLSX4j/blob/master/Changelog.md)** for recent updates.
 
+## What's new in version 2.x
+
+There are some additional functions for workbooks and worksheets, as well as support of further data types.
+The biggest change is the full capable reader support for workbook, worksheet and style information. Also, all features are now fully unit tested. This means, that nanoXLSX is no longer in Beta state. Some key features are:
+
+* Full reader support for styles
+* Copy functions for worksheets
+* Advance import options for the reader
+* Several additional checks, exception handling and updated documentation
+
+## Roadmap
+Version 2.x of NanoXLSX4j was completely overhauled and a high number of (partially parametrized) unit tests with a code coverage of >90% were written to improve the quality of the library.
+However, it is not planned as a LTS version. The upcoming v3.x is supposed to introduce some important functions, like in-line cell formatting, better formula handling and additional worksheet features.
+Furthermore, it is planned to introduce more modern OOXML features like the SHA256 implementation of worksheet passwords.
+
 ## Reader Support
 
-Currently, only basic reader functionality is available:
+The reader is of NanoXLS4j follows the principle of "What You Can Write Is What You Can Read". Therefore, all information about workbooks, worksheets, cells and styles that can be written into an XLSX file by NanoXLSX, can also be read by it.
+There are some limitations:
 
-* Reading and casting of cell values into the appropriate data types
-* Reading of several worksheets in one workbook with worksheet names
-* Limited processing of styles (when reading) at the moment
+* A workbook or worksheet password cannot be recovered, only its hash
+* Information that is not supported by the library will be discarded
+* There are some approximations for floating point numbers. These values (e.g. pane split widths) may deviate from the originally written values
+* Numeric values are cast to the appropriate Java types with the best effort. There are import options available to enforce specific types
 * No support of other objects than spreadsheet data at the moment
-
-**Note: Styles in loaded files are only considering number formats (to determine date and time values), as well as custom formats. The scope of reader functionality may change with future versions.**
-
 ## Requirements
 
-PicoXLSX4j was initially created with Java 8 and currently build with OpenJDK 11
+NanoXLSX4j was initially created with Java 8 and currently build with OpenJDK 11
 The only requirement for development is an up-to-date Java environment (OpenJDK 11 or higher recommended)
 
 ## Installation
 
 ### As JAR
 
-Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-1.3.0.jar**) into the lib folder of your project and create a library reference to it in your IDE.
+Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-2.0.0.jar**) into the lib folder of your project and create a library reference to it in your IDE.
 
 ### As source files
 
@@ -45,7 +59,7 @@ Add the following information to your POM file within the ```<dependencies>``` t
 <dependency>
     <groupId>ch.rabanti</groupId>
     <artifactId>nanoxlsx4j</artifactId>
-    <version>1.3.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 

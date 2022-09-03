@@ -64,6 +64,7 @@ public class WorksheetReader {
     private Map<Worksheet.SheetProtectionValue, Integer> worksheetProtection = new HashMap<>();
     private String worksheetProtectionHash;
     private PaneDefinition paneSplitValue;
+
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
      *
@@ -93,6 +94,7 @@ public class WorksheetReader {
 
     /**
      * Gets a list of defined Columns
+     *
      * @return List of columns
      */
     public List<Column> getColumns() {
@@ -101,6 +103,7 @@ public class WorksheetReader {
 
     /**
      * Gets the default column width
+     *
      * @return Default column width if defined, otherwise null
      */
     public Float getDefaultColumnWidth() {
@@ -109,6 +112,7 @@ public class WorksheetReader {
 
     /**
      * Gets the default row height
+     *
      * @return Default row height if defined, otherwise null
      */
     public Float getDefaultRowHeight() {
@@ -117,6 +121,7 @@ public class WorksheetReader {
 
     /**
      * Gets a map of row definitions
+     *
      * @return Map of row definitions, where the key is the row number and the value is an instance of {@link RowDefinition}
      */
     public Map<Integer, RowDefinition> getRows() {
@@ -125,6 +130,7 @@ public class WorksheetReader {
 
     /**
      * Gets a list of merged cells
+     *
      * @return List of Range definitions
      */
     public List<Range> getMergedCells() {
@@ -133,6 +139,7 @@ public class WorksheetReader {
 
     /**
      * Gets the selected cells (panes are currently not considered)
+     *
      * @return Selected cells range if defined, otherwise null
      */
     public Range getSelectedCells() {
@@ -141,6 +148,7 @@ public class WorksheetReader {
 
     /**
      * Gets the applicable worksheet protection values
+     *
      * @return Map of {@link Worksheet.SheetProtectionValue} objects
      */
     public Map<Worksheet.SheetProtectionValue, Integer> getWorksheetProtection() {
@@ -149,6 +157,7 @@ public class WorksheetReader {
 
     /**
      * Gets the (legacy) password hash of a worksheet if protection values are applied with a password
+     *
      * @return Hash value as string or null / empty if not defined
      */
     public String getWorksheetProtectionHash() {
@@ -157,6 +166,7 @@ public class WorksheetReader {
 
     /**
      * Gets the definition of pane split-related information
+     *
      * @return PaneDefinition object
      */
     public PaneDefinition getPaneSplitValue() {
@@ -213,8 +223,7 @@ public class WorksheetReader {
             for (int i = 0; i < rows.size(); i++) {
                 XmlDocument.XmlNode row = rows.get(i);
                 String rowAttribute = row.getAttribute("r");
-                if (rowAttribute != null)
-                {
+                if (rowAttribute != null) {
                     String hiddenAttribute = row.getAttribute("hidden");
                     RowDefinition.addRowDefinition(this.rows, rowAttribute, null, hiddenAttribute);
                     String heightAttribute = row.getAttribute("ht");
@@ -243,72 +252,64 @@ public class WorksheetReader {
 
     /**
      * Gets the selected cells of the current worksheet
+     *
      * @param xmlDocument XML document of the current worksheet
      */
-    private void getSheetView(XmlDocument xmlDocument){
+    private void getSheetView(XmlDocument xmlDocument) {
         XmlDocument.XmlNodeList sheetViewsNodes = xmlDocument.getDocumentElement().getElementsByTagName("sheetViews", true);
-        if (sheetViewsNodes != null && sheetViewsNodes.size() > 0){
+        if (sheetViewsNodes != null && sheetViewsNodes.size() > 0) {
             XmlDocument.XmlNodeList sheetViewNodes = sheetViewsNodes.get(0).getChildNodes();
             // Go through all possible views
-            for(XmlDocument.XmlNode sheetView : sheetViewNodes){
+            for (XmlDocument.XmlNode sheetView : sheetViewNodes) {
                 if (sheetView.getName().equalsIgnoreCase("sheetView")) {
                     XmlDocument.XmlNodeList selectionNodes = sheetView.getElementsByTagName("selection", true);
-                    if (selectionNodes != null && selectionNodes.size() > 0){
-                        for (XmlDocument.XmlNode selectionNode : selectionNodes){
+                    if (selectionNodes != null && selectionNodes.size() > 0) {
+                        for (XmlDocument.XmlNode selectionNode : selectionNodes) {
                             String attribute = selectionNode.getAttribute("sqref");
-                            if (attribute != null){
-                                if (attribute.contains(":")){
+                            if (attribute != null) {
+                                if (attribute.contains(":")) {
                                     this.selectedCells = new Range(attribute);
-                                }
-                                else {
+                                } else {
                                     this.selectedCells = new Range(attribute + ":" + attribute);
                                 }
                             }
                         }
                     }
                     XmlDocument.XmlNodeList paneNodes = sheetView.getElementsByTagName("pane", true);
-                    if (paneNodes != null && paneNodes.size() > 0)
-                    {
+                    if (paneNodes != null && paneNodes.size() > 0) {
                         String attribute = paneNodes.get(0).getAttribute("state");
                         boolean useNumbers = false;
                         this.paneSplitValue = new PaneDefinition();
-                        if (attribute != null)
-                        {
+                        if (attribute != null) {
                             this.paneSplitValue.setFrozenState(attribute);
                             useNumbers = this.paneSplitValue.getFrozenState();
                         }
                         attribute = paneNodes.get(0).getAttribute("ySplit");
-                        if (attribute != null)
-                        {
+                        if (attribute != null) {
                             this.paneSplitValue.ySplitDefined = true;
-                            if (useNumbers){
+                            if (useNumbers) {
                                 this.paneSplitValue.paneSplitRowIndex = Integer.parseInt(attribute);
-                            }
-                            else{
+                            } else {
                                 this.paneSplitValue.paneSplitHeight = Helper.getPaneSplitHeight(Float.parseFloat(attribute));
                             }
                         }
 
                         attribute = paneNodes.get(0).getAttribute("xSplit");
-                        if (attribute != null)
-                        {
+                        if (attribute != null) {
                             this.paneSplitValue.xSplitDefined = true;
-                            if (useNumbers){
+                            if (useNumbers) {
                                 this.paneSplitValue.paneSplitColumnIndex = Integer.parseInt(attribute);
-                            }
-                            else{
+                            } else {
                                 this.paneSplitValue.paneSplitWidth = Helper.getPaneSplitWidth(Float.parseFloat(attribute));
                             }
                         }
 
                         attribute = paneNodes.get(0).getAttribute("topLeftCell");
-                        if (attribute != null)
-                        {
+                        if (attribute != null) {
                             this.paneSplitValue.topLeftCell = new Address(attribute);
                         }
                         attribute = paneNodes.get(0).getAttribute("activePane");
-                        if (attribute != null)
-                        {
+                        if (attribute != null) {
                             this.paneSplitValue.setActivePane(attribute);
                         }
 
@@ -321,13 +322,12 @@ public class WorksheetReader {
 
     /**
      * Gets the sheet protection values of the current worksheets
+     *
      * @param xmlDocument XML document of the current worksheet
      */
-    private void getSheetProtection(XmlDocument xmlDocument)
-    {
+    private void getSheetProtection(XmlDocument xmlDocument) {
         XmlDocument.XmlNodeList sheetProtectionNodes = xmlDocument.getDocumentElement().getElementsByTagName("sheetProtection", true);
-        if (sheetProtectionNodes != null && sheetProtectionNodes.size() > 0)
-        {
+        if (sheetProtectionNodes != null && sheetProtectionNodes.size() > 0) {
             XmlDocument.XmlNode sheetProtectionNode = sheetProtectionNodes.get(0);
             manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.autoFilter);
             manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.deleteColumns);
@@ -345,7 +345,7 @@ public class WorksheetReader {
             manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.selectUnlockedCells);
             manageSheetProtection(sheetProtectionNode, Worksheet.SheetProtectionValue.sort);
             String legacyPasswordHash = sheetProtectionNode.getAttribute("password");
-            if (legacyPasswordHash != null){
+            if (legacyPasswordHash != null) {
                 this.worksheetProtectionHash = legacyPasswordHash;
             }
         }
@@ -354,15 +354,14 @@ public class WorksheetReader {
 
     /**
      * Manages particular sheet protection values if defined
-     * @param node Sheet protection node
+     *
+     * @param node                 Sheet protection node
      * @param sheetProtectionValue Value to check and maintain (if defined)
      */
-    private void manageSheetProtection(XmlDocument.XmlNode node, Worksheet.SheetProtectionValue sheetProtectionValue)
-    {
+    private void manageSheetProtection(XmlDocument.XmlNode node, Worksheet.SheetProtectionValue sheetProtectionValue) {
         String attributeName = sheetProtectionValue.name();
         String attribute = node.getAttribute(attributeName);
-        if (attribute != null)
-        {
+        if (attribute != null) {
             int value = Integer.parseInt(attribute);
             worksheetProtection.put(sheetProtectionValue, value);
         }
@@ -370,16 +369,17 @@ public class WorksheetReader {
 
     /**
      * Gets the merged cells of the current worksheet
+     *
      * @param xmlDocument XML document of the current worksheet
      */
-    private void getMergedCells(XmlDocument xmlDocument){
+    private void getMergedCells(XmlDocument xmlDocument) {
         XmlDocument.XmlNodeList mergedCellsNodes = xmlDocument.getDocumentElement().getElementsByTagName("mergeCells", true);
-        if (mergedCellsNodes != null && mergedCellsNodes.size() > 0){
+        if (mergedCellsNodes != null && mergedCellsNodes.size() > 0) {
             XmlDocument.XmlNodeList mergedCellNodes = mergedCellsNodes.get(0).getChildNodes();
-            if (mergedCellNodes != null && mergedCellNodes.size() > 0){
-                for(XmlDocument.XmlNode mergedCells : mergedCellNodes){
+            if (mergedCellNodes != null && mergedCellNodes.size() > 0) {
+                for (XmlDocument.XmlNode mergedCells : mergedCellNodes) {
                     String attribute = mergedCells.getAttribute("ref");
-                    if (attribute != null){
+                    if (attribute != null) {
                         this.mergedCells.add(new Range(attribute));
                     }
                 }
@@ -389,9 +389,10 @@ public class WorksheetReader {
 
     /**
      * Gets the sheet format information of the current worksheet
+     *
      * @param xmlDocument XML document of the current worksheet
      */
-    private void getSheetFormats(XmlDocument xmlDocument){
+    private void getSheetFormats(XmlDocument xmlDocument) {
         XmlDocument.XmlNodeList formatNodes = xmlDocument.getDocumentElement().getElementsByTagName("sheetFormatPr", true);
         if (formatNodes != null && formatNodes.size() > 0) {
             String attribute = formatNodes.get(0).getAttribute("defaultColWidth");
@@ -407,6 +408,7 @@ public class WorksheetReader {
 
     /**
      * Gets the auto filters of the current worksheet
+     *
      * @param xmlDocument XML document of the current worksheet
      */
     private void getAutoFilters(XmlDocument xmlDocument) {
@@ -421,51 +423,44 @@ public class WorksheetReader {
 
     /**
      * Gets the columns of the current worksheet
+     *
      * @param xmlDocument XML document of the current worksheet
      */
-    private void getColumns(XmlDocument xmlDocument){
+    private void getColumns(XmlDocument xmlDocument) {
         XmlDocument.XmlNodeList columnsNodes = xmlDocument.getDocumentElement().getElementsByTagName("cols", true);
-        if (columnsNodes.size() == 0){
+        if (columnsNodes.size() == 0) {
             return;
         }
-        for (XmlDocument.XmlNode columnNode : columnsNodes.get(0).getChildNodes())
-        {
+        for (XmlDocument.XmlNode columnNode : columnsNodes.get(0).getChildNodes()) {
             Integer min = null;
             Integer max = null;
             List<Integer> indices = new ArrayList<>();
             String attribute = columnNode.getAttribute("min");
-            if (attribute != null)
-            {
+            if (attribute != null) {
                 min = Integer.parseInt(attribute);
                 max = min;
                 indices.add(min);
             }
             attribute = columnNode.getAttribute("max");
-            if (attribute != null)
-            {
+            if (attribute != null) {
                 max = Integer.parseInt(attribute);
             }
-            if (min != null && !max.equals(min))
-            {
-                for (int i = min; i <= max; i++)
-                {
+            if (min != null && !max.equals(min)) {
+                for (int i = min; i <= max; i++) {
                     indices.add(i);
                 }
             }
             attribute = columnNode.getAttribute("width");
             float width = Worksheet.DEFAULT_COLUMN_WIDTH;
-            if (attribute != null)
-            {
+            if (attribute != null) {
                 width = Float.parseFloat(attribute);
             }
             attribute = columnNode.getAttribute("hidden");
             boolean hidden = false;
-            if (attribute != null && attribute.equals("1"))
-            {
+            if (attribute != null && attribute.equals("1")) {
                 hidden = true;
             }
-            for (int index : indices)
-            {
+            for (int index : indices) {
                 Column column = new Column(index - 1); // transform to zero-based
                 column.setWidth(width);
                 column.setHidden(hidden);
@@ -1229,8 +1224,7 @@ public class WorksheetReader {
     /**
      * Class represents information about pane splitting
      */
-    public static class PaneDefinition
-    {
+    public static class PaneDefinition {
         private Float paneSplitHeight;
         private Float paneSplitWidth;
         private Integer paneSplitRowIndex;
@@ -1243,6 +1237,7 @@ public class WorksheetReader {
 
         /**
          * Gets the pane split height of a worksheet split
+         *
          * @return Pane split height
          */
         public Float getPaneSplitHeight() {
@@ -1251,6 +1246,7 @@ public class WorksheetReader {
 
         /**
          * Gets the row index of a worksheet split
+         *
          * @return Row index of the split
          */
         public Integer getPaneSplitRowIndex() {
@@ -1259,6 +1255,7 @@ public class WorksheetReader {
 
         /**
          * Gets the pane split width of a worksheet split
+         *
          * @return Pane split width
          */
         public Float getPaneSplitWidth() {
@@ -1267,6 +1264,7 @@ public class WorksheetReader {
 
         /**
          * Gets the column index of a worksheet split
+         *
          * @return Column index of the split
          */
         public Integer getPaneSplitColumnIndex() {
@@ -1275,6 +1273,7 @@ public class WorksheetReader {
 
         /**
          * Gets the top Left cell address of the bottom right pane
+         *
          * @return Top left cell address
          */
         public Address getTopLeftCell() {
@@ -1283,6 +1282,7 @@ public class WorksheetReader {
 
         /**
          * Gets the active pane in the split window
+         *
          * @return Active pane split value
          */
         public Worksheet.WorksheetPane getActivePane() {
@@ -1291,6 +1291,7 @@ public class WorksheetReader {
 
         /**
          * Gets the frozen state of the split window
+         *
          * @return True if panes are frozen
          */
         public boolean getFrozenState() {
@@ -1299,6 +1300,7 @@ public class WorksheetReader {
 
         /**
          * Gets whether an X split was defined
+         *
          * @return True if an X split is defined
          */
         public boolean isYSplitDefined() {
@@ -1307,33 +1309,34 @@ public class WorksheetReader {
 
         /**
          * Gets whether an Y split was defined
+         *
          * @return True if an Y split is defined
          */
         public boolean isXSplitDefined() {
             return xSplitDefined;
         }
 
-        public PaneDefinition()
-        {
+        public PaneDefinition() {
             activePane = null;
             topLeftCell = new Address(0, 0);
         }
 
         /**
          * Parses and sets the active pane from a string value
+         *
          * @param value Raw enum value as string
          */
-        public void setActivePane(String value)
-        {
+        public void setActivePane(String value) {
             this.activePane = Worksheet.WorksheetPane.valueOf(value);
         }
 
         /**
          * Sets the frozen state of the split window if defined
+         *
          * @param value raw attribute value
          */
-        public void setFrozenState(String value){
-            if (value.equalsIgnoreCase("frozen") || value.equalsIgnoreCase("frozensplit")){
+        public void setFrozenState(String value) {
+            if (value.equalsIgnoreCase("frozen") || value.equalsIgnoreCase("frozensplit")) {
                 this.frozenState = true;
             }
         }
@@ -1342,13 +1345,15 @@ public class WorksheetReader {
     /**
      * Internal class to represent a row
      */
-    static class RowDefinition{
+    static class RowDefinition {
 
         private boolean hidden;
         private Float height = null;
 
-        /**+
+        /**
+         * +
          * Gets whether the row is hidden
+         *
          * @return True if hidden, otherwise false
          */
         public boolean isHidden() {
@@ -1357,6 +1362,7 @@ public class WorksheetReader {
 
         /**
          * Sets whether the row is hidden
+         *
          * @param hidden True if hidden, otherwise false
          */
         public void setHidden(boolean hidden) {
@@ -1365,6 +1371,7 @@ public class WorksheetReader {
 
         /**
          * Gets the non-standard row-height
+         *
          * @return Row height. If null, no specific height was defined (remains default)
          */
         public Float getHeight() {
@@ -1373,7 +1380,8 @@ public class WorksheetReader {
 
         /**
          * Sets the non-standard row-height
-         * @param height  Row height. If null, no specific height was defined (remains default)
+         *
+         * @param height Row height. If null, no specific height was defined (remains default)
          */
         public void setHeight(Float height) {
             this.height = height;
@@ -1381,22 +1389,21 @@ public class WorksheetReader {
 
         /**
          * Adds a row definition or changes it, when a non-standard row height and/or hidden state is defined
-         * @param rows Row map
-         * @param rowNumber Row number as string (directly resolved from the corresponding XML attribute)
+         *
+         * @param rows           Row map
+         * @param rowNumber      Row number as string (directly resolved from the corresponding XML attribute)
          * @param heightProperty Row height as string (directly resolved from the corresponding XML attribute)
          * @param hiddenProperty Hidden definition as string (directly resolved from the corresponding XML attribute)
-         */ static void addRowDefinition(Map<Integer,RowDefinition> rows, String rowNumber, String heightProperty, String hiddenProperty){
-            int row = Integer.parseInt(rowNumber) -1; // Transform to zero-based
-            if (!rows.containsKey(row))
-            {
+         */
+        static void addRowDefinition(Map<Integer, RowDefinition> rows, String rowNumber, String heightProperty, String hiddenProperty) {
+            int row = Integer.parseInt(rowNumber) - 1; // Transform to zero-based
+            if (!rows.containsKey(row)) {
                 rows.put(row, new RowDefinition());
             }
-            if (heightProperty != null)
-            {
+            if (heightProperty != null) {
                 rows.get(row).setHeight(Float.parseFloat(heightProperty));
             }
-            if (hiddenProperty != null && hiddenProperty.equals("1"))
-            {
+            if (hiddenProperty != null && hiddenProperty.equals("1")) {
                 rows.get(row).setHidden(true);
             }
         }

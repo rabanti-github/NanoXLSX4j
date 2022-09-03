@@ -6,6 +6,7 @@ import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
+import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
 import org.junit.jupiter.api.DisplayName;
@@ -613,6 +614,49 @@ public class WorkbookTest {
         assertEquals(2, workbook.getMruColors().size());
         assertEquals("FF00AAFF", workbook.getMruColors().get(0));
         assertEquals("FFAABBCC", workbook.getMruColors().get(1));
+    }
+
+    @DisplayName("Test of the 'getWorksheet' function by name")
+    @Test()
+    void getWorksheetTest()
+    {
+        Workbook workbook = new Workbook("worksheet1");
+        workbook.getCurrentWorksheet().addCell("WS1", "A1");
+        workbook.addWorksheet("worksheet2");
+        workbook.getCurrentWorksheet().addCell("WS2", "A1");
+        workbook.addWorksheet("worksheet3");
+        workbook.getCurrentWorksheet().addCell("WS3", "A1");
+        Worksheet givenWorksheet = workbook.getWorksheet("worksheet2");
+        assertEquals("WS2", givenWorksheet.getCell("A1").getValue());
+    }
+
+    @DisplayName("Test of the 'getWorksheet' function by index")
+    @Test()
+    void getWorksheetTest2()
+    {
+        Workbook workbook = new Workbook("worksheet1");
+        workbook.getCurrentWorksheet().addCell("WS1", "A1");
+        workbook.addWorksheet("worksheet2");
+        workbook.getCurrentWorksheet().addCell("WS2", "A1");
+        workbook.addWorksheet("worksheet3");
+        workbook.getCurrentWorksheet().addCell("WS3", "A1");
+        Worksheet givenWorksheet = workbook.getWorksheet(1);
+        assertEquals("WS2", givenWorksheet.getCell("A1").getValue());
+    }
+    @DisplayName("Test of the failing 'getWorksheet' on a non existing worksheet name")
+    @Test()
+    void getWorksheetFailTest()
+    {
+        Workbook workbook1 = new Workbook("worksheet1");
+        assertThrows(WorksheetException.class, () -> workbook1.getWorksheet("worksheet3"));
+    }
+
+    @DisplayName("Test of the failing 'getWorksheet' on a non existing worksheet index")
+    @Test()
+    void getWorksheetFailTest2()
+    {
+        Workbook workbook1 = new Workbook("worksheet1");
+        assertThrows(RangeException.class, () -> workbook1.getWorksheet(1));
     }
 
     private <T> void assertWorksheetRemoval(Workbook workbook, Consumer<T> removalFunction, int worksheetCount, String currentWorksheet, int selectedWorksheetIndex, T worksheetToRemove, String expectedCurrentWorksheet, int expectedSelectedWorksheetIndex) {

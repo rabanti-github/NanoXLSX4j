@@ -19,23 +19,22 @@ public class Performance {
 
     /**
      * Method to test and measure the performance if a huge number of date vales is inserted as new cells.
-     * @param fileName Filename of the output
-     * @param sheetName Worksheet name
+     *
+     * @param fileName     Filename of the output
+     * @param sheetName    Worksheet name
      * @param numberOfRows Number of generated rows
      */
-    public static void dateStressTest(String fileName, String sheetName, int numberOfRows){
+    public static void dateStressTest(String fileName, String sheetName, int numberOfRows) {
 
         Workbook wb = new Workbook(fileName, sheetName);
-        for (int i = 0; i < numberOfRows; i++){
+        for (int i = 0; i < numberOfRows; i++) {
             wb.WS.value(new Date());
             wb.WS.value("XYZ", BasicStyles.Bold());
             wb.WS.down();
         }
         try {
             wb.save();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }

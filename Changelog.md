@@ -1,16 +1,87 @@
 # Change Log
 
-## v1.4.0
+## v2.0.0
 
 ---
-Release Date: **xx.06.2021**
+Release Date: **03.09.2022 - Major Release**
 
-- Added style reader to resolve dates and times properly
-- Added new data type TIME, represented by LocalTime objects in reader and writer
-- Added time (LocalTime) examples to the demos
-- Added a check to ensure dates are not set beyond 9999-12-31 (limitation of OAdate)
-- Updated documentation
-- Fixed some code formatting issues
+### Workbook and Shortener
+
+- Added a list of MRU colors that can be defined in the Workbook class (methods addMruColor, clearMruColors)
+- Added a getter for the workbook protection password hash (will be filled when loading a workbook)
+- Added the method setSelectedWorksheet by name in the Workbook class
+- Added two methods getWorksheet by name or index in the Workbook class
+- Added the methods copyWorksheetIntoThis and copyWorksheetTo with several overloads in the Workbook class
+- Added the function removeWorksheet by index with the option of resetting the current worksheet, in the Workbook class
+- Added the function setCurrentWorksheet by index in the Workbook class
+- Added the function setSelectedWorksheet by name in the Workbook class
+- Added a Shortener-Class constructor with a workbook reference
+- The shortener functions down and right have now an option to keep row and column positions
+- Added two shortener functions up and left
+- Made several style assigning methods deprecated in the Workbook class (will be removed in future versions)
+
+### Worksheet
+
+- Added a getter for the worksheet protection password hash (will be filled when loading a workbook)
+- Added the methods getFirstDataColumnNumber, getFirstDataColumnNumber, getFirstDataRowNumber, getFirstRowNumber, getLastDataColumnNumber, getFirstCellAddress, getFirstDataCellAddress, getLastDataColumnNumber, getLastDataRowNumber, getLastRowNumber, getLastCellAddress,  getLastCellAddress and getLastDataCellAddress
+- Added the methods getRow and getColumns by address string or index
+- Added the method copy to copy a worksheet (deep copy)
+- Added a constructor with only the worksheet name as parameter
+- Added and option in goToNextColumn and goToNextRow to either keep the current row or column
+- Added the methods removeRowHeight and removeAllowedActionOnSheetProtection
+- Renamed columnAddress and rowAddress to columnNumber and rowNumber in the addNextCell, addCellFormula and removeCell methods
+- Added several validations for worksheet data
+
+### Cells, Rows and Columns
+
+- In Cell, the address can now have reference modifiers ($)
+- The worksheet reference in the Cell constructor was removed. Assigning to a worksheet is now managed automatically by the worksheet when adding a cell
+- Added a field cellAddressType in Cell
+- Cells can now have null as value, interpreted as empty
+- Added a new overloaded function resolveCellCoordinate to resolve the address type as well
+- Added validateColumnNumber and validateRowNumber in Cell
+- In Address, the constructor with string and address type now only needs a string, since reference modifiers ($) are resolved automatically
+- Address objects are now comparable
+- Implemented better address validation
+- Range start and end addresses are swapped automatically, if reversed
+
+### Styles
+
+- Font has now an enum of possible underline values (e.g. instead of a bool)
+- CellXf supports now indentation
+- A new, internal style repository was introduced to streamline the style management
+- Color (RGB) values are now validated (Fill class has a function validateColor)
+- Style components have now more appropriate default values
+- MRU colors are now not collected from defined style colors but from the MRU list in the workbook object
+- The toString function of Styles and all sub parts will now give a complete outline of all elements
+- Fixed several issues with style comparison
+- Several style default values were introduced as constants
+
+### Formulas
+
+- Added types as formula values: byte, Double, Short, Integer, Long, BigDecimal
+- Added several validity checks
+
+### Reader
+
+- Added default values for dates and times in the import options
+- Added global casting import options: AllNumbersToDouble, AllNumbersToBigDecimal, AllNumbersToInt, EverythingToString
+- Added column casting import options: Numeric, Double, BigDecimal
+- Added global import options: EnforcePhoneticCharacterImport, EnforceEmptyValuesAsString, DateTimeFormat, TemporalCultureInfo
+- Added a meta data reader
+- All style elements that can be written can also be read
+- All workbook elements that can be written can also be read (exception: passwords cannot be recovered)
+- All worksheet elements that can be written can also be read (exception: passwords cannot be recovered)
+- Better handling of dates and times, especially with invalid (too low and too high numbers) values
+
+### Misc
+- Added a unit test project with several thousand, partially parametrized test cases
+- Added several constants for boundary dates in the Helper class
+- Added several functions for pane splitting in the Helper class
+- Exposed the (legacy) password generation method in the Helper class
+- Updated documentation among the whole project
+- Overhauled the whole writer
+- Removed lot of dead code for better maintenance
 
 ## v1.3.0
 

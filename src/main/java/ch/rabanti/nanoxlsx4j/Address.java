@@ -147,5 +147,13 @@ public class Address implements Comparable<Address> {
         return Long.compare(thisCoordinate, otherCoordinate);
     }
 
+    /**
+     * Creates a (dereferenced, if applicable) deep copy of this address
+     *
+     * @return Copy of this range
+     */
+    Address copy() {
+        return new Address(this.Column, this.Row, this.Type);
+    }
 
 }

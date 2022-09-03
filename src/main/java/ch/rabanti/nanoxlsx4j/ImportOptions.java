@@ -173,6 +173,7 @@ public class ImportOptions {
     /**
      * Gets whether phonetic characters (like ruby characters / Furigana / Zhuyin fuhao) in strings are added in brackets after the transcribed symbols.
      * By default, phonetic characters are removed from strings.
+     *
      * @return If true, phonetic characters will be appended, otherwise discarded
      */
     public boolean isEnforcePhoneticCharacterImport() {
@@ -182,6 +183,7 @@ public class ImportOptions {
     /**
      * Sets whether phonetic characters (like ruby characters / Furigana / Zhuyin fuhao) in strings are added in brackets after the transcribed symbols.
      * By default, phonetic characters are removed from strings.
+     *
      * @param enforcePhoneticCharacterImport If true, phonetic characters will be appended, otherwise discarded
      * @apiNote This option is not applicable to specific rows or a start column (applied globally)
      */
@@ -250,6 +252,7 @@ public class ImportOptions {
 
     /**
      * Gets the Locale instance, used to parse Duration objects from strings. If null, parsing will be tried with 'best effort'.
+     *
      * @return Locale instance used for parsing
      */
     public Locale getTemporalLocale() {
@@ -258,6 +261,7 @@ public class ImportOptions {
 
     /**
      * Sets the Locale instance, used to parse Duration objects from strings. If null, parsing will be tried with 'best effort'.
+     *
      * @param temporalLocale Locale instance used for parsing
      */
     public void setTemporalLocale(Locale temporalLocale) {

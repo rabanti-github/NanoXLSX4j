@@ -55,10 +55,10 @@ public class NanoXLSX4j {
         // Performance.dateStressTest(outputFolder + "stressTest.xlsx", "Dates", 40000); // Only uncomment this to test the library performance
         /* *********************** */
 
-         /** DEMOS **/
-       // bug();
+        /** DEMOS **/
+        // bug();
 
-       // basicDemo();
+        // basicDemo();
         read();
         /*
         shortenerDemo();
