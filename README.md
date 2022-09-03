@@ -21,14 +21,14 @@ The biggest change is the full capable reader support for workbook, worksheet an
 * Advance import options for the reader
 * Several additional checks, exception handling and updated documentation
 
-## Roadmap
+## Road map
 Version 2.x of NanoXLSX4j was completely overhauled and a high number of (partially parametrized) unit tests with a code coverage of >90% were written to improve the quality of the library.
 However, it is not planned as a LTS version. The upcoming v3.x is supposed to introduce some important functions, like in-line cell formatting, better formula handling and additional worksheet features.
 Furthermore, it is planned to introduce more modern OOXML features like the SHA256 implementation of worksheet passwords.
 
 ## Reader Support
 
-The reader is of NanoXLS4j follows the principle of "What You Can Write Is What You Can Read". Therefore, all information about workbooks, worksheets, cells and styles that can be written into an XLSX file by NanoXLSX, can also be read by it.
+The reader of NanoXLS4j follows the principle of "What You Can Write Is What You Can Read". Therefore, all information about workbooks, worksheets, cells and styles that can be written into an XLSX file by NanoXLSX, can also be read by it.
 There are some limitations:
 
 * A workbook or worksheet password cannot be recovered, only its hash
