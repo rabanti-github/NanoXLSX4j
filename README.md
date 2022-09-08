@@ -29,7 +29,7 @@ The biggest change is the full capable reader support for workbook, worksheet an
 * Several additional checks, exception handling and updated documentation
 
 ## Road map
-Version 2.x of NanoXLSX4j was completely overhauled and a high number of (partially parametrized) unit tests with a code coverage of >90% were written to improve the quality of the library.
+Version 2.x of NanoXLSX4j was completely overhauled and a high number of (partially parametrized) unit tests with a code coverage of >97% were written to improve the quality of the library.
 However, it is not planned as a LTS version. The upcoming v3.x is supposed to introduce some important functions, like in-line cell formatting, better formula handling and additional worksheet features.
 Furthermore, it is planned to introduce more modern OOXML features like the SHA256 implementation of worksheet passwords.
 
@@ -56,7 +56,7 @@ Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-2.0.0.jar**) into the li
 
 ### As source files
 
-Place all .java files from the NanoXLSX4j source folder into your project. The folder structure defines the packages. Please use refactoring if you want to relocate the files.
+Place all .java files from the NanoXLSX4j [source folder](https://github.com/rabanti-github/NanoXLSX4j/tree/master/NanoXLSX4j.Lib/src/main/java/ch/rabanti/nanoxlsx4j) into your project. The folder structure defines the packages. Please use refactoring if you want to relocate the files.
 
 ### Maven
 
@@ -122,7 +122,7 @@ catch (Exception ex)
 ## Further References
 
 See the full <b>API-Documentation</b> at: [https://rabanti-github.github.io/NanoXLSX4j/](https://rabanti-github.github.io/NanoXLSX4j/).
-The [Demo class](https://github.com/rabanti-github/NanoXLSX4j/blob/master/src/main/java/ch/rabanti/nanoxlsx4j/demo/NanoXLSX4j.java) contains 14 simple use cases. You can also look at the full API documentation or the Javadoc annotations in the particular .java files.
+The [Demo module](https://github.com/rabanti-github/NanoXLSX4j/tree/master/NanoXLSX4j.Demo) contains 14 simple use cases. You can also look at the full API documentation or the Javadoc annotations in the particular .java files.
 
-Hint: You will find most certainly any function, and the way how to use it, in the [Unit Test Section](https://github.com/rabanti-github/NanoXLSX4j/tree/master/NanoXlsx%20Test)
+Hint: You will find most certainly any function, and the way how to use it, in the [Unit Test Section](https://github.com/rabanti-github/NanoXLSX4j/tree/master/NanoXLSX4j.Lib/src/test/java/ch/rabanti/nanoxlsx4j)
 
