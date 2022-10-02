@@ -3,12 +3,14 @@ package ch.rabanti.nanoxlsx4j.styles.writeRead;
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.TestUtils;
+import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.styles.NumberFormat;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -16,6 +18,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NumberFormatWriteReadTest {
@@ -33,15 +36,42 @@ public class NumberFormatWriteReadTest {
         Style style = new Style();
         style.getNumberFormat().setCustomFormatID(styleValue);
         style.getNumberFormat().setNumber(NumberFormat.FormatNumber.custom); // Mandatory
+        style.getNumberFormat().setCustomFormatCode("#.##"); // Mandatory
         Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
         assertEquals(styleValue, cell.getCellStyle().getNumberFormat().getCustomFormatID());
     }
+
+
+
+
+    @DisplayName("Test of the failing save attempt of 'customFormatID' value when writing and reading a NumberFormat style with missing CustomFormatCode")
+    @ParameterizedTest(name = "Given format number {0} with value '{1}' should lead to an exception")
+    @CsvSource({
+            "164, test",
+            "165, 0.5f",
+            "200, 22",
+            "2000, true",
+    })
+    void customFormatIDFormatFailTest(int styleValue, Object value)
+    {
+        Workbook workbook = new Workbook("worksheet1");
+        Style style = new Style();
+        style.getNumberFormat().setCustomFormatID(styleValue);
+        style.getNumberFormat().setNumber(NumberFormat.FormatNumber.custom); // Mandatory
+        workbook.getCurrentWorksheet().addNextCell("test", style);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        assertThrows(Exception.class, () -> workbook.saveAsStream(stream));
+    }
+
+
 
     @DisplayName("Test of the 'customFormatCode' value when writing and reading a NumberFormat style")
     @ParameterizedTest(name = "Given format number {0} with value '{1}' should lead to a cell with the same format number")
     @CsvSource({
             "#, test",
-            "'', 0.5f",
+            "'\\', 0.5f",
+            "'\\\\', ''",
+            "' \\.\\ ', false",
             "' ', 22",
             "ABCDE, true",
     })
@@ -90,7 +120,6 @@ public class NumberFormatWriteReadTest {
             "format_47, noDate",
             "format_48, Æ",
             "format_49, test",
-            "custom, 0.5f",
     })
     void numberNumberFormatTest(NumberFormat.FormatNumber styleValue, Object value)
     {
@@ -109,7 +138,7 @@ public class NumberFormatWriteReadTest {
             "format_17, 1000, 26.09.1902",
             "format_22, 1000, 26.09.1902",
     })
-    void numberNumberFormatTest2(NumberFormat.FormatNumber styleValue, int value, String expected) throws ParseException {
+    void numberFormatTest2(NumberFormat.FormatNumber styleValue, int value, String expected) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
         Date expectedValue = formatter.parse(expected);
         Style style = new Style();
@@ -129,7 +158,7 @@ public class NumberFormatWriteReadTest {
             "format_46, 0.5, 12:00:00",
             "format_47, 0.5, 12:00:00",
     })
-    void numberNumberFormatTest3(NumberFormat.FormatNumber styleValue, float value, String expected)
+    void numberFormatTest3(NumberFormat.FormatNumber styleValue, float value, String expected)
     {
         Duration expectedValue = Helper.parseTime(expected, "HH:mm:ss", Locale.US);
         Style style = new Style();

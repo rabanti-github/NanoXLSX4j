@@ -210,7 +210,7 @@ public class FontTest {
     @DisplayName("Test of the failing set function of the colorTheme field (invalid values)")
     @ParameterizedTest(name = "Given value {0} should lead to an exception")
     @CsvSource({
-            "0",
+            "-1",
             "-100",
     })
     void colorThemeFailTest(int value) {

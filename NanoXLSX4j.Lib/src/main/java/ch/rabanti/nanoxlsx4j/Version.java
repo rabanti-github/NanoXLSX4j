@@ -21,6 +21,6 @@ public final class Version {
     /**
      * Version of the library
      */
-    public static final String VERSION = "1.3000"; // 1.3.0
+    public static final String VERSION = "2.0100"; // 2.0.1
 
 }

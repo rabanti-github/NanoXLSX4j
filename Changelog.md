@@ -1,5 +1,21 @@
 # Change Log
 
+## v2.0.1
+
+---
+Release Date: **03.10.2022**
+
+- Fixed a bug in the functions to write and read custom number formats
+- Fixed behavior of empty cells and added re-evaluation if values are set by the setValue setter
+- Fixed a bug in the functions to write and read font values (styles)
+- Adapted and added further tests
+- Updated documentation
+- Added some internal notes to prepare the development of the next mayor version
+
+Note:
+- When defining a custom number format, now the CustomFormatCode property must always be defined as well, since an empty value leads to an invalid Workbook
+- When a cell is now created (by constructor) with the type EMPTY, any passed value will be discarded in this cell
+
 ## v2.0.0
 
 ---

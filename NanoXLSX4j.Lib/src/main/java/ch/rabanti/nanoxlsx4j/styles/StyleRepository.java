@@ -17,6 +17,7 @@ import java.util.Map;
 public class StyleRepository {
 
     private static StyleRepository instance;
+    private boolean importInProgress = false;
 
     /**
      * Gets the singleton instance of the repository
@@ -39,6 +40,22 @@ public class StyleRepository {
      */
     public Map<Integer, Style> getStyles() {
         return styles;
+    }
+
+    /**
+     *  Sets the import state of the repository
+     * @param importInProgress If true certain exceptions will be suppressed and transformations on styles are performed when a worksheet is loaded
+     */
+    public void setImportInProgress(boolean importInProgress) {
+        this.importInProgress = importInProgress;
+    }
+
+    /**
+     * Gets the import state of the repository
+     * @return If true certain exceptions will be suppressed and transformations on styles are performed when a worksheet is loaded
+     */
+    public boolean isImportInProgress() {
+        return importInProgress;
     }
 
     /**
@@ -74,5 +91,6 @@ public class StyleRepository {
     public void flushStyles() {
         styles.clear();
     }
+
 
 }

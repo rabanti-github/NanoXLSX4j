@@ -13,6 +13,7 @@ import ch.rabanti.nanoxlsx4j.Metadata;
 import ch.rabanti.nanoxlsx4j.Range;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
@@ -731,10 +732,13 @@ public class XlsxWriter {
         NumberFormat[] numberFormatStyles = this.styles.getNumberFormats();
         StringBuilder sb = new StringBuilder();
         for (NumberFormat numberFormatStyle : numberFormatStyles) {
-            if (numberFormatStyle.isCustomFormat() == true) {
-                sb.append("<numFmt formatCode=\"").append(numberFormatStyle.getCustomFormatCode()).append("\" numFmtId=\"");
-                sb.append(numberFormatStyle.getCustomFormatID());
-                sb.append("\"/>");
+            if (numberFormatStyle.isCustomFormat()) {
+
+                if (Helper.isNullOrEmpty(numberFormatStyle.getCustomFormatCode())) {
+                    throw new FormatException("The number format style component with the ID " + numberFormatStyle.getCustomFormatID() + " cannot be null or empty");
+                }
+                String customFormat = NumberFormat.escapeFormatCode(numberFormatStyle.getCustomFormatCode());
+                sb.append("<numFmt formatCode=\"").append(escapeXMLAttributeChars(customFormat)).append("\" numFmtId=\"").append(numberFormatStyle.getCustomFormatID()).append("\"/>");
             }
         }
         return sb.toString();

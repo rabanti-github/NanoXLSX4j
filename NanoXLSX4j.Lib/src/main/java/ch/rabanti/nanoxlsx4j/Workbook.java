@@ -47,8 +47,8 @@ public class Workbook {
     private String workbookProtectionPasswordHash;
     private List<Worksheet> worksheets;
     private boolean hidden;
-    private boolean importInProgress = false;
     private final List<String> mruColors = new ArrayList<>();
+    boolean importInProgress = false;
 
     /**
      * Shortener omits getter and setter to simplify the access (Can throw a WorksheetException if not defined)

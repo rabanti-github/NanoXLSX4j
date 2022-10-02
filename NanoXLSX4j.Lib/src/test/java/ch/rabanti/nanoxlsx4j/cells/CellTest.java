@@ -67,8 +67,8 @@ public class CellTest {
             "=B1, =B1, FORMULA, FORMULA",
             "'','' , DEFAULT, STRING",
             ",, DEFAULT, EMPTY",
-            "'','' , EMPTY, EMPTY",
-            "11, 11, EMPTY, EMPTY",
+            "'', , EMPTY, EMPTY",
+            "11, , EMPTY, EMPTY",
     })
     void cellConstructorTest2(Object givenValue, Object expectedValue, Cell.CellType givenType, Cell.CellType expectedType) throws Exception {
         Cell cell = new Cell(givenValue, givenType);
@@ -100,8 +100,8 @@ public class CellTest {
             "=B1, =B1, FORMULA, FORMULA, $A$15, $A$15",
             "'','' , DEFAULT, STRING, r1, R1",
             ",, DEFAULT, EMPTY, $ab$999, $AB$999",
-            "'','' , EMPTY, EMPTY, c$90000, C$90000",
-            "11, 11, EMPTY, EMPTY, a17, A17",
+            "'', , EMPTY, EMPTY, c$90000, C$90000",
+            "11, , EMPTY, EMPTY, a17, A17",
     })
     void cellConstructorTest3(Object givenValue, Object expectedValue, Cell.CellType givenType, Cell.CellType expectedType, String givenAddress, String expectedAddress) {
         Cell cell = new Cell(givenValue, givenType, givenAddress);
@@ -122,8 +122,8 @@ public class CellTest {
             "=B1, =B1, FORMULA, FORMULA, 0, 14, A15",
             "'','' , DEFAULT, STRING, 17, 0, R1",
             ", , DEFAULT, EMPTY, 27, 998, AB999",
-            "'','' , EMPTY, EMPTY, 2, 89999, C90000",
-            "11, 11, EMPTY, EMPTY, 0, 16, A17",
+            "'', , EMPTY, EMPTY, 2, 89999, C90000",
+            "11, , EMPTY, EMPTY, 0, 16, A17",
     })
     void cellConstructorTest4(Object givenValue, Object expectedValue, Cell.CellType givenType, Cell.CellType expectedType, int givenColumn, int givenRow, String expectedAddress) {
         Address address = new Address(givenColumn, givenRow);
@@ -260,6 +260,27 @@ public class CellTest {
             cell.setStyle(style);
         });
     }
+
+
+    @DisplayName("Test of the set function of the Value field")
+    @ParameterizedTest(name = "Initial type {0} with value {1} should lead with value {3} to type {2}")
+    @CsvSource({
+            "INTEGER, 0, NUMBER, STRING, 'test', STRING",
+            "BOOLEAN, true, BOOL, INTEGER, 1, NUMBER",
+            "FLOAT, 22.5, NUMBER, INTEGER, 22, NUMBER",
+            "STRING, 'True', STRING, BOOLEAN, true, BOOL",
+            "NULL, '', EMPTY, INTEGER, 22, NUMBER",
+            "STRING, 'test', STRING, NULL, '', EMPTY",
+    })
+    void cellValueTest(String initialSourceType, String initialSourceValue, Cell.CellType initialType, String givenSourceType, String givenSourceValue, Cell.CellType expectedType) {
+        Object initialValue = TestUtils.createInstance(initialSourceType, initialSourceValue);
+        Object givenValue = TestUtils.createInstance(givenSourceType, givenSourceValue);
+        Cell cell2 = new Cell(initialValue, initialType);
+        assertEquals(cell2.getDataType(), initialType);
+        cell2.setValue(givenValue);
+        assertEquals(expectedType, cell2.getDataType());
+    }
+
 
     @DisplayName("Test of the removeStyle method")
     @Test()

@@ -44,7 +44,7 @@ public class Cell implements Comparable<Cell> {
          */
         STRING,
         /**
-         * Type for all numeric types (long, integer and float and double)
+         * Type for all numeric types (long, short, integer, float, double and BigDecimal)
          */
         NUMBER,
         /**
@@ -263,12 +263,13 @@ public class Cell implements Comparable<Cell> {
     }
 
     /**
-     * Sets the value of the cell (generic object type)
+     * Sets the value of the cell (generic object type). When setting a value, the {@link Cell#dataType } is automatically resolved
      *
      * @param value Value of the cell
      */
     public void setValue(Object value) {
         this.value = value;
+        resolveCellType();
     }
 
 // ### C O N S T R U C T O R S ###
@@ -285,10 +286,15 @@ public class Cell implements Comparable<Cell> {
      *
      * @param value Value of the cell
      * @param type  Type of the cell
+     * @apiNote If the {@link Cell#dataType} is defined as {@link CellType#EMPTY} any passed value will be set to null
      */
     public Cell(Object value, CellType type) {
         this.dataType = type;
-        this.value = value;
+        if (type == CellType.EMPTY) {
+            this.value = null;
+        } else {
+            this.value = value;
+        }
         if (type == CellType.DEFAULT) {
             resolveCellType();
         }
@@ -300,10 +306,15 @@ public class Cell implements Comparable<Cell> {
      * @param value   Value of the cell
      * @param type    Type of the cell
      * @param address Address of the cell
+     * @apiNote If the {@link Cell#dataType} is defined as {@link CellType#EMPTY} any passed value will be set to null
      */
     public Cell(Object value, CellType type, String address) {
         this.dataType = type;
-        this.value = value;
+        if (type == CellType.EMPTY) {
+            this.value = null;
+        } else {
+            this.value = value;
+        }
         this.setCellAddress(address);
         if (type == CellType.DEFAULT) {
             resolveCellType();
@@ -316,10 +327,15 @@ public class Cell implements Comparable<Cell> {
      * @param value   Value of the cell
      * @param type    Type of the cell
      * @param address Address class of the cell
+     * @apiNote If the {@link Cell#dataType} is defined as {@link CellType#EMPTY} any passed value will be set to null
      */
     public Cell(Object value, CellType type, Address address) {
         this.dataType = type;
-        this.value = value;
+        if (type == CellType.EMPTY) {
+            this.value = null;
+        } else {
+            this.value = value;
+        }
         this.setCellAddress2(address);
         if (type == CellType.DEFAULT) {
             resolveCellType();
@@ -333,6 +349,7 @@ public class Cell implements Comparable<Cell> {
      * @param type   Type of the cell
      * @param column Column number of the cell (zero-based)
      * @param row    Row number of the cell (zero-based)
+     * @apiNote If the {@link Cell#dataType} is defined as {@link CellType#EMPTY} any passed value will be set to null
      */
     public Cell(Object value, CellType type, int column, int row) {
         this(value, type);
@@ -396,17 +413,19 @@ public class Cell implements Comparable<Cell> {
     }
 
     /**
-     * Method resets the Cell type and tries to find the actual type. This is used if a Cell was created with the CellType DEFAULT. CellTypes FORMULA and EMPTY will skip this method
+     *  Method resets the Cell type and tries to find the actual type. This is used if a Cell was created with the
+     *  CellType DEFAULT or automatically if a value was set by {@link Cell#setValue(Object)}.
+     *  CellType FORMULA will skip this method and EMPTY will discard the value of the cell
      */
     public void resolveCellType() {
         if (this.value == null) {
             this.setDataType(CellType.EMPTY);
-            value = null;
             return;
         } // the following section is intended to be as similar as possible to PicoXLSX for C#
-        if (this.dataType == CellType.FORMULA || this.dataType == CellType.EMPTY) {
+        if (this.dataType == CellType.FORMULA) {
             return;
-        } else if (value instanceof Boolean) {
+        }
+         else if (value instanceof Boolean) {
             this.dataType = CellType.BOOL;
         } else if (value instanceof Byte) {
             this.dataType = CellType.NUMBER;
@@ -493,7 +512,7 @@ public class Cell implements Comparable<Cell> {
      */
     Cell copy() {
         Cell copy = new Cell();
-        copy.setValue(this.value);
+        copy.value = this.value;
         copy.setDataType(this.dataType);
         copy.setColumnNumber(this.columnNumber);
         copy.setRowNumber(this.rowNumber);

@@ -6,6 +6,7 @@
  */
 package ch.rabanti.nanoxlsx4j.styles;
 
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 import java.util.Arrays;
@@ -229,7 +230,7 @@ public class NumberFormat extends AbstractStyle {
      */
     public void setCustomFormatID(int customFormatID) {
 
-        if (customFormatID < CUSTOMFORMAT_START_NUMBER) {
+        if (customFormatID < CUSTOMFORMAT_START_NUMBER && !StyleRepository.getInstance().isImportInProgress()) {
             throw new StyleException("The number '" + customFormatID + "' is not a valid custom format ID. Must be at least " + CUSTOMFORMAT_START_NUMBER);
         }
         this.customFormatID = customFormatID;
@@ -248,8 +249,13 @@ public class NumberFormat extends AbstractStyle {
      * Sets the custom format code in the notation of Excel
      *
      * @param customFormatCode Custom format code
+     * @throws FormatException thrown if the passed value is null or empty
+     * @apiNote Do not escape backslashes in custom format codes by double-backslashes (four in code), since escaping will be performed on saving the file. Unescaping will be also performed on loading
      */
     public void setCustomFormatCode(String customFormatCode) {
+        if (customFormatCode == null || customFormatCode.isEmpty()) {
+            throw new FormatException("A custom format code cannot be null or empty");
+        }
         this.customFormatCode = customFormatCode;
     }
 
@@ -300,8 +306,8 @@ public class NumberFormat extends AbstractStyle {
     @Override
     public NumberFormat copy() {
         NumberFormat copy = new NumberFormat();
-        copy.setCustomFormatCode(this.customFormatCode);
-        copy.setCustomFormatID(this.customFormatID);
+        copy.customFormatCode = this.customFormatCode;
+        copy.customFormatID = this.customFormatID;
         copy.setNumber(this.number);
         return copy;
     }
@@ -388,6 +394,33 @@ public class NumberFormat extends AbstractStyle {
                 return false;
         }
     }
+
+    /**
+     * Method to escape Backslashes in custom format codes.
+     *
+     * @param rawFormatCode Raw value to escape
+     * @return Escaped format code
+     */
+    public static String escapeFormatCode(String rawFormatCode) {
+        return rawFormatCode.replace("\\", "\\\\");
+    }
+
+    /**
+     * Method to unescape a custom format code when reading a workbook
+     *
+     * @param escapedFormatCode Escaped value to unescape
+     * @return Unescaped format code
+     */
+    public static String unEscapeFormatCode(String escapedFormatCode) {
+        if (!escapedFormatCode.contains("\\")) {
+            return escapedFormatCode;
+        }
+        // TODO: Add further rules, if discovered
+        String intermediateEscaped = escapedFormatCode.replace("\\\\", "\0");
+        intermediateEscaped = intermediateEscaped.replace("\\", "");
+        return intermediateEscaped.replace("\0", "\\");
+    }
+
 
 // ### S U B - C L A S S E S ###
 

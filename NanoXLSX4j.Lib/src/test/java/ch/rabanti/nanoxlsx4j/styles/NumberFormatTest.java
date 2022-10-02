@@ -70,7 +70,7 @@ public class NumberFormatTest {
     @DisplayName("Test of the get and set function of the customFormatCode filed")
     @ParameterizedTest(name = "Given value {0} should lead to the defined field")
     @CsvSource({
-            "STRING, ''",
+            "STRING, '//'",
             "STRING, '#.###'",
     })
     void customFormatCodeTest(String sourceType, String sourceValue) {
@@ -79,6 +79,18 @@ public class NumberFormatTest {
         assertEquals("", numberFormat.getCustomFormatCode());
         numberFormat.setCustomFormatCode(value);
         assertEquals(value, numberFormat.getCustomFormatCode());
+    }
+
+    @DisplayName("Test of the failing set function of the customFormatCode filed on invalid values")
+    @ParameterizedTest(name = "Given value {0} should lead to an exception")
+    @CsvSource({
+            "STRING, ''",
+            "NULL, ''",
+    })
+    void customFormatCodeFailTest(String sourceType, String sourceValue) {
+        String value = (String) TestUtils.createInstance(sourceType, sourceValue);
+        NumberFormat numberFormat = new NumberFormat();
+        assertThrows(Exception.class, () -> numberFormat.setCustomFormatCode(value));
     }
 
     @DisplayName("Test of the get and set function of the customFormatID field")

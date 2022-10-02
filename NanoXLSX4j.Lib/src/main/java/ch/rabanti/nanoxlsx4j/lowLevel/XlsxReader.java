@@ -15,6 +15,7 @@ import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.styles.Style;
+import ch.rabanti.nanoxlsx4j.styles.StyleRepository;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -126,10 +127,12 @@ public class XlsxReader {
             stream = getEntryStream("xl/sharedStrings.xml", zf);
             sharedStrings.read(stream);
 
+            StyleRepository.getInstance().setImportInProgress(true);
             StyleReader styleReader = new StyleReader();
             stream = getEntryStream("xl/styles.xml", zf);
             styleReader.read(stream);
             this.styleReaderContainer = styleReader.getStyleReaderContainer();
+            StyleRepository.getInstance().setImportInProgress(false);
 
             this.workbook = new WorkbookReader();
             stream = getEntryStream("xl/workbook.xml", zf);

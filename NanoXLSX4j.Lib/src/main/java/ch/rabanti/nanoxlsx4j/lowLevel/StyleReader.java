@@ -81,8 +81,8 @@ public class StyleReader {
             if (childNode.getName().equalsIgnoreCase("numfmt")) {
                 NumberFormat numberFormat = new NumberFormat();
                 int id = Integer.parseInt(childNode.getAttribute("numFmtId")); // Default/null will (justified) throw an exception
-
                 String code = childNode.getAttribute("formatCode", "");
+                code = NumberFormat.unEscapeFormatCode(code);
                 numberFormat.setCustomFormatID(id);
                 numberFormat.setNumber(NumberFormat.FormatNumber.custom);
                 numberFormat.setInternalID(id);

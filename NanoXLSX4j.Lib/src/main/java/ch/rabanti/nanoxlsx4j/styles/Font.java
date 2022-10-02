@@ -135,12 +135,23 @@ public class Font extends AbstractStyle {
     private boolean strike;
     private UnderlineValue underline;
     private float size;
+
+    //OOXML: Chp.18.8.29
     private String name;
+
+    //TODO: v3> Refactor to enum according to specs (18.18.94)
+    //OOXML: Chp.18.8.18 and 18.18.94
     private String family;
+
+    //TODO: V3> Refactor to enum according to specs
+    //OOXML: Chp.18.8.3 and 20.1.6.2(p2839ff)
     private int colorTheme;
     private String colorValue;
     private SchemeValue scheme;
     private VerticalAlignValue verticalAlign;
+
+    //TODO: v3> Refactor to enum according to specs
+    // OOXML: Chp.19.2.1.13
     private String charset;
 
 // ### G E T T E R S  &  S E T T E R S ###
@@ -257,10 +268,10 @@ public class Font extends AbstractStyle {
      *
      * @param name Font name
      * @throws StyleException thrown if the name is null or empty.
-     * @apiNote Note that the font name is not validated whether it is a valid or existing font
+     * @apiNote Note that the font name is not validated whether it is a valid or existing font. The font name may not exceed more than 31 characters
      */
     public void setName(String name) {
-        if (name == null || name.isEmpty()) {
+        if ((name == null || name.isEmpty()) && !StyleRepository.getInstance().isImportInProgress()) {
             throw new StyleException("The font name was null or empty");
         }
         this.name = name;
@@ -276,7 +287,7 @@ public class Font extends AbstractStyle {
     }
 
     /**
-     * Sets the font family (Default is 2)
+     * Sets the font family (Default is 2 = Swiss)
      *
      * @param family Font family
      */
@@ -285,7 +296,7 @@ public class Font extends AbstractStyle {
     }
 
     /**
-     * Gets the font color theme (Default is 1)
+     * Gets the font color theme (Default is 1 = Light)
      *
      * @return Font color theme
      */
@@ -297,11 +308,11 @@ public class Font extends AbstractStyle {
      * Sets the font color theme (Default is 1)
      *
      * @param colorTheme Font color theme
-     * @throws StyleException thrown if the number is below 1
+     * @throws StyleException thrown if the number is below 0
      */
     public void setColorTheme(int colorTheme) {
-        if (colorTheme < 1) {
-            throw new StyleException("The color theme number " + colorTheme + " is invalid. Should be >0");
+        if (colorTheme < 0) {
+            throw new StyleException("The color theme number " + colorTheme + " is invalid. Should be >=0");
         }
         this.colorTheme = colorTheme;
     }
