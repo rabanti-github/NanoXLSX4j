@@ -11,7 +11,8 @@ import ch.rabanti.nanoxlsx4j.Range;
 public class RangeMatchers {
 
 	public static Matcher<Range> hasStartAddress(Matcher<? super Address> matcher) {
-		return new FeatureMatcher<Range, Address>(matcher, "resolved start address", "startAddress") {
+		return new FeatureMatcher<Range, Address>(matcher, "resolved start address",
+				"startAddress") {
 			@Override
 			protected Address featureValueOf(Range range) {
 				return range.StartAddress;
@@ -24,7 +25,8 @@ public class RangeMatchers {
 	}
 
 	public static Matcher<Range> hasEndAddress(Matcher<? super Address> matcher) {
-		return new FeatureMatcher<Range, Address>(matcher, "resolved end address", "endAddress") {
+		return new FeatureMatcher<Range, Address>(matcher, "resolved end address",
+				"endAddress") {
 			@Override
 			protected Address featureValueOf(Range range) {
 				return range.EndAddress;
@@ -37,7 +39,8 @@ public class RangeMatchers {
 	}
 
 	public static Matcher<Range> hasRangeString(Matcher<? super String> matcher) {
-		return new FeatureMatcher<Range, String>(matcher, "resolved range string", "rangeString") {
+		return new FeatureMatcher<Range, String>(matcher, "resolved range string",
+				"rangeString") {
 			@Override
 			protected String featureValueOf(Range range) {
 				return range.toString();

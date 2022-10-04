@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class ConvertArrayTest {
 	void convertBigDecimalArrayTest() {
 		BigDecimal[] array = new BigDecimal[4];
 		array[0] = BigDecimal.valueOf(0d);
-		array[1] = BigDecimal.valueOf(2222l);
+		array[1] = BigDecimal.valueOf(2222L);
 		array[2] = BigDecimal.valueOf(-0.0001);
 		array[3] = BigDecimal.valueOf(1.01);
 		assertArray(array, BigDecimal.class);
@@ -66,7 +67,10 @@ public class ConvertArrayTest {
 	@DisplayName("Test of the convertArray method on long")
 	@Test()
 	void convertLongArrayTest() {
-		Long[] array = new Long[] { 12l, 55l, -1l, 0l, Long.MAX_VALUE, Long.MIN_VALUE };
+		Long[] array = new Long[] {
+				12L,
+				55L, -1L,
+				0L, Long.MAX_VALUE, Long.MIN_VALUE };
 		assertArray(array, Long.class);
 	}
 
@@ -112,13 +116,21 @@ public class ConvertArrayTest {
 		array[1] = new Cell("test", Cell.CellType.STRING);
 		array[2] = new Cell("x", Cell.CellType.STRING);
 		array[3] = new Cell(" ", Cell.CellType.STRING);
-		assertArray(array, String.class, new String[] { "", "test", "x", " " });
+		assertArray(array,
+				String.class,
+				new String[] { "",
+						"test",
+						"x",
+						" " });
 	}
 
 	@DisplayName("Test of the convertArray method on string")
 	@Test()
 	void convertStringArrayTest() {
-		String[] array = new String[] { "", "test", "X", "Ø", null, " " };
+		String[] array = new String[] { "",
+				"test",
+				"X",
+				"Ø", null, " " };
 		assertArray(array, String.class);
 	}
 
@@ -155,9 +167,7 @@ public class ConvertArrayTest {
 
 	private static <T> void assertArray(T[] array, Class<?> expectedValueType, Object[] actualValues) {
 		List<T> list = new ArrayList<>();
-		for (T obj : array) {
-			list.add(obj);
-		}
+		Collections.addAll(list, array);
 		List<Cell> cells = Cell.convertArray(list);
 		assertNotNull(cells);
 		assertEquals(array.length, cells.size());
@@ -168,14 +178,15 @@ public class ConvertArrayTest {
 			}
 			if (actualValues == null) {
 				assertEquals(array[i], cell.getValue());
-			} else {
+			}
+			else {
 				assertEquals(actualValues[i], cell.getValue());
 			}
 
 		}
 	}
 
-	public class DummyArrayClass {
+	public static class DummyArrayClass {
 		private String value;
 
 		public String getValue() {

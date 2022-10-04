@@ -132,7 +132,10 @@ public class StyleTest {
 
 	@DisplayName("Test of the constructor for internal styles")
 	@ParameterizedTest(name = "Given name {0}, forced order {1} and internal flag {2} should lead to a valid style")
-	@CsvSource({ "test, 0, false", "test2, 777, false", "test3, -17, true", })
+	@CsvSource({
+			"test, 0, false",
+			"test2, 777, false",
+			"test3, -17, true", })
 	void constructorTest3(String name, int forceOrder, boolean isInternal) {
 		Style style = new Style(name, forceOrder, isInternal);
 		assertNotNull(style.getBorder());

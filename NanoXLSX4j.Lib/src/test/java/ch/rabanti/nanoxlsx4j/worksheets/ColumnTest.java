@@ -51,7 +51,10 @@ public class ColumnTest {
 
 	@DisplayName("Test of the failing addHiddenColumn function with an invalid column number")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "-1", "-100", "16384", })
+	@CsvSource({
+			"-1",
+			"-100",
+			"16384", })
 	void addHiddenColumnFailTest(int value) {
 		Worksheet worksheet = new Worksheet();
 		assertThrows(RangeException.class, () -> worksheet.addHiddenColumn(value));
@@ -59,7 +62,11 @@ public class ColumnTest {
 
 	@DisplayName("Test of the failing addHiddenColumn function with an invalid column string")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "NULL, ''", "STRING, ''", "STRING,'#'", "STRING,'XFE'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, ''",
+			"STRING,'#'",
+			"STRING,'XFE'", })
 	void addHiddenColumnFailTest2(String sourceType, String sourceValue) {
 		String value = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet();
@@ -142,7 +149,13 @@ public class ColumnTest {
 
 	@DisplayName("Test of the goToNextColumn function")
 	@ParameterizedTest(name = "Given initial column number {0} and number {1} should lead to the column {2}")
-	@CsvSource({ "0, 0, 0", "0, 1, 1", "1, 1, 2", "3, 10, 13", "3, -1, 2", "3, -3, 0", })
+	@CsvSource({
+			"0, 0, 0",
+			"0, 1, 1",
+			"1, 1, 2",
+			"3, 10, 13",
+			"3, -1, 2",
+			"3, -3, 0", })
 	void goToNextColumnTest(int initialColumnNumber, int number, int expectedColumnNumber) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.setCurrentColumnNumber(initialColumnNumber);
@@ -152,9 +165,19 @@ public class ColumnTest {
 
 	@DisplayName("Test of the goToNextColumn function with the option to keep the row")
 	@ParameterizedTest(name = "Given start address {0} and number {1} with the option to keep the row: {2} should lead to the address {3}")
-	@CsvSource({ "A1, 0, false, A1", "A1, 0, true, A1", "A1, 1, false, B1", "A1, 1, true, B1", "C10, 1, false, D1",
-			"C10, 1, true, D10", "R5, 5, false, W1", "R5, 5, true, W5", "F5, -3, false, C1", "F5, -3, true, C5",
-			"F5, -5, false, A1", "F5, -5, true, A5", })
+	@CsvSource({
+			"A1, 0, false, A1",
+			"A1, 0, true, A1",
+			"A1, 1, false, B1",
+			"A1, 1, true, B1",
+			"C10, 1, false, D1",
+			"C10, 1, true, D10",
+			"R5, 5, false, W1",
+			"R5, 5, true, W5",
+			"F5, -3, false, C1",
+			"F5, -3, true, C5",
+			"F5, -5, false, A1",
+			"F5, -5, true, A5", })
 	void goToNextColumnTest2(String initialAddress, int number, boolean keepRowPosition, String expectedAddress) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.setCurrentCellAddress(initialAddress);
@@ -166,7 +189,11 @@ public class ColumnTest {
 
 	@DisplayName("Test of the failing goToNextColumn function on invalid values")
 	@ParameterizedTest(name = "Given incremental value {1} an basis {0} should lead to an exception")
-	@CsvSource({ "0, -1", "10, -12", "0, 16384", "0, 20383", })
+	@CsvSource({
+			"0, -1",
+			"10, -12",
+			"0, 16384",
+			"0, 20383", })
 	void goToNextColumnFailTest(int initialValue, int value) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.setCurrentColumnNumber(initialValue);
@@ -176,7 +203,11 @@ public class ColumnTest {
 
 	@DisplayName("Test of the setAutoFilter function on a start and end column")
 	@ParameterizedTest(name = "Given start column {0} and end column {1} should lead to a range {2}")
-	@CsvSource({ "0, 0, A1:A1", "0, 5, A1:F1", "1, 5, B1:F1", "5, 1, B1:F1", })
+	@CsvSource({
+			"0, 0, A1:A1",
+			"0, 5, A1:F1",
+			"1, 5, B1:F1",
+			"5, 1, B1:F1", })
 	void setAutoFilterTest(int startColumn, int endColumn, String expectedRange) {
 		Worksheet worksheet = new Worksheet();
 		assertNull(worksheet.getAutoFilterRange());
@@ -187,7 +218,12 @@ public class ColumnTest {
 
 	@DisplayName("Test of the setAutoFilter function on a range as string")
 	@ParameterizedTest(name = "Given range {0} should lead to {0}")
-	@CsvSource({ "A1:A1, A1:A1", "A1:F1, A1:F1", "B1:F1, B1:F1", "F1:B1, B1:F1", "$B$1:$F$1, B1:F1", })
+	@CsvSource({
+			"A1:A1, A1:A1",
+			"A1:F1, A1:F1",
+			"B1:F1, B1:F1",
+			"F1:B1, B1:F1",
+			"$B$1:$F$1, B1:F1", })
 	void setAutoFilterTest2(String givenRange, String expectedRange) {
 		Worksheet worksheet = new Worksheet();
 		assertNull(worksheet.getAutoFilterRange());
@@ -198,7 +234,13 @@ public class ColumnTest {
 
 	@DisplayName("Test of the failing setAutoFilter function on an invalid start and / or end column")
 	@ParameterizedTest(name = "Given start column {0} and end column {1} should lead to an exception")
-	@CsvSource({ "-1, 0", "0, -1", "-1, -1", "2, 16384", "16384, 2", "16384, 16384", })
+	@CsvSource({
+			"-1, 0",
+			"0, -1",
+			"-1, -1",
+			"2, 16384",
+			"16384, 2",
+			"16384, 16384", })
 	void setAutoFilterFailingTest(int startColumn, int endColumn) {
 		Worksheet worksheet = new Worksheet();
 		assertThrows(RangeException.class, () -> worksheet.setAutoFilter(startColumn, endColumn));
@@ -206,7 +248,11 @@ public class ColumnTest {
 
 	@DisplayName("Test of the failing setAutoFilter function on an invalid string expression")
 	@ParameterizedTest(name = "Given range {0} should lead to an exception")
-	@CsvSource({ "NULL, ''", "STRING, ''", "STRING, 'A1'", "STRING, ':'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, ''",
+			"STRING, 'A1'",
+			"STRING, ':'", })
 	void setAutoFilterFailingTest2(String sourceType, String sourceValue) {
 		String range = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet();
@@ -215,7 +261,11 @@ public class ColumnTest {
 
 	@DisplayName("Test of the setColumnWidth function with column number and column address")
 	@ParameterizedTest(name = "Given width {0} should lead to a valid column definition with this width")
-	@CsvSource({ "0f", "0.1f", "10f", "255f", })
+	@CsvSource({
+			"0f",
+			"0.1f",
+			"10f",
+			"255f", })
 	void setColumnWidthTest(float width) {
 		Worksheet worksheet = new Worksheet();
 		assertEquals(0, worksheet.getColumns().size());
@@ -233,7 +283,12 @@ public class ColumnTest {
 
 	@DisplayName("Test of the failing setColumnWidth function with column number")
 	@ParameterizedTest(name = "Given column number {0} or width {1} should lead to an exception")
-	@CsvSource({ "-1, 0f", "16384, 0.0f", "0, -10f", "0, 255.01f", "0, 500f", })
+	@CsvSource({
+			"-1, 0f",
+			"16384, 0.0f",
+			"0, -10f",
+			"0, 255.01f",
+			"0, 500f", })
 	void setColumnWidthFailTest(int columnNumber, float width) {
 		Worksheet worksheet = new Worksheet();
 		assertThrows(Exception.class, () -> worksheet.setColumnWidth(columnNumber, width));
@@ -241,8 +296,14 @@ public class ColumnTest {
 
 	@DisplayName("Test of the failing setColumnWidth function with column address")
 	@ParameterizedTest(name = "Given column address {1} (type: {0}) or width {2} should lead to an exception")
-	@CsvSource({ "NULL, ''1, 0f", "STRING, '', 0.0f", "STRING, ':', 0.0f", "STRING, 'XFE', 0.0f", "STRING, 'A', -10f",
-			"STRING, 'XFD', 255.01f", "STRING, 'A', 500f", })
+	@CsvSource({
+			"NULL, ''1, 0f",
+			"STRING, '', 0.0f",
+			"STRING, ':', 0.0f",
+			"STRING, 'XFE', 0.0f",
+			"STRING, 'A', -10f",
+			"STRING, 'XFD', 255.01f",
+			"STRING, 'A', 500f", })
 	void setColumnWidthFailTest2(String sourceType, String sourceValue, float width) {
 		String address = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet();
@@ -251,7 +312,10 @@ public class ColumnTest {
 
 	@DisplayName("Test of the setCurrentColumnNumber function")
 	@ParameterizedTest(name = "Given column number {0} should lead to the same currentColumnNumber on the worksheet")
-	@CsvSource({ "0", "5", "16383", })
+	@CsvSource({
+			"0",
+			"5",
+			"16383", })
 	void setCurrentColumnNumberTest(int column) {
 		Worksheet worksheet = new Worksheet();
 		assertEquals(0, worksheet.getCurrentColumnNumber());
@@ -262,7 +326,10 @@ public class ColumnTest {
 
 	@DisplayName("Test of the failing setCurrentColumnNumber function")
 	@ParameterizedTest(name = "Given column number {0} should lead to an exception")
-	@CsvSource({ "-1", "-10", "16384", })
+	@CsvSource({
+			"-1",
+			"-10",
+			"16384", })
 	void setCurrentColumnNumberFailTest(int column) {
 		Worksheet worksheet = new Worksheet();
 		assertThrows(RangeException.class, () -> worksheet.setCurrentColumnNumber(column));

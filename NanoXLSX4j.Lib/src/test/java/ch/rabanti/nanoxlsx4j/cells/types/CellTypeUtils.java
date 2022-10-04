@@ -29,18 +29,15 @@ public class CellTypeUtils {
 		return this.cellAddress;
 	}
 
-	public <T> void assertCellCreation(T initialValue, T expectedValue, Cell.CellType expectedType,
-			BiFunction<T, T, Boolean> comparer) {
+	public <T> void assertCellCreation(T initialValue, T expectedValue, Cell.CellType expectedType, BiFunction<T, T, Boolean> comparer) {
 		assertCellCreation(initialValue, expectedValue, expectedType, comparer, null);
 	}
 
-	public <T> void assertStyledCellCreation(T initialValue, T expectedValue, Cell.CellType expectedType,
-			BiFunction<T, T, Boolean> comparer, Style style) {
+	public <T> void assertStyledCellCreation(T initialValue, T expectedValue, Cell.CellType expectedType, BiFunction<T, T, Boolean> comparer, Style style) {
 		assertCellCreation(initialValue, expectedValue, expectedType, comparer, style);
 	}
 
-	private <T> void assertCellCreation(T initialValue, T expectedValue, Cell.CellType expectedType,
-			BiFunction<T, T, Boolean> comparer, Style style) {
+	private <T> void assertCellCreation(T initialValue, T expectedValue, Cell.CellType expectedType, BiFunction<T, T, Boolean> comparer, Style style) {
 		Cell actualCell = new Cell(initialValue, Cell.CellType.DEFAULT, this.cellAddress);
 		if (style != null) {
 			actualCell.setStyle(style);

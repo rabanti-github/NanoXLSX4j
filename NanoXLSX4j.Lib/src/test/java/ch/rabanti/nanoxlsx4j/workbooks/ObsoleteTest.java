@@ -35,26 +35,31 @@ public class ObsoleteTest {
 
 	@DisplayName("Test of the AddStyleComponent function (only for code coverage)")
 	@ParameterizedTest(name = "Given... should lead to ")
-	@CsvSource({ "Border", "CellXf", "Fill", "Font", "NumberFormat", })
+	@CsvSource({
+			"Border",
+			"CellXf",
+			"Fill",
+			"Font",
+			"NumberFormat", })
 	void addStyleComponentTest(String type) {
 		Workbook workbook = new Workbook();
 		AbstractStyle style = null;
 		switch (type) {
-		case "Border":
-			style = new Border();
-			break;
-		case "CellXf":
-			style = new CellXf();
-			break;
-		case "Fill":
-			style = new Fill();
-			break;
-		case "Font":
-			style = new Font();
-			break;
-		case "NumberFormat":
-			style = new NumberFormat();
-			break;
+			case "Border":
+				style = new Border();
+				break;
+			case "CellXf":
+				style = new CellXf();
+				break;
+			case "Fill":
+				style = new Fill();
+				break;
+			case "Font":
+				style = new Font();
+				break;
+			case "NumberFormat":
+				style = new NumberFormat();
+				break;
 		}
 		Style baseStyle = BasicStyles.DottedFill_0_125();
 		workbook.addStyleComponent(baseStyle, style);

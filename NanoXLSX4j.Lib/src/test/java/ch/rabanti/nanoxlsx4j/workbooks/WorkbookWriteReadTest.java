@@ -26,7 +26,7 @@ public class WorkbookWriteReadTest {
 		workbook.addMruColor(color1);
 		workbook.addMruColor(color2);
 		Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
-		List<String> mruColors = ((List<String>) givenWorkbook.getMruColors());
+		List<String> mruColors = givenWorkbook.getMruColors();
 		Collections.sort(mruColors);
 		assertEquals(2, mruColors.size());
 		assertEquals("FF" + color1, mruColors.get(0));
@@ -42,7 +42,7 @@ public class WorkbookWriteReadTest {
 		workbook.addMruColor(color1);
 		workbook.addMruColor(color2);
 		Workbook givenWorkbook = TestUtils.writeAndReadWorkbook(workbook);
-		List<String> mruColors = ((List<String>) givenWorkbook.getMruColors());
+		List<String> mruColors = givenWorkbook.getMruColors();
 		Collections.sort(mruColors);
 		assertEquals(1, mruColors.size());
 		assertEquals("FF" + color1, mruColors.get(0));
@@ -50,7 +50,9 @@ public class WorkbookWriteReadTest {
 
 	@DisplayName("Test of the 'Hidden' property when writing and reading a workbook")
 	@ParameterizedTest(name = "Given state {0} should lead to a loaded workbook with this state")
-	@CsvSource({ "true", "false", })
+	@CsvSource({
+			"true",
+			"false", })
 	void readWorkbookHiddenTest(boolean hidden) throws Exception {
 		Workbook workbook = new Workbook();
 		workbook.setHidden(hidden);
@@ -60,7 +62,10 @@ public class WorkbookWriteReadTest {
 
 	@DisplayName("Test of the 'SelectedWorksheet' property when writing and reading a workbook")
 	@ParameterizedTest(name = "Given index {0} should lead to a loaded workbook with this index")
-	@CsvSource({ "0", "1", "2", })
+	@CsvSource({
+			"0",
+			"1",
+			"2", })
 	void readWorkbookSelectedWorksheetTest(int index) throws Exception {
 		Workbook workbook = new Workbook("sheet1");
 		workbook.addWorksheet("sheet2");
@@ -73,7 +78,9 @@ public class WorkbookWriteReadTest {
 
 	@DisplayName("Test of the 'LockWindowsIfProtected' property when writing and reading a workbook")
 	@ParameterizedTest(name = "Given state {0} should lead to a loaded workbook with this state")
-	@CsvSource({ "true", "false", })
+	@CsvSource({
+			"true",
+			"false", })
 	void readWorkbookLockWindowsTest(boolean locked) throws Exception {
 		Workbook workbook = new Workbook("sheet1");
 		workbook.setWorkbookProtection(true, locked, false, null);
@@ -83,7 +90,9 @@ public class WorkbookWriteReadTest {
 
 	@DisplayName("Test of the 'LockStructureIfProtected' property when writing and reading a workbook")
 	@ParameterizedTest(name = "Given state {0} should lead to a loaded workbook with this state")
-	@CsvSource({ "true", "false", })
+	@CsvSource({
+			"true",
+			"false", })
 	void readWorkbookLockStructureTest(boolean locked) throws Exception {
 		Workbook workbook = new Workbook("sheet1");
 		workbook.setWorkbookProtection(true, false, locked, null);
@@ -93,7 +102,12 @@ public class WorkbookWriteReadTest {
 
 	@DisplayName("Test of the 'WorkbookProtectionPasswordHash' property when writing and reading a workbook")
 	@ParameterizedTest(name = "Given password {0} should lead to a loaded workbook with a hash of this value")
-	@CsvSource({ "NULL, null", "STRING, ''", "STRING,A", "STRING,123", "STRING,test", })
+	@CsvSource({
+			"NULL, null",
+			"STRING, ''",
+			"STRING,A",
+			"STRING,123",
+			"STRING,test", })
 	void readWorkbookPasswordHashTest(String sourceType, String sourceValue) throws Exception {
 		String plainText = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Workbook workbook = new Workbook("sheet1");

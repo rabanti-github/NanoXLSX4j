@@ -21,9 +21,17 @@ import ch.rabanti.nanoxlsx4j.styles.Style;
 public class AddNextCellTest {
 	@DisplayName("Test of the addNextCell function with only the value")
 	@ParameterizedTest(name = "Given value {1} ({0}) should lead to cells of the type {2}")
-	@CsvSource({ "NULL,'', EMPTY", "STRING,'', STRING", "STRING, test, STRING", "LONG, '17', NUMBER",
-			"DOUBLE, '1.02', NUMBER", "FLOAT, '-22.3', NUMBER", "INTEGER, '0', NUMBER", "BYTE, '127', NUMBER",
-			"BOOLEAN, 'true', BOOL", "BOOLEAN, 'false', BOOL", })
+	@CsvSource({
+			"NULL,'', EMPTY",
+			"STRING,'', STRING",
+			"STRING, test, STRING",
+			"LONG, '17', NUMBER",
+			"DOUBLE, '1.02', NUMBER",
+			"FLOAT, '-22.3', NUMBER",
+			"INTEGER, '0', NUMBER",
+			"BYTE, '127', NUMBER",
+			"BOOLEAN, 'true', BOOL",
+			"BOOLEAN, 'false', BOOL", })
 	void addNextCellTest(String sourceType, String sourceValue, Cell.CellType expectedType) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.setCurrentCellAddress("D2");
@@ -40,9 +48,17 @@ public class AddNextCellTest {
 
 	@DisplayName("Test of the addNextCell function with value and style")
 	@ParameterizedTest(name = "Given value {1} ({0}) should lead to cells of the type {2}")
-	@CsvSource({ "NULL,'', EMPTY", "STRING,'', STRING", "STRING, test, STRING", "LONG, '17', NUMBER",
-			"DOUBLE, '1.02', NUMBER", "FLOAT, '-22.3', NUMBER", "INTEGER, '0', NUMBER", "BYTE, '127', NUMBER",
-			"BOOLEAN, 'true', BOOL", "BOOLEAN, 'false', BOOL", })
+	@CsvSource({
+			"NULL,'', EMPTY",
+			"STRING,'', STRING",
+			"STRING, test, STRING",
+			"LONG, '17', NUMBER",
+			"DOUBLE, '1.02', NUMBER",
+			"FLOAT, '-22.3', NUMBER",
+			"INTEGER, '0', NUMBER",
+			"BYTE, '127', NUMBER",
+			"BOOLEAN, 'true', BOOL",
+			"BOOLEAN, 'false', BOOL", })
 	void addNextCellTest2(String sourceType, String sourceValue, Cell.CellType expectedType) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.setCurrentCellAddress("D2");
@@ -97,9 +113,17 @@ public class AddNextCellTest {
 
 	@DisplayName("Test of the addNextCell function with value and active worksheet style")
 	@ParameterizedTest(name = "Given value {1} ({0}) should lead to cells of the type {2}")
-	@CsvSource({ "NULL,'', EMPTY", "STRING,'', STRING", "STRING, test, STRING", "LONG, '17', NUMBER",
-			"DOUBLE, '1.02', NUMBER", "FLOAT, '-22.3', NUMBER", "INTEGER, '0', NUMBER", "BYTE, '127', NUMBER",
-			"BOOLEAN, 'true', BOOL", "BOOLEAN, 'false', BOOL", })
+	@CsvSource({
+			"NULL,'', EMPTY",
+			"STRING,'', STRING",
+			"STRING, test, STRING",
+			"LONG, '17', NUMBER",
+			"DOUBLE, '1.02', NUMBER",
+			"FLOAT, '-22.3', NUMBER",
+			"INTEGER, '0', NUMBER",
+			"BYTE, '127', NUMBER",
+			"BOOLEAN, 'true', BOOL",
+			"BOOLEAN, 'false', BOOL", })
 	void addNextCellTest5(String sourceType, String sourceValue, Cell.CellType expectedType) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.setActiveStyle(BasicStyles.BorderFrameHeader());

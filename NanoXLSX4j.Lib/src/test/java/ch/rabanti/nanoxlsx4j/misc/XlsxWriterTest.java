@@ -13,7 +13,8 @@ public class XlsxWriterTest {
 
 	@DisplayName("Test of the 'EscapeXmlChars' method on characters that has to be replaced, when writing a workbook")
 	@ParameterizedTest(name = "Given char number {1}, pre- and appended with {0} should lead to a text: {2}")
-	@CsvSource({ "test, 0x41, testAtest", // Not printable
+	@CsvSource({
+			"test, 0x41, testAtest", // Not printable
 			"test, 0x8, test test", // "
 			"test, 0xC, test test", // "
 			"test, 0x1F, test test", // "
@@ -32,7 +33,8 @@ public class XlsxWriterTest {
 
 	@DisplayName("Test of the 'EscapeXmlChars' method on characters that has to be replaced, when writing a workbook")
 	@ParameterizedTest(name = "Given char number {1}, pre- and appended with {0} should lead to a text: {2}")
-	@CsvSource({ "ws, 0x41, wsAws", // Not printable
+	@CsvSource({
+			"ws, 0x41, wsAws", // Not printable
 			"ws, 0x8, ws ws", // "
 			"ws, 0xC, ws ws", // "
 			"ws, 0x1F, ws ws", // "

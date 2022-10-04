@@ -13,14 +13,14 @@ package ch.rabanti.nanoxlsx4j;
  */
 public final class Version {
 
-// ### C O N S T A N T S ###    
-    /**
-     * Application name of the library
-     */
-    public static final String APPLICATIONNAME = "NanoXLSX4j";
-    /**
-     * Version of the library
-     */
-    public static final String VERSION = "2.0100"; // 2.0.1
+	// ### C O N S T A N T S ###
+	/**
+	 * Application name of the library
+	 */
+	public static final String APPLICATIONNAME = "NanoXLSX4j";
+	/**
+	 * Version of the library
+	 */
+	public static final String VERSION = "2.0200"; // 2.0.2
 
 }

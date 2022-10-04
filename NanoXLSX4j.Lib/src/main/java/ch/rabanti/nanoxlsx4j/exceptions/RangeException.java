@@ -13,21 +13,21 @@ package ch.rabanti.nanoxlsx4j.exceptions;
  */
 public class RangeException extends RuntimeException {
 
-    /**
-     * Default constructor
-     */
-    public RangeException() {
-        super();
-    }
+	/**
+	 * Default constructor
+	 */
+	public RangeException() {
+		super();
+	}
 
-    /**
-     * Constructor with passed message
-     *
-     * @param message Message of the exception
-     */
-    public RangeException(String message) {
-        super(message);
-    }
-
+	/**
+	 * Constructor with passed message
+	 *
+	 * @param message
+	 *            Message of the exception
+	 */
+	public RangeException(String message) {
+		super(message);
+	}
 
 }

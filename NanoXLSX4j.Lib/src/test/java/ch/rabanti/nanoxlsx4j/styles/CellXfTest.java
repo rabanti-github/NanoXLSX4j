@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 
 public class CellXfTest {
 
-	private CellXf exampleStyle;
+	private final CellXf exampleStyle;
 
 	public CellXfTest() {
 		exampleStyle = new CellXf();
@@ -33,7 +32,9 @@ public class CellXfTest {
 
 	@DisplayName("Test of the get and set function of the Hidden field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "true", "false", })
+	@CsvSource({
+			"true",
+			"false", })
 	void hiddenTest(boolean value) {
 		CellXf cellXf = new CellXf();
 		assertFalse(cellXf.isHidden());
@@ -43,7 +44,9 @@ public class CellXfTest {
 
 	@DisplayName("Test of the get and set function of the Locked field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "true", "false", })
+	@CsvSource({
+			"true",
+			"false", })
 	void lockedTest(boolean value) {
 		CellXf cellXf = new CellXf();
 		assertFalse(cellXf.isLocked());
@@ -53,7 +56,9 @@ public class CellXfTest {
 
 	@DisplayName("Test of the get and set function of the ForceApplyAlignment field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "true", "false", })
+	@CsvSource({
+			"true",
+			"false", })
 	void forceApplyAlignmentTest(boolean value) {
 		CellXf cellXf = new CellXf();
 		assertFalse(cellXf.isForceApplyAlignment());
@@ -63,7 +68,16 @@ public class CellXfTest {
 
 	@DisplayName("Test of the get and set function of the HorizontalAlign field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "center", "centerContinuous", "distributed", "fill", "general", "justify", "left", "none", "right", })
+	@CsvSource({
+			"center",
+			"centerContinuous",
+			"distributed",
+			"fill",
+			"general",
+			"justify",
+			"left",
+			"none",
+			"right", })
 	void horizontalAlignTest(CellXf.HorizontalAlignValue value) {
 		CellXf cellXf = new CellXf();
 		assertEquals(CellXf.DEFAULT_HORIZONTAL_ALIGNMENT, cellXf.getHorizontalAlign()); // none is default
@@ -73,7 +87,13 @@ public class CellXfTest {
 
 	@DisplayName("Test of the get and set function of the VerticalAlign field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "bottom", "center", "distributed", "justify", "none", "top", })
+	@CsvSource({
+			"bottom",
+			"center",
+			"distributed",
+			"justify",
+			"none",
+			"top", })
 	void verticalAlignTest(CellXf.VerticalAlignValue value) {
 		CellXf cellXf = new CellXf();
 		assertEquals(CellXf.DEFAULT_VERTICAL_ALIGNMENT, cellXf.getVerticalAlign()); // none is default
@@ -83,7 +103,9 @@ public class CellXfTest {
 
 	@DisplayName("Test of the get and set function of the HorizontalAlign field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "horizontal", "vertical", })
+	@CsvSource({
+			"horizontal",
+			"vertical", })
 	void textDirectionTest(CellXf.TextDirectionValue value) {
 		CellXf cellXf = new CellXf();
 		assertEquals(CellXf.DEFAULT_TEXT_DIRECTION, cellXf.getTextDirection()); // horizontal is default
@@ -96,7 +118,12 @@ public class CellXfTest {
 
 	@DisplayName("Test of the get and set function of the TextRotation field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "0", "33", "90", "-33", "-90", })
+	@CsvSource({
+			"0",
+			"33",
+			"90",
+			"-33",
+			"-90", })
 	void textRotationTest(int value) {
 		CellXf cellXf = new CellXf();
 		assertEquals(0, cellXf.getTextRotation()); // 0 is default
@@ -106,7 +133,12 @@ public class CellXfTest {
 
 	@DisplayName("Test of the failing get and set function of the textRotation field on out-of-range values")
 	@ParameterizedTest(name = "GGiven value {0} should lead to an exception")
-	@CsvSource({ "91", "-91", "-360", "360", "720", })
+	@CsvSource({
+			"91",
+			"-91",
+			"-360",
+			"360",
+			"720", })
 	void textRotationFailTest(int value) {
 		CellXf cellXf = new CellXf();
 		assertEquals(0, cellXf.getTextRotation()); // 0 is default
@@ -115,7 +147,10 @@ public class CellXfTest {
 
 	@DisplayName("Test of the get and set function of the Align field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "none", "shrinkToFit", "wrapText", })
+	@CsvSource({
+			"none",
+			"shrinkToFit",
+			"wrapText", })
 	void alignTest(CellXf.TextBreakValue value) {
 		CellXf cellXf = new CellXf();
 		assertEquals(CellXf.DEFAULT_ALIGNMENT, cellXf.getAlignment()); // none is default
@@ -125,7 +160,10 @@ public class CellXfTest {
 
 	@DisplayName("Test of the get and set function of the Indent field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "0", "1", "99", })
+	@CsvSource({
+			"0",
+			"1",
+			"99", })
 	void indentTest(int value) {
 		CellXf cellXf = new CellXf();
 		assertEquals(0, cellXf.getIndent()); // 0 is default
@@ -135,7 +173,9 @@ public class CellXfTest {
 
 	@DisplayName("Test of the failing set function of the indent field when an invalid value was passed")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "-1", "-999", })
+	@CsvSource({
+			"-1",
+			"-999", })
 	void indentFailTest(int value) {
 		assertThrows(Exception.class, () -> exampleStyle.setIndent(value));
 	}
@@ -143,102 +183,108 @@ public class CellXfTest {
 	@DisplayName("Test of the equals method")
 	@Test()
 	void equalsTest() {
-		CellXf style2 = (CellXf) exampleStyle.copy();
-		assertTrue(exampleStyle.equals(style2));
+		CellXf style2 = exampleStyle.copy();
+		assertEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of Locked)")
 	@Test()
 	void equalsTest2() {
-		CellXf style2 = (CellXf) exampleStyle.copy();
+		CellXf style2 = exampleStyle.copy();
 		style2.setLocked(false);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of Hidden)")
 	@Test()
 	void equalsTest2b() {
-		CellXf style2 = (CellXf) exampleStyle.copy();
+		CellXf style2 = exampleStyle.copy();
 		style2.setHidden(false);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of HorizontalAlign)")
 	@Test()
 	void equalsTest2c() {
-		CellXf style2 = (CellXf) exampleStyle.copy();
+		CellXf style2 = exampleStyle.copy();
 		style2.setHorizontalAlign(CellXf.HorizontalAlignValue.right);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of VerticalAlign)")
 	@Test()
 	void equalsTest2d() {
-		CellXf style2 = (CellXf) exampleStyle.copy();
+		CellXf style2 = exampleStyle.copy();
 		style2.setVerticalAlign(CellXf.VerticalAlignValue.top);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of ForceApplyAlignment)")
 	@Test()
 	void equalsTest2e() {
-		CellXf style2 = (CellXf) exampleStyle.copy();
+		CellXf style2 = exampleStyle.copy();
 		style2.setForceApplyAlignment(false);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of TextDirection)")
 	@Test()
 	void equalsTest2f() {
-		CellXf style2 = (CellXf) exampleStyle.copy();
+		CellXf style2 = exampleStyle.copy();
 		style2.setTextDirection(CellXf.TextDirectionValue.vertical);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of TextRotation)")
 	@Test()
 	void equalsTest2g() {
-		CellXf style2 = (CellXf) exampleStyle.copy();
+		CellXf style2 = exampleStyle.copy();
 		style2.setTextRotation(27);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of Alignment)")
 	@Test()
 	void equalsTest2h() {
-		CellXf style2 = (CellXf) exampleStyle.copy();
+		CellXf style2 = exampleStyle.copy();
 		style2.setAlignment(CellXf.TextBreakValue.none);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of Indent)")
 	@Test()
 	void equalsTest2i() {
-		CellXf style2 = (CellXf) exampleStyle.copy();
+		CellXf style2 = exampleStyle.copy();
 		style2.setIndent(77);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality on null or different objects)")
 	@ParameterizedTest(name = "Given value should lead to an equal result")
-	@CsvSource({ "NULL, ''", "STRING, 'text'", "BOOLEAN, 'true'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, 'text'",
+			"BOOLEAN, 'true'", })
 	void equalsTest3(String sourceType, String sourceValue) {
 		Object obj = TestUtils.createInstance(sourceType, sourceValue);
-		assertFalse(exampleStyle.equals(obj));
+		assertNotEquals(exampleStyle, obj);
 	}
 
 	@DisplayName("Test of the equals method when the origin object is null or not of the same type")
 	@ParameterizedTest(name = "Given value {1} should lead to a non-equal result")
-	@CsvSource({ "NULL ,''", "BOOLEAN ,'true'", "STRING ,'origin'", })
+	@CsvSource({
+			"NULL ,''",
+			"BOOLEAN ,'true'",
+			"STRING ,'origin'", })
 	void equalsTest5(String sourceType, String sourceValue) {
 		Object origin = TestUtils.createInstance(sourceType, sourceValue);
-		assertFalse(exampleStyle.equals(origin));
+		assertNotEquals(exampleStyle, origin);
 	}
 
 	@DisplayName("Test of the hashCode method (equality of two identical objects)")
 	@Test()
 	void hashCodeTest() {
-		CellXf copy = (CellXf) exampleStyle.copy();
+		CellXf copy = exampleStyle.copy();
 		copy.setInternalID(99); // Should not influence
 		assertEquals(exampleStyle.hashCode(), copy.hashCode());
 	}
@@ -246,7 +292,7 @@ public class CellXfTest {
 	@DisplayName("Test of the hashCode method (inequality of two different objects)")
 	@Test()
 	void hashCodeTest2() {
-		CellXf copy = (CellXf) exampleStyle.copy();
+		CellXf copy = exampleStyle.copy();
 		copy.setHidden(false);
 		assertNotEquals(exampleStyle.hashCode(), copy.hashCode());
 	}

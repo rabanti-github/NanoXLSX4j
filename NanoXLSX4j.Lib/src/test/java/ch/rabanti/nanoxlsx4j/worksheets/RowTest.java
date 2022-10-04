@@ -37,7 +37,10 @@ public class RowTest {
 
 	@DisplayName("Test of the failing addHiddenRow function with an invalid column number")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "-1", "-100", "1048576", })
+	@CsvSource({
+			"-1",
+			"-100",
+			"1048576", })
 	void addHiddenRowFailTest(int value) {
 		Worksheet worksheet = new Worksheet();
 		assertThrows(RangeException.class, () -> worksheet.addHiddenRow(value));
@@ -66,7 +69,13 @@ public class RowTest {
 
 	@DisplayName("Test of the goToNextRow function")
 	@ParameterizedTest(name = "Given initial row number {0} and number {1} should lead to the row {2}")
-	@CsvSource({ "0, 0, 0", "0, 1, 1", "1, 1, 2", "3, 10, 13", "3, -1, 2", "3, -3, 0", })
+	@CsvSource({
+			"0, 0, 0",
+			"0, 1, 1",
+			"1, 1, 2",
+			"3, 10, 13",
+			"3, -1, 2",
+			"3, -3, 0", })
 	void goToNextRowTest(int initialRowNumber, int number, int expectedRowNumber) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.setCurrentRowNumber(initialRowNumber);
@@ -76,9 +85,19 @@ public class RowTest {
 
 	@DisplayName("Test of the goToNextRow function with the option to keep the column")
 	@ParameterizedTest(name = "Given start address {0} and number {1} with the option to keep the column: {2} should lead to the address {3}")
-	@CsvSource({ "A1, 0, false, A1", "A1, 0, true, A1", "A1, 1, false, A2", "A1, 1, true, A2", "C10, 1, false, A11",
-			"C10, 1, true, C11", "R5, 5, false, A10", "R5, 5, true, R10", "F5, -3, false, A2", "F5, -3, true, F2",
-			"F5, -4, false, A1", "F5, -4, true, F1", })
+	@CsvSource({
+			"A1, 0, false, A1",
+			"A1, 0, true, A1",
+			"A1, 1, false, A2",
+			"A1, 1, true, A2",
+			"C10, 1, false, A11",
+			"C10, 1, true, C11",
+			"R5, 5, false, A10",
+			"R5, 5, true, R10",
+			"F5, -3, false, A2",
+			"F5, -3, true, F2",
+			"F5, -4, false, A1",
+			"F5, -4, true, F1", })
 	void goToNextRowTest2(String initialAddress, int number, boolean keepColumnPosition, String expectedAddress) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.setCurrentCellAddress(initialAddress);
@@ -90,7 +109,11 @@ public class RowTest {
 
 	@DisplayName("Test of the failing goToNextRow function on invalid values")
 	@ParameterizedTest(name = "Given incremental value {1} an basis {0} should lead to an exception")
-	@CsvSource({ "0, -1", "10, -12", "0, 1048576", "0, 1248575", })
+	@CsvSource({
+			"0, -1",
+			"10, -12",
+			"0, 1048576",
+			"0, 1248575", })
 	void goToNextRowFailTest(int initialValue, int value) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.setCurrentRowNumber(initialValue);
@@ -114,7 +137,10 @@ public class RowTest {
 
 	@DisplayName("Test of the setCurrentRowNumber function")
 	@ParameterizedTest(name = "Given row number {0} should lead to the same position on the worksheet")
-	@CsvSource({ "0", "3", "1048575", })
+	@CsvSource({
+			"0",
+			"3",
+			"1048575", })
 	void setCurrentRowNumberTest(int row) {
 		Worksheet worksheet = new Worksheet();
 		assertEquals(0, worksheet.getCurrentRowNumber());
@@ -125,7 +151,10 @@ public class RowTest {
 
 	@DisplayName("Test of the failing setCurrentRowNumber function")
 	@ParameterizedTest(name = "Given column number {0} should lead to an exception")
-	@CsvSource({ "-1", "-10", "1048576", })
+	@CsvSource({
+			"-1",
+			"-10",
+			"1048576", })
 	void setCurrentRowNumberFailTest(int row) {
 		Worksheet worksheet = new Worksheet();
 		assertThrows(RangeException.class, () -> worksheet.setCurrentRowNumber(row));
@@ -133,7 +162,11 @@ public class RowTest {
 
 	@DisplayName("Test of the setRowHeight function")
 	@ParameterizedTest(name = "Given height {0} should lead to do a valid rowHeight definition")
-	@CsvSource({ "0f", "0.1f", "10f", "255f", })
+	@CsvSource({
+			"0f",
+			"0.1f",
+			"10f",
+			"255f", })
 	void setRowHeightTest(float height) {
 		Worksheet worksheet = new Worksheet();
 		assertEquals(0, worksheet.getRowHeights().size());
@@ -147,7 +180,12 @@ public class RowTest {
 
 	@DisplayName("Test of the failing setRowHeight function")
 	@ParameterizedTest(name = "Given row number {0} or width {1} should lead to an exception")
-	@CsvSource({ "-1, 0f", "1048576, 0.0f", "0, -10f", "0, 409.51f", "0, 500f", })
+	@CsvSource({
+			"-1, 0f",
+			"1048576, 0.0f",
+			"0, -10f",
+			"0, 409.51f",
+			"0, 500f", })
 	void setRowHeightFailTest(int rowNumber, float height) {
 		Worksheet worksheet = new Worksheet();
 		assertThrows(RangeException.class, () -> worksheet.setRowHeight(rowNumber, height));
@@ -159,7 +197,8 @@ public class RowTest {
 		Worksheet worksheet = new Worksheet();
 		worksheet.addCell(22, "B1");
 		worksheet.addCell(23, "B2");
-		worksheet.addCell("test", "C2");
+		worksheet.addCell("test",
+				"C2");
 		worksheet.addCell(true, "D2");
 		worksheet.addCell(false, "B3");
 		List<Cell> row = worksheet.getRow(1);

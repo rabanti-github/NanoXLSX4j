@@ -16,7 +16,11 @@ public class FillWriteReadTest {
 
 	@DisplayName("Test of the 'foreground' value when writing and reading a Fill style")
 	@ParameterizedTest(name = "Given foreground color {0} with value {1} should lead to a cell with this color")
-	@CsvSource({ "FFAACC00, 'test'", "FFAADD00, 0.5f", "FFDDCC00, true", "FFAACCDD, null", })
+	@CsvSource({
+			"FFAACC00, 'test'",
+			"FFAADD00, 0.5f",
+			"FFDDCC00, true",
+			"FFAACCDD, null", })
 	void foregroundColorTest(String color, Object value) {
 		Style style = new Style();
 		style.getFill().setForegroundColor(color);
@@ -28,7 +32,11 @@ public class FillWriteReadTest {
 
 	@DisplayName("Test of the 'background' value when writing and reading a Fill style")
 	@ParameterizedTest(name = "Given background color {0} with value {1} should lead to a cell with this color")
-	@CsvSource({ "FFAACC00, 'test'", "FFAADD00, 0.5f", "FFDDCC00, true", "FFAACCDD, null", })
+	@CsvSource({
+			"FFAACC00, 'test'",
+			"FFAADD00, 0.5f",
+			"FFDDCC00, true",
+			"FFAACCDD, null", })
 	void backgroundColorTest(String color, Object value) {
 		Style style = new Style();
 		style.getFill().setBackgroundColor(color);
@@ -41,7 +49,13 @@ public class FillWriteReadTest {
 
 	@DisplayName("Test of the 'patternFill' value when writing and reading a Fill style")
 	@ParameterizedTest(name = "Given pattern value {0} with value {1} should lead to a cell with this pattern")
-	@CsvSource({ "solid, 'test'", "darkGray, 0.5f", "gray0625, true", "gray125, null", "lightGray, ''", "mediumGray, 0",
+	@CsvSource({
+			"solid, 'test'",
+			"darkGray, 0.5f",
+			"gray0625, true",
+			"gray125, null",
+			"lightGray, ''",
+			"mediumGray, 0",
 			"none, true", })
 	void patternValueTest(Fill.PatternValue pattern, Object value) {
 		Style style = new Style();

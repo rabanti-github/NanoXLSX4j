@@ -22,8 +22,13 @@ import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 public class BasicFormulasTest {
 	@DisplayName("Test of the average function on a Range object")
 	@ParameterizedTest(name = "Given range {0} should lead to the formula {1}")
-	@CsvSource({ "'A1:A1', 'AVERAGE(A1)'", "'A1:C2', 'AVERAGE(A1:C2)'", "'$A1:C2', 'AVERAGE($A1:C2)'",
-			"'$A$1:C2', 'AVERAGE($A$1:C2)'", "'$A$1:$C2', 'AVERAGE($A$1:$C2)'", "'$A$1:$C$2', 'AVERAGE($A$1:$C$2)'", })
+	@CsvSource({
+			"'A1:A1', 'AVERAGE(A1)'",
+			"'A1:C2', 'AVERAGE(A1:C2)'",
+			"'$A1:C2', 'AVERAGE($A1:C2)'",
+			"'$A$1:C2', 'AVERAGE($A$1:C2)'",
+			"'$A$1:$C2', 'AVERAGE($A$1:$C2)'",
+			"'$A$1:$C$2', 'AVERAGE($A$1:$C$2)'", })
 	void averageTest(String rangeExpression, String expectedFormula) {
 		Range range = new Range(rangeExpression);
 		Cell formula = BasicFormulas.Average(range);
@@ -33,7 +38,8 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the average function on a Range object and a target worksheet")
 	@ParameterizedTest(name = "Given worksheet {0} and range {1} should lead to the formula {2}")
-	@CsvSource({ "'worksheet1', 'A1:A1', 'AVERAGE(worksheet1!A1)'",
+	@CsvSource({
+			"'worksheet1', 'A1:A1', 'AVERAGE(worksheet1!A1)'",
 			"'worksheet1', 'A1:C2', 'AVERAGE(worksheet1!A1:C2)'",
 			"'worksheet1', '$A1:C2', 'AVERAGE(worksheet1!$A1:C2)'",
 			"'worksheet1', '$A$1:C2', 'AVERAGE(worksheet1!$A$1:C2)'",
@@ -49,8 +55,12 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the ceil function on a value and a number of decimals")
 	@ParameterizedTest(name = "Given Address {0}  and number of decimals {1} should lead to to the formula {2}")
-	@CsvSource({ "'A1', 1, 'ROUNDUP(A1,1)'", "'C4', 0, 'ROUNDUP(C4,0)'", "'$A1', 10, 'ROUNDUP($A1,10)'",
-			"'$A$1', 5, 'ROUNDUP($A$1,5)'", "'A1', -2, 'ROUNDUP(A1,-2)'",
+	@CsvSource({
+			"'A1', 1, 'ROUNDUP(A1,1)'",
+			"'C4', 0, 'ROUNDUP(C4,0)'",
+			"'$A1', 10, 'ROUNDUP($A1,10)'",
+			"'$A$1', 5, 'ROUNDUP($A$1,5)'",
+			"'A1', -2, 'ROUNDUP(A1,-2)'",
 	// This seems to be valid
 	})
 	void ceilTest(String addressExpression, int numberOfDecimals, String expectedFormula) {
@@ -62,7 +72,8 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the ceil function on a value and a number of decimals")
 	@ParameterizedTest(name = "Given worksheet {0}, address {1} and number of decimals {2} should lead to the formula {3}")
-	@CsvSource({ "'worksheet3', 'A1', 1, 'ROUNDUP(worksheet3!A1,1)'",
+	@CsvSource({
+			"'worksheet3', 'A1', 1, 'ROUNDUP(worksheet3!A1,1)'",
 			"'worksheet3', 'C4', 0, 'ROUNDUP(worksheet3!C4,0)'",
 			"'worksheet3', '$A1', 10, 'ROUNDUP(worksheet3!$A1,10)'",
 			"'worksheet3', '$A$1', 5, 'ROUNDUP(worksheet3!$A$1,5)'",
@@ -79,8 +90,12 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the floor function on a value and a number of decimals")
 	@ParameterizedTest(name = "Given address {0} and number of decimals {1} should lead to to the formula {2}")
-	@CsvSource({ "'A1', 1, 'ROUNDDOWN(A1,1)'", "'C4', 0, 'ROUNDDOWN(C4,0)'", "'$A1', 10, 'ROUNDDOWN($A1,10)'",
-			"'$A$1', 5, 'ROUNDDOWN($A$1,5)'", "'A1', -2, 'ROUNDDOWN(A1,-2)'",
+	@CsvSource({
+			"'A1', 1, 'ROUNDDOWN(A1,1)'",
+			"'C4', 0, 'ROUNDDOWN(C4,0)'",
+			"'$A1', 10, 'ROUNDDOWN($A1,10)'",
+			"'$A$1', 5, 'ROUNDDOWN($A$1,5)'",
+			"'A1', -2, 'ROUNDDOWN(A1,-2)'",
 	// This seems to be valid
 	})
 	void floorTest(String addressExpression, int numberOfDecimals, String expectedFormula) {
@@ -92,7 +107,8 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the floor function on a value and a number of decimals")
 	@ParameterizedTest(name = "Given worksheet {0}, address {1} and number of decimals {2} should lead to the formula {3}")
-	@CsvSource({ "'worksheet3', 'A1', 1, 'ROUNDDOWN(worksheet3!A1,1)'",
+	@CsvSource({
+			"'worksheet3', 'A1', 1, 'ROUNDDOWN(worksheet3!A1,1)'",
 			"'worksheet3', 'C4', 0, 'ROUNDDOWN(worksheet3!C4,0)'",
 			"'worksheet3', '$A1', 10, 'ROUNDDOWN(worksheet3!$A1,10)'",
 			"'worksheet3', '$A$1', 5, 'ROUNDDOWN(worksheet3!$A$1,5)'",
@@ -109,8 +125,13 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the max function on a Range object")
 	@ParameterizedTest(name = "Given range {0} should lead to the formula {1}")
-	@CsvSource({ "'A1:A1', 'MAX(A1)'", "'A1:C2', 'MAX(A1:C2)'", "'$A1:C2', 'MAX($A1:C2)'", "'$A$1:C2', 'MAX($A$1:C2)'",
-			"'$A$1:$C2', 'MAX($A$1:$C2)'", "'$A$1:$C$2', 'MAX($A$1:$C$2)'", })
+	@CsvSource({
+			"'A1:A1', 'MAX(A1)'",
+			"'A1:C2', 'MAX(A1:C2)'",
+			"'$A1:C2', 'MAX($A1:C2)'",
+			"'$A$1:C2', 'MAX($A$1:C2)'",
+			"'$A$1:$C2', 'MAX($A$1:$C2)'",
+			"'$A$1:$C$2', 'MAX($A$1:$C$2)'", })
 	void maxTest(String rangeExpression, String expectedFormula) {
 		Range range = new Range(rangeExpression);
 		Cell formula = BasicFormulas.Max(range);
@@ -120,8 +141,11 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the max function on a Range object and a target worksheet")
 	@ParameterizedTest(name = "Given worksheet {0} and range {1} should lead to the formula {2}")
-	@CsvSource({ "'worksheet1', 'A1:A1', 'MAX(worksheet1!A1)'", "'worksheet1', 'A1:C2', 'MAX(worksheet1!A1:C2)'",
-			"'worksheet1', '$A1:C2', 'MAX(worksheet1!$A1:C2)'", "'worksheet1', '$A$1:C2', 'MAX(worksheet1!$A$1:C2)'",
+	@CsvSource({
+			"'worksheet1', 'A1:A1', 'MAX(worksheet1!A1)'",
+			"'worksheet1', 'A1:C2', 'MAX(worksheet1!A1:C2)'",
+			"'worksheet1', '$A1:C2', 'MAX(worksheet1!$A1:C2)'",
+			"'worksheet1', '$A$1:C2', 'MAX(worksheet1!$A$1:C2)'",
 			"'worksheet1', '$A$1:$C2', 'MAX(worksheet1!$A$1:$C2)'",
 			"'worksheet1', '$A$1:$C$2', 'MAX(worksheet1!$A$1:$C$2)'", })
 	void maxTest2(String worksheetName, String rangeExpression, String expectedFormula) {
@@ -134,8 +158,13 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the min function on a Range object")
 	@ParameterizedTest(name = "Given range {0} should lead to the formula {1}")
-	@CsvSource({ "'A1:A1', 'MIN(A1)'", "'A1:C2', 'MIN(A1:C2)'", "'$A1:C2', 'MIN($A1:C2)'", "'$A$1:C2', 'MIN($A$1:C2)'",
-			"'$A$1:$C2', 'MIN($A$1:$C2)'", "'$A$1:$C$2', 'MIN($A$1:$C$2)'", })
+	@CsvSource({
+			"'A1:A1', 'MIN(A1)'",
+			"'A1:C2', 'MIN(A1:C2)'",
+			"'$A1:C2', 'MIN($A1:C2)'",
+			"'$A$1:C2', 'MIN($A$1:C2)'",
+			"'$A$1:$C2', 'MIN($A$1:$C2)'",
+			"'$A$1:$C$2', 'MIN($A$1:$C$2)'", })
 	void minTest(String rangeExpression, String expectedFormula) {
 		Range range = new Range(rangeExpression);
 		Cell formula = BasicFormulas.Min(range);
@@ -145,8 +174,11 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the min function on a Range object and a target worksheet")
 	@ParameterizedTest(name = "Given worksheet {0} and range {1} should lead to the formula {2}")
-	@CsvSource({ "'worksheet1', 'A1:A1', 'MIN(worksheet1!A1)'", "'worksheet1', 'A1:C2', 'MIN(worksheet1!A1:C2)'",
-			"'worksheet1', '$A1:C2', 'MIN(worksheet1!$A1:C2)'", "'worksheet1', '$A$1:C2', 'MIN(worksheet1!$A$1:C2)'",
+	@CsvSource({
+			"'worksheet1', 'A1:A1', 'MIN(worksheet1!A1)'",
+			"'worksheet1', 'A1:C2', 'MIN(worksheet1!A1:C2)'",
+			"'worksheet1', '$A1:C2', 'MIN(worksheet1!$A1:C2)'",
+			"'worksheet1', '$A$1:C2', 'MIN(worksheet1!$A$1:C2)'",
 			"'worksheet1', '$A$1:$C2', 'MIN(worksheet1!$A$1:$C2)'",
 			"'worksheet1', '$A$1:$C$2', 'MIN(worksheet1!$A$1:$C$2)'", })
 	void minTest2(String worksheetName, String rangeExpression, String expectedFormula) {
@@ -159,8 +191,13 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the median function on a Range object")
 	@ParameterizedTest(name = "Given range {0} should lead to the formula {1}")
-	@CsvSource({ "'A1:A1', 'MEDIAN(A1)'", "'A1:C2', 'MEDIAN(A1:C2)'", "'$A1:C2', 'MEDIAN($A1:C2)'",
-			"'$A$1:C2', 'MEDIAN($A$1:C2)'", "'$A$1:$C2', 'MEDIAN($A$1:$C2)'", "'$A$1:$C$2', 'MEDIAN($A$1:$C$2)'", })
+	@CsvSource({
+			"'A1:A1', 'MEDIAN(A1)'",
+			"'A1:C2', 'MEDIAN(A1:C2)'",
+			"'$A1:C2', 'MEDIAN($A1:C2)'",
+			"'$A$1:C2', 'MEDIAN($A$1:C2)'",
+			"'$A$1:$C2', 'MEDIAN($A$1:$C2)'",
+			"'$A$1:$C$2', 'MEDIAN($A$1:$C$2)'", })
 	void medianTest(String rangeExpression, String expectedFormula) {
 		Range range = new Range(rangeExpression);
 		Cell formula = BasicFormulas.Median(range);
@@ -170,7 +207,9 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the median function on a Range object and a target worksheet")
 	@ParameterizedTest(name = "Given worksheet {0} and range {1} should lead to the formula {2}")
-	@CsvSource({ "'worksheet1', 'A1:A1', 'MEDIAN(worksheet1!A1)'", "'worksheet1', 'A1:C2', 'MEDIAN(worksheet1!A1:C2)'",
+	@CsvSource({
+			"'worksheet1', 'A1:A1', 'MEDIAN(worksheet1!A1)'",
+			"'worksheet1', 'A1:C2', 'MEDIAN(worksheet1!A1:C2)'",
 			"'worksheet1', '$A1:C2', 'MEDIAN(worksheet1!$A1:C2)'",
 			"'worksheet1', '$A$1:C2', 'MEDIAN(worksheet1!$A$1:C2)'",
 			"'worksheet1', '$A$1:$C2', 'MEDIAN(worksheet1!$A$1:$C2)'",
@@ -185,8 +224,12 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the round function on a value and a number of decimals")
 	@ParameterizedTest(name = "Given address {0} and number of decimals {1} should lead to the formula {2}")
-	@CsvSource({ "'A1', 1, 'ROUND(A1,1)'", "'C4', 0, 'ROUND(C4,0)'", "'$A1', 10, 'ROUND($A1,10)'",
-			"'$A$1', 5, 'ROUND($A$1,5)'", "'A1', -2, 'ROUND(A1,-2)'", // This seems to be valid
+	@CsvSource({
+			"'A1', 1, 'ROUND(A1,1)'",
+			"'C4', 0, 'ROUND(C4,0)'",
+			"'$A1', 10, 'ROUND($A1,10)'",
+			"'$A$1', 5, 'ROUND($A$1,5)'",
+			"'A1', -2, 'ROUND(A1,-2)'", // This seems to be valid
 	})
 	void roundTest(String addressExpression, int numberOfDecimals, String expectedFormula) {
 		Address address = new Address(addressExpression);
@@ -197,13 +240,16 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the round function on a value and a number of decimals")
 	@ParameterizedTest(name = "Given worksheet {0}, address {1} and number of decimals {2} should lead to the formula {3}")
-	@CsvSource({ "'worksheet3', 'A1', 1, 'ROUND(worksheet3!A1,1)'", "'worksheet3', 'C4', 0, 'ROUND(worksheet3!C4,0)'",
+	@CsvSource({
+			"'worksheet3', 'A1', 1, 'ROUND(worksheet3!A1,1)'",
+			"'worksheet3', 'C4', 0, 'ROUND(worksheet3!C4,0)'",
 			"'worksheet3', '$A1', 10, 'ROUND(worksheet3!$A1,10)'",
-			"'worksheet3', '$A$1', 5, 'ROUND(worksheet3!$A$1,5)'", "'worksheet3', 'A1', -2, 'ROUND(worksheet3!A1,-2)'", // This
-																														// seems
-																														// to
-																														// be
-																														// valid
+			"'worksheet3', '$A$1', 5, 'ROUND(worksheet3!$A$1,5)'",
+			"'worksheet3', 'A1', -2, 'ROUND(worksheet3!A1,-2)'", // This
+																	// seems
+																	// to
+																	// be
+																	// valid
 	})
 	void roundTest2(String worksheetName, String addressExpression, int numberOfDecimals, String expectedFormula) {
 		Worksheet worksheet = new Worksheet(worksheetName);
@@ -215,8 +261,13 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the sum function on a Range object")
 	@ParameterizedTest(name = "Given range {0} should lead to the formula {1}")
-	@CsvSource({ "'A1:A1', 'SUM(A1)'", "'A1:C2', 'SUM(A1:C2)'", "'$A1:C2', 'SUM($A1:C2)'", "'$A$1:C2', 'SUM($A$1:C2)'",
-			"'$A$1:$C2', 'SUM($A$1:$C2)'", "'$A$1:$C$2', 'SUM($A$1:$C$2)'", })
+	@CsvSource({
+			"'A1:A1', 'SUM(A1)'",
+			"'A1:C2', 'SUM(A1:C2)'",
+			"'$A1:C2', 'SUM($A1:C2)'",
+			"'$A$1:C2', 'SUM($A$1:C2)'",
+			"'$A$1:$C2', 'SUM($A$1:$C2)'",
+			"'$A$1:$C$2', 'SUM($A$1:$C$2)'", })
 	void sumTest(String rangeExpression, String expectedFormula) {
 		Range range = new Range(rangeExpression);
 		Cell formula = BasicFormulas.Sum(range);
@@ -226,8 +277,11 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the sum function on a Range object and a target worksheet")
 	@ParameterizedTest(name = "Given worksheet {0} and range {1} should lead to the formula {2}")
-	@CsvSource({ "'worksheet1', 'A1:A1', 'SUM(worksheet1!A1)'", "'worksheet1', 'A1:C2', 'SUM(worksheet1!A1:C2)'",
-			"'worksheet1', '$A1:C2', 'SUM(worksheet1!$A1:C2)'", "'worksheet1', '$A$1:C2', 'SUM(worksheet1!$A$1:C2)'",
+	@CsvSource({
+			"'worksheet1', 'A1:A1', 'SUM(worksheet1!A1)'",
+			"'worksheet1', 'A1:C2', 'SUM(worksheet1!A1:C2)'",
+			"'worksheet1', '$A1:C2', 'SUM(worksheet1!$A1:C2)'",
+			"'worksheet1', '$A$1:C2', 'SUM(worksheet1!$A$1:C2)'",
 			"'worksheet1', '$A$1:$C2', 'SUM(worksheet1!$A$1:$C2)'",
 			"'worksheet1', '$A$1:$C$2', 'SUM(worksheet1!$A$1:$C$2)'", })
 	void sumTest2(String worksheetName, String rangeExpression, String expectedFormula) {
@@ -240,12 +294,12 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the vLookup function on a Range object with an arbitrary number, the column index and the option of an exact match")
 	@ParameterizedTest(name = "Given value {0}, range {1}, column index {2} and exact match flag = {3} should lead to the formula {4}")
-	@CsvSource({ "'DOUBLE', '11', 'A1:A1', 1, false, 'VLOOKUP(11,A1:A1,1,FALSE)'",
+	@CsvSource({
+			"'DOUBLE', '11', 'A1:A1', 1, false, 'VLOOKUP(11,A1:A1,1,FALSE)'",
 			"'FLOAT', '0.5', 'A1:C4', 3, false, 'VLOOKUP(0.5,A1:C4,3,FALSE)'",
 			"'LONG', '-800', 'A10:XFD999999', 200, true, 'VLOOKUP(-800,A10:XFD999999,200,TRUE)'",
 			"'BYTE', '0', 'X100:A1', 5, true, 'VLOOKUP(0,A1:X100,5,TRUE)'", })
-	void vLookupTest(String sourceType, String sourceValue, String rangeExpression, int columnIndex, boolean exactMatch,
-			String expectedFormula) {
+	void vLookupTest(String sourceType, String sourceValue, String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula) {
 		Object number = TestUtils.createInstance(sourceType, sourceValue);
 		Range range = new Range(rangeExpression);
 		Cell formula = BasicFormulas.VLookup(number, range, columnIndex, exactMatch);
@@ -255,12 +309,12 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the vLookup function on a Range object with an arbitrary number, the column index, the option of an exact match and a target worksheet")
 	@ParameterizedTest(name = "Given worksheet {0}, value {2}, range {3}, column index {4} and exact match flag = {5} should lead to the formula {6}")
-	@CsvSource({ "'worksheet1', 'INTEGER', '11', '$A$1:A1', 1, false, 'VLOOKUP(11,worksheet1!$A$1:A1,1,FALSE)'",
+	@CsvSource({
+			"'worksheet1', 'INTEGER', '11', '$A$1:A1', 1, false, 'VLOOKUP(11,worksheet1!$A$1:A1,1,FALSE)'",
 			"'worksheet1', 'FLOAT', '0.5', 'A1:$C4', 3, false, 'VLOOKUP(0.5,worksheet1!A1:$C4,3,FALSE)'",
 			"'worksheet1', 'DOUBLE', '2.22', '$A10:XFD999999', 200, true, 'VLOOKUP(2.22,worksheet1!$A10:XFD999999,200,TRUE)'",
 			"'worksheet1', 'BYTE', '0', 'X100:A1', 5, true, 'VLOOKUP(0,worksheet1!A1:X100,5,TRUE)'", })
-	void vLookupTest2(String worksheetName, String sourceType, String sourceValue, String rangeExpression,
-			int columnIndex, boolean exactMatch, String expectedFormula) {
+	void vLookupTest2(String worksheetName, String sourceType, String sourceValue, String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula) {
 		Object number = TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet(worksheetName);
 		Range range = new Range(rangeExpression);
@@ -271,12 +325,12 @@ public class BasicFormulasTest {
 
 	@DisplayName("Test of the vLookup function on a Range object with reference address, the column index and the option of an exact match")
 	@ParameterizedTest(name = "Given address {0}, range {1}, column index {2} and exact match flag = {3} should lead to the formula {4}")
-	@CsvSource({ "'C5', 'A1:$A$1', 1, false, 'VLOOKUP(C5,A1:$A$1,1,FALSE)'",
+	@CsvSource({
+			"'C5', 'A1:$A$1', 1, false, 'VLOOKUP(C5,A1:$A$1,1,FALSE)'",
 			"'A1', 'A1:C$4', 3, false, 'VLOOKUP(A1,A1:C$4,3,FALSE)'",
 			"'$F4', 'A10:XFD999999', 200, true, 'VLOOKUP($F4,A10:XFD999999,200,TRUE)'",
 			"'$XFD$99999', 'X100:A1', 5, true,'VLOOKUP($XFD$99999,A1:X100,5,TRUE)'", })
-	void vLookupTest3(String addressExpression, String rangeExpression, int columnIndex, boolean exactMatch,
-			String expectedFormula) {
+	void vLookupTest3(String addressExpression, String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula) {
 		Address address = new Address(addressExpression);
 		Range range = new Range(rangeExpression);
 		Cell formula = BasicFormulas.VLookup(address, range, columnIndex, exactMatch);
@@ -291,8 +345,7 @@ public class BasicFormulasTest {
 			"'worksheet2','A1', 'worksheet1', 'A1:C$4', 3, false, 'VLOOKUP(worksheet2!A1,worksheet1!A1:C$4,3,FALSE)'",
 			"'worksheet1','$F4', 'worksheet2', 'A10:XFD999999', 200, true, 'VLOOKUP(worksheet1!$F4,worksheet2!A10:XFD999999,200,TRUE)'",
 			"'worksheet2','$XFD$99999', 'worksheet2',  'X100:A1', 5, true, 'VLOOKUP(worksheet2!$XFD$99999,worksheet2!A1:X100,5,TRUE)'", })
-	void vLookupTest4(String valueWorksheetName, String addressExpression, String rangesWorksheetName,
-			String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula) {
+	void vLookupTest4(String valueWorksheetName, String addressExpression, String rangesWorksheetName, String rangeExpression, int columnIndex, boolean exactMatch, String expectedFormula) {
 		Worksheet valueWorksheet = new Worksheet(valueWorksheetName);
 		Worksheet rangeWorksheet = new Worksheet(rangesWorksheetName);
 		Address address = new Address(addressExpression);
@@ -348,9 +401,9 @@ public class BasicFormulasTest {
 	@DisplayName("Test of the vLookup function for int / Integer as value")
 	@Test()
 	void vLookupIntTest() {
-		assertVlookup((int) 0, "0");
-		assertVlookup((int) -77, "-77");
-		assertVlookup((int) 77, "77");
+		assertVlookup(0, "0");
+		assertVlookup(-77, "-77");
+		assertVlookup(77, "77");
 		assertVlookup(Integer.valueOf(-77), "-77");
 		assertVlookup(Integer.valueOf(77), "77");
 	}
@@ -406,10 +459,16 @@ public class BasicFormulasTest {
 		int column = 2;
 		boolean exactMatch = true;
 		Cell formula = BasicFormulas.VLookup(number, range, column, exactMatch);
-		StringBuilder sb = new StringBuilder();
-		sb.append("VLOOKUP(").append(expectedLookupValue).append(",").append(range).append(",").append(column)
-				.append(",").append(Boolean.toString(exactMatch).toUpperCase()).append(")");
-		assertEquals(sb.toString(), formula.getValue().toString());
+		String sb = "VLOOKUP(" +
+				expectedLookupValue +
+				"," +
+				range +
+				"," +
+				column +
+				"," +
+				Boolean.toString(exactMatch).toUpperCase() +
+				")";
+		assertEquals(sb, formula.getValue().toString());
 		assertEquals(Cell.CellType.FORMULA, formula.getDataType());
 	}
 

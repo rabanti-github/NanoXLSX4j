@@ -10,7 +10,8 @@ import ch.rabanti.nanoxlsx4j.Cell;
 
 public class AddressMatchers {
 	public static Matcher<Address> hasRowNumber(Matcher<? super Integer> matcher) {
-		return new FeatureMatcher<Address, Integer>(matcher, "zero-based row number", "row") {
+		return new FeatureMatcher<Address, Integer>(matcher, "zero-based row number",
+				"row") {
 			@Override
 			protected Integer featureValueOf(Address address) {
 				return address.Row;
@@ -23,7 +24,8 @@ public class AddressMatchers {
 	}
 
 	public static Matcher<Address> hasColumnNumber(Matcher<? super Integer> matcher) {
-		return new FeatureMatcher<Address, Integer>(matcher, "zero-based column number", "column") {
+		return new FeatureMatcher<Address, Integer>(matcher, "zero-based column number",
+				"column") {
 			@Override
 			protected Integer featureValueOf(Address address) {
 				return address.Column;
@@ -36,7 +38,8 @@ public class AddressMatchers {
 	}
 
 	public static Matcher<Address> hasType(Matcher<? super Cell.AddressType> matcher) {
-		return new FeatureMatcher<Address, Cell.AddressType>(matcher, "address type", "type") {
+		return new FeatureMatcher<Address, Cell.AddressType>(matcher, "address type",
+				"type") {
 			@Override
 			protected Cell.AddressType featureValueOf(Address address) {
 				return address.Type;
@@ -49,7 +52,8 @@ public class AddressMatchers {
 	}
 
 	public static Matcher<Address> hasAddress(Matcher<? super String> matcher) {
-		return new FeatureMatcher<Address, String>(matcher, "resolved address", "address") {
+		return new FeatureMatcher<Address, String>(matcher, "resolved address",
+				"address") {
 			@Override
 			protected String featureValueOf(Address address) {
 				return address.getAddress();
@@ -62,7 +66,8 @@ public class AddressMatchers {
 	}
 
 	public static Matcher<Address> hasColumnName(Matcher<? super String> matcher) {
-		return new FeatureMatcher<Address, String>(matcher, "resolved column name", "columnName") {
+		return new FeatureMatcher<Address, String>(matcher, "resolved column name",
+				"columnName") {
 			@Override
 			protected String featureValueOf(Address address) {
 				return address.getColumn();

@@ -1,10 +1,8 @@
 package ch.rabanti.nanoxlsx4j.styles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +13,7 @@ import ch.rabanti.nanoxlsx4j.TestUtils;
 
 public class BorderTest {
 
-	private Border exampleStyle;
+	private final Border exampleStyle;
 
 	public BorderTest() {
 		exampleStyle = new Border();
@@ -35,7 +33,10 @@ public class BorderTest {
 
 	@DisplayName("Test of the get and set function of the bottomColor field")
 	@ParameterizedTest(name = "Given value {1} should not lead to an exception")
-	@CsvSource({ "STRING, ''", "NULL, ''", "STRING, 'FFAA3300'", })
+	@CsvSource({
+			"STRING, ''",
+			"NULL, ''",
+			"STRING, 'FFAA3300'", })
 	void bottomColorTest(String sourceType, String sourceValue) {
 		String value = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Border border = new Border();
@@ -46,7 +47,10 @@ public class BorderTest {
 
 	@DisplayName("Test of the failing set function of the bottomColor filed with invalid values")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "77BB00", "0002200000", "XXXXXXXX", })
+	@CsvSource({
+			"77BB00",
+			"0002200000",
+			"XXXXXXXX", })
 	void bottomColorFailTest(String value) {
 		Border border = new Border();
 		assertThrows(Exception.class, () -> border.setBottomColor(value));
@@ -54,8 +58,21 @@ public class BorderTest {
 
 	@DisplayName("Test of the get and set function of the bottomStyle field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined filed value")
-	@CsvSource({ "dashDot", "dashDotDot", "dashed", "dotted", "hair", "medium", "mediumDashDot", "mediumDashDotDot",
-			"mediumDashed", "none", "slantDashDot", "s_double", "thick", "thin", })
+	@CsvSource({
+			"dashDot",
+			"dashDotDot",
+			"dashed",
+			"dotted",
+			"hair",
+			"medium",
+			"mediumDashDot",
+			"mediumDashDotDot",
+			"mediumDashed",
+			"none",
+			"slantDashDot",
+			"s_double",
+			"thick",
+			"thin", })
 	void bottomStyleTest(Border.StyleValue value) {
 		Border border = new Border();
 		assertEquals(Border.DEFAULT_BORDER_STYLE, border.getBottomStyle()); // none is default
@@ -65,7 +82,10 @@ public class BorderTest {
 
 	@DisplayName("Test of the get and set function of the diagonalColor field")
 	@ParameterizedTest(name = "Given value {1} should not lead to an exception")
-	@CsvSource({ "STRING, ''", "NULL, ''", "STRING, 'FFAA3300'", })
+	@CsvSource({
+			"STRING, ''",
+			"NULL, ''",
+			"STRING, 'FFAA3300'", })
 	void diagonalColorTest(String sourceType, String sourceValue) {
 		String value = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Border border = new Border();
@@ -76,7 +96,10 @@ public class BorderTest {
 
 	@DisplayName("Test of the failing set function of the diagonalColor field with invalid values")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "77BB00", "0002200000", "XXXXXXXX", })
+	@CsvSource({
+			"77BB00",
+			"0002200000",
+			"XXXXXXXX", })
 	void diagonalColorFailTest(String value) {
 		Border border = new Border();
 		assertThrows(Exception.class, () -> border.setDiagonalColor(value));
@@ -84,8 +107,21 @@ public class BorderTest {
 
 	@DisplayName("Test of the get and set function of the diagonalStyle field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined filed value")
-	@CsvSource({ "dashDot", "dashDotDot", "dashed", "dotted", "hair", "medium", "mediumDashDot", "mediumDashDotDot",
-			"mediumDashed", "none", "slantDashDot", "s_double", "thick", "thin", })
+	@CsvSource({
+			"dashDot",
+			"dashDotDot",
+			"dashed",
+			"dotted",
+			"hair",
+			"medium",
+			"mediumDashDot",
+			"mediumDashDotDot",
+			"mediumDashed",
+			"none",
+			"slantDashDot",
+			"s_double",
+			"thick",
+			"thin", })
 	void diagonalStyleTest(Border.StyleValue value) {
 		Border border = new Border();
 		assertEquals(Border.DEFAULT_BORDER_STYLE, border.getDiagonalStyle()); // none is default
@@ -95,7 +131,10 @@ public class BorderTest {
 
 	@DisplayName("Test of the get and set function of the leftColor field")
 	@ParameterizedTest(name = "Given value {1} should not lead to an exception")
-	@CsvSource({ "STRING, ''", "NULL, ''", "STRING, 'FFAA3300'", })
+	@CsvSource({
+			"STRING, ''",
+			"NULL, ''",
+			"STRING, 'FFAA3300'", })
 	void leftColorTest(String sourceType, String sourceValue) {
 		String value = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Border border = new Border();
@@ -106,7 +145,10 @@ public class BorderTest {
 
 	@DisplayName("Test of the failing set function of the leftColor field with invalid values")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "77BB00", "0002200000", "XXXXXXXX", })
+	@CsvSource({
+			"77BB00",
+			"0002200000",
+			"XXXXXXXX", })
 	void leftColorFailTest(String value) {
 		Border border = new Border();
 		assertThrows(Exception.class, () -> border.setLeftColor(value));
@@ -114,8 +156,21 @@ public class BorderTest {
 
 	@DisplayName("Test of the get and set function of the leftStyle field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined filed value")
-	@CsvSource({ "dashDot", "dashDotDot", "dashed", "dotted", "hair", "medium", "mediumDashDot", "mediumDashDotDot",
-			"mediumDashed", "none", "slantDashDot", "s_double", "thick", "thin", })
+	@CsvSource({
+			"dashDot",
+			"dashDotDot",
+			"dashed",
+			"dotted",
+			"hair",
+			"medium",
+			"mediumDashDot",
+			"mediumDashDotDot",
+			"mediumDashed",
+			"none",
+			"slantDashDot",
+			"s_double",
+			"thick",
+			"thin", })
 	void leftStyleTest(Border.StyleValue value) {
 		Border border = new Border();
 		assertEquals(Border.DEFAULT_BORDER_STYLE, border.getLeftStyle()); // none is default
@@ -125,7 +180,10 @@ public class BorderTest {
 
 	@DisplayName("Test of the get and set function of the rightColor field")
 	@ParameterizedTest(name = "Given value {1} should not lead to an exception")
-	@CsvSource({ "STRING, ''", "NULL, ''", "STRING, 'FFAA3300'", })
+	@CsvSource({
+			"STRING, ''",
+			"NULL, ''",
+			"STRING, 'FFAA3300'", })
 	void rightColorTest(String sourceType, String sourceValue) {
 		String value = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Border border = new Border();
@@ -136,7 +194,10 @@ public class BorderTest {
 
 	@DisplayName("Test of the failing set function of the rightColor field with invalid values")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "77BB00", "0002200000", "XXXXXXXX", })
+	@CsvSource({
+			"77BB00",
+			"0002200000",
+			"XXXXXXXX", })
 	void rightColorFailTest(String value) {
 		Border border = new Border();
 		assertThrows(Exception.class, () -> border.setRightColor(value));
@@ -144,8 +205,21 @@ public class BorderTest {
 
 	@DisplayName("Test of the get and set function of the rightStyle field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined filed value")
-	@CsvSource({ "dashDot", "dashDotDot", "dashed", "dotted", "hair", "medium", "mediumDashDot", "mediumDashDotDot",
-			"mediumDashed", "none", "slantDashDot", "s_double", "thick", "thin", })
+	@CsvSource({
+			"dashDot",
+			"dashDotDot",
+			"dashed",
+			"dotted",
+			"hair",
+			"medium",
+			"mediumDashDot",
+			"mediumDashDotDot",
+			"mediumDashed",
+			"none",
+			"slantDashDot",
+			"s_double",
+			"thick",
+			"thin", })
 	void rightStyleTest(Border.StyleValue value) {
 		Border border = new Border();
 		assertEquals(Border.DEFAULT_BORDER_STYLE, border.getRightStyle()); // none is default
@@ -155,7 +229,10 @@ public class BorderTest {
 
 	@DisplayName("Test of the get and set function of the topColor field")
 	@ParameterizedTest(name = "Given value {1} should not lead to an exception")
-	@CsvSource({ "STRING, ''", "NULL, ''", "STRING, 'FFAA3300'", })
+	@CsvSource({
+			"STRING, ''",
+			"NULL, ''",
+			"STRING, 'FFAA3300'", })
 	void topColorTest(String sourceType, String sourceValue) {
 		String value = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Border border = new Border();
@@ -166,7 +243,10 @@ public class BorderTest {
 
 	@DisplayName("Test of the failing set function of the topColor field with invalid values")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "77BB00", "0002200000", "XXXXXXXX", })
+	@CsvSource({
+			"77BB00",
+			"0002200000",
+			"XXXXXXXX", })
 	void topColorFailTest(String value) {
 		Border border = new Border();
 		assertThrows(Exception.class, () -> border.setTopColor(value));
@@ -174,8 +254,21 @@ public class BorderTest {
 
 	@DisplayName("Test of the get and set function of the topStyle field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined filed value")
-	@CsvSource({ "dashDot", "dashDotDot", "dashed", "dotted", "hair", "medium", "mediumDashDot", "mediumDashDotDot",
-			"mediumDashed", "none", "slantDashDot", "s_double", "thick", "thin", })
+	@CsvSource({
+			"dashDot",
+			"dashDotDot",
+			"dashed",
+			"dotted",
+			"hair",
+			"medium",
+			"mediumDashDot",
+			"mediumDashDotDot",
+			"mediumDashed",
+			"none",
+			"slantDashDot",
+			"s_double",
+			"thick",
+			"thin", })
 	void topStyleTest(Border.StyleValue value) {
 		Border border = new Border();
 		assertEquals(Border.DEFAULT_BORDER_STYLE, border.getTopStyle()); // none is default
@@ -193,126 +286,132 @@ public class BorderTest {
 	@DisplayName("Test of the equals method")
 	@Test()
 	void equalsTest() {
-		Border style2 = (Border) exampleStyle.copy();
-		assertTrue(exampleStyle.equals(style2));
+		Border style2 = exampleStyle.copy();
+		assertEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of bottomColor)")
 	@Test()
 	void equalsTest2() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setBottomColor("");
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of bottomStyle)")
 	@Test()
 	void equalsTest2b() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setBottomStyle(Border.StyleValue.s_double);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of topColor)")
 	@Test()
 	void equalsTest2c() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setTopColor("");
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of topStyle)")
 	@Test()
 	void equalsTest2d() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setTopStyle(Border.StyleValue.s_double);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of leftColor)")
 	@Test()
 	void equalsTest2e() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setLeftColor("");
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of leftStyle)")
 	@Test()
 	void equalsTest2f() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setLeftStyle(Border.StyleValue.s_double);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of rightColor)")
 	@Test()
 	void equalsTest2g() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setRightColor("");
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of rightStyle)")
 	@Test()
 	void equalsTest2h() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setRightStyle(Border.StyleValue.s_double);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of diagonalColor)")
 	@Test()
 	void equalsTest2i() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setDiagonalColor("");
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of diagonalStyle)")
 	@Test()
 	void equalsTest2j() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setDiagonalStyle(Border.StyleValue.s_double);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of diagonalDown)")
 	@Test()
 	void equalsTest2k() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setDiagonalDown(false);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of diagonalUp)")
 	@Test()
 	void equalsTest2l() {
-		Border style2 = (Border) exampleStyle.copy();
+		Border style2 = exampleStyle.copy();
 		style2.setDiagonalUp(false);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality on null or different objects)")
 	@ParameterizedTest(name = "Given value {1} should lead to an unequal result")
-	@CsvSource({ "NULL, ''", "STRING, 'text'", "BOOLEAN, 'true'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, 'text'",
+			"BOOLEAN, 'true'", })
 	void equalsTest3(String sourceType, String sourceValue) {
 		Object obj = TestUtils.createInstance(sourceType, sourceValue);
-		assertFalse(exampleStyle.equals(obj));
+		assertNotEquals(exampleStyle, obj);
 	}
 
 	@DisplayName("Test of the equals method when the origin object is null or not of the same type")
 	@ParameterizedTest(name = "Given value {1} should lead to an unequal result")
-	@CsvSource({ "NULL, ''", "BOOLEAN, 'true'", "STRING, 'origin'", })
+	@CsvSource({
+			"NULL, ''",
+			"BOOLEAN, 'true'",
+			"STRING, 'origin'", })
 	void equalsTest5(String sourceType, String sourceValue) {
 		Object origin = TestUtils.createInstance(sourceType, sourceValue);
-		assertFalse(exampleStyle.equals(origin));
+		assertNotEquals(exampleStyle, origin);
 	}
 
 	@DisplayName("Test of the hashCode method (equality of two identical objects)")
 	@Test()
 	void hashCodeTest() {
-		Border copy = (Border) exampleStyle.copy();
+		Border copy = exampleStyle.copy();
 		copy.setInternalID(99); // Should not influence
 		assertEquals(exampleStyle.hashCode(), copy.hashCode());
 	}
@@ -320,7 +419,7 @@ public class BorderTest {
 	@DisplayName("Test of the hashCode method (inequality of two different objects)")
 	@Test()
 	void hashCodeTest2() {
-		Border copy = (Border) exampleStyle.copy();
+		Border copy = exampleStyle.copy();
 		copy.setBottomColor("AACCDD00");
 		assertNotEquals(exampleStyle.hashCode(), copy.hashCode());
 	}

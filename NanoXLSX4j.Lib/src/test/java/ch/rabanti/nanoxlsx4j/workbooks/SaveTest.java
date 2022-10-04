@@ -27,14 +27,18 @@ public class SaveTest {
 			assertFalse(fi.exists());
 			workbook.save();
 			WorkbookTest.assertExistingFile(fileName, true);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			fail();
 		}
 	}
 
 	@DisplayName("Test of the failing save function (file System)")
 	@ParameterizedTest(name = "Given file name {0} should lead to an exception")
-	@CsvSource({ "NULL, ''", "STRING, '?'", "STRING, ''", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, '?'",
+			"STRING, ''", })
 	void saveFailTest(String sourceType, String sourceValue) {
 		String fileName = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Workbook workbook = new Workbook(fileName, "test");
@@ -51,14 +55,18 @@ public class SaveTest {
 			assertFalse(fi.exists());
 			workbook.saveAs(fileName);
 			WorkbookTest.assertExistingFile(fileName, true);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			fail();
 		}
 	}
 
 	@DisplayName("Test of the failing saveAs function (file System)")
 	@ParameterizedTest(name = "Given file name {0} should lead to an exception")
-	@CsvSource({ "NULL, ''", "STRING, '?'", "STRING, ''", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, '?'",
+			"STRING, ''", })
 	void saveAsFailTest(String sourceType, String sourceValue) {
 		String fileName = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Workbook workbook = new Workbook("test");
@@ -74,7 +82,8 @@ public class SaveTest {
 			FileOutputStream fs = new FileOutputStream(fileName);
 			workbook.saveAsStream(fs);
 			WorkbookTest.assertExistingFile(fileName, true);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new AssertionError("Stream exception", ex);
 		}
 	}
@@ -89,7 +98,8 @@ public class SaveTest {
 			fs.write(0);
 			fs.close();
 			assertThrows(Exception.class, () -> workbook.saveAsStream(fs));
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new AssertionError("Stream exception", ex);
 		}
 	}
@@ -100,7 +110,8 @@ public class SaveTest {
 		try {
 			Workbook workbook = new Workbook("test");
 			assertThrows(Exception.class, () -> workbook.saveAsStream(null));
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new AssertionError("Stream exception", ex);
 		}
 	}

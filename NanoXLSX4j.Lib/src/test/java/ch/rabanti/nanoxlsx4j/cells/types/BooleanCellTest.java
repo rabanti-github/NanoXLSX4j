@@ -44,7 +44,11 @@ public class BooleanCellTest {
 
 	@DisplayName("Test of the bool comparison method on cells")
 	@ParameterizedTest(name = "Given values {0} and {1} should lead to a comparison result of {2}")
-	@CsvSource({ "true, true, 0", "false, false, 0", "true, false, 1", "false, true, -1", })
+	@CsvSource({
+			"true, true, 0",
+			"false, false, 0",
+			"true, false, 1",
+			"false, true, -1", })
 	void booleanCellComparisonTest(boolean value1, boolean value2, int expectedResult) {
 		Cell cell1 = utils.createVariantCell(value1, utils.getCellAddress());
 		Cell cell2 = utils.createVariantCell(value2, utils.getCellAddress());

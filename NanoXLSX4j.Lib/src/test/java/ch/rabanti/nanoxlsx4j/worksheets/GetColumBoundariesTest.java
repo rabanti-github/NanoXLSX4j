@@ -48,7 +48,8 @@ public class GetColumBoundariesTest {
 		worksheet.addHiddenColumn(0);
 		worksheet.addHiddenColumn(1);
 		worksheet.addHiddenColumn(10);
-		worksheet.addCell("test", "E5");
+		worksheet.addCell("test",
+				"E5");
 		int column = worksheet.getLastColumnNumber();
 		assertEquals(10, column);
 	}
@@ -60,14 +61,17 @@ public class GetColumBoundariesTest {
 		worksheet.addHiddenColumn(0);
 		worksheet.addHiddenColumn(1);
 		worksheet.addHiddenColumn(2);
-		worksheet.addCell("test", "F5");
+		worksheet.addCell("test",
+				"F5");
 		int column = worksheet.getLastColumnNumber();
 		assertEquals(5, column);
 	}
 
 	@DisplayName("Test of the getLastColumnNumber function with an explicitly defined, empty cell besides other column definitions")
 	@ParameterizedTest(name = "Given empty cell address {0} should lead to the appropriate last column {1}")
-	@CsvSource({ "'F5', 5", "'A1', 4", })
+	@CsvSource({
+			"'F5', 5",
+			"'A1', 4", })
 	void getLastColumnNumberTest6(String emptyCellAddress, int expectedLastColumn) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.addHiddenColumn(3);
@@ -114,7 +118,8 @@ public class GetColumBoundariesTest {
 		worksheet.addHiddenColumn(3);
 		worksheet.addHiddenColumn(8);
 		worksheet.addHiddenColumn(10);
-		worksheet.addCell("test", "E5");
+		worksheet.addCell("test",
+				"E5");
 		int column = worksheet.getFirstColumnNumber();
 		assertEquals(3, column);
 	}
@@ -126,14 +131,17 @@ public class GetColumBoundariesTest {
 		worksheet.addHiddenColumn(7);
 		worksheet.addHiddenColumn(8);
 		worksheet.addHiddenColumn(9);
-		worksheet.addCell("test", "F5");
+		worksheet.addCell("test",
+				"F5");
 		int column = worksheet.getFirstColumnNumber();
 		assertEquals(5, column);
 	}
 
 	@DisplayName("Test of the getFirstColumnNumber function with an explicitly defined, empty cell besides other column definitions")
 	@ParameterizedTest(name = "Given empty cell address {0} should lead to the appropriate last column {1}")
-	@CsvSource({ "'F5', 3", "'A1', 0", })
+	@CsvSource({
+			"'F5', 3",
+			"'A1', 0", })
 	void getFirstColumnNumberTest6(String emptyCellAddress, int expectedFirstColumn) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.addHiddenColumn(3);
@@ -169,7 +177,8 @@ public class GetColumBoundariesTest {
 		worksheet.addHiddenColumn(0);
 		worksheet.addHiddenColumn(1);
 		worksheet.addHiddenColumn(10);
-		worksheet.addCell("test", "E5");
+		worksheet.addCell("test",
+				"E5");
 		int column = worksheet.getLastDataColumnNumber();
 		assertEquals(4, column);
 	}
@@ -181,7 +190,8 @@ public class GetColumBoundariesTest {
 		worksheet.addHiddenColumn(0);
 		worksheet.addHiddenColumn(1);
 		worksheet.addHiddenColumn(10);
-		worksheet.addCell("test", "E5");
+		worksheet.addCell("test",
+				"E5");
 		int column = worksheet.getLastDataColumnNumber();
 		assertEquals(4, column);
 	}
@@ -212,7 +222,8 @@ public class GetColumBoundariesTest {
 		worksheet.addHiddenColumn(2);
 		worksheet.addHiddenColumn(3);
 		worksheet.addHiddenColumn(10);
-		worksheet.addCell("test", "E5");
+		worksheet.addCell("test",
+				"E5");
 		int column = worksheet.getFirstDataColumnNumber();
 		assertEquals(4, column);
 	}
@@ -224,14 +235,17 @@ public class GetColumBoundariesTest {
 		worksheet.addHiddenColumn(2);
 		worksheet.addHiddenColumn(3);
 		worksheet.addHiddenColumn(10);
-		worksheet.addCell("test", "F5");
+		worksheet.addCell("test",
+				"F5");
 		int column = worksheet.getFirstDataColumnNumber();
 		assertEquals(5, column);
 	}
 
 	@DisplayName("Test of the getFirstDataColumnNumber and getLastDataColumnNumber functions with an explicitly defined, empty cell besides other column definitions")
 	@ParameterizedTest(name = "Given empty cell address {0} should lead to -1 as  first and last column")
-	@CsvSource({ "'F5'", "'A1'" })
+	@CsvSource({
+			"'F5'",
+			"'A1'" })
 	void getFirstOrLastDataColumnNumberTest(String emptyCellAddress) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.addHiddenColumn(3);
@@ -250,7 +264,8 @@ public class GetColumBoundariesTest {
 		worksheet.addHiddenColumn(2);
 		worksheet.addHiddenColumn(3);
 		worksheet.addHiddenColumn(10);
-		worksheet.addCell("test", "F5");
+		worksheet.addCell("test",
+				"F5");
 		int minColumn = worksheet.getFirstDataColumnNumber();
 		int maxColumn = worksheet.getLastDataColumnNumber();
 		assertEquals(5, minColumn);

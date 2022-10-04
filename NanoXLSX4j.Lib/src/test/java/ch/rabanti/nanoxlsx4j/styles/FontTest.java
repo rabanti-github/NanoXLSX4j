@@ -16,7 +16,7 @@ import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 public class FontTest {
 
-	private Font exampleStyle;
+	private final Font exampleStyle;
 
 	public FontTest() {
 		exampleStyle = new Font();
@@ -60,7 +60,9 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the bold field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "true", "false", })
+	@CsvSource({
+			"true",
+			"false", })
 	void boldTest(boolean value) {
 		Font font = new Font();
 		assertFalse(font.isBold());
@@ -70,7 +72,9 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the italic field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "true", "false", })
+	@CsvSource({
+			"true",
+			"false", })
 	void italicTest(boolean value) {
 		Font font = new Font();
 		assertFalse(font.isItalic());
@@ -80,7 +84,12 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the underline field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "none", "doubleAccounting", "singleAccounting", "u_double", "u_single", })
+	@CsvSource({
+			"none",
+			"doubleAccounting",
+			"singleAccounting",
+			"u_double",
+			"u_single", })
 	void underlineTest(Font.UnderlineValue value) {
 		Font font = new Font();
 		assertEquals(Font.UnderlineValue.none, font.getUnderline());
@@ -90,7 +99,9 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the strike field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "true", "false", })
+	@CsvSource({
+			"true",
+			"false", })
 	void strikeTest(boolean value) {
 		Font font = new Font();
 		assertFalse(font.isStrike());
@@ -100,7 +111,9 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the charset field")
 	@ParameterizedTest(name = "Given value {1} should lead to the defined field")
-	@CsvSource({ "NULL, ''", "STRING, 'ASCII'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, 'ASCII'", })
 	void charsetTest(String sourceType, String sourceValue) {
 		String value = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Font font = new Font();
@@ -111,7 +124,10 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the size field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "8", "75", "11", })
+	@CsvSource({
+			"8",
+			"75",
+			"11", })
 	void sizeTest(int value) {
 		Font font = new Font();
 		assertEquals(Font.DEFAULT_FONT_SIZE, font.getSize()); // 11 is default
@@ -121,7 +137,14 @@ public class FontTest {
 
 	@DisplayName("Test of the auto-adjusting set function of the size field (invalid values)")
 	@ParameterizedTest(name = "Given value {0} should lead to the adjusted value {1}")
-	@CsvSource({ "0f, 1f", "7f, 7f", "-100f, 1f", "0.5f, 1f", "200f, 200f", "500f, 409f", "409.05f, 409f", })
+	@CsvSource({
+			"0f, 1f",
+			"7f, 7f",
+			"-100f, 1f",
+			"0.5f, 1f",
+			"200f, 200f",
+			"500f, 409f",
+			"409.05f, 409f", })
 	void sizeFailTest(float givenValue, float expectedValue) {
 		Font font = new Font();
 		font.setSize(givenValue);
@@ -130,7 +153,10 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the name field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "Calibri", "Arial", "---", // Not a font but a valid string
+	@CsvSource({
+			"Calibri",
+			"Arial",
+			"---", // Not a font but a valid string
 	})
 	void nameTest(String value) {
 		Font font = new Font();
@@ -149,7 +175,9 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the family field")
 	@ParameterizedTest(name = "Given value {1} should lead to the defined field")
-	@CsvSource({ "NULL, ''", "STRING, '4'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, '4'", })
 	void familyTest(String sourceType, String sourceValue) {
 		String value = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Font font = new Font();
@@ -160,7 +188,9 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the colorTheme field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "1", "10", })
+	@CsvSource({
+			"1",
+			"10", })
 	void colorThemeTest(int value) {
 		Font font = new Font();
 		assertEquals(1, font.getColorTheme()); // 1 is default
@@ -170,7 +200,9 @@ public class FontTest {
 
 	@DisplayName("Test of the failing set function of the colorTheme field (invalid values)")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "-1", "-100", })
+	@CsvSource({
+			"-1",
+			"-100", })
 	void colorThemeFailTest(int value) {
 		Font font = new Font();
 		assertThrows(Exception.class, () -> font.setColorTheme(value));
@@ -178,7 +210,10 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the colorValue field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined filed")
-	@CsvSource({ "STRING, ''", "NULL, ''", "STRING, 'FFAA22CC'", })
+	@CsvSource({
+			"STRING, ''",
+			"NULL, ''",
+			"STRING, 'FFAA22CC'", })
 	void colorValueTest(String sourceType, String sourceValue) {
 		String value = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Font font = new Font();
@@ -189,7 +224,10 @@ public class FontTest {
 
 	@DisplayName("Test of the failing set function of the colorValue field (invalid values)")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "77BB00", "0002200000", "XXXXXXXX", })
+	@CsvSource({
+			"77BB00",
+			"0002200000",
+			"XXXXXXXX", })
 	void colorValueFailTest(String value) {
 		Font font = new Font();
 		assertThrows(Exception.class, () -> font.setColorValue(value));
@@ -197,7 +235,10 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the scheme field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "major", "minor", "none", })
+	@CsvSource({
+			"major",
+			"minor",
+			"none", })
 	void schmeTest(Font.SchemeValue value) {
 		Font font = new Font();
 		assertEquals(Font.DEFAULT_FONT_SCHEME, font.getScheme()); // default is minor
@@ -207,7 +248,10 @@ public class FontTest {
 
 	@DisplayName("Test of the get and set function of the verticalAlign field")
 	@ParameterizedTest(name = "Given value {0} should lead to the defined field")
-	@CsvSource({ "none", "subscript", "superscript", })
+	@CsvSource({
+			"none",
+			"subscript",
+			"superscript", })
 	void verticalAlignTest(Font.VerticalAlignValue value) {
 		Font font = new Font();
 		assertEquals(Font.DEFAULT_VERTICAL_ALIGN, font.getVerticalAlign()); // default is none
@@ -235,127 +279,133 @@ public class FontTest {
 	@DisplayName("Test of the equals method")
 	@Test()
 	void equalsTest() {
-		Font style2 = (Font) exampleStyle.copy();
-		assertTrue(exampleStyle.equals(style2));
+		Font style2 = exampleStyle.copy();
+		assertEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of bold)")
 	@Test()
 	void equalsTest2a() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setBold(false);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of italic)")
 	@Test()
 	void equalsTest2b() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setItalic(false);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of underline)")
 	@Test()
 	void equalsTest2c() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setUnderline(Font.UnderlineValue.singleAccounting);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of strike)")
 	@Test()
 	void equalsTest2e() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setStrike(false);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of charset)")
 	@Test()
 	void equalsTest2f() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setCharset("XYZ");
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of size)")
 	@Test()
 	void equalsTest2g() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setSize(33);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of name)")
 	@Test()
 	void equalsTest2h() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setName("Comic Sans");
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of family)")
 	@Test()
 	void equalsTest2i() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setFamily("999");
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of colorTheme)")
 	@Test()
 	void equalsTest2j() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setColorTheme(22);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of colorValue)")
 	@Test()
 	void equalsTest2k() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setColorValue("FF9988AA");
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of scheme)")
 	@Test()
 	void equalsTest2l() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setScheme(Font.SchemeValue.none);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality of verticalAlign)")
 	@Test()
 	void equalsTest2m() {
-		Font style2 = (Font) exampleStyle.copy();
+		Font style2 = exampleStyle.copy();
 		style2.setVerticalAlign(Font.VerticalAlignValue.none);
-		assertFalse(exampleStyle.equals(style2));
+		assertNotEquals(exampleStyle, style2);
 	}
 
 	@DisplayName("Test of the equals method (inequality on null or different objects)")
 	@ParameterizedTest(name = "Given value {1} should lead to inequality")
-	@CsvSource({ "NULL, ''", "STRING, 'text'", "BOOLEAN, 'true'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, 'text'",
+			"BOOLEAN, 'true'", })
 	void equalsTest3(String sourceType, String sourceValue) {
 		Object obj = TestUtils.createInstance(sourceType, sourceValue);
-		assertFalse(exampleStyle.equals(obj));
+		assertNotEquals(exampleStyle, obj);
 	}
 
 	@DisplayName("Test of the equals method when the origin object is null or not of the same type")
 	@ParameterizedTest(name = "Given value {1} should lead to inequality")
-	@CsvSource({ "NULL, ''", "STRING, 'origin'", "BOOLEAN, 'true'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, 'origin'",
+			"BOOLEAN, 'true'", })
 	void equalsTest5(String sourceType, String sourceValue) {
 		Object origin = TestUtils.createInstance(sourceType, sourceValue);
-		Font copy = (Font) exampleStyle.copy();
-		assertFalse(copy.equals(origin));
+		Font copy = exampleStyle.copy();
+		assertNotEquals(copy, origin);
 	}
 
 	@DisplayName("Test of the hashCode method (equality of two identical objects)")
 	@Test()
 	void hashCodeTest() {
-		Font copy = (Font) exampleStyle.copy();
+		Font copy = exampleStyle.copy();
 		copy.setInternalID(99); // Should not influence
 		assertEquals(exampleStyle.hashCode(), copy.hashCode());
 	}
@@ -363,7 +413,7 @@ public class FontTest {
 	@DisplayName("Test of the hashCode method (inequality of two different objects)")
 	@Test()
 	void hashCodeTest2() {
-		Font copy = (Font) exampleStyle.copy();
+		Font copy = exampleStyle.copy();
 		copy.setBold(false);
 		assertNotEquals(exampleStyle.hashCode(), copy.hashCode());
 	}

@@ -21,14 +21,17 @@ public class GetRowBoundariesTest {
 
 	@DisplayName("Test of the getLastRowNumber function with defined rows on an empty worksheet")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate last row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getLastRowNumberTest2(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(0);
 			worksheet.addHiddenRow(1);
 			worksheet.addHiddenRow(2);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(0, 22.2f);
 			worksheet.setRowHeight(1, 33.3f);
 			worksheet.setRowHeight(2, 44.4f);
@@ -39,14 +42,17 @@ public class GetRowBoundariesTest {
 
 	@DisplayName("Test of the getLastRowNumber function with defined rows on an empty worksheet, where the row definition has gaps")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate last row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getLastRowNumberTest3(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(0);
 			worksheet.addHiddenRow(1);
 			worksheet.addHiddenRow(10);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(0, 22.2f);
 			worksheet.setRowHeight(1, 33.3f);
 			worksheet.setRowHeight(10, 44.4f);
@@ -57,45 +63,55 @@ public class GetRowBoundariesTest {
 
 	@DisplayName("Test of the getLastRowNumber function with defined rows where cells are defined below the last row")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate last row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getLastRowNumberTest4(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(0);
 			worksheet.addHiddenRow(1);
 			worksheet.addHiddenRow(10);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(0, 22.2f);
 			worksheet.setRowHeight(1, 33.3f);
 			worksheet.setRowHeight(10, 44.4f);
 		}
-		worksheet.addCell("test", "E5");
+		worksheet.addCell("test",
+				"E5");
 		int row = worksheet.getLastRowNumber();
 		assertEquals(10, row);
 	}
 
 	@DisplayName("Test of the getLastRowNumber function with defined rows where cells are defined above the last row")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate last row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getLastRowNumberTest5(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(0);
 			worksheet.addHiddenRow(1);
 			worksheet.addHiddenRow(2);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(0, 22.2f);
 			worksheet.setRowHeight(1, 33.3f);
 			worksheet.setRowHeight(2, 44.4f);
 		}
-		worksheet.addCell("test", "F5");
+		worksheet.addCell("test",
+				"F5");
 		int row = worksheet.getLastRowNumber();
 		assertEquals(4, row);
 	}
 
 	@DisplayName("Test of the getLastRowNumber function with an explicitly defined, empty cell besides other row definitions")
 	@ParameterizedTest(name = "Given empty cell address {0} should lead to the appropriate last row {1}")
-	@CsvSource({ "'F7', 6", "'A1', 4", })
+	@CsvSource({
+			"'F7', 6",
+			"'A1', 4", })
 	void getLastRowNumberTest6(String emptyCellAddress, int expectedLastRow) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.addHiddenRow(3);
@@ -115,14 +131,17 @@ public class GetRowBoundariesTest {
 
 	@DisplayName("Test of the GetLastDataRowNumber function with defined rows on an empty worksheet")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate last row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getLastDataRowNumberTest2(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(0);
 			worksheet.addHiddenRow(1);
 			worksheet.addHiddenRow(2);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(0, 22.2f);
 			worksheet.setRowHeight(1, 33.3f);
 			worksheet.setRowHeight(2, 44.4f);
@@ -133,38 +152,46 @@ public class GetRowBoundariesTest {
 
 	@DisplayName("Test of the GetLastDataRowNumber function with defined rows where cells are defined below the last row")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate last row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getLastDataRowNumberTest3(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(0);
 			worksheet.addHiddenRow(1);
 			worksheet.addHiddenRow(10);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(0, 22.2f);
 			worksheet.setRowHeight(1, 33.3f);
 			worksheet.setRowHeight(10, 44.4f);
 		}
-		worksheet.addCell("test", "E5");
+		worksheet.addCell("test",
+				"E5");
 		int row = worksheet.getLastDataRowNumber();
 		assertEquals(4, row);
 	}
 
 	@DisplayName("Test of the GetLastDataRowNumber function with defined rows where cells are defined above the last row")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate last row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getLastDataRowNumberTest4(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(0);
 			worksheet.addHiddenRow(1);
 			worksheet.addHiddenRow(2);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(0, 22.2f);
 			worksheet.setRowHeight(1, 33.3f);
 			worksheet.setRowHeight(3, 44.4f);
 		}
-		worksheet.addCell("test", "F5");
+		worksheet.addCell("test",
+				"F5");
 		int row = worksheet.getLastDataRowNumber();
 		assertEquals(4, row);
 	}
@@ -179,14 +206,17 @@ public class GetRowBoundariesTest {
 
 	@DisplayName("Test of the getFirstRowNumber function with defined rows on an empty worksheet")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate first row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getFirstRowNumberTest2(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(1);
 			worksheet.addHiddenRow(2);
 			worksheet.addHiddenRow(3);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(1, 22.2f);
 			worksheet.setRowHeight(2, 33.3f);
 			worksheet.setRowHeight(3, 44.4f);
@@ -197,14 +227,17 @@ public class GetRowBoundariesTest {
 
 	@DisplayName("Test of the getFirstRowNumber function with defined rows on an empty worksheet, where the row definition has gaps")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate first row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getFirstRowNumberTest3(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(1);
 			worksheet.addHiddenRow(2);
 			worksheet.addHiddenRow(10);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(1, 22.2f);
 			worksheet.setRowHeight(2, 33.3f);
 			worksheet.setRowHeight(10, 44.4f);
@@ -215,45 +248,55 @@ public class GetRowBoundariesTest {
 
 	@DisplayName("Test of the getFirstRowNumber function with defined rows where cells are defined above the first row")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate first row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getFirstRowNumberTest4(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(2);
 			worksheet.addHiddenRow(3);
 			worksheet.addHiddenRow(10);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(2, 22.2f);
 			worksheet.setRowHeight(3, 33.3f);
 			worksheet.setRowHeight(10, 44.4f);
 		}
-		worksheet.addCell("test", "E5");
+		worksheet.addCell("test",
+				"E5");
 		int row = worksheet.getFirstRowNumber();
 		assertEquals(2, row);
 	}
 
 	@DisplayName("Test of the getFirstRowNumber function with defined rows where cells are defined below the first row")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate first row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getFirstRowNumberTest5(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(6);
 			worksheet.addHiddenRow(7);
 			worksheet.addHiddenRow(8);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(6, 22.2f);
 			worksheet.setRowHeight(7, 33.3f);
 			worksheet.setRowHeight(8, 44.4f);
 		}
-		worksheet.addCell("test", "F5");
+		worksheet.addCell("test",
+				"F5");
 		int row = worksheet.getFirstRowNumber();
 		assertEquals(4, row);
 	}
 
 	@DisplayName("Test of the getFirstRowNumber function with an explicitly defined, empty cell besides other row definitions")
 	@ParameterizedTest(name = "Given empty cell address {0} should lead to the appropriate last row {1}")
-	@CsvSource({ "'F5', 4", "'A1', 0", })
+	@CsvSource({
+			"'F5', 4",
+			"'A1', 0", })
 	void getFirstRowNumberTest6(String emptyCellAddress, int expectedFirstRow) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.addHiddenColumn(3);
@@ -273,14 +316,17 @@ public class GetRowBoundariesTest {
 
 	@DisplayName("Test of the getFirstDataRowNumber function with defined rows on an empty worksheet")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate first row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getFirstDataRowNumberTest2(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(1);
 			worksheet.addHiddenRow(2);
 			worksheet.addHiddenRow(3);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(1, 22.2f);
 			worksheet.setRowHeight(2, 33.3f);
 			worksheet.setRowHeight(3, 44.4f);
@@ -291,45 +337,55 @@ public class GetRowBoundariesTest {
 
 	@DisplayName("Test of the getFirstDataRowNumber function with defined rows where cells are defined below the last row")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate first row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getFirstDataRowNumberTest3(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(2);
 			worksheet.addHiddenRow(3);
 			worksheet.addHiddenRow(10);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(2, 22.2f);
 			worksheet.setRowHeight(3, 33.3f);
 			worksheet.setRowHeight(10, 44.4f);
 		}
-		worksheet.addCell("test", "E5");
+		worksheet.addCell("test",
+				"E5");
 		int row = worksheet.getFirstDataRowNumber();
 		assertEquals(4, row);
 	}
 
 	@DisplayName("Test of the getFirstDataRowNumber function with defined rows where cells are defined above the last row")
 	@ParameterizedTest(name = "Given property {0} should lead to the appropriate first row")
-	@CsvSource({ "Height", "Hidden", })
+	@CsvSource({
+			"Height",
+			"Hidden", })
 	void getFirstDataRowNumberTest4(RowTest.RowProperty rowProperty) {
 		Worksheet worksheet = new Worksheet();
 		if (rowProperty == RowTest.RowProperty.Hidden) {
 			worksheet.addHiddenRow(1);
 			worksheet.addHiddenRow(2);
 			worksheet.addHiddenRow(3);
-		} else {
+		}
+		else {
 			worksheet.setRowHeight(1, 22.2f);
 			worksheet.setRowHeight(2, 33.3f);
 			worksheet.setRowHeight(3, 44.4f);
 		}
-		worksheet.addCell("test", "F5");
+		worksheet.addCell("test",
+				"F5");
 		int row = worksheet.getFirstDataRowNumber();
 		assertEquals(4, row);
 	}
 
 	@DisplayName("Test of the getFirstDataRowNumber and getLastDataRowNumber functions with an explicitly defined, empty cell besides other row definitions")
 	@ParameterizedTest(name = "Given empty cell address {0} should lead to -1 as  first and last row")
-	@CsvSource({ "'F5'", "'A1'" })
+	@CsvSource({
+			"'F5'",
+			"'A1'" })
 	void getFirstOrLastDataRowNumberTest(String emptyCellAddress) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.addHiddenRow(3);
@@ -348,7 +404,8 @@ public class GetRowBoundariesTest {
 		worksheet.addHiddenRow(2);
 		worksheet.addHiddenRow(3);
 		worksheet.addHiddenRow(10);
-		worksheet.addCell("test", "F5");
+		worksheet.addCell("test",
+				"F5");
 		int minRow = worksheet.getFirstDataRowNumber();
 		int maxRow = worksheet.getLastDataRowNumber();
 		assertEquals(4, minRow);

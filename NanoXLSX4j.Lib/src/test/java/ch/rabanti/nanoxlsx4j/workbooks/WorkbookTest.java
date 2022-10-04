@@ -69,7 +69,8 @@ public class WorkbookTest {
 			workbook.setFilename(filename);
 			workbook.save();
 			assertExistingFile(filename, true);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			fail();
 		}
 	}
@@ -190,14 +191,17 @@ public class WorkbookTest {
 
 	@DisplayName("Test of the Workbook constructor with an automatic option to create an initial worksheet")
 	@ParameterizedTest(name = "Given parameter {0} should lead to a new workbook")
-	@CsvSource({ "true, Sheet1", "false, ", })
+	@CsvSource({
+			"true, Sheet1",
+			"false, ", })
 	void workbookConstructorTest2(boolean givenValue, String expectedName) {
 		Workbook workbook = new Workbook(givenValue);
 		if (givenValue) {
 			assertNotNull(workbook.getCurrentWorksheet());
 			assertEquals(expectedName, workbook.getWorksheets().get(0).getSheetName());
 			assertEquals(1, workbook.getWorksheets().size());
-		} else {
+		}
+		else {
 			assertEquals(0, workbook.getWorksheets().size());
 			assertNull(workbook.getCurrentWorksheet());
 		}
@@ -208,7 +212,11 @@ public class WorkbookTest {
 
 	@DisplayName("Test of the Workbook constructor with the name of the initially crated worksheet")
 	@ParameterizedTest(name = "Given value {0} should lead to a new workbook with an initial worksheet, called {1}")
-	@CsvSource({ "Sheet1, Sheet1", "?, _", "'', Sheet1", ", Sheet1", })
+	@CsvSource({
+			"Sheet1, Sheet1",
+			"?, _",
+			"'', Sheet1",
+			", Sheet1", })
 	void workbookConstructorTest3(String givenName, String expectedName) {
 		Workbook workbook = new Workbook(givenName);
 		assertNotNull(workbook.getCurrentWorksheet());
@@ -221,7 +229,11 @@ public class WorkbookTest {
 
 	@DisplayName("Test of the Workbook constructor with the file name of the workbook and name of the initially crated worksheet")
 	@ParameterizedTest(name = "Given file name {0} and worksheet name {1} should lead to a new workbook")
-	@CsvSource({ "f1.xlsx, Sheet1, Sheet1", "'', ?, _", ",'', Sheet1", "?, , Sheet1", })
+	@CsvSource({
+			"f1.xlsx, Sheet1, Sheet1",
+			"'', ?, _",
+			",'', Sheet1",
+			"?, , Sheet1", })
 	void workbookConstructorTest4(String fileName, String givenSheetName, String expectedSheetName) {
 		Workbook workbook = new Workbook(fileName, givenSheetName);
 		assertNotNull(workbook.getCurrentWorksheet());
@@ -234,14 +246,20 @@ public class WorkbookTest {
 
 	@DisplayName("Test of the Workbook constructor with the file name of the workbook, the name of the initially created worksheet and a sanitizing option")
 	@ParameterizedTest(name = "Given file name {1}, worksheet name {2} should lead to an exception: {4} or a workbook wit a worksheet {3}")
-	@CsvSource({ "false, f1.xlsx, Sheet1, Sheet1, false", "false, , ?, , true", "false, , , , true",
-			"false, ?, , , true", "true, f1.xlsx, Sheet1, Sheet1, false", "true, , ?, _, false",
-			"true, , , Sheet1, false", "true, ?, , Sheet1, false", })
-	void workbookConstructorTest5(boolean sanitize, String fileName, String givenSheetName, String expectedSheetName,
-			boolean expectException) {
+	@CsvSource({
+			"false, f1.xlsx, Sheet1, Sheet1, false",
+			"false, , ?, , true",
+			"false, , , , true",
+			"false, ?, , , true",
+			"true, f1.xlsx, Sheet1, Sheet1, false",
+			"true, , ?, _, false",
+			"true, , , Sheet1, false",
+			"true, ?, , Sheet1, false", })
+	void workbookConstructorTest5(boolean sanitize, String fileName, String givenSheetName, String expectedSheetName, boolean expectException) {
 		if (expectException) {
 			assertThrows(FormatException.class, () -> new Workbook(fileName, givenSheetName, sanitize));
-		} else {
+		}
+		else {
 			Workbook workbook = new Workbook(fileName, givenSheetName, sanitize);
 			assertNotNull(workbook.getCurrentWorksheet());
 			assertEquals(expectedSheetName, workbook.getWorksheets().get(0).getSheetName());
@@ -254,7 +272,10 @@ public class WorkbookTest {
 
 	@DisplayName("Test of the addWorksheet function with the worksheet name")
 	@ParameterizedTest(name = "Given name {0} and optional name {1} should lead to new worksheet")
-	@CsvSource({ "test, ", "test, test2", "0, _", })
+	@CsvSource({
+			"test, ",
+			"test, test2",
+			"0, _", })
 	void addWorksheetTest(String name1, String name2) {
 		Workbook workbook = new Workbook();
 		assertEquals(0, workbook.getWorksheets().size());
@@ -270,7 +291,12 @@ public class WorkbookTest {
 
 	@DisplayName("Test of the failing addWorksheet function with an invalid worksheet name")
 	@ParameterizedTest(name = "Given worksheet name {1} with initial worksheet {0} should lead to an exception")
-	@CsvSource({ "Sheet1, ", "Sheet1, ", "Sheet1, ?", "Sheet1, Sheet1", "Sheet1, --------------------------------", })
+	@CsvSource({
+			"Sheet1, ",
+			"Sheet1, ",
+			"Sheet1, ?",
+			"Sheet1, Sheet1",
+			"Sheet1, --------------------------------", })
 	void addWorksheetFailTest(String initialWorksheetName, String invalidName) {
 		Workbook workbook = new Workbook();
 		workbook.addWorksheet(initialWorksheetName);
@@ -279,14 +305,19 @@ public class WorkbookTest {
 
 	@DisplayName("Test of the addWorksheet function with the worksheet name and a sanitation option")
 	@ParameterizedTest(name = "Given worksheet name {1} with initial worksheet {0} and sanitation: {2} should lead to an exception: {3}")
-	@CsvSource({ "Sheet1, , false, false, ", "test, test, false, false, ", "Sheet1, , false, false, ",
-			"Sheet1, --------------------------------, false, false, ", "Sheet1, ?, false, false, ",
-			"Sheet1, Sheet2, false, true, Sheet2", "Sheet1, , true, true, Sheet2", "test, test, true, true, test1",
+	@CsvSource({
+			"Sheet1, , false, false, ",
+			"test, test, false, false, ",
+			"Sheet1, , false, false, ",
+			"Sheet1, --------------------------------, false, false, ",
+			"Sheet1, ?, false, false, ",
+			"Sheet1, Sheet2, false, true, Sheet2",
+			"Sheet1, , true, true, Sheet2",
+			"test, test, true, true, test1",
 			"Sheet1, , true, true, Sheet2",
 			"Sheet1, --------------------------------, true, true, -------------------------------",
 			"Sheet1, ?, true, true, _", })
-	void addWorksheetTest2(String initialWorksheetName, String name2, boolean sanitize, boolean expectedValid,
-			String expectedSheetName) {
+	void addWorksheetTest2(String initialWorksheetName, String name2, boolean sanitize, boolean expectedValid, String expectedSheetName) {
 		Workbook workbook = new Workbook();
 		assertEquals(0, workbook.getWorksheets().size());
 		workbook.addWorksheet(initialWorksheetName);
@@ -296,7 +327,8 @@ public class WorkbookTest {
 			assertEquals(2, workbook.getWorksheets().size());
 			assertEquals(expectedSheetName, workbook.getWorksheets().get(1).getSheetName());
 			assertEquals(expectedSheetName, workbook.getCurrentWorksheet().getSheetName());
-		} else {
+		}
+		else {
 			assertThrows(Exception.class, () -> workbook.addWorksheet(name2, sanitize));
 		}
 	}
@@ -343,10 +375,12 @@ public class WorkbookTest {
 	@DisplayName("Test of the addWorksheet function with the worksheet object and a sanitation option")
 	@ParameterizedTest(name = "Given worksheet {1} with initial worksheet {0} and sanitation: {2} should lead to an exception: {3}")
 
-	@CsvSource({ "Sheet1, Sheet1, false, false, ", "Sheet1, , false, false, ", "Sheet1, Sheet1, true, true, Sheet2",
+	@CsvSource({
+			"Sheet1, Sheet1, false, false, ",
+			"Sheet1, , false, false, ",
+			"Sheet1, Sheet1, true, true, Sheet2",
 			"Sheet1, , true, true, Sheet2", })
-	void addWorksheetTest4(String initialWorksheetName, String name2, boolean sanitize, boolean expectedValid,
-			String expectedSheetName) {
+	void addWorksheetTest4(String initialWorksheetName, String name2, boolean sanitize, boolean expectedValid, String expectedSheetName) {
 		Workbook workbook = new Workbook();
 		assertEquals(0, workbook.getWorksheets().size());
 		workbook.addWorksheet(initialWorksheetName);
@@ -360,7 +394,8 @@ public class WorkbookTest {
 			assertEquals(2, workbook.getWorksheets().size());
 			assertEquals(expectedSheetName, workbook.getWorksheets().get(1).getSheetName());
 			assertEquals(expectedSheetName, workbook.getCurrentWorksheet().getSheetName());
-		} else {
+		}
+		else {
 			assertThrows(Exception.class, () -> workbook.addWorksheet(worksheet, sanitize));
 		}
 	}
@@ -406,17 +441,24 @@ public class WorkbookTest {
 	}
 
 	@DisplayName("Test of the RemoveWorksheet function by name")
-	@ParameterizedTest(name = "Given worksheet count {0} with current worksheet {1} and selected worksheet {2} on removal of {3} should lead to a current worksheet {4}  and selected worksheet {5}")
-	@CsvSource({ "2, 0, 1, 1, 0, 0", "2, 1, 0, 1, 0, 0", "2, 1, 1, 1, 0, 0", "2, 0, 0, 1, 0, 0", "5, 2, 2, 2, 4, 3",
-			"5, 0, 0, 4, 0, 0", "4, 3, 1, 3, 2, 1", "4, 3, 3, 3, 2, 2", })
-	void removeWorksheetTest(int worksheetCount, int currentWorksheetIndex, int selectedWorksheetIndex,
-			int worksheetToRemoveIndex, String expectedCurrentWorksheetIndex, int expectedSelectedWorksheetIndex) {
+	@ParameterizedTest(
+		name = "Given worksheet count {0} with current worksheet {1} and selected worksheet {2} on removal of {3} should lead to a current worksheet {4}  and selected worksheet {5}")
+	@CsvSource({
+			"2, 0, 1, 1, 0, 0",
+			"2, 1, 0, 1, 0, 0",
+			"2, 1, 1, 1, 0, 0",
+			"2, 0, 0, 1, 0, 0",
+			"5, 2, 2, 2, 4, 3",
+			"5, 0, 0, 4, 0, 0",
+			"4, 3, 1, 3, 2, 1",
+			"4, 3, 3, 3, 2, 2", })
+	void removeWorksheetTest(int worksheetCount, int currentWorksheetIndex, int selectedWorksheetIndex, int worksheetToRemoveIndex, String expectedCurrentWorksheetIndex, int expectedSelectedWorksheetIndex) {
 		Workbook workbook = new Workbook();
 		String current = null;
 		String toRemove = null;
 		String expected = null;
 		for (int i = 0; i < worksheetCount; i++) {
-			String name = "Sheet" + Integer.toString(i + 1);
+			String name = "Sheet" + (i + 1);
 			workbook.addWorksheet(name);
 			if (i == currentWorksheetIndex) {
 				current = name;
@@ -428,22 +470,35 @@ public class WorkbookTest {
 				expected = name;
 			}
 		}
-		assertWorksheetRemoval(workbook, workbook::removeWorksheet, worksheetCount, current, selectedWorksheetIndex,
-				toRemove, expected, expectedSelectedWorksheetIndex);
+		assertWorksheetRemoval(workbook,
+				workbook::removeWorksheet,
+				worksheetCount,
+				current,
+				selectedWorksheetIndex,
+				toRemove,
+				expected,
+				expectedSelectedWorksheetIndex);
 	}
 
 	@DisplayName("Test of the RemoveWorksheet function by index")
-	@ParameterizedTest(name = "Given worksheet count {0} with current worksheet {1} and selected worksheet {2} on removal of {3} should lead to a current worksheet {4}  and selected worksheet {5}")
-	@CsvSource({ "2, 0, 1, 1, 0, 0", "2, 1, 0, 1, 0, 0", "2, 1, 1, 1, 0, 0", "2, 0, 0, 1, 0, 0", "5, 2, 2, 2, 4, 3",
-			"5, 0, 0, 4, 0, 0", "4, 3, 1, 3, 2, 1", "4, 3, 3, 3, 2, 2", })
-	void removeWorksheetTest2(int worksheetCount, int currentWorksheetIndex, int selectedWorksheetIndex,
-			int worksheetToRemoveIndex, String expectedCurrentWorksheetIndex, int expectedSelectedWorksheetIndex) {
+	@ParameterizedTest(
+		name = "Given worksheet count {0} with current worksheet {1} and selected worksheet {2} on removal of {3} should lead to a current worksheet {4}  and selected worksheet {5}")
+	@CsvSource({
+			"2, 0, 1, 1, 0, 0",
+			"2, 1, 0, 1, 0, 0",
+			"2, 1, 1, 1, 0, 0",
+			"2, 0, 0, 1, 0, 0",
+			"5, 2, 2, 2, 4, 3",
+			"5, 0, 0, 4, 0, 0",
+			"4, 3, 1, 3, 2, 1",
+			"4, 3, 3, 3, 2, 2", })
+	void removeWorksheetTest2(int worksheetCount, int currentWorksheetIndex, int selectedWorksheetIndex, int worksheetToRemoveIndex, String expectedCurrentWorksheetIndex, int expectedSelectedWorksheetIndex) {
 		Workbook workbook = new Workbook();
 		String current = null;
 		int toRemove = -1;
 		String expected = null;
 		for (int i = 0; i < worksheetCount; i++) {
-			String name = "Sheet" + Integer.toString(i + 1);
+			String name = "Sheet" + (i + 1);
 			workbook.addWorksheet(name);
 			if (i == currentWorksheetIndex) {
 				current = name;
@@ -455,13 +510,23 @@ public class WorkbookTest {
 				expected = name;
 			}
 		}
-		assertWorksheetRemoval(workbook, workbook::removeWorksheet, worksheetCount, current, selectedWorksheetIndex,
-				toRemove, expected, expectedSelectedWorksheetIndex);
+		assertWorksheetRemoval(workbook,
+				workbook::removeWorksheet,
+				worksheetCount,
+				current,
+				selectedWorksheetIndex,
+				toRemove,
+				expected,
+				expectedSelectedWorksheetIndex);
 	}
 
 	@DisplayName("Test of the failing removeWorksheet function on an non-existing name")
 	@ParameterizedTest(name = "Given existing worksheet {0} and non-existing {1} to remove should lead to an exception")
-	@CsvSource({ "test, ", "test, ''", "test, 'Test'", "test, 'Sheet1'", })
+	@CsvSource({
+			"test, ",
+			"test, ''",
+			"test, 'Test'",
+			"test, 'Sheet1'", })
 	void removeWorksheetFailTest(String existingWorksheet, String absentWorksheet) {
 		Workbook workbook = new Workbook();
 		workbook.addWorksheet(existingWorksheet);
@@ -470,7 +535,10 @@ public class WorkbookTest {
 
 	@DisplayName("Test of the failing removeWorksheet function on an non-existing index")
 	@ParameterizedTest(name = "Given existing worksheet {0} and non-existing {1} to remove should lead to an exception")
-	@CsvSource({ "test, -1", "test, 1", "test, 99", })
+	@CsvSource({
+			"test, -1",
+			"test, 1",
+			"test, 99", })
 	void removeWorksheetFailTest2(String existingWorksheet, int absentIndex) {
 		Workbook workbook = new Workbook();
 		workbook.addWorksheet(existingWorksheet);
@@ -485,15 +553,20 @@ public class WorkbookTest {
 	}
 
 	@DisplayName("Test of the SetWorkbookProtection function")
-	@ParameterizedTest(name = "Given state {0}, protectWindow {1}, protectStructure {2} and password {3} should lead to a locked widows state {4}, a locked structure state {5} and a protection state {6}")
-	@CsvSource({ "false, false, false, , false, false, false", "true, false, false, '', false, false, false",
-			"true, true, false, 'test', true, false, true", "true, false, true, , false, true, true",
-			"true, true, true, ' ' , true, true, true", "false, true, false, '222', true, false, false",
-			"false, false, true, '#*$', false, true, false", "false, true, true, '_-_', true, true, false",
+	@ParameterizedTest(
+		name = "Given state {0}, protectWindow {1}, protectStructure {2} and password {3} should lead to a locked widows state {4}, a locked structure state {5} and a protection state {6}")
+	@CsvSource({
+			"false, false, false, , false, false, false",
+			"true, false, false, '', false, false, false",
+			"true, true, false, 'test', true, false, true",
+			"true, false, true, , false, true, true",
+			"true, true, true, ' ' , true, true, true",
+			"false, true, false, '222', true, false, false",
+			"false, false, true, '#*$', false, true, false",
+			"false, true, true, '_-_', true, true, false",
 
 	})
-	void setWorkbookProtectionTest(boolean state, boolean protectWindows, boolean protectStructure, String password,
-			boolean expectedLockWindowsState, boolean expectedLockStructureState, boolean expectedProtectionState) {
+	void setWorkbookProtectionTest(boolean state, boolean protectWindows, boolean protectStructure, String password, boolean expectedLockWindowsState, boolean expectedLockStructureState, boolean expectedProtectionState) {
 		Workbook workbook = new Workbook();
 		workbook.setWorkbookProtection(state, protectWindows, protectStructure, password);
 		assertEquals(expectedLockWindowsState, workbook.isWindowsLockedIfProtected());
@@ -514,7 +587,12 @@ public class WorkbookTest {
 
 	@DisplayName("Test of the failing addMruColor function when adding an invalid color value")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "NULL, ''", "STRING, ''", "STRING, ' '", "STRING, 'GGGGGG'", "STRING, 'AABBCCDD22'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, ''",
+			"STRING, ' '",
+			"STRING, 'GGGGGG'",
+			"STRING, 'AABBCCDD22'", })
 	void addMruColorFailTest(String sourceType, String rawValue) {
 		String value = (String) TestUtils.createInstance(sourceType, rawValue);
 		Workbook workbook = new Workbook("worksheet1");
@@ -548,11 +626,14 @@ public class WorkbookTest {
 	@Test()
 	void getWorksheetTest() {
 		Workbook workbook = new Workbook("worksheet1");
-		workbook.getCurrentWorksheet().addCell("WS1", "A1");
+		workbook.getCurrentWorksheet().addCell("WS1",
+				"A1");
 		workbook.addWorksheet("worksheet2");
-		workbook.getCurrentWorksheet().addCell("WS2", "A1");
+		workbook.getCurrentWorksheet().addCell("WS2",
+				"A1");
 		workbook.addWorksheet("worksheet3");
-		workbook.getCurrentWorksheet().addCell("WS3", "A1");
+		workbook.getCurrentWorksheet().addCell("WS3",
+				"A1");
 		Worksheet givenWorksheet = workbook.getWorksheet("worksheet2");
 		assertEquals("WS2", givenWorksheet.getCell("A1").getValue());
 	}
@@ -561,11 +642,14 @@ public class WorkbookTest {
 	@Test()
 	void getWorksheetTest2() {
 		Workbook workbook = new Workbook("worksheet1");
-		workbook.getCurrentWorksheet().addCell("WS1", "A1");
+		workbook.getCurrentWorksheet().addCell("WS1",
+				"A1");
 		workbook.addWorksheet("worksheet2");
-		workbook.getCurrentWorksheet().addCell("WS2", "A1");
+		workbook.getCurrentWorksheet().addCell("WS2",
+				"A1");
 		workbook.addWorksheet("worksheet3");
-		workbook.getCurrentWorksheet().addCell("WS3", "A1");
+		workbook.getCurrentWorksheet().addCell("WS3",
+				"A1");
 		Worksheet givenWorksheet = workbook.getWorksheet(1);
 		assertEquals("WS2", givenWorksheet.getCell("A1").getValue());
 	}
@@ -584,9 +668,7 @@ public class WorkbookTest {
 		assertThrows(RangeException.class, () -> workbook1.getWorksheet(1));
 	}
 
-	private <T> void assertWorksheetRemoval(Workbook workbook, Consumer<T> removalFunction, int worksheetCount,
-			String currentWorksheet, int selectedWorksheetIndex, T worksheetToRemove, String expectedCurrentWorksheet,
-			int expectedSelectedWorksheetIndex) {
+	private <T> void assertWorksheetRemoval(Workbook workbook, Consumer<T> removalFunction, int worksheetCount, String currentWorksheet, int selectedWorksheetIndex, T worksheetToRemove, String expectedCurrentWorksheet, int expectedSelectedWorksheetIndex) {
 		workbook.setCurrentWorksheet(currentWorksheet);
 		workbook.setSelectedWorksheet(selectedWorksheetIndex);
 		assertEquals(worksheetCount, workbook.getWorksheets().size());
@@ -595,7 +677,8 @@ public class WorkbookTest {
 		assertEquals(worksheetCount - 1, workbook.getWorksheets().size());
 		if (expectedCurrentWorksheet == null) {
 			assertNull(workbook.getCurrentWorksheet());
-		} else {
+		}
+		else {
 			assertEquals(expectedCurrentWorksheet, workbook.getCurrentWorksheet().getSheetName());
 		}
 		assertEquals(expectedSelectedWorksheetIndex, workbook.getSelectedWorksheet());
@@ -607,7 +690,8 @@ public class WorkbookTest {
 		if (deleteAfterAssertion) {
 			try {
 				file.delete();
-			} catch (Exception ex) {
+			}
+			catch (Exception ex) {
 				System.out.println("Could not delete " + expectedPath);
 			}
 		}
@@ -615,7 +699,9 @@ public class WorkbookTest {
 
 	public static String getRandomName() throws Exception {
 		File tmp = new File(System.getProperty("java.io.tmpdir"));
-		File file = File.createTempFile("tmp", ".xlsx", tmp);
+		File file = File.createTempFile("tmp",
+				".xlsx",
+				tmp);
 		if (file.exists()) {
 			file.delete();
 		}

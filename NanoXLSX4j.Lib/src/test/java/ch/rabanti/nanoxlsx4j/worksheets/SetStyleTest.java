@@ -36,16 +36,25 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the setStyle function on an empty worksheet with a Range object or its string representation")
 	@ParameterizedTest(name = "Given range {0} as {1} should lead to the encoded number of empty cells with a style")
-	@CsvSource({ "A1:A1, RangeObject", "A1:A5, RangeObject", "A1:C1, RangeObject", "A1:C3, RangeObject",
-			"R17:N22, RangeObject", "A1:A1, StringExpression", "A1:A5, StringExpression", "A1:C1, StringExpression",
-			"A1:C3, StringExpression", "R17:N22, StringExpression", })
+	@CsvSource({
+			"A1:A1, RangeObject",
+			"A1:A5, RangeObject",
+			"A1:C1, RangeObject",
+			"A1:C3, RangeObject",
+			"R17:N22, RangeObject",
+			"A1:A1, StringExpression",
+			"A1:A5, StringExpression",
+			"A1:C1, StringExpression",
+			"A1:C3, StringExpression",
+			"R17:N22, StringExpression", })
 	void setStyleTest1(String rangeString, RangeRepresentation rangeRepresentation) {
 		Worksheet worksheet = new Worksheet();
 		assertEquals(0, worksheet.getCells().size());
 		Range range = new Range(rangeString);
 		if (rangeRepresentation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(range, BasicStyles.BoldItalic());
-		} else {
+		}
+		else {
 			worksheet.setStyle(rangeString, BasicStyles.BoldItalic());
 		}
 		List<String> emptyCells = range.resolveEnclosedAddresses().stream().map(i -> i.getAddress())
@@ -55,24 +64,36 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the setStyle function on an empty worksheet with a Range object or its string representation with null as style")
 	@ParameterizedTest(name = "Given range {0} as {1} should lead to no new cells")
-	@CsvSource({ "A1:A1, RangeObject", "A1:A5, RangeObject", "A1:C1, RangeObject", "A1:C3, RangeObject",
-			"R17:N22, RangeObject", "A1:A1, StringExpression", "A1:A5, StringExpression", "A1:C1, StringExpression",
-			"A1:C3, StringExpression", "R17:N22, StringExpression", })
+	@CsvSource({
+			"A1:A1, RangeObject",
+			"A1:A5, RangeObject",
+			"A1:C1, RangeObject",
+			"A1:C3, RangeObject",
+			"R17:N22, RangeObject",
+			"A1:A1, StringExpression",
+			"A1:A5, StringExpression",
+			"A1:C1, StringExpression",
+			"A1:C3, StringExpression",
+			"R17:N22, StringExpression", })
 	void setStyleTest1b(String rangeString, RangeRepresentation rangeRepresentation) {
 		Worksheet worksheet = new Worksheet();
 		assertEquals(0, worksheet.getCells().size());
 		Range range = new Range(rangeString);
 		if (rangeRepresentation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(range, null);
-		} else {
+		}
+		else {
 			worksheet.setStyle(rangeString, null);
 		}
 		assertEquals(0, worksheet.getCells().size()); // Should not create empty cells
 	}
 
 	@DisplayName("Test of the setStyle function on a worksheet with existing cells and a Range object or its string representation")
-	@ParameterizedTest(name = "Given range {0} with existing value {3} on {1} should lead to a worksheet with these cells are set to null as style and no additional, empty cells")
-	@CsvSource({ "A1:A1, A1, INTEGER, '22', '', RangeObject", "A1:A5, A2, BOOLEAN, 'true', 'A1,A3,A4,A5', RangeObject",
+	@ParameterizedTest(
+		name = "Given range {0} with existing value {3} on {1} should lead to a worksheet with these cells are set to null as style and no additional, empty cells")
+	@CsvSource({
+			"A1:A1, A1, INTEGER, '22', '', RangeObject",
+			"A1:A5, A2, BOOLEAN, 'true', 'A1,A3,A4,A5', RangeObject",
 			"A1:C1, B1, STRING, 'test', 'A1,C1', RangeObject",
 			"A1:C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3', RangeObject",
 			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21', RangeObject",
@@ -81,8 +102,7 @@ public class SetStyleTest {
 			"A1:C1, B1, STRING, 'test', 'A1,C1', StringExpression",
 			"A1:C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3', StringExpression",
 			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21', StringExpression", })
-	void setStyleTest2(String rangeString, String definedCells, String sourceType, String sourceValue,
-			String expectedEmptyCells, RangeRepresentation representation) {
+	void setStyleTest2(String rangeString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells, RangeRepresentation representation) {
 		Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet();
 		addCells(worksheet, cellValue, definedCells);
@@ -91,7 +111,8 @@ public class SetStyleTest {
 		Range range = new Range(rangeString);
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(range, BasicStyles.Bold());
-		} else {
+		}
+		else {
 			worksheet.setStyle(rangeString, BasicStyles.Bold());
 		}
 		List<String> emptyCells = TestUtils.splitValuesAsList(expectedEmptyCells);
@@ -99,15 +120,20 @@ public class SetStyleTest {
 	}
 
 	@DisplayName("Test of the setStyle function on a worksheet with existing cells and a Range object or its string representation with null as style")
-	@ParameterizedTest(name = "Given range {0} with existing value {3} on {1} should lead to a worksheet with these cells are set to null as style and no additional, empty cells")
-	@CsvSource({ "A1:A1, A1, INTEGER, '22', RangeObject", "A1:A5, A2, BOOLEAN, 'true', RangeObject",
-			"A1:C1, B1, STRING, 'test', RangeObject", "A1:C3, B2, FLOAT, '-0.25',  RangeObject",
-			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', RangeObject", "A1:A1, A1, INTEGER, '22', StringExpression",
-			"A1:A5, A2, BOOLEAN, 'true', StringExpression", "A1:C1, B1, STRING, 'test',  StringExpression",
+	@ParameterizedTest(
+		name = "Given range {0} with existing value {3} on {1} should lead to a worksheet with these cells are set to null as style and no additional, empty cells")
+	@CsvSource({
+			"A1:A1, A1, INTEGER, '22', RangeObject",
+			"A1:A5, A2, BOOLEAN, 'true', RangeObject",
+			"A1:C1, B1, STRING, 'test', RangeObject",
+			"A1:C3, B2, FLOAT, '-0.25',  RangeObject",
+			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', RangeObject",
+			"A1:A1, A1, INTEGER, '22', StringExpression",
+			"A1:A5, A2, BOOLEAN, 'true', StringExpression",
+			"A1:C1, B1, STRING, 'test',  StringExpression",
 			"A1:C3, B2, FLOAT, '-0.25',  StringExpression",
 			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', StringExpression", })
-	void setStyleTest2b(String rangeString, String definedCells, String sourceType, String sourceValue,
-			RangeRepresentation representation) {
+	void setStyleTest2b(String rangeString, String definedCells, String sourceType, String sourceValue, RangeRepresentation representation) {
 		Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet();
 		addCells(worksheet, cellValue, definedCells);
@@ -116,15 +142,19 @@ public class SetStyleTest {
 		Range range = new Range(rangeString);
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(range, null);
-		} else {
+		}
+		else {
 			worksheet.setStyle(rangeString, null);
 		}
 		assertRemovedStyles(worksheet, cellCount);
 	}
 
 	@DisplayName("Test of the setStyle function on a worksheet with existing cells that have a style defined, and a Range object or its string representation")
-	@ParameterizedTest(name = "Given range {0} with existing value {3} on {1} should lead to a worksheet with these cells are set to a style and additional, empty cells")
-	@CsvSource({ "A1:A1, A1, INTEGER, '22', '', RangeObject", "A1:A5, A2, BOOLEAN, 'true', 'A1,A3,A4,A5', RangeObject",
+	@ParameterizedTest(
+		name = "Given range {0} with existing value {3} on {1} should lead to a worksheet with these cells are set to a style and additional, empty cells")
+	@CsvSource({
+			"A1:A1, A1, INTEGER, '22', '', RangeObject",
+			"A1:A5, A2, BOOLEAN, 'true', 'A1,A3,A4,A5', RangeObject",
 			"A1:C1, B1, STRING, 'test', 'A1,C1', RangeObject",
 			"A1:C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3', RangeObject",
 			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21', RangeObject",
@@ -133,7 +163,8 @@ public class SetStyleTest {
 			"A1:C1, B1, STRING, 'test', 'A1,C1', StringExpression",
 			"A1:C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3', StringExpression",
 			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21', StringExpression",
-			"A1:A1, A1, INTEGER, '22', '', RangeObject", "A1:A5, A2, BOOLEAN, 'true', 'A1,A3,A4,A5', RangeObject",
+			"A1:A1, A1, INTEGER, '22', '', RangeObject",
+			"A1:A5, A2, BOOLEAN, 'true', 'A1,A3,A4,A5', RangeObject",
 			"A1:C1, B1, STRING, 'test', 'A1,C1', RangeObject",
 			"A1:C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3', RangeObject",
 			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21', RangeObject",
@@ -142,8 +173,7 @@ public class SetStyleTest {
 			"A1:C1, B1, STRING, 'test', 'A1,C1', StringExpression",
 			"A1:C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3', StringExpression",
 			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21', StringExpression", })
-	void setStyleTest3(String rangeString, String definedCells, String sourceType, String sourceValue,
-			String expectedEmptyCells, RangeRepresentation representation) {
+	void setStyleTest3(String rangeString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells, RangeRepresentation representation) {
 		Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet();
 		addCells(worksheet, cellValue, definedCells, BasicStyles.Italic());
@@ -152,7 +182,8 @@ public class SetStyleTest {
 		Range range = new Range(rangeString);
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(range, BasicStyles.BoldItalic());
-		} else {
+		}
+		else {
 			worksheet.setStyle(rangeString, BasicStyles.BoldItalic());
 		}
 
@@ -161,20 +192,30 @@ public class SetStyleTest {
 	}
 
 	@DisplayName("Test of the setStyle function on a worksheet with existing cells that have a style defined, and a Range object or its string representation with null as style")
-	@ParameterizedTest(name = "Given range {0} with existing value {3} on {1} should lead to a worksheet with these cells are set to null as style and no additional, empty cells")
-	@CsvSource({ "A1:A1, A1, INTEGER, '22', RangeObject", "A1:A5, A2, BOOLEAN, 'true', RangeObject",
-			"A1:C1, B1, STRING, 'test', RangeObject", "A1:C3, B2, FLOAT, '-0.25', RangeObject",
-			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', RangeObject", "A1:A1, A1, INTEGER, '22', StringExpression",
-			"A1:A5, A2, BOOLEAN, 'true', StringExpression", "A1:C1, B1, STRING, 'test', StringExpression",
+	@ParameterizedTest(
+		name = "Given range {0} with existing value {3} on {1} should lead to a worksheet with these cells are set to null as style and no additional, empty cells")
+	@CsvSource({
+			"A1:A1, A1, INTEGER, '22', RangeObject",
+			"A1:A5, A2, BOOLEAN, 'true', RangeObject",
+			"A1:C1, B1, STRING, 'test', RangeObject",
+			"A1:C3, B2, FLOAT, '-0.25', RangeObject",
+			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', RangeObject",
+			"A1:A1, A1, INTEGER, '22', StringExpression",
+			"A1:A5, A2, BOOLEAN, 'true', StringExpression",
+			"A1:C1, B1, STRING, 'test', StringExpression",
 			"A1:C3, B2, FLOAT, '-0.25', StringExpression",
-			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', StringExpression", "A1:A1, A1, INTEGER, '22', RangeObject",
-			"A1:A5, A2, BOOLEAN, 'true', RangeObject", "A1:C1, B1, STRING, 'test', RangeObject",
-			"A1:C3, B2, FLOAT, '-0.25', RangeObject", "R17:T21, 'R18,R19,R20,S19', LONG, '99999', RangeObject",
-			"A1:A1, A1, INTEGER, '22', StringExpression", "A1:A5, A2, BOOLEAN, 'true', StringExpression",
-			"A1:C1, B1, STRING, 'test', StringExpression", "A1:C3, B2, FLOAT, '-0.25', StringExpression",
+			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', StringExpression",
+			"A1:A1, A1, INTEGER, '22', RangeObject",
+			"A1:A5, A2, BOOLEAN, 'true', RangeObject",
+			"A1:C1, B1, STRING, 'test', RangeObject",
+			"A1:C3, B2, FLOAT, '-0.25', RangeObject",
+			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', RangeObject",
+			"A1:A1, A1, INTEGER, '22', StringExpression",
+			"A1:A5, A2, BOOLEAN, 'true', StringExpression",
+			"A1:C1, B1, STRING, 'test', StringExpression",
+			"A1:C3, B2, FLOAT, '-0.25', StringExpression",
 			"R17:T21, 'R18,R19,R20,S19', LONG, '99999', StringExpression", })
-	void setStyleTest3b(String rangeString, String definedCells, String sourceType, String sourceValue,
-			RangeRepresentation representation) {
+	void setStyleTest3b(String rangeString, String definedCells, String sourceType, String sourceValue, RangeRepresentation representation) {
 		Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet();
 		addCells(worksheet, cellValue, definedCells, BasicStyles.Italic());
@@ -183,7 +224,8 @@ public class SetStyleTest {
 		Range range = new Range(rangeString);
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(range, null);
-		} else {
+		}
+		else {
 			worksheet.setStyle(rangeString, null);
 		}
 		assertRemovedStyles(worksheet, cellCount);
@@ -191,7 +233,9 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the setStyle function on a worksheet with existing date and time cells and a Range object")
 	@ParameterizedTest(name = "Representation {0} should lead date and time objects with override styles")
-	@CsvSource({ "RangeObject", "StringExpression", })
+	@CsvSource({
+			"RangeObject",
+			"StringExpression", })
 	void setStyleTest4(RangeRepresentation representation) {
 		Worksheet worksheet = new Worksheet();
 		Calendar calendar = Calendar.getInstance();
@@ -203,7 +247,8 @@ public class SetStyleTest {
 		Range range = new Range("A1:C3");
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(range, BasicStyles.BorderFrame());
-		} else {
+		}
+		else {
 			worksheet.setStyle("A1:C3", BasicStyles.BorderFrame());
 		}
 
@@ -213,7 +258,9 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the setStyle function on a worksheet with existing date and time cells and a Range object with null as style")
 	@ParameterizedTest(name = "Representation {0} should lead date and time objects with null as style (invalid)")
-	@CsvSource({ "RangeObject", "StringExpression", })
+	@CsvSource({
+			"RangeObject",
+			"StringExpression", })
 	void setStyleTest4b(RangeRepresentation representation) {
 		Worksheet worksheet = new Worksheet();
 		Calendar calendar = Calendar.getInstance();
@@ -225,7 +272,8 @@ public class SetStyleTest {
 		Range range = new Range("A1:C3");
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(range, null);
-		} else {
+		}
+		else {
 			worksheet.setStyle("A1:C3", null);
 		}
 		assertRemovedStyles(worksheet, cellCount);
@@ -233,7 +281,12 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the SetStyle function on an empty worksheet with a start and end address")
 	@ParameterizedTest(name = "Given start address {0} and end address {1} should lead to the encoded number of empty cells with a style")
-	@CsvSource({ "A1, A1", "A1, A5", "A1, C1", "A1, C3", "R17, N22", })
+	@CsvSource({
+			"A1, A1",
+			"A1, A5",
+			"A1, C1",
+			"A1, C3",
+			"R17, N22", })
 	void setStyleTest5(String startAddressString, String endAddressString) {
 		Worksheet worksheet = new Worksheet();
 		assertEquals(0, worksheet.getCells().size());
@@ -248,7 +301,12 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the SetStyle function on an empty worksheet with a start and end address with null as style")
 	@ParameterizedTest(name = "Given start address {0} and end address {1} should lead to no empty cells")
-	@CsvSource({ "A1, A1", "A1, A5", "A1, C1", "A1, C3", "R17, N22", })
+	@CsvSource({
+			"A1, A1",
+			"A1, A5",
+			"A1, C1",
+			"A1, C3",
+			"R17, N22", })
 	void setStyleTest5b(String startAddressString, String endAddressString) {
 		Worksheet worksheet = new Worksheet();
 		assertEquals(0, worksheet.getCells().size());
@@ -259,12 +317,15 @@ public class SetStyleTest {
 	}
 
 	@DisplayName("Test of the SetStyle function on a worksheet with existing cells, and a start and end address")
-	@ParameterizedTest(name = "Given start address {0} and end address {1} with existing value {4} on {2} should lead to a worksheet with these cells are set to a style and additional, empty cells")
-	@CsvSource({ "A1, A1, A1, INTEGER, '22', ''", "A1, A5, A2, BOOLEAN, 'true', 'A1,A3,A4,A5'",
-			"A1, C1, B1, STRING, 'test', 'A1,C1'", "A1, C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3'",
+	@ParameterizedTest(
+		name = "Given start address {0} and end address {1} with existing value {4} on {2} should lead to a worksheet with these cells are set to a style and additional, empty cells")
+	@CsvSource({
+			"A1, A1, A1, INTEGER, '22', ''",
+			"A1, A5, A2, BOOLEAN, 'true', 'A1,A3,A4,A5'",
+			"A1, C1, B1, STRING, 'test', 'A1,C1'",
+			"A1, C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3'",
 			"R17, T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21'", })
-	void setStyleTest6(String startAddressString, String endAddressString, String definedCells, String sourceType,
-			String sourceValue, String expectedEmptyCells) {
+	void setStyleTest6(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells) {
 		Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet();
 		addCells(worksheet, cellValue, definedCells);
@@ -279,11 +340,15 @@ public class SetStyleTest {
 	}
 
 	@DisplayName("Test of the SetStyle function on a worksheet with existing cells, and a start and end address with null as style")
-	@ParameterizedTest(name = "Given start address {0} and end address {1} with existing value {4} on {2} should lead to a worksheet with these cells are set to null as style and no additional, empty cells")
-	@CsvSource({ "A1, A1, A1, INTEGER, '22'", "A1, A5, A2, BOOLEAN, 'true'", "A1, C1, B1, STRING, 'test'",
-			"A1, C3, B2, FLOAT, '-0.25'", "R17, T21, 'R18,R19,R20,S19', LONG, '99999'", })
-	void setStyleTest6b(String startAddressString, String endAddressString, String definedCells, String sourceType,
-			String sourceValue) {
+	@ParameterizedTest(
+		name = "Given start address {0} and end address {1} with existing value {4} on {2} should lead to a worksheet with these cells are set to null as style and no additional, empty cells")
+	@CsvSource({
+			"A1, A1, A1, INTEGER, '22'",
+			"A1, A5, A2, BOOLEAN, 'true'",
+			"A1, C1, B1, STRING, 'test'",
+			"A1, C3, B2, FLOAT, '-0.25'",
+			"R17, T21, 'R18,R19,R20,S19', LONG, '99999'", })
+	void setStyleTest6b(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue) {
 		Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet();
 		addCells(worksheet, cellValue, definedCells);
@@ -296,12 +361,15 @@ public class SetStyleTest {
 	}
 
 	@DisplayName("Test of the SetStyle function on a worksheet with existing cells that have a style defined, and a start and end address")
-	@ParameterizedTest(name = "Given start address {0} and end address {1} with existing value {4} on {2} should lead to a worksheet with these cells are set to a style and additional, empty cells")
-	@CsvSource({ "A1, A1, A1, INTEGER, '22', ''", "A1, A5, A2, BOOLEAN, 'true', 'A1,A3,A4,A5'",
-			"A1, C1, B1, STRING, 'test', 'A1,C1'", "A1, C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3'",
+	@ParameterizedTest(
+		name = "Given start address {0} and end address {1} with existing value {4} on {2} should lead to a worksheet with these cells are set to a style and additional, empty cells")
+	@CsvSource({
+			"A1, A1, A1, INTEGER, '22', ''",
+			"A1, A5, A2, BOOLEAN, 'true', 'A1,A3,A4,A5'",
+			"A1, C1, B1, STRING, 'test', 'A1,C1'",
+			"A1, C3, B2, FLOAT, '-0.25', 'A1,A2,A3,B1,B3,C1,C2,C3'",
 			"R17, T21, 'R18,R19,R20,S19', LONG, '99999', 'R17,R21,S17,S18,S20,S21,T17,T18,T19,T20,T21'", })
-	void setStyleTest7(String startAddressString, String endAddressString, String definedCells, String sourceType,
-			String sourceValue, String expectedEmptyCells) {
+	void setStyleTest7(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue, String expectedEmptyCells) {
 		Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet();
 		addCells(worksheet, cellValue, definedCells, BasicStyles.Italic());
@@ -316,11 +384,15 @@ public class SetStyleTest {
 	}
 
 	@DisplayName("Test of the SetStyle function on a worksheet with existing cells that have a style defined, and a start and end address with null as style")
-	@ParameterizedTest(name = "Given start address {0} and end address {1} with existing value {4} on {2} should lead to a worksheet with these cells are set to null as style and no additional, empty cells")
-	@CsvSource({ "A1, A1, A1, INTEGER, '22'", "A1, A5, A2, BOOLEAN, 'true'", "A1, C1, B1, STRING, 'test'",
-			"A1, C3, B2, FLOAT, '-0.25'", "R17, T21, 'R18,R19,R20,S19', LONG, '99999'", })
-	void setStyleTest7b(String startAddressString, String endAddressString, String definedCells, String sourceType,
-			String sourceValue) {
+	@ParameterizedTest(
+		name = "Given start address {0} and end address {1} with existing value {4} on {2} should lead to a worksheet with these cells are set to null as style and no additional, empty cells")
+	@CsvSource({
+			"A1, A1, A1, INTEGER, '22'",
+			"A1, A5, A2, BOOLEAN, 'true'",
+			"A1, C1, B1, STRING, 'test'",
+			"A1, C3, B2, FLOAT, '-0.25'",
+			"R17, T21, 'R18,R19,R20,S19', LONG, '99999'", })
+	void setStyleTest7b(String startAddressString, String endAddressString, String definedCells, String sourceType, String sourceValue) {
 		Object cellValue = TestUtils.createInstance(sourceType, sourceValue);
 		Worksheet worksheet = new Worksheet();
 		addCells(worksheet, cellValue, definedCells, BasicStyles.Italic());
@@ -367,13 +439,16 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the SetStyle function on an empty worksheet with a singular address or its string representation")
 	@ParameterizedTest(name = "Representation {0} should lead to one override cell")
-	@CsvSource({ "RangeObject", "StringExpression", })
+	@CsvSource({
+			"RangeObject",
+			"StringExpression", })
 	void setStyleTest9(RangeRepresentation representation) {
 		Worksheet worksheet = new Worksheet();
 		assertEquals(0, worksheet.getCells().size());
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(new Address("C2"), BasicStyles.BoldItalic());
-		} else {
+		}
+		else {
 			worksheet.setStyle("C2", BasicStyles.BoldItalic());
 		}
 		Range range = new Range("C2:C2");
@@ -384,13 +459,16 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the SetStyle function on an empty worksheet with a singular address or its string representation with null as style")
 	@ParameterizedTest(name = "Representation {0} should lead to no new cells")
-	@CsvSource({ "RangeObject", "StringExpression", })
+	@CsvSource({
+			"RangeObject",
+			"StringExpression", })
 	void setStyleTest9b(RangeRepresentation representation) {
 		Worksheet worksheet = new Worksheet();
 		assertEquals(0, worksheet.getCells().size());
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(new Address("C2"), null);
-		} else {
+		}
+		else {
 			worksheet.setStyle("C2", null);
 		}
 		assertEquals(0, worksheet.getCells().size());
@@ -398,17 +476,21 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the SetStyle function on a worksheet with existing cells, and a singular address or its string representation")
 	@ParameterizedTest(name = "Representation {0} should lead to one override cell")
-	@CsvSource({ "RangeObject", "StringExpression", })
+	@CsvSource({
+			"RangeObject",
+			"StringExpression", })
 	void setStyleTest10(RangeRepresentation representation) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.addCell(22, "B2");
 		worksheet.addCell(false, "B3");
-		worksheet.addCell("test", "B4");
+		worksheet.addCell("test",
+				"B4");
 		int cellCount = worksheet.getCells().size();
 		assertNotEquals(0, cellCount);
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(new Address("B2"), BasicStyles.Bold());
-		} else {
+		}
+		else {
 			worksheet.setStyle("B2", BasicStyles.Bold());
 		}
 		assertCellRange("B2:B2", BasicStyles.Bold(), worksheet, new ArrayList<>(), 3);
@@ -416,17 +498,21 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the SetStyle function on a worksheet with existing cells, and a singular address or its string representation with null as style")
 	@ParameterizedTest(name = "Representation {0} should lead to one override cell where the style is set to null")
-	@CsvSource({ "RangeObject", "StringExpression", })
+	@CsvSource({
+			"RangeObject",
+			"StringExpression", })
 	void setStyleTest10b(RangeRepresentation representation) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.addCell(22, "B2");
 		worksheet.addCell(false, "B3");
-		worksheet.addCell("test", "B4");
+		worksheet.addCell("test",
+				"B4");
 		int cellCount = worksheet.getCells().size();
 		assertNotEquals(0, cellCount);
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(new Address("B2"), null);
-		} else {
+		}
+		else {
 			worksheet.setStyle("B2", null);
 		}
 		assertRemovedStyles(worksheet, cellCount);
@@ -434,17 +520,22 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the SetStyle function on a worksheet with existing cells that have a style defined, and a singular address or its string representation")
 	@ParameterizedTest(name = "Representation {0} should lead to one override cell")
-	@CsvSource({ "RangeObject", "StringExpression", })
+	@CsvSource({
+			"RangeObject",
+			"StringExpression", })
 	void setStyleTest11(RangeRepresentation representation) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.addCell(22, "B2", BasicStyles.Bold());
 		worksheet.addCell(false, "B3", BasicStyles.Bold());
-		worksheet.addCell("test", "B4", BasicStyles.Bold());
+		worksheet.addCell("test",
+				"B4",
+				BasicStyles.Bold());
 		int cellCount = worksheet.getCells().size();
 		assertNotEquals(0, cellCount);
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(new Address("B2"), BasicStyles.Bold());
-		} else {
+		}
+		else {
 			worksheet.setStyle("B2", BasicStyles.Bold());
 		}
 		assertCellRange("B2:B2", BasicStyles.Bold(), worksheet, new ArrayList<>(), 3);
@@ -452,27 +543,34 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the SetStyle function on a worksheet with existing cells that have a style defined, and a singular address or its string representation with null as style")
 	@ParameterizedTest(name = "Representation {0} should lead to one override cell where the style is set to null")
-	@CsvSource({ "RangeObject", "StringExpression", })
+	@CsvSource({
+			"RangeObject",
+			"StringExpression", })
 	void setStyleTest11b(RangeRepresentation representation) {
 		Worksheet worksheet = new Worksheet();
 		worksheet.addCell(22, "B2", BasicStyles.Bold());
 		worksheet.addCell(false, "B3", BasicStyles.Bold());
-		worksheet.addCell("test", "B4", BasicStyles.Bold());
+		worksheet.addCell("test",
+				"B4",
+				BasicStyles.Bold());
 		int cellCount = worksheet.getCells().size();
 		assertNotEquals(0, cellCount);
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(new Address("B2"), null);
-		} else {
+		}
+		else {
 			worksheet.setStyle("B2", null);
 		}
 		assertNull(worksheet.getCells().get("B2").getCellStyle());
-		assertTrue(worksheet.getCells().get("B3").getCellStyle().equals(BasicStyles.Bold()));
-		assertTrue(worksheet.getCells().get("B4").getCellStyle().equals(BasicStyles.Bold()));
+		assertEquals(worksheet.getCells().get("B3").getCellStyle(), BasicStyles.Bold());
+		assertEquals(worksheet.getCells().get("B4").getCellStyle(), BasicStyles.Bold());
 	}
 
 	@DisplayName("Test of the setStyle function on a worksheet with existing date and time cells, and a singular address or its string representation")
 	@ParameterizedTest(name = "Representation {0} should lead to one override cell")
-	@CsvSource({ "RangeObject", "StringExpression", })
+	@CsvSource({
+			"RangeObject",
+			"StringExpression", })
 	void setStyleTest12(RangeRepresentation representation) {
 		Worksheet worksheet = new Worksheet();
 		Calendar calendar = Calendar.getInstance();
@@ -484,7 +582,8 @@ public class SetStyleTest {
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(new Address("B2"), BasicStyles.BorderFrame());
 			worksheet.setStyle(new Address("B3"), BasicStyles.BorderFrame());
-		} else {
+		}
+		else {
 			worksheet.setStyle("B2", BasicStyles.BorderFrame());
 			worksheet.setStyle("B3", BasicStyles.BorderFrame());
 		}
@@ -493,7 +592,9 @@ public class SetStyleTest {
 
 	@DisplayName("Test of the setStyle function on a worksheet with existing date and time cells, and a singular address or its string representation with null as style")
 	@ParameterizedTest(name = "Representation {0} should lead to one override cell where the style is set to null")
-	@CsvSource({ "RangeObject", "StringExpression", })
+	@CsvSource({
+			"RangeObject",
+			"StringExpression", })
 	void setStyleTest12b(RangeRepresentation representation) {
 		Worksheet worksheet = new Worksheet();
 		Calendar calendar = Calendar.getInstance();
@@ -505,7 +606,8 @@ public class SetStyleTest {
 		if (representation == RangeRepresentation.RangeObject) {
 			worksheet.setStyle(new Address("B2"), null);
 			worksheet.setStyle(new Address("B3"), null);
-		} else {
+		}
+		else {
 			worksheet.setStyle("B2", null);
 			worksheet.setStyle("B3", null);
 		}
@@ -528,16 +630,16 @@ public class SetStyleTest {
 		assertThrows(FormatException.class, () -> worksheet.setStyle(range, BasicStyles.Bold()));
 	}
 
-	private void assertCellRange(String range, Style expectedStyle, Worksheet worksheet, List<String> createdCells,
-			int expectedSize) {
+	private void assertCellRange(String range, Style expectedStyle, Worksheet worksheet, List<String> createdCells, int expectedSize) {
 		assertEquals(expectedSize, worksheet.getCells().size());
 		Range setRange = new Range(range);
 		for (Address address : setRange.resolveEnclosedAddresses()) {
 			assertTrue(worksheet.getCells().containsKey(address.getAddress()));
 			if (expectedStyle == null) {
 				assertNull(worksheet.getCells().get(address.getAddress()).getCellStyle());
-			} else {
-				assertTrue(expectedStyle.equals(worksheet.getCells().get(address.getAddress()).getCellStyle()));
+			}
+			else {
+				assertEquals(expectedStyle, worksheet.getCells().get(address.getAddress()).getCellStyle());
 			}
 			if (createdCells != null && createdCells.contains(address.getAddress())) {
 				assertEquals(Cell.CellType.EMPTY, worksheet.getCells().get(address.getAddress()).getDataType());

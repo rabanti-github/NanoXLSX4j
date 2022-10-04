@@ -13,21 +13,21 @@ package ch.rabanti.nanoxlsx4j.exceptions;
  */
 public class WorksheetException extends RuntimeException {
 
-    /**
-     * Default constructor
-     */
-    public WorksheetException() {
-        super();
-    }
+	/**
+	 * Default constructor
+	 */
+	public WorksheetException() {
+		super();
+	}
 
-    /**
-     * Constructor with passed message
-     *
-     * @param message Message of the exception
-     */
-    public WorksheetException(String message) {
-        super(message);
-    }
-
+	/**
+	 * Constructor with passed message
+	 *
+	 * @param message
+	 *            Message of the exception
+	 */
+	public WorksheetException(String message) {
+		super(message);
+	}
 
 }

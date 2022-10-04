@@ -26,10 +26,11 @@ public class CopyWorksheetTest {
 
 	@DisplayName("Test of the 'copyWorksheetIntoThis' function by name")
 	@ParameterizedTest(name = "Given source worksheet {2}, copied as {3}, should lead to a copy, named {4}, with sanitation: {0}")
-	@CsvSource({ "false, worksheet1, worksheet2, copy, copy", "true, worksheet1, worksheet2, copy, copy",
+	@CsvSource({
+			"false, worksheet1, worksheet2, copy, copy",
+			"true, worksheet1, worksheet2, copy, copy",
 			"true, worksheet1, worksheet2, worksheet1, worksheet2", })
-	void copyWorksheetIntoThisTest(boolean sanitize, String givenWorksheetName1, String givenSourceWsName,
-			String copyName, String expectedTargetWsName) {
+	void copyWorksheetIntoThisTest(boolean sanitize, String givenWorksheetName1, String givenSourceWsName, String copyName, String expectedTargetWsName) {
 		Workbook workbook1 = new Workbook(givenWorksheetName1);
 		Worksheet worksheet2 = createWorksheet();
 		worksheet2.setSheetName(givenSourceWsName);
@@ -46,15 +47,18 @@ public class CopyWorksheetTest {
 		worksheet2.setSheetName("worksheet2");
 		workbook1.addWorksheet(worksheet2);
 		assertThrows(WorksheetException.class,
-				() -> workbook1.copyWorksheetIntoThis("worksheet2", "worksheet1", false));
+				() -> workbook1.copyWorksheetIntoThis("worksheet2",
+						"worksheet1",
+						false));
 	}
 
 	@DisplayName("Test of the 'copyWorksheetIntoThis' function by index")
 	@ParameterizedTest(name = "Given source worksheet {2}, copied as {3}, should lead to a copy, named {4}, with sanitation: {0}")
-	@CsvSource({ "false, worksheet1, worksheet2, copy, copy", "true, worksheet1, worksheet2, copy, copy",
+	@CsvSource({
+			"false, worksheet1, worksheet2, copy, copy",
+			"true, worksheet1, worksheet2, copy, copy",
 			"true, worksheet1, worksheet2, worksheet1, worksheet2", })
-	void copyWorksheetIntoThisTest2(boolean sanitize, String givenWorksheetName1, String givenSourceWsName,
-			String copyName, String expectedTargetWsName) {
+	void copyWorksheetIntoThisTest2(boolean sanitize, String givenWorksheetName1, String givenSourceWsName, String copyName, String expectedTargetWsName) {
 		Workbook workbook1 = new Workbook(givenWorksheetName1);
 		Worksheet worksheet2 = createWorksheet();
 		worksheet2.setSheetName(givenSourceWsName);
@@ -75,10 +79,11 @@ public class CopyWorksheetTest {
 
 	@DisplayName("Test of the 'copyWorksheetIntoThis' function by reference")
 	@ParameterizedTest(name = "Given source worksheet {2}, copied as {3}, should lead to a copy, named {4}, with sanitation: {0}")
-	@CsvSource({ "false, worksheet1, worksheet2, copy, copy", "true, worksheet1, worksheet2, copy, copy",
+	@CsvSource({
+			"false, worksheet1, worksheet2, copy, copy",
+			"true, worksheet1, worksheet2, copy, copy",
 			"true, worksheet1, worksheet2, worksheet1, worksheet2", })
-	void copyWorksheetIntoThisTest3(boolean sanitize, String givenWorksheetName1, String givenSourceWsName,
-			String copyName, String expectedTargetWsName) {
+	void copyWorksheetIntoThisTest3(boolean sanitize, String givenWorksheetName1, String givenSourceWsName, String copyName, String expectedTargetWsName) {
 		Workbook workbook1 = new Workbook(givenWorksheetName1);
 		Worksheet worksheet2 = createWorksheet();
 		worksheet2.setSheetName(givenSourceWsName);
@@ -99,11 +104,12 @@ public class CopyWorksheetTest {
 
 	@DisplayName("Test of the 'copyWorksheetTo' function by name")
 	@ParameterizedTest(name = "Given source worksheet {2}, copied as {3}, should lead to a copy, named {4}, with sanitation: {0}")
-	@CsvSource({ "false, worksheet1, worksheet2, copy, copy", "true, worksheet1, worksheet2, copy, copy",
+	@CsvSource({
+			"false, worksheet1, worksheet2, copy, copy",
+			"true, worksheet1, worksheet2, copy, copy",
 			"true, worksheet1, worksheet2, worksheet1, worksheet2", })
 
-	void copyWorksheetToTest(boolean sanitize, String givenWorksheetName1, String givenSourceWsName, String copyName,
-			String expectedTargetWsName) {
+	void copyWorksheetToTest(boolean sanitize, String givenWorksheetName1, String givenSourceWsName, String copyName, String expectedTargetWsName) {
 		Workbook workbook1 = new Workbook(givenWorksheetName1);
 		Workbook workbook2 = new Workbook(givenWorksheetName1);
 		Worksheet worksheet2 = createWorksheet();
@@ -122,15 +128,19 @@ public class CopyWorksheetTest {
 		worksheet2.setSheetName("worksheet2");
 		workbook1.addWorksheet(worksheet2);
 		assertThrows(WorksheetException.class,
-				() -> workbook1.copyWorksheetTo("worksheet2", "worksheet1", workbook2, false));
+				() -> workbook1.copyWorksheetTo("worksheet2",
+						"worksheet1",
+						workbook2,
+						false));
 	}
 
 	@DisplayName("Test of the 'copyWorksheetTo' function by index")
 	@ParameterizedTest(name = "Given source worksheet {2}, copied as {3}, should lead to a copy, named {4}, with sanitation: {0}")
-	@CsvSource({ "false, worksheet1, worksheet2, copy, copy", "true, worksheet1, worksheet2, copy, copy",
+	@CsvSource({
+			"false, worksheet1, worksheet2, copy, copy",
+			"true, worksheet1, worksheet2, copy, copy",
 			"true, worksheet1, worksheet2, worksheet1, worksheet2", })
-	void copyWorksheetToTest2(boolean sanitize, String givenWorksheetName1, String givenSourceWsName, String copyName,
-			String expectedTargetWsName) {
+	void copyWorksheetToTest2(boolean sanitize, String givenWorksheetName1, String givenSourceWsName, String copyName, String expectedTargetWsName) {
 		Workbook workbook1 = new Workbook(givenWorksheetName1);
 		Workbook workbook2 = new Workbook(givenWorksheetName1);
 		Worksheet worksheet2 = createWorksheet();
@@ -153,10 +163,11 @@ public class CopyWorksheetTest {
 
 	@DisplayName("Test of the 'copyWorksheetTo' function by reference")
 	@ParameterizedTest(name = "Given source worksheet {2}, copied as {3}, should lead to a copy, named {4}, with sanitation: {0}")
-	@CsvSource({ "false, worksheet1, worksheet2, copy, copy", "true, worksheet1, worksheet2, copy, copy",
+	@CsvSource({
+			"false, worksheet1, worksheet2, copy, copy",
+			"true, worksheet1, worksheet2, copy, copy",
 			"true, worksheet1, worksheet2, worksheet1, worksheet2", })
-	void copyWorksheetToTest3(boolean sanitize, String givenWorksheetName1, String givenSourceWsName, String copyName,
-			String expectedTargetWsName) {
+	void copyWorksheetToTest3(boolean sanitize, String givenWorksheetName1, String givenSourceWsName, String copyName, String expectedTargetWsName) {
 		Workbook workbook1 = new Workbook(givenWorksheetName1);
 		Workbook workbook2 = new Workbook(givenWorksheetName1);
 		Worksheet worksheet2 = createWorksheet();
@@ -289,7 +300,8 @@ public class CopyWorksheetTest {
 	private void assertStyle(Style style1, Style style2) {
 		if (style1 == null) {
 			assertNull(style2);
-		} else {
+		}
+		else {
 			assertEquals(style2.hashCode(), style1.hashCode());
 		}
 	}
@@ -298,12 +310,15 @@ public class CopyWorksheetTest {
 		Worksheet w = new Worksheet();
 		Style s1 = BasicStyles.BoldItalic();
 		Style s2 = BasicStyles.Bold().append(BasicStyles.DateFormat());
-		w.addCell("A1", "A1", s1);
+		w.addCell("A1",
+				"A1",
+				s1);
 		w.addCell(true, "B2");
 		w.addCell(100, "C3", s2);
 		w.addCell(2.23f, "D4");
 		w.addCell(false, "D5");
-		w.addCellFormula("=A2", "E5");
+		w.addCellFormula("=A2",
+				"E5");
 		w.setColumnWidth(2, 31.2f);
 		w.setRowHeight(2, 50.6f);
 		w.addHiddenColumn(1);

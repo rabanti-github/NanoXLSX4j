@@ -29,7 +29,15 @@ public class WorksheetWriteReadTest {
 
 	@DisplayName("Test of the 'AutoFilterRange' property when writing and reading a worksheet")
 	@ParameterizedTest(name = "Given range {0} should lead to the same range in the read worksheet with the index {1}")
-	@CsvSource({ ", 0", "A1:A1, 0", "A1:C1, 0", "B1:D1, 0", ", 1", "A1:A1, 1", "A1:C1, 2", "B1:D1, 3", })
+	@CsvSource({
+			", 0",
+			"A1:A1, 0",
+			"A1:C1, 0",
+			"B1:D1, 0",
+			", 1",
+			"A1:A1, 1",
+			"A1:C1, 2",
+			"B1:D1, 3", })
 	void autoFilterRangeWriteReadTest(String autoFilterRange, int sheetIndex) throws Exception {
 		Workbook workbook = prepareWorkbook(4, "test");
 		Range range = null;
@@ -45,17 +53,32 @@ public class WorksheetWriteReadTest {
 		Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
 		if (autoFilterRange == null) {
 			assertNull(givenWorksheet.getAutoFilterRange());
-		} else {
+		}
+		else {
 			assertEquals(range, givenWorksheet.getAutoFilterRange());
 		}
 	}
 
 	@DisplayName("Test of the 'Columns' property when writing and reading a worksheet")
-	@ParameterizedTest(name = "Given column indices {0} with width definition: {1} and hidden definition: {2} should lead to the same columns in the read worksheet with the index {1}")
-	@CsvSource({ "'', 0, true, false", "'0', 0, true, false", "'0,1,2', 0, true, false", "'1,3,5', 0, true, false",
-			"'', 1, true, false", "'0', 1, true, false", "'0,1,2', 2, true, false", "'1,3,5', 3, true, false",
-			"'', 0, false, true", "'0', 0, false, true", "'0,1,2', 0, false, true", "'1,3,5', 0, false, true",
-			"'', 1, false, true", "'0', 1, false, true", "'0,1,2', 2, false, true", "'1,3,5', 3, false, true", })
+	@ParameterizedTest(
+		name = "Given column indices {0} with width definition: {1} and hidden definition: {2} should lead to the same columns in the read worksheet with the index {1}")
+	@CsvSource({
+			"'', 0, true, false",
+			"'0', 0, true, false",
+			"'0,1,2', 0, true, false",
+			"'1,3,5', 0, true, false",
+			"'', 1, true, false",
+			"'0', 1, true, false",
+			"'0,1,2', 2, true, false",
+			"'1,3,5', 3, true, false",
+			"'', 0, false, true",
+			"'0', 0, false, true",
+			"'0,1,2', 0, false, true",
+			"'1,3,5', 0, false, true",
+			"'', 1, false, true",
+			"'0', 1, false, true",
+			"'0,1,2', 2, false, true",
+			"'1,3,5', 3, false, true", })
 	void columnsWriteReadTest(String columnDefinitions, int sheetIndex, boolean setWidth, boolean setHidden)
 			throws Exception {
 		String[] tokens = columnDefinitions.split(",");
@@ -94,7 +117,13 @@ public class WorksheetWriteReadTest {
 
 	@DisplayName("Test of the 'DefaultColumnWidth' property when writing and reading a worksheet")
 	@ParameterizedTest(name = "Given default column width {0} should lead to the same width in the read worksheet with the index {1}")
-	@CsvSource({ "1f, 0", "11f, 0", "55.55f, 0", "1f, 1", "11f, 2", "55.55f, 3", })
+	@CsvSource({
+			"1f, 0",
+			"11f, 0",
+			"55.55f, 0",
+			"1f, 1",
+			"11f, 2",
+			"55.55f, 3", })
 	void defaultColumnWidthWriteReadTest(float width, int sheetIndex) throws Exception {
 		Workbook workbook = prepareWorkbook(4, "test");
 		for (int i = 0; i <= sheetIndex; i++) {
@@ -109,7 +138,13 @@ public class WorksheetWriteReadTest {
 
 	@DisplayName("Test of the 'DefaultRowHeight' property when writing and reading a worksheet")
 	@ParameterizedTest(name = "Given default row height {0} should lead to the same height in the read worksheet with the index {1}")
-	@CsvSource({ "1f, 0", "11f, 0", "55.55f, 0", "1f, 1", "11f, 2", "55.55f, 3", })
+	@CsvSource({
+			"1f, 0",
+			"11f, 0",
+			"55.55f, 0",
+			"1f, 1",
+			"11f, 2",
+			"55.55f, 3", })
 	void defaultRowHeightWriteReadTest(float height, int sheetIndex) throws Exception {
 		Workbook workbook = prepareWorkbook(4, "test");
 		for (int i = 0; i <= sheetIndex; i++) {
@@ -124,7 +159,15 @@ public class WorksheetWriteReadTest {
 
 	@DisplayName("Test of the 'HiddenRows' property when writing and reading a worksheet")
 	@ParameterizedTest(name = "Given hidden row indices {0} with should lead to the same hidden rows in the read worksheet with the index {1}")
-	@CsvSource({ "'', 0", "'0', 0", "'0,1,2', 0", "'1,3,5', 0", "'', 1", "'0', 1", "'0,1,2', 2", "'1,3,5', 3", })
+	@CsvSource({
+			"'', 0",
+			"'0', 0",
+			"'0,1,2', 0",
+			"'1,3,5', 0",
+			"'', 1",
+			"'0', 1",
+			"'0,1,2', 2",
+			"'1,3,5', 3", })
 	void hiddenRowsWriteReadTest(String rowDefinitions, int sheetIndex) throws Exception {
 		String[] tokens = rowDefinitions.split(",");
 		List<Integer> rowIndices = new ArrayList<>();
@@ -152,8 +195,14 @@ public class WorksheetWriteReadTest {
 
 	@DisplayName("Test of the 'RowHeight' property when writing and reading a worksheet")
 	@ParameterizedTest(name = "Given hidden row indices {0} with should lead to the same hidden rows in the read worksheet with the index {1}")
-	@CsvSource({ "'','',0", "'0','17',0", "'0,1,2','11,12,13.5',0", "'','',1", "'0','17.2',1",
-			"'0','17',0,1,2','11.05,12.1,13.55',2", "'1,3,5','55.5,1.111,5.587',3", })
+	@CsvSource({
+			"'','',0",
+			"'0','17',0",
+			"'0,1,2','11,12,13.5',0",
+			"'','',1",
+			"'0','17.2',1",
+			"'0','17',0,1,2','11.05,12.1,13.55',2",
+			"'1,3,5','55.5,1.111,5.587',3", })
 	void rowHeightsWriteReadTest(String rowDefinitions, String heightDefinitions, int sheetIndex) throws Exception {
 		String[] tokens = rowDefinitions.split(",");
 		String[] heightTokens = heightDefinitions.split(",");
@@ -195,8 +244,17 @@ public class WorksheetWriteReadTest {
 
 	@DisplayName("Test of the 'MergedCells' property when writing and reading a worksheet")
 	@ParameterizedTest(name = "Given range {0} should lead to the same range in the read worksheet with the index {1}")
-	@CsvSource({ ", 0", "'A1:A1', 0", "'A1:C1', 0", "'B1:D1', 0", "'B1:D1,E5:E7', 0", ", 1", "'A1:A1', 1", "'A1:C1', 2",
-			"'B1:D1', 3", "'B1:D1,E5:E7', 3", })
+	@CsvSource({
+			", 0",
+			"'A1:A1', 0",
+			"'A1:C1', 0",
+			"'B1:D1', 0",
+			"'B1:D1,E5:E7', 0",
+			", 1",
+			"'A1:A1', 1",
+			"'A1:C1', 2",
+			"'B1:D1', 3",
+			"'B1:D1,E5:E7', 3", })
 	void mergedCellsWriteReadTest(String mergedCellsRanges, int sheetIndex) throws Exception {
 		Workbook workbook = prepareWorkbook(4, "test");
 		List<Range> ranges = new ArrayList<>();
@@ -217,7 +275,8 @@ public class WorksheetWriteReadTest {
 		Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
 		if (mergedCellsRanges == null) {
 			assertEquals(0, givenWorksheet.getMergedCells().size());
-		} else {
+		}
+		else {
 			for (Range range : ranges) {
 				assertEquals(range, givenWorksheet.getMergedCells().get(range.toString()));
 			}
@@ -226,7 +285,15 @@ public class WorksheetWriteReadTest {
 
 	@DisplayName("Test of the 'SelectedCells' property when writing and reading a worksheet")
 	@ParameterizedTest(name = "Given range {0} should lead to the same range in the read worksheet with the index {1}")
-	@CsvSource({ ", 0", "A1:A1, 0", "A1:C1, 0", "B1:D1, 0", ", 1", "A1:A1, 1", "A1:C1, 2", "B1:D1, 3", })
+	@CsvSource({
+			", 0",
+			"A1:A1, 0",
+			"A1:C1, 0",
+			"B1:D1, 0",
+			", 1",
+			"A1:A1, 1",
+			"A1:C1, 2",
+			"B1:D1, 3", })
 	void selectedCellsWriteReadTest(String selectedCellsRange, int sheetIndex) throws Exception {
 		Workbook workbook = prepareWorkbook(4, "test");
 		Range range = null;
@@ -242,7 +309,8 @@ public class WorksheetWriteReadTest {
 		Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
 		if (selectedCellsRange == null) {
 			assertNull(givenWorksheet.getSelectedCells());
-		} else {
+		}
+		else {
 			assertEquals(range, givenWorksheet.getSelectedCells());
 		}
 	}
@@ -265,14 +333,18 @@ public class WorksheetWriteReadTest {
 		workbook.addWorksheet(sheetName4);
 		id4 = workbook.getCurrentWorksheet().getSheetID();
 		Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
-		assertEquals(id1, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName1))
-				.findFirst().map(Worksheet::getSheetID).get());
-		assertEquals(id2, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName2))
-				.findFirst().map(Worksheet::getSheetID).get());
-		assertEquals(id3, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName3))
-				.findFirst().map(Worksheet::getSheetID).get());
-		assertEquals(id4, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName4))
-				.findFirst().map(Worksheet::getSheetID).get());
+		assertEquals(id1,
+				givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName1))
+						.findFirst().map(Worksheet::getSheetID).get());
+		assertEquals(id2,
+				givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName2))
+						.findFirst().map(Worksheet::getSheetID).get());
+		assertEquals(id3,
+				givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName3))
+						.findFirst().map(Worksheet::getSheetID).get());
+		assertEquals(id4,
+				givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName4))
+						.findFirst().map(Worksheet::getSheetID).get());
 	}
 
 	@DisplayName("Test of the 'SheetName'  property when writing and reading a worksheet")
@@ -293,19 +365,25 @@ public class WorksheetWriteReadTest {
 		workbook.addWorksheet(sheetName4);
 		id4 = workbook.getCurrentWorksheet().getSheetID();
 		Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
-		assertEquals(sheetName1, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id1).findFirst()
-				.map(Worksheet::getSheetName).get());
-		assertEquals(sheetName2, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id2).findFirst()
-				.map(Worksheet::getSheetName).get());
-		assertEquals(sheetName3, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id3).findFirst()
-				.map(Worksheet::getSheetName).get());
-		assertEquals(sheetName4, givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id4).findFirst()
-				.map(Worksheet::getSheetName).get());
+		assertEquals(sheetName1,
+				givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id1).findFirst()
+						.map(Worksheet::getSheetName).get());
+		assertEquals(sheetName2,
+				givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id2).findFirst()
+						.map(Worksheet::getSheetName).get());
+		assertEquals(sheetName3,
+				givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id3).findFirst()
+						.map(Worksheet::getSheetName).get());
+		assertEquals(sheetName4,
+				givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id4).findFirst()
+						.map(Worksheet::getSheetName).get());
 	}
 
 	@DisplayName("Test of the 'SheetProtectionValues'  and 'UseSheetProtection' property when writing and reading a worksheet")
 	@ParameterizedTest(name = "Given values {1} and enabled protection: {0} should lead to the values {2} in worksheet {3}")
-	@CsvSource({ "false, '', '', 0", "false, 'autoFilter:0,sort:0', '', 0",
+	@CsvSource({
+			"false, '', '', 0",
+			"false, 'autoFilter:0,sort:0', '', 0",
 			"true, '', 'objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
 			"true, 'autoFilter:0', 'autoFilter:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
 			"true, 'pivotTables:0', 'pivotTables:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
@@ -322,7 +400,8 @@ public class WorksheetWriteReadTest {
 			"true, 'scenarios:0', 'objects:1,selectLockedCells:1,selectUnlockedCells:1', 0",
 			"true, 'selectLockedCells:0', 'objects:1,scenarios:1', 0",
 			"true, 'selectUnlockedCells:0', 'objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:0', 0",
-			"false, '', '', 1", "false, 'autoFilter:0', '', 2",
+			"false, '', '', 1",
+			"false, 'autoFilter:0', '', 2",
 			"true, '', 'objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 3",
 			"true, 'autoFilter:0', 'autoFilter:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 1",
 			"true, 'pivotTables:0,sort:0', 'pivotTables:0,sort:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 2",
@@ -336,8 +415,8 @@ public class WorksheetWriteReadTest {
 			"true, 'formatColumns:0,formatCells:0', 'formatColumns:0,formatCells:0,objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 1",
 
 	})
-	void sheetProtectionWriteReadTest(boolean useSheetProtection, String givenProtectionValues,
-			String expectedProtectionValues, int sheetIndex) throws Exception {
+	void sheetProtectionWriteReadTest(boolean useSheetProtection, String givenProtectionValues, String expectedProtectionValues, int sheetIndex)
+			throws Exception {
 		Map<Worksheet.SheetProtectionValue, Boolean> expectedProtection = prepareSheetProtectionValues(
 				expectedProtectionValues);
 		Map<Worksheet.SheetProtectionValue, Boolean> givenProtection = prepareSheetProtectionValues(
@@ -366,7 +445,15 @@ public class WorksheetWriteReadTest {
 
 	@DisplayName("Test of the 'sheetProtectionPasswordHash' property when writing and reading a worksheet")
 	@ParameterizedTest(name = "Given password \"{0}\" should lead to the same hash on worksheet {1} when writing and reading a worksheet")
-	@CsvSource({ "'x', 0", "'@test-1,23', 0", "'', 0", ", 0", "'x', 1", "'@test-1,23', 2", "'', 3", ", 4", })
+	@CsvSource({
+			"'x', 0",
+			"'@test-1,23', 0",
+			"'', 0",
+			", 0",
+			"'x', 1",
+			"'@test-1,23', 2",
+			"'', 3",
+			", 4", })
 	void sheetProtectionPasswordHashWriteReadTest(String givenPassword, int sheetIndex) throws Exception {
 		String hash = null;
 		Workbook workbook = prepareWorkbook(5, "test");
@@ -385,7 +472,13 @@ public class WorksheetWriteReadTest {
 
 	@DisplayName("Test of the 'Hidden' property when writing and reading a worksheet")
 	@ParameterizedTest(name = "Given hidden state: {0} should lead to the same state on worksheet {1} when writing and reading a worksheet")
-	@CsvSource({ "false, 0", "true, 0", "false, 1", "true, 1", "false, 2", "true, 2", })
+	@CsvSource({
+			"false, 0",
+			"true, 0",
+			"false, 1",
+			"true, 1",
+			"false, 2",
+			"true, 2", })
 	void hiddenWriteReadTest(boolean hidden, int sheetIndex) throws Exception {
 		Workbook workbook = prepareWorkbook(4, "test");
 		for (int i = 0; i <= sheetIndex; i++) {
@@ -409,9 +502,15 @@ public class WorksheetWriteReadTest {
 		Style xfStyle = new Style();
 		xfStyle.getCellXf().setAlignment(CellXf.TextBreakValue.shrinkToFit);
 		Style style = BasicStyles.Bold().append(xfStyle);
-		workbook.getCurrentWorksheet().addCell("", "A1", style);
-		workbook.getCurrentWorksheet().addCell("B", "A2", style);
-		workbook.getCurrentWorksheet().addCell("", "A3", style);
+		workbook.getCurrentWorksheet().addCell("",
+				"A1",
+				style);
+		workbook.getCurrentWorksheet().addCell("B",
+				"A2",
+				style);
+		workbook.getCurrentWorksheet().addCell("",
+				"A3",
+				style);
 		workbook.getCurrentWorksheet().mergeCells(new Range("A1:A3"));
 		assertFalse(workbook.getCurrentWorksheet().getCell("A1").getCellStyle().getCellXf().isForceApplyAlignment());
 		assertFalse(workbook.getCurrentWorksheet().getCell("A2").getCellStyle().getCellXf().isForceApplyAlignment());
@@ -439,7 +538,8 @@ public class WorksheetWriteReadTest {
 			Worksheet.SheetProtectionValue value = Worksheet.SheetProtectionValue.valueOf(subTokens[0]);
 			if (subTokens[1].equals("1")) {
 				map.put(value, true);
-			} else {
+			}
+			else {
 				map.put(value, false);
 			}
 		}
@@ -449,7 +549,7 @@ public class WorksheetWriteReadTest {
 	private static Workbook prepareWorkbook(int numberOfWorksheets, Object a1Data) {
 		Workbook workbook = new Workbook();
 		for (int i = 0; i < numberOfWorksheets; i++) {
-			workbook.addWorksheet("worksheet" + Integer.toString(i + 1));
+			workbook.addWorksheet("worksheet" + (i + 1));
 			workbook.getCurrentWorksheet().addCell(a1Data, "A1");
 		}
 		return workbook;

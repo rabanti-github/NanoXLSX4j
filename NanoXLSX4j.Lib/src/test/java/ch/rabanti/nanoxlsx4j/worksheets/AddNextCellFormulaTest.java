@@ -40,12 +40,20 @@ class AddNextCellFormulaTest {
 	@DisplayName("Test of the addNextCellFormula function with value and active worksheet style")
 	@Test()
 	void addNextCellFormulaTest3() {
-		worksheet = WorksheetTest.initWorksheet(worksheet, "D2", Worksheet.CellDirection.RowToRow,
+		worksheet = WorksheetTest.initWorksheet(worksheet,
+				"D2",
+				Worksheet.CellDirection.RowToRow,
 				BasicStyles.BorderFrameHeader());
 		assertEquals(0, worksheet.getCells().size());
 		worksheet.addNextCellFormula("=B2");
-		WorksheetTest.assertAddedCell(worksheet, 1, "D2", Cell.CellType.FORMULA, BasicStyles.BorderFrameHeader(), "=B2",
-				3, 2);
+		WorksheetTest.assertAddedCell(worksheet,
+				1,
+				"D2",
+				Cell.CellType.FORMULA,
+				BasicStyles.BorderFrameHeader(),
+				"=B2",
+				3,
+				2);
 	}
 
 	@DisplayName("Test of the addNextCell function for a nested cell object, if the cell is a formula")

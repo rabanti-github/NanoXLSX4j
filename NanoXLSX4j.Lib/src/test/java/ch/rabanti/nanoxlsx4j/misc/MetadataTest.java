@@ -29,7 +29,11 @@ public class MetadataTest {
 
 	@DisplayName("Test of the get and set function of the applicationVersion field ")
 	@ParameterizedTest(name = "Given value {1} should lead to a valid application version")
-	@CsvSource({ "NULL, ''", "STRING, ''", "STRING, '0.1'", "STRING, '99999.99999'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, ''",
+			"STRING, '0.1'",
+			"STRING, '99999.99999'", })
 	void applicationVersionTest(String sourceType, String sourceValue) {
 		String version = (String) TestUtils.createInstance(sourceType, sourceValue);
 		Metadata metadata = new Metadata();
@@ -41,7 +45,14 @@ public class MetadataTest {
 
 	@DisplayName("Test of failing set function of the applicationVersion field on invalid versions")
 	@ParameterizedTest(name = "Given value {0} should lead to an exception")
-	@CsvSource({ "'1'", "'1.2.3'", "' '", "'xyz'", "'111111.1'", "'1.222222'", "'333333.333333'", })
+	@CsvSource({
+			"'1'",
+			"'1.2.3'",
+			"' '",
+			"'xyz'",
+			"'111111.1'",
+			"'1.222222'",
+			"'333333.333333'", })
 	void applicationVersionFailTest(String version) {
 		Metadata metadata = new Metadata();
 		assertThrows(FormatException.class, () -> metadata.setApplicationVersion(version));
@@ -148,8 +159,16 @@ public class MetadataTest {
 
 	@DisplayName("Test of the ParseVersion function")
 	@ParameterizedTest(name = "Given major {0}, minor {1}, build {2} and revision {3} number should lead to the version string {4}")
-	@CsvSource({ "1, 2, 2, 5, 1.225", "4, 2, 2, 0, 4.22", "11, 2, 0, 0, 11.2", "112, 0, 0, 0, 112.0", "0, 0, 0, 0, 0.0",
-			"0, 4, 5, 1, 0.451", "0, 0, 2, 1, 0.021", "0, 0, 0, 1, 0.001", "9999, 666, 555, 444, 9999.66655",
+	@CsvSource({
+			"1, 2, 2, 5, 1.225",
+			"4, 2, 2, 0, 4.22",
+			"11, 2, 0, 0, 11.2",
+			"112, 0, 0, 0, 112.0",
+			"0, 0, 0, 0, 0.0",
+			"0, 4, 5, 1, 0.451",
+			"0, 0, 2, 1, 0.021",
+			"0, 0, 0, 1, 0.001",
+			"9999, 666, 555, 444, 9999.66655",
 			"99999, 0, 0, 1234567, 99999.00123", })
 	void parseVersionTest(int major, int minor, int build, int revision, String expectedVersion) {
 		String version = Metadata.parseVersion(major, minor, build, revision);
@@ -158,7 +177,12 @@ public class MetadataTest {
 
 	@DisplayName("Test of the failingParseVersion function")
 	@ParameterizedTest(name = "Given major {0}, minor {1}, build {2} or revision {3} number should lead to an exception")
-	@CsvSource({ "111111, 1, 1, 1", "-1, 1, 1, 1", "1, -1, 1, 1", "1, 1, -1, 1", "1, 1, 1, -1", })
+	@CsvSource({
+			"111111, 1, 1, 1",
+			"-1, 1, 1, 1",
+			"1, -1, 1, 1",
+			"1, 1, -1, 1",
+			"1, 1, 1, -1", })
 	void parseVersionFailTest(int major, int minor, int build, int revision) {
 		assertThrows(FormatException.class, () -> Metadata.parseVersion(major, minor, build, revision));
 	}

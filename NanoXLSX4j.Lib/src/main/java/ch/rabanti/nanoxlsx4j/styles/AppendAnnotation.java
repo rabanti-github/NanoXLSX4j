@@ -19,18 +19,21 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface AppendAnnotation {
 
-    /**
-     * Indicates whether the property annotated with the attribute is ignored during the copying of properties
-     *
-     * @return True if property is not relevant to copy styles (default false)
-     */
-    boolean ignore() default false;
+	/**
+	 * Indicates whether the property annotated with the attribute is ignored during
+	 * the copying of properties
+	 *
+	 * @return True if property is not relevant to copy styles (default false)
+	 */
+	boolean ignore() default false;
 
-    /**
-     * Indicates whether the property annotated with the attribute is a nested property. Nested properties are ignored during the copying of properties but can be broken down to its sub-properties
-     *
-     * @return True if the style property is nested (default false)
-     */
-    boolean nestedProperty() default false;
+	/**
+	 * Indicates whether the property annotated with the attribute is a nested
+	 * property. Nested properties are ignored during the copying of properties but
+	 * can be broken down to its sub-properties
+	 *
+	 * @return True if the style property is nested (default false)
+	 */
+	boolean nestedProperty() default false;
 
 }

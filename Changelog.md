@@ -3,6 +3,15 @@
 ## v2.0.1
 
 ---
+Release Date: **04.10.2022**
+
+- Code maintenance
+- Documentation update
+- Updated code formatter (reverted unreadable parametrized  unit tests)
+
+## v2.0.1
+
+---
 Release Date: **03.10.2022**
 
 - Fixed a bug in the functions to write and read custom number formats

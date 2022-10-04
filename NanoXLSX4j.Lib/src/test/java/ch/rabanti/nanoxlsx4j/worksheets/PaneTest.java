@@ -89,8 +89,15 @@ public class PaneTest {
 
 	@DisplayName("Test of the SetHorizontalSplit function with height definition")
 	@ParameterizedTest(name = "Given height {0}, top-left address {1} and active pane {2} should lead to a valid horizontal split")
-	@CsvSource({ "22.2f, B2, bottomLeft", "0f, B2, bottomLeft", "500f, B2, bottomLeft", "22.2f, X1, bottomLeft",
-			"0f, A1, bottomLeft", "500f, XFD1048576, bottomLeft", "22.2f, B2, topRight", "0f, B2, bottomRight",
+	@CsvSource({
+			"22.2f, B2, bottomLeft",
+			"0f, B2, bottomLeft",
+			"500f, B2, bottomLeft",
+			"22.2f, X1, bottomLeft",
+			"0f, A1, bottomLeft",
+			"500f, XFD1048576, bottomLeft",
+			"22.2f, B2, topRight",
+			"0f, B2, bottomRight",
 			"500f, B2, topLeft", })
 	void setHorizontalSplitTest(float height, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
 		Worksheet worksheet = new Worksheet();
@@ -106,11 +113,16 @@ public class PaneTest {
 
 	@DisplayName("Test of the setHorizontalSplit function with row definition")
 	@ParameterizedTest(name = "Given row {0}, freeze state {1}, top-left address {2} and active pane {3} should lead to a valid horizontal split")
-	@CsvSource({ "3, false, D1, bottomLeft", "10, true, K11, bottomLeft", "3, false, E2, bottomRight",
-			"10, true, L100, bottomRight", "3, false, F3, topLeft", "10, true, M200, topLeft", "3, false, F3, topRight",
+	@CsvSource({
+			"3, false, D1, bottomLeft",
+			"10, true, K11, bottomLeft",
+			"3, false, E2, bottomRight",
+			"10, true, L100, bottomRight",
+			"3, false, F3, topLeft",
+			"10, true, M200, topLeft",
+			"3, false, F3, topRight",
 			"10, true, M11, topRight", })
-	void setHorizontalSplitTest2(int rowNumber, boolean freeze, String topLeftCellAddress,
-			Worksheet.WorksheetPane activePane) {
+	void setHorizontalSplitTest2(int rowNumber, boolean freeze, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
 		Worksheet worksheet = new Worksheet();
 		assertInitializedPaneSplit(worksheet);
 		Address address = new Address(topLeftCellAddress);
@@ -126,14 +138,19 @@ public class PaneTest {
 
 	@DisplayName("Test of the failing setHorizontalSplit function")
 	@ParameterizedTest(name = "Given row {0} and topLeftCell {2} with freezing state {1} should lead to an exception = {3}")
-	@CsvSource({ "3, false, A1, true", "3, true, A1, false", "100, false, R100, true", "100, true, R100, false", })
+	@CsvSource({
+			"3, false, A1, true",
+			"3, true, A1, false",
+			"100, false, R100, true",
+			"100, true, R100, false", })
 	void setHorizontalSplitFailTest(int rowNumber, boolean freeze, String topLeftCellAddress, boolean expectedValid) {
 		Worksheet worksheet = new Worksheet();
 		assertInitializedPaneSplit(worksheet);
 		Address address = new Address(topLeftCellAddress);
 		if (expectedValid) {
 			worksheet.setHorizontalSplit(rowNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft);
-		} else {
+		}
+		else {
 			assertThrows(WorksheetException.class,
 					() -> worksheet.setHorizontalSplit(rowNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft));
 		}
@@ -141,8 +158,15 @@ public class PaneTest {
 
 	@DisplayName("Test of the setVerticalSplit function with width definition")
 	@ParameterizedTest(name = "Given width {0}, top-left address {1} and active pane {2} should lead to a valid horizontal split")
-	@CsvSource({ "22.2f, B2, bottomLeft", "0f, B2, bottomLeft", "500f, B2, bottomLeft", "22.2f, X1, bottomLeft",
-			"0f, A1, bottomLeft", "500f, XFD1048576, bottomLeft", "22.2f, B2, topRight", "0f, B2, bottomRight",
+	@CsvSource({
+			"22.2f, B2, bottomLeft",
+			"0f, B2, bottomLeft",
+			"500f, B2, bottomLeft",
+			"22.2f, X1, bottomLeft",
+			"0f, A1, bottomLeft",
+			"500f, XFD1048576, bottomLeft",
+			"22.2f, B2, topRight",
+			"0f, B2, bottomRight",
 			"500f, B2, topLeft", })
 	void setVerticalSplitTest(float width, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
 		Worksheet worksheet = new Worksheet();
@@ -159,11 +183,16 @@ public class PaneTest {
 
 	@DisplayName("Test of the setVerticalSplit function with column definition")
 	@ParameterizedTest(name = "Given column {0}, freeze state {1}, top-left address {2} and active pane {3} should lead to a valid vertical split")
-	@CsvSource({ "3, false, A1, bottomLeft", "10, true, K11, bottomLeft", "3, false, E2, bottomRight",
-			"10, true, L100, bottomRight", "3, false, F3, topLeft", "10, true, M200, topLeft", "3, false, F3, topRight",
+	@CsvSource({
+			"3, false, A1, bottomLeft",
+			"10, true, K11, bottomLeft",
+			"3, false, E2, bottomRight",
+			"10, true, L100, bottomRight",
+			"3, false, F3, topLeft",
+			"10, true, M200, topLeft",
+			"3, false, F3, topRight",
 			"10, true, M11, topRight", })
-	void setVerticalSplitTest2(int columnNumber, boolean freeze, String topLeftCellAddress,
-			Worksheet.WorksheetPane activePane) {
+	void setVerticalSplitTest2(int columnNumber, boolean freeze, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
 		Worksheet worksheet = new Worksheet();
 		assertInitializedPaneSplit(worksheet);
 		Address address = new Address(topLeftCellAddress);
@@ -179,24 +208,39 @@ public class PaneTest {
 
 	@DisplayName("Test of the failing setVerticalSplit function")
 	@ParameterizedTest(name = "Given column {0} and topLeftCell {2} with freezing state {1} should lead to an exception = {3}")
-	@CsvSource({ "3, false, A1, true", "3, true, A1, false", "100, false, R100, true", "100, true, R100, false", })
+	@CsvSource({
+			"3, false, A1, true",
+			"3, true, A1, false",
+			"100, false, R100, true",
+			"100, true, R100, false", })
 	void setVerticalSplitFailTest(int columnNumber, boolean freeze, String topLeftCellAddress, boolean expectedValid) {
 		Worksheet worksheet = new Worksheet();
 		assertInitializedPaneSplit(worksheet);
 		Address address = new Address(topLeftCellAddress);
 		if (expectedValid) {
 			worksheet.setVerticalSplit(columnNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft);
-		} else {
-			assertThrows(WorksheetException.class, () -> worksheet.setVerticalSplit(columnNumber, freeze, address,
-					Worksheet.WorksheetPane.bottomLeft));
+		}
+		else {
+			assertThrows(WorksheetException.class,
+					() -> worksheet.setVerticalSplit(columnNumber,
+							freeze,
+							address,
+							Worksheet.WorksheetPane.bottomLeft));
 		}
 	}
 
 	@DisplayName("Test of the setSplit function with height and width definition")
 	@ParameterizedTest(name = "Given height {0} width {1}, top-left address {2} and active pane {3} should lead to a valid horizontal split")
-	@CsvSource({ "22.2f, 11.1f, B2, bottomLeft", "0f, 0f, B2, bottomLeft", "500f, 200f, B2, bottomLeft",
-			"22.2f, 0f, X1, bottomLeft", ", 0f, A1, bottomLeft", "500f, , XFD1048576, bottomLeft",
-			", 22.2f, B2, topRight", "0f, , B2, bottomRight", ", 500f, B2, topLeft", })
+	@CsvSource({
+			"22.2f, 11.1f, B2, bottomLeft",
+			"0f, 0f, B2, bottomLeft",
+			"500f, 200f, B2, bottomLeft",
+			"22.2f, 0f, X1, bottomLeft",
+			", 0f, A1, bottomLeft",
+			"500f, , XFD1048576, bottomLeft",
+			", 22.2f, B2, topRight",
+			"0f, , B2, bottomRight",
+			", 500f, B2, topLeft", })
 	void setSplitTest(Float height, Float width, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
 		Worksheet worksheet = new Worksheet();
 		assertInitializedPaneSplit(worksheet);
@@ -213,11 +257,16 @@ public class PaneTest {
 
 	@DisplayName("Test of the setSplit function with column and definition")
 	@ParameterizedTest(name = "Given column {0}, row {1}, topLeftCell {3}  and active pane {4} with freezing state {2} should lead to a valid split")
-	@CsvSource({ "3, 3, false, A1, bottomLeft", "10, 2, true, K11, bottomLeft", "3, 1, false, E2, bottomRight",
-			"10, 99, true, L100, bottomRight", "3, , false, F3, topLeft", ", 1, true, M200, topLeft",
-			"3, ,  false, F3, topRight", ", 10, true, M11, topRight", })
-	void setSplitTest2(Integer columnNumber, Integer rowNumber, boolean freeze, String topLeftCellAddress,
-			Worksheet.WorksheetPane activePane) {
+	@CsvSource({
+			"3, 3, false, A1, bottomLeft",
+			"10, 2, true, K11, bottomLeft",
+			"3, 1, false, E2, bottomRight",
+			"10, 99, true, L100, bottomRight",
+			"3, , false, F3, topLeft",
+			", 1, true, M200, topLeft",
+			"3, ,  false, F3, topRight",
+			", 10, true, M11, topRight", })
+	void setSplitTest2(Integer columnNumber, Integer rowNumber, boolean freeze, String topLeftCellAddress, Worksheet.WorksheetPane activePane) {
 		Worksheet worksheet = new Worksheet();
 		assertInitializedPaneSplit(worksheet);
 		Address address = new Address(topLeftCellAddress);
@@ -241,22 +290,36 @@ public class PaneTest {
 
 	@DisplayName("Test of the failing setSplit function")
 	@ParameterizedTest(name = "Given column {0}, row {1} and topLeftCell {3} with freezing state {2} should lead to an exception = {4}")
-	@CsvSource({ "3, 3, false, A1, true", "3, 0, true, A1, false", "100, 1, false, R100, true",
-			"100, 1, true, R100, false", "3, 3, false, B2, true", "3, 0, true, B2, false", "17, 1, false, R100, true",
-			"16, 100, true, R100, false", "3, , true, E1, true", ", 99, true, R100, true", "3, , true, A1, false",
-			", 101, true, R100, false", ", , true, A1, true",
+	@CsvSource({
+			"3, 3, false, A1, true",
+			"3, 0, true, A1, false",
+			"100, 1, false, R100, true",
+			"100, 1, true, R100, false",
+			"3, 3, false, B2, true",
+			"3, 0, true, B2, false",
+			"17, 1, false, R100, true",
+			"16, 100, true, R100, false",
+			"3, , true, E1, true",
+			", 99, true, R100, true",
+			"3, , true, A1, false",
+			", 101, true, R100, false",
+			", , true, A1, true",
 
 	})
-	void setSplitFailTest(Integer columnNumber, Integer rowNumber, boolean freeze, String topLeftCellAddress,
-			boolean expectedValid) {
+	void setSplitFailTest(Integer columnNumber, Integer rowNumber, boolean freeze, String topLeftCellAddress, boolean expectedValid) {
 		Worksheet worksheet = new Worksheet();
 		assertInitializedPaneSplit(worksheet);
 		Address address = new Address(topLeftCellAddress);
 		if (expectedValid) {
 			worksheet.setSplit(columnNumber, rowNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft);
-		} else {
-			assertThrows(WorksheetException.class, () -> worksheet.setSplit(columnNumber, rowNumber, freeze, address,
-					Worksheet.WorksheetPane.bottomLeft));
+		}
+		else {
+			assertThrows(WorksheetException.class,
+					() -> worksheet.setSplit(columnNumber,
+							rowNumber,
+							freeze,
+							address,
+							Worksheet.WorksheetPane.bottomLeft));
 		}
 	}
 

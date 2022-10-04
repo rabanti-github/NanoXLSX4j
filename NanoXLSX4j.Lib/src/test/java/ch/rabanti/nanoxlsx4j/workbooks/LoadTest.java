@@ -29,7 +29,8 @@ public class LoadTest {
 						workbook.getWorksheets().get(0).getCell(new Address(item.getKey())).getValue());
 			}
 			WorkbookTest.assertExistingFile(name, true);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			fail();
 		}
 	}
@@ -49,7 +50,8 @@ public class LoadTest {
 						workbook.getWorksheets().get(0).getCell(new Address(item.getKey())).getValue());
 			}
 			WorkbookTest.assertExistingFile(name, true);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			fail();
 		}
 	}
@@ -66,7 +68,8 @@ public class LoadTest {
 
 	private static Map<String, Object> createSampleData() {
 		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("A1", "test");
+		data.put("A1",
+				"test");
 		data.put("A2", 22);
 		data.put("A3", 11.1f);
 		return data;

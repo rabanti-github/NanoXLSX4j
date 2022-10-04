@@ -46,7 +46,7 @@ public class OtherTypesCellTest {
 
 		@Override
 		public String toString() {
-			return PREFIX + Integer.toString(this.number);
+			return PREFIX + this.number;
 		}
 	}
 
@@ -68,7 +68,7 @@ public class OtherTypesCellTest {
 
 		@Override
 		public String toString() {
-			return PREFIX + Integer.toString(this.number);
+			return PREFIX + this.number;
 		}
 	}
 

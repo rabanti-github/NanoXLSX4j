@@ -130,7 +130,11 @@ public class BasicStylesTest {
 
 	@DisplayName("Test of the ColorizedText function")
 	@ParameterizedTest(name = "Given value {0} should lead to the color {1}")
-	@CsvSource({ "000000, FF000000", "3CDEF0, FF3CDEF0", "af3cd1, FFAF3CD1", "FFFFFF, FFFFFFFF", })
+	@CsvSource({
+			"000000, FF000000",
+			"3CDEF0, FF3CDEF0",
+			"af3cd1, FFAF3CD1",
+			"FFFFFF, FFFFFFFF", })
 	void colorizedTextTest(String hexCode, String expectedHexCode) {
 		Style style = BasicStyles.colorizedText(hexCode);
 		assertNotNull(style);
@@ -139,7 +143,13 @@ public class BasicStylesTest {
 
 	@DisplayName("Test of the failing colorizedText function")
 	@ParameterizedTest(name = "Given value {1} should lead to an exception")
-	@CsvSource({ "NULL, ''", "STRING, ''", "STRING, ' '", "STRING, 'AAFF'", "STRING, 'AAFFCC22'", "STRING, 'XXXXVV'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, ''",
+			"STRING, ' '",
+			"STRING, 'AAFF'",
+			"STRING, 'AAFFCC22'",
+			"STRING, 'XXXXVV'", })
 	void colorizedTextFailTest(String sourceType, String sourceValue) {
 		String hexCode = (String) TestUtils.createInstance(sourceType, sourceValue);
 		assertThrows(StyleException.class, () -> BasicStyles.colorizedText(hexCode));
@@ -147,7 +157,11 @@ public class BasicStylesTest {
 
 	@DisplayName("Test of the ColorizedBackground function")
 	@ParameterizedTest(name = "Given value {0} should lead to the color {1}")
-	@CsvSource({ "000000, FF000000", "3CDEF0, FF3CDEF0", "af3cd1, FFAF3CD1", "FFFFFF, FFFFFFFF", })
+	@CsvSource({
+			"000000, FF000000",
+			"3CDEF0, FF3CDEF0",
+			"af3cd1, FFAF3CD1",
+			"FFFFFF, FFFFFFFF", })
 	void colorizedBackgroundTest(String hexCode, String expectedHexCode) {
 		Style style = BasicStyles.colorizedBackground(hexCode);
 		assertNotNull(style);
@@ -158,7 +172,13 @@ public class BasicStylesTest {
 
 	@DisplayName("Test of the failing colorizedBackground function")
 	@ParameterizedTest(name = "Given value {1} should lead to an exception")
-	@CsvSource({ "NULL, ''", "STRING, ''", "STRING, ' '", "STRING, 'AAFF'", "STRING, 'AAFFCC22'", "STRING, 'XXXXVV'", })
+	@CsvSource({
+			"NULL, ''",
+			"STRING, ''",
+			"STRING, ' '",
+			"STRING, 'AAFF'",
+			"STRING, 'AAFFCC22'",
+			"STRING, 'XXXXVV'", })
 	void colorizedBackgroundFailTest(String sourceType, String sourceValue) {
 		String hexCode = (String) TestUtils.createInstance(sourceType, sourceValue);
 		assertThrows(StyleException.class, () -> BasicStyles.colorizedBackground(hexCode));
@@ -166,7 +186,12 @@ public class BasicStylesTest {
 
 	@DisplayName("Test of the Font function with name")
 	@ParameterizedTest(name = "Given name {0} should lead to a valid Font style")
-	@CsvSource({ "Calibri", "Arial", "Times New Roman", "Sans Serif", "Tahoma", })
+	@CsvSource({
+			"Calibri",
+			"Arial",
+			"Times New Roman",
+			"Sans Serif",
+			"Tahoma", })
 	void fontTest3(String name) {
 		Style style = BasicStyles.font(name);
 		assertEquals(name, style.getFont().getName());
@@ -177,7 +202,12 @@ public class BasicStylesTest {
 
 	@DisplayName("Test of the Font function with name and size")
 	@ParameterizedTest(name = "Given name {0} and size {1} should lead to a valid Font style")
-	@CsvSource({ "Calibri, 12f", "Arial, 1f", "Times New Roman, 409f", "Sans Serif, 50f", "Tahoma, 11f", })
+	@CsvSource({
+			"Calibri, 12f",
+			"Arial, 1f",
+			"Times New Roman, 409f",
+			"Sans Serif, 50f",
+			"Tahoma, 11f", })
 	void fontTest3(String name, float size) {
 		Style style = BasicStyles.font(name, size);
 		assertEquals(name, style.getFont().getName());
@@ -188,7 +218,11 @@ public class BasicStylesTest {
 
 	@DisplayName("Test of the Font function with name, size and bold state")
 	@ParameterizedTest(name = "Given name {0}, size {1} and bold state {2} should lead to a valid Font style")
-	@CsvSource({ "Calibri, 12f, false", "Arial, 1f, false", "Times New Roman, 409f, true", "Sans Serif, 50f, false",
+	@CsvSource({
+			"Calibri, 12f, false",
+			"Arial, 1f, false",
+			"Times New Roman, 409f, true",
+			"Sans Serif, 50f, false",
 			"Tahoma, 11f, true", })
 	void fontTest3(String name, float size, boolean bold) {
 		Style style = BasicStyles.font(name, size, bold);
@@ -200,8 +234,12 @@ public class BasicStylesTest {
 
 	@DisplayName("Test of the Font function with all parameters")
 	@ParameterizedTest(name = "Given name {0}, size {1}, bold state {2} and italic state {3} should lead to a valid Font style")
-	@CsvSource({ "Calibri, 12f, false, false", "Arial, 1f, false, false", "Times New Roman, 409f, true, false",
-			"Sans Serif, 50f, false, true", "Tahoma, 11f, true, true", })
+	@CsvSource({
+			"Calibri, 12f, false, false",
+			"Arial, 1f, false, false",
+			"Times New Roman, 409f, true, false",
+			"Sans Serif, 50f, false, true",
+			"Tahoma, 11f, true, true", })
 	void fontTest3(String name, float size, boolean bold, boolean italic) {
 		Style style = BasicStyles.font(name, size, bold, italic);
 		assertEquals(name, style.getFont().getName());
