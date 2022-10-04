@@ -97,7 +97,7 @@ public class StyleRepository {
 	 *
 	 * @apiNote Do not use this maintenance method while writing data on a worksheet
 	 *          or workbook. It will lead to invalid style data or even
-	 *          exceptions.<br/>
+	 *          exceptions.<br>
 	 *          Only use this method after all worksheets in all workbooks are
 	 *          disposed. It may free memory then.
 	 */

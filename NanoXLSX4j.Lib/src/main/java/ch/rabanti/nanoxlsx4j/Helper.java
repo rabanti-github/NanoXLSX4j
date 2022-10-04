@@ -59,7 +59,7 @@ public class Helper {
 
 	/**
 	 * All dates before this date are shifted in Excel by -1.0, since Excel assumes
-	 * wrongly that the year 1900 is a leap year.<br/>
+	 * wrongly that the year 1900 is a leap year.<br>
 	 * See also: <a href=
 	 * "https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year">
 	 * https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year</a>
@@ -90,19 +90,19 @@ public class Helper {
 	 * Method to calculate the OA date (OLE automation) of the passed date.<br>
 	 * OA Date format starts at January 1st 1900 (actually 00.01.1900). Dates beyond
 	 * this date cannot be handled by Excel under normal circumstances and will
-	 * throw a FormatException.<br/>
+	 * throw a FormatException.<br>
 	 * Excel assumes wrongly that the year 1900 is a leap year. There is a gap of
 	 * 1.0 between 1900-02-28 and 1900-03-01. This method corrects all dates from
 	 * the first valid date (1900-01-01) to 1900-03-01. However, Excel displays the
 	 * minimum valid date as 1900-01-00, although 0 is not a valid description for a
-	 * day of month.<br/>
+	 * day of month.<br>
 	 * In conformance to the OAdate specifications, the maximum valid date is
-	 * 9999-12-31 23:59:59 (plus 999 milliseconds).<br/>
+	 * 9999-12-31 23:59:59 (plus 999 milliseconds).<br>
 	 * See also: <a href=
-	 * "https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1"><br/>
-	 * https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1</a><br/>
+	 * "https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1"><br>
+	 * https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1</a><br>
 	 * See also: <a href=
-	 * "https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br/>
+	 * "https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br>
 	 * https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year</a>
 	 *
 	 * @param date
@@ -121,19 +121,19 @@ public class Helper {
 	 * Method to calculate the OA date (OLE automation) of the passed date.<br>
 	 * OA Date format starts at January 1st 1900 (actually 00.01.1900). Dates beyond
 	 * this date cannot be handled by Excel under normal circumstances and will
-	 * throw a FormatException.<br/>
+	 * throw a FormatException.<br>
 	 * Excel assumes wrongly that the year 1900 is a leap year. There is a gap of
 	 * 1.0 between 1900-02-28 and 1900-03-01. This method corrects all dates from
 	 * the first valid date (1900-01-01) to 1900-03-01. However, Excel displays the
 	 * minimum valid date as 1900-01-00, although 0 is not a valid description for a
-	 * day of month.<br/>
+	 * day of month.<br>
 	 * In conformance to the OAdate specifications, the maximum valid date is
-	 * 9999-12-31 23:59:59 (plus 999 milliseconds).<br/>
+	 * 9999-12-31 23:59:59 (plus 999 milliseconds).<br>
 	 * See also: <a href=
-	 * "https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1"><br/>
-	 * https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1</a><br/>
+	 * "https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1"><br>
+	 * https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1</a><br>
 	 * See also: <a href=
-	 * "https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br/>
+	 * "https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br>
 	 * https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year</a>
 	 *
 	 * @param date
@@ -151,19 +151,19 @@ public class Helper {
 	 * Method to calculate the OA date (OLE automation) of the passed date.<br>
 	 * OA Date format starts at January 1st 1900 (actually 00.01.1900). Dates beyond
 	 * this date cannot be handled by Excel under normal circumstances and will
-	 * throw a FormatException.<br/>
+	 * throw a FormatException.<br>
 	 * Excel assumes wrongly that the year 1900 is a leap year. There is a gap of
 	 * 1.0 between 1900-02-28 and 1900-03-01. This method corrects all dates from
 	 * the first valid date (1900-01-01) to 1900-03-01. However, Excel displays the
 	 * minimum valid date as 1900-01-00, although 0 is not a valid description for a
-	 * day of month.<br/>
+	 * day of month.<br>
 	 * In conformance to the OAdate specifications, the maximum valid date is
-	 * 9999-12-31 23:59:59 (plus 999 milliseconds).<br/>
+	 * 9999-12-31 23:59:59 (plus 999 milliseconds).<br>
 	 * See also: <a href=
-	 * "https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1"><br/>
-	 * https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1</a><br/>
+	 * "https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1"><br>
+	 * https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tooadate?view=netcore-3.1</a><br>
 	 * See also: <a href=
-	 * "https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br/>
+	 * "https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br>
 	 * https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year</a>
 	 *
 	 * @param date
@@ -245,7 +245,7 @@ public class Helper {
 	 *           since 1900-01-01 = 60) are automatically modified. Until 1900-03-01
 	 *           is 1.0 added to the number to get the same date, as displayed in
 	 *           Excel. The reason for this is a bug in Excel. See also: <a href=
-	 *           "https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br/>
+	 *           "https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year"><br>
 	 *           https://docs.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year</a>
 	 */
 	public static Date getDateFromOA(double oaDate) {
@@ -366,16 +366,16 @@ public class Helper {
 	 *          in Excel. Although internal, the default column width of 10
 	 *          characters is visible in Excel as 10.71. The deviation depends on
 	 *          the maximum digit width of the default font, as well as its text
-	 *          padding and various constants.<br/>
+	 *          padding and various constants.<br>
 	 *          In case of the width 10.0 and the default digit width 7.0, as well
 	 *          as the padding 5.0 of the default font Calibri (size 11), the
-	 *          internal width is approximately 10.7142857 (rounded to 10.71).<br/>
+	 *          internal width is approximately 10.7142857 (rounded to 10.71).<br>
 	 *          Note that the column height is not affected by this consideration.
 	 *          The entered height in Excel is the actual height in the worksheet
-	 *          XML documents.<br/>
+	 *          XML documents.<br>
 	 *          This method is derived from the Perl implementation by John McNamara
 	 *          (<a href=
-	 *          "https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>)<br/>
+	 *          "https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>)<br>
 	 *          See also: <a href=
 	 *          "https://www.ecma-international.org/publications-and-standards/standards/ecma-376/">ECMA-376,
 	 *          Part 1, Chapter 18.3.1.13</a>
@@ -405,16 +405,16 @@ public class Helper {
 	 *          in Excel. Although internal, the default column width of 10
 	 *          characters is visible in Excel as 10.71. The deviation depends on
 	 *          the maximum digit width of the default font, as well as its text
-	 *          padding and various constants.<br/>
+	 *          padding and various constants.<br>
 	 *          In case of the width 10.0 and the default digit width 7.0, as well
 	 *          as the padding 5.0 of the default font Calibri (size 11), the
-	 *          internal width is approximately 10.7142857 (rounded to 10.71).<br/>
+	 *          internal width is approximately 10.7142857 (rounded to 10.71).<br>
 	 *          Note that the column height is not affected by this consideration.
 	 *          The entered height in Excel is the actual height in the worksheet
-	 *          XML documents.<br/>
+	 *          XML documents.<br>
 	 *          This method is derived from the Perl implementation by John McNamara
 	 *          (<a href=
-	 *          "https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>)<br/>
+	 *          "https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>)<br>
 	 *          See also: <a href=
 	 *          "https://www.ecma-international.org/publications-and-standards/standards/ecma-376/">ECMA-376,
 	 *          Part 1, Chapter 18.3.1.13</a>
@@ -453,7 +453,7 @@ public class Helper {
 	 * @apiNote The height is based on the calculated amount of pixels. One point
 	 *          are ~1.333 (1+1/3) pixels. After the conversion, the number of
 	 *          pixels is rounded to the nearest integer and calculated back to
-	 *          points.<br/>
+	 *          points.<br>
 	 *          Therefore, the originally defined row height will slightly deviate,
 	 *          based on this pixel snap
 	 */
@@ -484,15 +484,15 @@ public class Helper {
 	 *         worksheet splitting
 	 * @apiNote The internal split width is based on the width of one or more
 	 *          columns. It also depends on the maximum digit width of the default
-	 *          font, as well as its text padding and various constants.<br/>
+	 *          font, as well as its text padding and various constants.<br>
 	 *          See also {@link #getInternalColumnWidth(float, float, float)} for
-	 *          additional details.<br/>
+	 *          additional details.<br>
 	 *          This method is derived from the Perl implementation by John McNamara
 	 *          (<a href=
-	 *          "https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>)<br/>
+	 *          "https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>)<br>
 	 *          See also: <a href=
 	 *          "https://www.ecma-international.org/publications-and-standards/standards/ecma-376/">ECMA-376,
-	 *          Part 1, Chapter 18.3.1.13</a><br/>
+	 *          Part 1, Chapter 18.3.1.13</a><br>
 	 */
 	public static float getInternalPaneSplitWidth(float width) {
 		return getInternalPaneSplitWidth(width, 7f, 5f);
@@ -515,15 +515,15 @@ public class Helper {
 	 *         worksheet splitting
 	 * @apiNote The internal split width is based on the width of one or more
 	 *          columns. It also depends on the maximum digit width of the default
-	 *          font, as well as its text padding and various constants.<br/>
+	 *          font, as well as its text padding and various constants.<br>
 	 *          See also {@link #getInternalColumnWidth(float, float, float)} for
-	 *          additional details.<br/>
+	 *          additional details.<br>
 	 *          This method is derived from the Perl implementation by John McNamara
 	 *          (<a href=
-	 *          "https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>)<br/>
+	 *          "https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>)<br>
 	 *          See also: <a href=
 	 *          "https://www.ecma-international.org/publications-and-standards/standards/ecma-376/">ECMA-376,
-	 *          Part 1, Chapter 18.3.1.13</a><br/>
+	 *          Part 1, Chapter 18.3.1.13</a><br>
 	 *          The two override parameters maxDigitWidth and textPadding probably
 	 *          don't have to be other than maxDigitWidth = 7f and textPadding = 5f.
 	 */
@@ -552,10 +552,10 @@ public class Helper {
 	 * @return The internal pane height, used in worksheet XML documents in case of
 	 *         worksheet splitting
 	 * @apiNote The internal split height is based on the height of one or more
-	 *          rows. It also depends on various constants.<br/>
+	 *          rows. It also depends on various constants.<br>
 	 *          This method is derived from the Perl implementation by John McNamara
 	 *          (<a href=
-	 *          "https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>).<br/>
+	 *          "https://stackoverflow.com/a/5010899">https://stackoverflow.com/a/5010899</a>).<br>
 	 *          Negative row heights are automatically transformed to 0.
 	 */
 	public static float getInternalPaneSplitHeight(float height) {

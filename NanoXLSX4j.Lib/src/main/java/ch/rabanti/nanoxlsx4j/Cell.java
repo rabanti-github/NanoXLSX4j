@@ -409,7 +409,7 @@ public class Cell implements Comparable<Cell> {
 	 *         bigger
 	 * @implNote Note that this method only compares the row and column numbers,
 	 *           since the values or styles may completely different types, and
-	 *           therefore hard to compare at all.<br/>
+	 *           therefore hard to compare at all.<br>
 	 *           The Equals() method considers values and style, though.
 	 */
 	@Override

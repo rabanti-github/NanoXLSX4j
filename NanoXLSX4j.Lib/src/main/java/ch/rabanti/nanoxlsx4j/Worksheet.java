@@ -633,7 +633,7 @@ public class Worksheet {
 	}
 
 	/**
-	 * Sets whether the worksheet is hidden<br/>
+	 * Sets whether the worksheet is hidden<br>
 	 * If the worksheet is not part of a workbook, or the only one in the workbook,
 	 * an exception will be thrown If the worksheet is the selected one, and
 	 * attempted to set hidden, an exception will be thrown. Define another selected
@@ -652,11 +652,11 @@ public class Worksheet {
 
 	/**
 	 * Gets the height of the upper, horizontal split pane, measured from the top of
-	 * the window.<br/>
+	 * the window.<br>
 	 * The value is nullable. If null, no horizontal split of the worksheet is
-	 * applied.<br/>
+	 * applied.<br>
 	 * The value is only applicable to split the worksheet into panes, but not to
-	 * freeze them.<br/>
+	 * freeze them.<br>
 	 * See also {@link #getPaneSplitAddress()}
 	 *
 	 * @return Height of the top pane until the split line appears
@@ -670,11 +670,11 @@ public class Worksheet {
 
 	/**
 	 * Gets the width of the left, vertical split pane, measured from the left of
-	 * the window.<br/>
+	 * the window.<br>
 	 * The value is nullable. If null, no vertical split of the worksheet is
-	 * applied<br/>
+	 * applied<br>
 	 * The value is only applicable to split the worksheet into panes, but not to
-	 * freeze them.<br/>
+	 * freeze them.<br>
 	 * See also: {@link #getPaneSplitAddress()}
 	 *
 	 * @return Width form the left border until the split line appears
@@ -687,7 +687,7 @@ public class Worksheet {
 	}
 
 	/**
-	 * Gets whether split panes are frozen.<br/>
+	 * Gets whether split panes are frozen.<br>
 	 * The value is nullable. If null, no freezing is applied. This property also
 	 * does not apply if {@link #getPaneSplitAddress()} is null
 	 *
@@ -699,9 +699,9 @@ public class Worksheet {
 
 	/**
 	 * Gets the Top Left cell address of the bottom right pane if applicable and
-	 * splitting is applied.<br/>
+	 * splitting is applied.<br>
 	 * The column is only relevant for vertical split, whereas the row component is
-	 * only relevant for a horizontal split.<br/>
+	 * only relevant for a horizontal split.<br>
 	 * The value is nullable. If null, no splitting was defined.
 	 *
 	 * @return Address of the top Left cell address of the bottom right pane
@@ -712,12 +712,12 @@ public class Worksheet {
 
 	/**
 	 * Gets the split address for frozen panes or if pane split was defined in
-	 * number of columns and / or rows.<br/>
+	 * number of columns and / or rows.<br>
 	 * For vertical splits, only the column component is considered. For horizontal
-	 * splits, only the row component is considered.<br/>
+	 * splits, only the row component is considered.<br>
 	 * The value is nullable. If null, no frozen panes or split by columns / rows
 	 * are applied to the worksheet. However, splitting can still be applied, if the
-	 * value is defined in characters.<br/>
+	 * value is defined in characters.<br>
 	 * See also: {@link #getPaneSplitLeftWidth()} and
 	 * {@link #getPaneSplitTopHeight()} for splitting in characters (without
 	 * freezing)
@@ -729,7 +729,7 @@ public class Worksheet {
 	}
 
 	/**
-	 * Gets the active Pane is splitting is applied.<br/>
+	 * Gets the active Pane is splitting is applied.<br>
 	 * The value is nullable. If null, no splitting was defined
 	 *
 	 * @return Active pane if defined
@@ -2163,13 +2163,13 @@ public class Worksheet {
 	 *
 	 * @param numberOfColumnsFromLeft
 	 *            Number of columns from left of the worksheet to the split line.
-	 *            The particular column widths are considered.<br/>
+	 *            The particular column widths are considered.<br>
 	 *            The parameter is nullable. If left null, the method acts identical
 	 *            to
 	 *            {@link #setHorizontalSplit(int, boolean, Address, WorksheetPane)}
 	 * @param numberOfRowsFromTop
 	 *            Number of rows from top of the worksheet to the split line. The
-	 *            particular row heights are considered.<br/>
+	 *            particular row heights are considered.<br>
 	 *            The parameter is nullable. If left null, the method acts identical
 	 *            to {@link #setVerticalSplit(int, boolean, Address, WorksheetPane)}
 	 * @param freeze
@@ -2213,12 +2213,12 @@ public class Worksheet {
 	 *
 	 * @param leftPaneWidth
 	 *            Width (similar to column width) from left of the worksheet to the
-	 *            split line in characters.<br/>
+	 *            split line in characters.<br>
 	 *            The parameter is nullable. If left null, the method acts identical
 	 *            to {@link #setHorizontalSplit(float, Address, WorksheetPane)}
 	 * @param topPaneHeight
 	 *            Height (similar to row height) from top of the worksheet to the
-	 *            split line in characters.<br/>
+	 *            split line in characters.<br>
 	 *            The parameter is nullable. If left null, the method acts identical
 	 *            to {@link #setVerticalSplit(float, Address, WorksheetPane)}
 	 * @param topLeftCell
@@ -2466,7 +2466,7 @@ public class Worksheet {
 	 * Method to resolve all merged cells of the worksheet. Only the value of the
 	 * very first cell of the merged cells range will be visible. The other values
 	 * are still present (set to EMPTY) but will not be stored in the
-	 * worksheet.<br/>
+	 * worksheet.<br>
 	 * This is an internal method. There is no need to use it.
 	 *
 	 * @throws StyleException

@@ -15,7 +15,7 @@ import ch.rabanti.nanoxlsx4j.Workbook;
 
 /**
  * Class representing a style manager to maintain all styles and its components
- * of a workbook.<br/>
+ * of a workbook.<br>
  * This class is only internally used to compose the style environment right
  * before saving an XLSX file
  *

@@ -604,7 +604,7 @@ public class Workbook {
 	 * Method to resolve all merged cells in all worksheets. Only the value of the
 	 * very first cell of the merged cells range will be visible. The other values
 	 * are still present (set to EMPTY) but will not be stored in the
-	 * worksheet.<br/>
+	 * worksheet.<br>
 	 * This is an internal method. There is no need to use it.
 	 *
 	 * @throws StyleException
@@ -1049,10 +1049,10 @@ public class Workbook {
 	}
 
 	/**
-	 * Validates the worksheets regarding several conditions that must be met:<br/>
-	 * - At least one worksheet must be defined<br/>
-	 * - A hidden worksheet cannot be the selected one<br/>
-	 * - At least one worksheet must be visible<br/>
+	 * Validates the worksheets regarding several conditions that must be met:<br>
+	 * - At least one worksheet must be defined<br>
+	 * - A hidden worksheet cannot be the selected one<br>
+	 * - At least one worksheet must be visible<br>
 	 * If one of the conditions is not met, an exception is thrown
 	 *
 	 * @apiNote If an import is in progress, these rules are disabled to avoid
