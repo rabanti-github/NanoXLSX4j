@@ -497,7 +497,15 @@ public class Worksheet {
 	 *             AddSelectedCells. It will be removed in a future version
 	 */
 	public void setSelectedCells(Address startAddress, Address endAddress) {
-		setSelectedCells(new Range(startAddress, endAddress));
+		if (startAddress == null && endAddress != null || startAddress != null && endAddress == null) {
+			throw new RangeException("Either the start or end address is null (invalid range)");
+		}
+		if (startAddress == null) {
+			removeSelectedCells();
+		}
+		else {
+			setSelectedCells(new Range(startAddress, endAddress));
+		}
 	}
 
 	/**

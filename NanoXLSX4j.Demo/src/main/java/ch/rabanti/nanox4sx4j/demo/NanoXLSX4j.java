@@ -46,7 +46,7 @@ public class NanoXLSX4j {
     public static void main(String[] args) {
 
         /** PROVIDING OUTPUT FOLDER **/
-        if (!Files.exists(Paths.get(outputFolder)))                     // Check existence of output folder
+        if (!Files.exists(Paths.get(outputFolder)))                             // Check existence of output folder
         {
             File dir = new File(outputFolder);                                  // Create new folder if not existing
             dir.mkdirs();
@@ -121,19 +121,19 @@ public class NanoXLSX4j {
      * This method shows the shortened style of writing cells
      */
     private static void shortenerDemo() {
-        Workbook wb = new Workbook(outputFolder + "shortenerDemo.xlsx", "Sheet1"); // Create a workbook (important: A worksheet must be created as well)
-        wb.WS.value("Some Text");                                                     // Add cell A1
-        wb.WS.value(58.55, BasicStyles.DoubleUnderline());                      // Add a formatted value to cell B1
-        wb.WS.right(2);                                               // Move to cell E1
-        wb.WS.value(true);                                                            // Add cell E1
-        wb.addWorksheet("Sheet2");                                              // Add a new worksheet
+        Workbook wb = new Workbook(outputFolder + "shortenerDemo.xlsx", "Sheet1");      // Create a workbook (important: A worksheet must be created as well)
+        wb.WS.value("Some Text");                                                       // Add cell A1
+        wb.WS.value(58.55, BasicStyles.DoubleUnderline());                              // Add a formatted value to cell B1
+        wb.WS.right(2);                                                                 // Move to cell E1
+        wb.WS.value(true);                                                              // Add cell E1
+        wb.addWorksheet("Sheet2");                                                      // Add a new worksheet
         wb.getCurrentWorksheet().setCurrentCellDirection(Worksheet.CellDirection.RowToRow); // Change the cell direction
-        wb.WS.value("This is another text");                                           // Add cell A1
-        wb.WS.formula("=A1");                                                          // Add a formula in Cell A2
-        wb.WS.down();                                                                  // Go to cell A4
-        wb.WS.value("Formatted Text", BasicStyles.Bold());                        // Add a formatted value to cell A4
+        wb.WS.value("This is another text");                                            // Add cell A1
+        wb.WS.formula("=A1");                                                           // Add a formula in Cell A2
+        wb.WS.down();                                                                   // Go to cell A4
+        wb.WS.value("Formatted Text", BasicStyles.Bold());                              // Add a formatted value to cell A4
         try {
-            wb.save();                                                      // Save the workbook
+            wb.save();                                                                  // Save the workbook
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -174,20 +174,20 @@ public class NanoXLSX4j {
         workbook.getCurrentWorksheet().addNextCellFormula("PI()");          // Add cell C3 as formula (Pi = 3.14.... )
         workbook.addWorksheet("Addresses");                                                    // Add new worksheet
         workbook.getCurrentWorksheet().setCurrentCellDirection(Worksheet.CellDirection.Disabled);    // Disable automatic addressing
-        workbook.getCurrentWorksheet().addCell("Default", 0, 0);       // Add a value
-        Address address = new Address(1, 0, Cell.AddressType.Default);                  // Create Address with default behavior
-        workbook.getCurrentWorksheet().addCell(address.toString(), 1, 0);    // Add the string of the address
-        workbook.getCurrentWorksheet().addCell("Fixed Column", 0, 1); // Add a value
-        address = new Address(1, 1, Cell.AddressType.FixedColumn);                      // Create Address with fixed column
+        workbook.getCurrentWorksheet().addCell("Default", 0, 0);            // Add a value
+        Address address = new Address(1, 0, Cell.AddressType.Default);      // Create Address with default behavior
+        workbook.getCurrentWorksheet().addCell(address.toString(), 1, 0);   // Add the string of the address
+        workbook.getCurrentWorksheet().addCell("Fixed Column", 0, 1);       // Add a value
+        address = new Address(1, 1, Cell.AddressType.FixedColumn);          // Create Address with fixed column
         workbook.getCurrentWorksheet().addCell(address.toString(), 1, 1);   // Add the string of the address
-        workbook.getCurrentWorksheet().addCell("Fixed Row", 0, 2);    // Add a value
-        address = new Address(1, 2, Cell.AddressType.FixedRow);                         // Create Address with fixed row
+        workbook.getCurrentWorksheet().addCell("Fixed Row", 0, 2);          // Add a value
+        address = new Address(1, 2, Cell.AddressType.FixedRow);             // Create Address with fixed row
         workbook.getCurrentWorksheet().addCell(address.toString(), 1, 2);   // Add the string of the address
         workbook.getCurrentWorksheet().addCell("Fixed Row and Column", 0, 3); // Add a value
-        address = new Address(1, 3, Cell.AddressType.FixedRowAndColumn);                // Create Address with fixed row and column
+        address = new Address(1, 3, Cell.AddressType.FixedRowAndColumn);    // Create Address with fixed row and column
         workbook.getCurrentWorksheet().addCell(address.toString(), 1, 3);   // Add the string of the address
         try {
-            workbook.save();                                                    // Save the workbook
+            workbook.save();                                                // Save the workbook
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -217,8 +217,8 @@ public class NanoXLSX4j {
         values.add(16.8);
         workbook.getCurrentWorksheet().addCellRange(values, "A4:C4");       // Add a cell range to A4 - C4
         try {
-            workbook.saveAs(outputFolder + "test2.xlsx");                       // Save the workbook
-            workbook.saveAs(outputFolder + "test2.xlsx");                       // Save the workbook
+            workbook.saveAs(outputFolder + "test2.xlsx");                   // Save the workbook
+            workbook.saveAs(outputFolder + "test2.xlsx");                   // Save the workbook
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -230,27 +230,27 @@ public class NanoXLSX4j {
     private static void demo3() {
         Workbook workbook = new Workbook(outputFolder + "test3.xlsx", "Sheet1"); // Create new workbook
         workbook.getCurrentWorksheet().setCurrentCellDirection(Worksheet.CellDirection.RowToRow);  // Change the cell direction
-        workbook.getCurrentWorksheet().addNextCell(1);                      // Add cell A1
-        workbook.getCurrentWorksheet().addNextCell(2);                      // Add cell A2
-        workbook.getCurrentWorksheet().addNextCell(3);                      // Add cell A3
-        workbook.getCurrentWorksheet().addNextCell(4);                      // Add cell A4
-        int row = workbook.getCurrentWorksheet().getCurrentRowNumber();    // Get the row number (will be 4 = row row 5)
-        int col = workbook.getCurrentWorksheet().getCurrentColumnNumber(); // Get the column number (will be 0 = column A)
+        workbook.getCurrentWorksheet().addNextCell(1);                          // Add cell A1
+        workbook.getCurrentWorksheet().addNextCell(2);                          // Add cell A2
+        workbook.getCurrentWorksheet().addNextCell(3);                          // Add cell A3
+        workbook.getCurrentWorksheet().addNextCell(4);                          // Add cell A4
+        int row = workbook.getCurrentWorksheet().getCurrentRowNumber();         // Get the row number (will be 4 = row row 5)
+        int col = workbook.getCurrentWorksheet().getCurrentColumnNumber();      // Get the column number (will be 0 = column A)
         workbook.getCurrentWorksheet().addNextCell("This cell has the row number " + (row + 1) + " and column number " + (col + 1));
-        workbook.getCurrentWorksheet().goToNextColumn();                    // Go to Column B
-        workbook.getCurrentWorksheet().addNextCell("A");                    // Add cell B1
-        workbook.getCurrentWorksheet().addNextCell("B");                    // Add cell B2
-        workbook.getCurrentWorksheet().addNextCell("C");                    // Add cell B3
-        workbook.getCurrentWorksheet().addNextCell("D");                    // Add cell B4
-        workbook.getCurrentWorksheet().removeCell("A2");                  // Delete cell A2
-        workbook.getCurrentWorksheet().removeCell(1, 1);  // Delete cell B2
-        workbook.getCurrentWorksheet().goToNextRow(3);              // Move 3 rows down
-        Object value = workbook.getCurrentWorksheet().getCell(1, 2).getValue();  // Gets the value of cell B3
+        workbook.getCurrentWorksheet().goToNextColumn();                        // Go to Column B
+        workbook.getCurrentWorksheet().addNextCell("A");                        // Add cell B1
+        workbook.getCurrentWorksheet().addNextCell("B");                        // Add cell B2
+        workbook.getCurrentWorksheet().addNextCell("C");                        // Add cell B3
+        workbook.getCurrentWorksheet().addNextCell("D");                        // Add cell B4
+        workbook.getCurrentWorksheet().removeCell("A2");                        // Delete cell A2
+        workbook.getCurrentWorksheet().removeCell(1, 1);                        // Delete cell B2
+        workbook.getCurrentWorksheet().goToNextRow(3);                          // Move 3 rows down
+        Object value = workbook.getCurrentWorksheet().getCell(1, 2).getValue(); // Gets the value of cell B3
         workbook.getCurrentWorksheet().addNextCell("Value of B3 is: " + value);
         workbook.getCurrentWorksheet().setCurrentCellDirection(Worksheet.CellDirection.Disabled);   // Disable automatic cell addressing
-        workbook.getCurrentWorksheet().addCell("Text A", 3, 0);       // Add manually placed value
-        workbook.getCurrentWorksheet().addCell("Text B", 4, 1);       // Add manually placed value
-        workbook.getCurrentWorksheet().addCell("Text C", 3, 2);       // Add manually placed value
+        workbook.getCurrentWorksheet().addCell("Text A", 3, 0);                 // Add manually placed value
+        workbook.getCurrentWorksheet().addCell("Text B", 4, 1);                 // Add manually placed value
+        workbook.getCurrentWorksheet().addCell("Text C", 3, 2);                 // Add manually placed value
         try {
             workbook.save();                                                    // Save the workbook
         } catch (Exception e) {
@@ -262,52 +262,52 @@ public class NanoXLSX4j {
      * This demo shows the usage of several styles, column widths and row heights
      */
     private static void demo4() {
-        Workbook workbook = new Workbook(outputFolder + "test4.xlsx", "Sheet1"); // Create new workbook
-        List<Object> values = new ArrayList<>();                            // Create a List of values
+        Workbook workbook = new Workbook(outputFolder + "test4.xlsx", "Sheet1");            // Create new workbook
+        List<Object> values = new ArrayList<>();                                            // Create a List of values
         values.add("Header1");
         values.add("Header2");
         values.add("Header3");
-        workbook.getCurrentWorksheet().addCellRange(values, new Address(0, 0), new Address(2, 0));         // Add a cell range to A4 - C4
+        workbook.getCurrentWorksheet().addCellRange(values, new Address(0, 0), new Address(2, 0));       // Add a cell range to A4 - C4
         workbook.getCurrentWorksheet().getCells().get("A1").setStyle(BasicStyles.Bold());                // Assign predefined basic style to cell
         workbook.getCurrentWorksheet().getCells().get("B1").setStyle(BasicStyles.Bold());                // Assign predefined basic style to cell
         workbook.getCurrentWorksheet().getCells().get("C1").setStyle(BasicStyles.Bold());                // Assign predefined basic style to cell
-        workbook.getCurrentWorksheet().goToNextRow();                       // Go to Row 2
-        workbook.getCurrentWorksheet().addNextCell(new Date());            // Add cell A2
-        workbook.getCurrentWorksheet().addNextCell(2);                      // Add cell B2
-        workbook.getCurrentWorksheet().addNextCell(3);                      // Add cell C2
-        workbook.getCurrentWorksheet().goToNextRow();                       // Go to Row 3
-        workbook.getCurrentWorksheet().addNextCell(new Date());             // Add cell A3
-        workbook.getCurrentWorksheet().addNextCell("B");                    // Add cell B3
-        workbook.getCurrentWorksheet().addNextCell("C");                    // Add cell C3
+        workbook.getCurrentWorksheet().goToNextRow();                                       // Go to Row 2
+        workbook.getCurrentWorksheet().addNextCell(new Date());                             // Add cell A2
+        workbook.getCurrentWorksheet().addNextCell(2);                                      // Add cell B2
+        workbook.getCurrentWorksheet().addNextCell(3);                                      // Add cell C2
+        workbook.getCurrentWorksheet().goToNextRow();                                       // Go to Row 3
+        workbook.getCurrentWorksheet().addNextCell(new Date());                             // Add cell A3
+        workbook.getCurrentWorksheet().addNextCell("B");                                    // Add cell B3
+        workbook.getCurrentWorksheet().addNextCell("C");                                    // Add cell C3
 
-        Style s = new Style();                                                 // Create new style
-        s.getFill().setColor("FF22FF11", Fill.FillType.fillColor);       // Set fill color
-        s.getFont().setUnderline(Font.UnderlineValue.u_double);                // Set double underline
-        s.getCellXf().setHorizontalAlign(CellXf.HorizontalAlignValue.center);  // Set alignment
+        Style s = new Style();                                                              // Create new style
+        s.getFill().setColor("FF22FF11", Fill.FillType.fillColor);                          // Set fill color
+        s.getFont().setUnderline(Font.UnderlineValue.u_double);                             // Set double underline
+        s.getCellXf().setHorizontalAlign(CellXf.HorizontalAlignValue.center);               // Set alignment
 
-        Style s2 = s.copyStyle();                                           // Copy the previously defined style
-        s2.getFont().setItalic(true);                                       // Change an attribute of the copied style
+        Style s2 = s.copyStyle();                                                           // Copy the previously defined style
+        s2.getFont().setItalic(true);                                                       // Change an attribute of the copied style
 
-        workbook.getCurrentWorksheet().getCells().get("B2").setStyle(s);    // Assign style to cell
-        workbook.getCurrentWorksheet().goToNextRow();                       // Go to Row 3
-        workbook.getCurrentWorksheet().addNextCell(new Date(115, 9, 3));    // Add cell B1
-        workbook.getCurrentWorksheet().addNextCell(true);                   // Add cell B2
-        workbook.getCurrentWorksheet().addNextCell(false, s2);              // Add cell B3 with style in the same step
-        workbook.getCurrentWorksheet().getCells().get("C2").setStyle(BasicStyles.BorderFrame());        // Assign predefined basic style to cell
+        workbook.getCurrentWorksheet().getCells().get("B2").setStyle(s);                    // Assign style to cell
+        workbook.getCurrentWorksheet().goToNextRow();                                       // Go to Row 3
+        workbook.getCurrentWorksheet().addNextCell(new Date(115, 9, 3));  // Add cell B1
+        workbook.getCurrentWorksheet().addNextCell(true);                                   // Add cell B2
+        workbook.getCurrentWorksheet().addNextCell(false, s2);                              // Add cell B3 with style in the same step
+        workbook.getCurrentWorksheet().getCells().get("C2").setStyle(BasicStyles.BorderFrame()); // Assign predefined basic style to cell
 
-        Style s3 = BasicStyles.Strike();                                    // Create a style from a predefined style
-        s3.getCellXf().setTextRotation(45);                                 // Set text rotation
-        s3.getCellXf().setVerticalAlign(CellXf.VerticalAlignValue.center);  // Set alignment
+        Style s3 = BasicStyles.Strike();                                                    // Create a style from a predefined style
+        s3.getCellXf().setTextRotation(45);                                                 // Set text rotation
+        s3.getCellXf().setVerticalAlign(CellXf.VerticalAlignValue.center);                  // Set alignment
 
-        workbook.getCurrentWorksheet().getCells().get("B4").setStyle(s3);   // Assign style to cell
+        workbook.getCurrentWorksheet().getCells().get("B4").setStyle(s3);                   // Assign style to cell
 
-        workbook.getCurrentWorksheet().setColumnWidth(0, 20f);              // Set column width
-        workbook.getCurrentWorksheet().setColumnWidth(1, 15f);              // Set column width
-        workbook.getCurrentWorksheet().setColumnWidth(2, 25f);              // Set column width
-        workbook.getCurrentWorksheet().setRowHeight(0, 20);                 // Set row height
-        workbook.getCurrentWorksheet().setRowHeight(1, 30);                 // Set row height
+        workbook.getCurrentWorksheet().setColumnWidth(0, 20f);                              // Set column width
+        workbook.getCurrentWorksheet().setColumnWidth(1, 15f);                              // Set column width
+        workbook.getCurrentWorksheet().setColumnWidth(2, 25f);                              // Set column width
+        workbook.getCurrentWorksheet().setRowHeight(0, 20);                                 // Set row height
+        workbook.getCurrentWorksheet().setRowHeight(1, 30);                                 // Set row height
         try {
-            workbook.save();                                                    // Save the workbook
+            workbook.save();                                                                // Save the workbook
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -317,40 +317,40 @@ public class NanoXLSX4j {
      * This demo shows the usage of cell ranges, adding and removing styles, and meta data
      */
     private static void demo5() {
-        Workbook workbook = new Workbook(outputFolder + "test5.xlsx", "Sheet1"); // Create new workbook
-        List<Object> values = new ArrayList<>();                            // Create a List of values
+        Workbook workbook = new Workbook(outputFolder + "test5.xlsx", "Sheet1");        // Create new workbook
+        List<Object> values = new ArrayList<>();                                        // Create a List of values
         values.add("Header1");
         values.add("Header2");
         values.add("Header3");
-        workbook.getCurrentWorksheet().setActiveStyle(BasicStyles.BorderFrameHeader());  // Assign predefined basic style as active style
-        workbook.getCurrentWorksheet().addCellRange(values, "A1:C1"); // Add cell range
+        workbook.getCurrentWorksheet().setActiveStyle(BasicStyles.BorderFrameHeader()); // Assign predefined basic style as active style
+        workbook.getCurrentWorksheet().addCellRange(values, "A1:C1");                   // Add cell range
 
-        values = new ArrayList<>();                                         // Create a List of values
+        values = new ArrayList<>();                                                     // Create a List of values
         values.add("Cell A2");
         values.add("Cell B2");
         values.add("Cell C2");
-        workbook.getCurrentWorksheet().setActiveStyle(BasicStyles.BorderFrame());  // Assign predefined basic style as active style
-        workbook.getCurrentWorksheet().addCellRange(values, "A2:C2"); // Add cell range
+        workbook.getCurrentWorksheet().setActiveStyle(BasicStyles.BorderFrame());       // Assign predefined basic style as active style
+        workbook.getCurrentWorksheet().addCellRange(values, "A2:C2");                   // Add cell range
 
-        values = new ArrayList<>();                                         // Create a List of values
+        values = new ArrayList<>();                                                     // Create a List of values
         values.add("Cell A3");
         values.add("Cell B3");
         values.add("Cell C3");
-        workbook.getCurrentWorksheet().addCellRange(values, "A3:C3"); // Add cell range
+        workbook.getCurrentWorksheet().addCellRange(values, "A3:C3");                   // Add cell range
 
-        values = new ArrayList<>();                                         // Create a List of values
+        values = new ArrayList<>();                                                     // Create a List of values
         values.add("Cell A4");
         values.add("Cell B4");
         values.add("Cell C4");
-        workbook.getCurrentWorksheet().clearActiveStyle();                  // Clear the active style
-        workbook.getCurrentWorksheet().addCellRange(values, "A4:C4");       // Add cell range
+        workbook.getCurrentWorksheet().clearActiveStyle();                              // Clear the active style
+        workbook.getCurrentWorksheet().addCellRange(values, "A4:C4");                   // Add cell range
 
-        workbook.getWorkbookMetadata().setTitle("Test 5");                           // Add meta data to workbook
-        workbook.getWorkbookMetadata().setSubject("This is the 5th PicoXLSX test");  // Add meta data to workbook
-        workbook.getWorkbookMetadata().setCreator("PicoXLSX");                       // Add meta data to workbook
-        workbook.getWorkbookMetadata().setKeywords("Keyword1;Keyword2;Keyword3");    // Add meta data to workbook
+        workbook.getWorkbookMetadata().setTitle("Test 5");                              // Add meta data to workbook
+        workbook.getWorkbookMetadata().setSubject("This is the 5th PicoXLSX test");     // Add meta data to workbook
+        workbook.getWorkbookMetadata().setCreator("PicoXLSX");                          // Add meta data to workbook
+        workbook.getWorkbookMetadata().setKeywords("Keyword1;Keyword2;Keyword3");       // Add meta data to workbook
         try {
-            workbook.save();                                                    // Save the workbook
+            workbook.save();                                                            // Save the workbook
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -361,26 +361,26 @@ public class NanoXLSX4j {
      */
     private static void demo6() {
         Workbook workbook = new Workbook(outputFolder + "test6.xlsx", "Sheet1");  // Create new workbook
-        workbook.getCurrentWorksheet().addNextCell("Merged1");             // Add cell A1
-        workbook.getCurrentWorksheet().mergeCells("A1:C1");                 // Merge cells from A1 to C1
-        workbook.getCurrentWorksheet().goToNextRow();                       // Go to next row
-        workbook.getCurrentWorksheet().addNextCell(false);                  // Add cell A2
-        workbook.getCurrentWorksheet().mergeCells("A2:D2");                 // Merge cells from A2 to D1
-        workbook.getCurrentWorksheet().goToNextRow();                       // Go to next row
-        workbook.getCurrentWorksheet().addNextCell("22.2d");                // Add cell A3
-        workbook.getCurrentWorksheet().mergeCells("A3:E4");                 // Merge cells from A3 to E4
-        workbook.addWorksheet("Protected");                                 // Add a new worksheet
+        workbook.getCurrentWorksheet().addNextCell("Merged1");                  // Add cell A1
+        workbook.getCurrentWorksheet().mergeCells("A1:C1");                     // Merge cells from A1 to C1
+        workbook.getCurrentWorksheet().goToNextRow();                           // Go to next row
+        workbook.getCurrentWorksheet().addNextCell(false);                      // Add cell A2
+        workbook.getCurrentWorksheet().mergeCells("A2:D2");                     // Merge cells from A2 to D1
+        workbook.getCurrentWorksheet().goToNextRow();                           // Go to next row
+        workbook.getCurrentWorksheet().addNextCell("22.2d");                    // Add cell A3
+        workbook.getCurrentWorksheet().mergeCells("A3:E4");                     // Merge cells from A3 to E4
+        workbook.addWorksheet("Protected");                                     // Add a new worksheet
         workbook.getCurrentWorksheet().addAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.sort);               // Allow to sort sheet (worksheet is automatically set as protected)
         workbook.getCurrentWorksheet().addAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.insertRows);         // Allow to insert rows
         workbook.getCurrentWorksheet().addAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.selectLockedCells);  // Allow to select cells (locked cells caused automatically to select unlocked cells)
-        workbook.getCurrentWorksheet().addNextCell("Cell A1");              // Add cell A1
-        workbook.getCurrentWorksheet().addNextCell("Cell B1");              // Add cell B1
+        workbook.getCurrentWorksheet().addNextCell("Cell A1");                  // Add cell A1
+        workbook.getCurrentWorksheet().addNextCell("Cell B1");                  // Add cell B1
         workbook.getCurrentWorksheet().getCells().get("A1").setCellLockedState(false, true); // Set the locking state of cell A1 (not locked but value is hidden when cell selected)
-        workbook.addWorksheet("PWD-Protected");                             // Add a new worksheet
+        workbook.addWorksheet("PWD-Protected");                                 // Add a new worksheet
         workbook.getCurrentWorksheet().addCell("This worksheet is password protected. The password is:", 0, 0);  // Add cell A1
-        workbook.getCurrentWorksheet().addCell("test123", 0, 1);            // Add cell A2
-        workbook.getCurrentWorksheet().setSheetProtectionPassword("test123"); // Set the password "test123"
-        workbook.setWorkbookProtection(true, true, true, null);             // Set workbook protection (windows locked, structure locked, no password)
+        workbook.getCurrentWorksheet().addCell("test123", 0, 1);                // Add cell A2
+        workbook.getCurrentWorksheet().setSheetProtectionPassword("test123");   // Set the password "test123"
+        workbook.setWorkbookProtection(true, true, true, null);                 // Set workbook protection (windows locked, structure locked, no password)
         try {
             workbook.save();                                                    // Save the workbook            
         } catch (Exception e) {
@@ -392,34 +392,34 @@ public class NanoXLSX4j {
      * This demo shows the usage of hiding rows and columns, auto-filter and worksheet name sanitizing
      */
     private static void demo7() {
-        Workbook workbook = new Workbook(false);                            // Create new workbook without worksheet
-        String invalidSheetName = "Sheet?1";                                // ? is not allowed in the names of worksheets
+        Workbook workbook = new Workbook(false);                                 // Create new workbook without worksheet
+        String invalidSheetName = "Sheet?1";                                     // ? is not allowed in the names of worksheets
         String sanitizedSheetName = Worksheet.sanitizeWorksheetName(invalidSheetName, workbook); // Method to sanitize a worksheet name (replaces ? with _)
-        workbook.addWorksheet(sanitizedSheetName);                          // Add new worksheet
-        Worksheet ws = workbook.getCurrentWorksheet();                      // Create reference (shortening)
-        List<Object> values = new ArrayList<>();                            // Create a List of values
-        values.add("Cell A1");                                              // set a value
-        values.add("Cell B1");                                              // set a value
-        values.add("Cell C1");                                              // set a value
-        values.add("Cell D1");                                              // set a value
-        ws.addCellRange(values, "A1:D1");                                   // Insert cell range
-        values = new ArrayList<>();                                         // Create a List of values
-        values.add("Cell A2");                                              // set a value
-        values.add("Cell B2");                                              // set a value
-        values.add("Cell C2");                                              // set a value
-        values.add("Cell D2");                                              // set a value
-        ws.addCellRange(values, "A2:D2");                                   // Insert cell range
-        values = new ArrayList<>();                                         // Create a List of values
+        workbook.addWorksheet(sanitizedSheetName);                               // Add new worksheet
+        Worksheet ws = workbook.getCurrentWorksheet();                           // Create reference (shortening)
+        List<Object> values = new ArrayList<>();                                 // Create a List of values
+        values.add("Cell A1");                                                // set a value
+        values.add("Cell B1");                                                // set a value
+        values.add("Cell C1");                                                // set a value
+        values.add("Cell D1");                                                // set a value
+        ws.addCellRange(values, "A1:D1");                                       // Insert cell range
+        values = new ArrayList<>();                                             // Create a List of values
+        values.add("Cell A2");                                               // set a value
+        values.add("Cell B2");                                               // set a value
+        values.add("Cell C2");                                               // set a value
+        values.add("Cell D2");                                               // set a value
+        ws.addCellRange(values, "A2:D2");                                      // Insert cell range
+        values = new ArrayList<>();                                            // Create a List of values
         values.add("Cell A3");                                              // set a value
         values.add("Cell B3");                                              // set a value
         values.add("Cell C3");                                              // set a value
         values.add("Cell D3");                                              // set a value
-        ws.addCellRange(values, "A3:D3");                                   // Insert cell range
-        ws.addHiddenColumn("C");                                            // Hide column C
-        ws.addHiddenRow(1);                                                 // Hider row 2 (zero-based: 1)
-        ws.setAutoFilter(1, 3);                                             // Set auto-filter for column B to D
+        ws.addCellRange(values, "A3:D3");                                     // Insert cell range
+        ws.addHiddenColumn("C");                                              // Hide column C
+        ws.addHiddenRow(1);                                                   // Hider row 2 (zero-based: 1)
+        ws.setAutoFilter(1, 3);                                               // Set auto-filter for column B to D
         try {
-            workbook.saveAs(outputFolder + "test7.xlsx");                       // Save the workbook            
+            workbook.saveAs(outputFolder + "test7.xlsx");                     // Save the workbook            
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -429,19 +429,21 @@ public class NanoXLSX4j {
      * This demo shows the usage of cell and worksheet selection, auto-sanitizing of worksheet names
      */
     private static void demo8() {
-        Workbook workbook = new Workbook(outputFolder + "test8.xlsx", "Sheet*1", true);  // Create new workbook with invalid sheet name (*); Auto-Sanitizing will replace * with _
-        workbook.getCurrentWorksheet().addNextCell("Test");                // Add cell A1
-        workbook.getCurrentWorksheet().setSelectedCells("A5:B10");        // Set the selection to the range A5:B10
-        workbook.addWorksheet("Sheet2");                    // Create new worksheet
-        workbook.getCurrentWorksheet().addNextCell("Test2");                // Add cell A1
-        Range range = new Range(new Address(1, 1), new Address(3, 3));        // Create a cell range for the selection B2:D4
-        workbook.getCurrentWorksheet().setSelectedCells(range);        // Set the selection to the range
-        workbook.addWorksheet("Sheet2", true);                // Create new worksheet with already existing name; The name will be changed to Sheet21 due to auto-sanitizing (appending of 1)
-        workbook.getCurrentWorksheet().addNextCell("Test3");                // Add cell A1
-        workbook.getCurrentWorksheet().setSelectedCells(new Address(2, 2), new Address(4, 4)); // Set the selection to the range C3:E5
-        workbook.setSelectedWorksheet(1);                    // Set the second Tab as selected (zero-based: 1)
+        Workbook workbook = new Workbook(outputFolder + "test8.xlsx", "Sheet*1", true);     // Create new workbook with invalid sheet name (*); Auto-Sanitizing will replace * with _
+        workbook.getCurrentWorksheet().addNextCell("Test");                                 // Add cell A1
+        workbook.getCurrentWorksheet().addSelectedCells("A5:B10");		                    // Set the selection to the range A5:B10
+        workbook.getCurrentWorksheet().addSelectedCells("D2:D2");                           // Add another cell as selected on this worksheet
+        workbook.addWorksheet("Sheet2");                                                    // Create new worksheet
+        workbook.getCurrentWorksheet().addNextCell("Test2");                                // Add cell A1
+        Range range = new Range(new Address(1, 1), new Address(3, 3));                      // Create a cell range for the selection B2:D4
+        workbook.getCurrentWorksheet().setSelectedCells(range);                             // Set the selection to the range (deprecated method to clear all previous definitions)
+        workbook.addWorksheet("Sheet2", true);                                              // Create new worksheet with already existing name; The name will be changed to Sheet21 due to auto-sanitizing (appending of 1)
+        workbook.getCurrentWorksheet().addNextCell("Test3");                                // Add cell A1
+        workbook.getCurrentWorksheet().addSelectedCells(new Address(2, 2), new Address(4, 4));	// Set the selection to the range C3:E5
+        workbook.getCurrentWorksheet().addSelectedCells(new Address(5, 1), new Address(5, 1));	// Set the selection to F2 as range
+        workbook.setSelectedWorksheet(1);                                                   // Set the second Tab as selected (zero-based: 1)
         try {
-            workbook.save();                                                    // Save the workbook            
+            workbook.save();                                                                // Save the workbook            
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -508,7 +510,7 @@ public class NanoXLSX4j {
         workbook.WS.value(c);                                               // Add the formula to the worksheet
 
         try {
-            workbook.save();                                                  // Save the workbook
+            workbook.save();                                                // Save the workbook
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -518,24 +520,24 @@ public class NanoXLSX4j {
      * This demo shows the usage of style appending
      */
     private static void demo10() {
-        Workbook wb = new Workbook(outputFolder + "demo10.xlsx", "styleAppending");  // Create a new workbook
+        Workbook wb = new Workbook(outputFolder + "demo10.xlsx", "styleAppending");     // Create a new workbook
 
-        Style style = new Style();                                                              // Create a new style
-        style.append(BasicStyles.Bold());                                                       // Append a basic style (bold)
-        style.append(BasicStyles.Underline());                                                  // Append a basic style (underline)
-        style.append(BasicStyles.font("Arial Black", 20));                    // Append a basic style (custom Font)
+        Style style = new Style();                                                      // Create a new style
+        style.append(BasicStyles.Bold());                                               // Append a basic style (bold)
+        style.append(BasicStyles.Underline());                                          // Append a basic style (underline)
+        style.append(BasicStyles.font("Arial Black", 20));                              // Append a basic style (custom Font)
 
-        wb.WS.value("THIS IS A TEST", style);                                             // Add text and the appended style
-        wb.WS.down();                                                                           // Go to a new row
+        wb.WS.value("THIS IS A TEST", style);                                           // Add text and the appended style
+        wb.WS.down();                                                                   // Go to a new row
 
-        Style chainedStyle = new Style()                                                        // Create a new style...
-                .append(BasicStyles.Underline())                                                // ... and append another part (chaining underline)
-                .append(BasicStyles.colorizedText("FF00FF"))                               // ... and append another part (chaining colorized text)
-                .append(BasicStyles.colorizedBackground("AAFFAA"));                        // ... and append another part (chaining colorized background)
+        Style chainedStyle = new Style()                                                // Create a new style...
+                .append(BasicStyles.Underline())                                        // ... and append another part (chaining underline)
+                .append(BasicStyles.colorizedText("FF00FF"))                            // ... and append another part (chaining colorized text)
+                .append(BasicStyles.colorizedBackground("AAFFAA"));                     // ... and append another part (chaining colorized background)
 
-        wb.WS.value("Another test", chainedStyle);                                        // Add text and the appended style
+        wb.WS.value("Another test", chainedStyle);                                      // Add text and the appended style
         try {
-            wb.save();                                                                          // Save the workbook
+            wb.save();                                                                  // Save the workbook
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

@@ -111,11 +111,13 @@ public class StyleReader {
 			Border borderStyle = new Border();
 			String diagonalDown = border.getAttribute("diagonalDown");
 			String diagonalUp = border.getAttribute("diagonalUp");
-			if (diagonalDown != null && diagonalDown.equals("1")) {
-				borderStyle.setDiagonalDown(true);
+			if (diagonalDown != null) {
+				int value = ReaderUtils.parseBinaryBoolean(diagonalDown);
+				borderStyle.setDiagonalDown(value == 1);
 			}
-			if (diagonalUp != null && diagonalUp.equals("1")) {
-				borderStyle.setDiagonalUp(true);
+			if (diagonalUp != null) {
+				int value = ReaderUtils.parseBinaryBoolean(diagonalUp);
+				borderStyle.setDiagonalUp(value == 1);
 			}
 			XmlDocument.XmlNode innerNode = getChildNode(border, "diagonal");
 			if (innerNode != null) {
@@ -287,18 +289,25 @@ public class StyleReader {
 			if (childNode.getName().equalsIgnoreCase("xf")) {
 				CellXf cellXfStyle = new CellXf();
 				String attribute = childNode.getAttribute("applyAlignment");
-				if (attribute != null && attribute.equals("1")) {
-					cellXfStyle.setForceApplyAlignment(true);
+				if (attribute != null) {
+					int value = ReaderUtils.parseBinaryBoolean(attribute);
+					cellXfStyle.setForceApplyAlignment(value == 1);
 				}
 				XmlDocument.XmlNode alignmentNode = getChildNode(childNode, "alignment");
 				if (alignmentNode != null) {
 					attribute = alignmentNode.getAttribute("shrinkToFit");
-					if (attribute != null && attribute.equals("1")) {
-						cellXfStyle.setAlignment(CellXf.TextBreakValue.shrinkToFit);
+					if (attribute != null) {
+						int value = ReaderUtils.parseBinaryBoolean(attribute);
+						if (value == 1) {
+							cellXfStyle.setAlignment(CellXf.TextBreakValue.shrinkToFit);
+						}
 					}
 					attribute = alignmentNode.getAttribute("wrapText");
-					if (attribute != null && attribute.equals("1")) {
-						cellXfStyle.setAlignment(CellXf.TextBreakValue.wrapText);
+					if (attribute != null) {
+						int value = ReaderUtils.parseBinaryBoolean(attribute);
+						if (value == 1) {
+							cellXfStyle.setAlignment(CellXf.TextBreakValue.wrapText);
+						}
 					}
 					attribute = alignmentNode.getAttribute("horizontal");
 					if (attribute != null) {
@@ -321,12 +330,18 @@ public class StyleReader {
 				XmlDocument.XmlNode protectionNode = getChildNode(childNode, "protection");
 				if (protectionNode != null) {
 					attribute = protectionNode.getAttribute("hidden");
-					if (attribute != null && attribute.equals("1")) {
-						cellXfStyle.setHidden(true);
+					if (attribute != null) {
+						int value = ReaderUtils.parseBinaryBoolean(attribute);
+						if (value == 1) {
+							cellXfStyle.setHidden(true);
+						}
 					}
 					attribute = protectionNode.getAttribute("locked");
-					if (attribute != null && attribute.equals("1")) {
-						cellXfStyle.setLocked(true);
+					if (attribute != null) {
+						int value = ReaderUtils.parseBinaryBoolean(attribute);
+						if (value == 1) {
+							cellXfStyle.setLocked(true);
+						}
 					}
 				}
 
@@ -334,19 +349,17 @@ public class StyleReader {
 				this.styleReaderContainer.addStyleComponent(cellXfStyle);
 
 				Style style = new Style();
-				IntParser id;
+				ReaderUtils.IntParser id;
 
-				id = IntParser.tryParse(childNode.getAttribute("numFmtId"));
+				id = ReaderUtils.IntParser.tryParse(childNode.getAttribute("numFmtId"));
 				NumberFormat format = this.styleReaderContainer.getNumberFormat(id.value);
 				if (!id.hasValue || format == null) {
-					NumberFormat.NumberFormatEvaluation evaluation = NumberFormat.tryParseFormatNumber(id.value); // Validity is neglected here to prevent
-																													// unhandled crashes. If invalid, the format
-																													// will be declared as 'none' // Invalid
-																													// values should not occur at all (malformed
-																													// Excel files); Undefined values may occur
-																													// if the file was saved by an Excel version
-																													// that has implemented yet unknown format
-																													// numbers (undefined in NanoXLSX)
+					// Validity is neglected here to prevent unhandled crashes. If invalid, the
+					// format will be declared as 'none' Invalid values should not occur at all
+					// (malformed Excel files); Undefined values may occur if the file was saved by
+					// an Excel version that has implemented yet unknown format numbers (undefined
+					// in NanoXLSX)
+					NumberFormat.NumberFormatEvaluation evaluation = NumberFormat.tryParseFormatNumber(id.value);
 					// Invalid values should not occur at all (malformed Excel files).
 					// Undefined values may occur if the file was saved by an Excel version that has
 					// implemented yet unknown format numbers (undefined in NanoXLSX)
@@ -355,19 +368,19 @@ public class StyleReader {
 					format.setInternalID(this.styleReaderContainer.getNextNumberFormatId());
 					this.styleReaderContainer.addStyleComponent(format);
 				}
-				id = IntParser.tryParse(childNode.getAttribute("borderId"));
+				id = ReaderUtils.IntParser.tryParse(childNode.getAttribute("borderId"));
 				Border border = styleReaderContainer.getBorder(id.value);
 				if (!id.hasValue || border == null) {
 					border = new Border();
 					border.setInternalID(styleReaderContainer.getNextBorderId());
 				}
-				id = IntParser.tryParse(childNode.getAttribute("fillId"));
+				id = ReaderUtils.IntParser.tryParse(childNode.getAttribute("fillId"));
 				Fill fill = styleReaderContainer.getFill(id.value);
 				if (!id.hasValue || fill == null) {
 					fill = new Fill();
 					fill.setInternalID(styleReaderContainer.getNextFillId());
 				}
-				id = IntParser.tryParse(childNode.getAttribute("fontId"));
+				id = ReaderUtils.IntParser.tryParse(childNode.getAttribute("fontId"));
 				Font font = styleReaderContainer.getFont(id.value);
 				if (!id.hasValue || font == null) {
 					font = new Font();
@@ -559,29 +572,6 @@ public class StyleReader {
 			this.attributeIsPresent = value != null;
 			this.nodeIsPresent = true;
 			this.value = value;
-		}
-	}
-
-	/**
-	 * Parser class to handle nullable integers
-	 */
-	private static class IntParser {
-		public boolean hasValue;
-		public int value;
-
-		public IntParser(String rawValue) {
-			try {
-				value = Integer.parseInt(rawValue);
-				hasValue = true;
-			}
-			catch (Exception e) {
-				value = 0;
-				hasValue = false;
-			}
-		}
-
-		public static IntParser tryParse(String rawValue) {
-			return new IntParser(rawValue);
 		}
 	}
 

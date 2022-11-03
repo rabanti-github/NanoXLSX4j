@@ -143,12 +143,14 @@ public class WorkbookReader {
 	private void getProtectionInformation(XmlDocument.XmlNode node) {
 		this.wbProtected = true;
 		String attribute = node.getAttribute("lockWindows");
-		if (attribute != null && attribute.equals("1")) {
-			this.lockWindows = true;
+		if (attribute != null) {
+			int value = ReaderUtils.parseBinaryBoolean(attribute);
+			this.lockWindows = value == 1;
 		}
 		attribute = node.getAttribute("lockStructure");
-		if (attribute != null && attribute.equals("1")) {
-			this.lockStructure = true;
+		if (attribute != null) {
+			int value = ReaderUtils.parseBinaryBoolean(attribute);
+			this.lockStructure = value == 1;
 		}
 		attribute = node.getAttribute("workbookPassword");
 		if (attribute != null) {

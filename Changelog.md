@@ -7,7 +7,9 @@ Release Date: **03.11.2022**
 
 - Added a several methods in the Worksheet class to add multiple ranges of selected cells
 - Fixed a bug in the reader function to read worksheets with multiple ranges of selected cells
+- Fixed a bug in several readers to cope (internally) with bools, represented by numbers and textual expressions
 - Renamed APPLICATIONNAME to APPLICATION_NAME in Version class
+- Updated example in demo
 
 ## v2.0.1
 

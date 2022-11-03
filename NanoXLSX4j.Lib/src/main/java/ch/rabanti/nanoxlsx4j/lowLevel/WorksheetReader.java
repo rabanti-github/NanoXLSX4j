@@ -495,7 +495,13 @@ public class WorksheetReader {
 				width = Float.parseFloat(attribute);
 			}
 			attribute = columnNode.getAttribute("hidden");
-			boolean hidden = attribute != null && attribute.equals("1");
+			boolean hidden = false;
+			if (attribute != null){
+				int value = ReaderUtils.parseBinaryBoolean(attribute);
+				if (value == 1){
+					hidden =true;
+				}
+			}
             for (int index : indices) {
 				Column column = new Column(index - 1); // transform to zero-based
 				column.setWidth(width);
@@ -1547,8 +1553,9 @@ public class WorksheetReader {
 			if (heightProperty != null) {
 				rows.get(row).setHeight(Float.parseFloat(heightProperty));
 			}
-			if (hiddenProperty != null && hiddenProperty.equals("1")) {
-				rows.get(row).setHidden(true);
+			if (hiddenProperty != null) {
+				int value = ReaderUtils.parseBinaryBoolean(hiddenProperty);
+				rows.get(row).setHidden(value == 1);
 			}
 		}
 

@@ -1184,6 +1184,7 @@ public class XlsxWriter {
 		sb.append(">");
 		createPaneString(worksheet, sb);
 		if (!worksheet.getSelectedCellRanges().isEmpty()) {
+			sb.append("<selection sqref=\"");
 			for (int i = 0; i < worksheet.getSelectedCellRanges().size(); i++) {
 				sb.append(worksheet.getSelectedCellRanges().get(i).toString());
 				if (i < worksheet.getSelectedCellRanges().size() - 1) {
