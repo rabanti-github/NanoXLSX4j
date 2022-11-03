@@ -1,5 +1,14 @@
 # Change Log
 
+## v2.1.0
+
+---
+Release Date: **03.11.2022**
+
+- Added a several methods in the Worksheet class to add multiple ranges of selected cells
+- Fixed a bug in the reader function to read worksheets with multiple ranges of selected cells
+- Renamed APPLICATIONNAME to APPLICATION_NAME in Version class
+
 ## v2.0.1
 
 ---

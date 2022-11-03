@@ -15,8 +15,8 @@ public class VersionTest {
 	@Test
 	public void versionTest() {
 		Assertions.assertNotEquals("", Version.VERSION);
-		assertNotEquals("", Version.APPLICATIONNAME);
+		assertNotEquals("", Version.APPLICATION_NAME);
 		assertNotNull(Version.VERSION);
-		assertNotNull(Version.APPLICATIONNAME);
+		assertNotNull(Version.APPLICATION_NAME);
 	}
 }

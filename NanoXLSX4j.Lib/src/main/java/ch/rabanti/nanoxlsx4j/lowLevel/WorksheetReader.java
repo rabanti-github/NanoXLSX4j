@@ -60,7 +60,7 @@ public class WorksheetReader {
 	private Float defaultRowHeight;
 	private final Map<Integer, RowDefinition> rows = new HashMap<>();
 	private final List<Range> mergedCells = new ArrayList<>();
-	private Range selectedCells = null;
+	private final List<Range> selectedCells = new ArrayList<>();
 	private final Map<Worksheet.SheetProtectionValue, Integer> worksheetProtection = new HashMap<>();
 	private String worksheetProtectionHash;
 	private PaneDefinition paneSplitValue;
@@ -139,11 +139,11 @@ public class WorksheetReader {
 	}
 
 	/**
-	 * Gets the selected cells (panes are currently not considered)
+	 * Gets the selected cell ranges (panes are currently not considered)
 	 *
-	 * @return Selected cells range if defined, otherwise null
+	 * @return Selected cell ranges if defined, otherwise null
 	 */
-	public Range getSelectedCells() {
+	public List<Range> getSelectedCells() {
 		return selectedCells;
 	}
 
@@ -278,11 +278,15 @@ public class WorksheetReader {
 						for (XmlDocument.XmlNode selectionNode : selectionNodes) {
 							String attribute = selectionNode.getAttribute("sqref");
 							if (attribute != null) {
-								if (attribute.contains(":")) {
-									this.selectedCells = new Range(attribute);
+								if (attribute.contains(" ")){
+									// Multiple ranges
+									String[] ranges = attribute.split(" ");
+									for (String range : ranges){
+										collectSelectedCells(range);
+									}
 								}
-								else {
-									this.selectedCells = new Range(attribute + ":" + attribute);
+								else{
+									collectSelectedCells(attribute);
 								}
 							}
 						}
@@ -330,6 +334,21 @@ public class WorksheetReader {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Resolves the selected cells of a range or a single cell
+	 * @param attribute Raw range/cell as string
+	 */
+	private void collectSelectedCells(String attribute) {
+		if (attribute.contains(":")) {
+			// One range
+			this.selectedCells.add(new Range(attribute));
+		}
+		else {
+			// One cell
+			this.selectedCells.add(new Range(attribute + ":" + attribute));
 		}
 	}
 

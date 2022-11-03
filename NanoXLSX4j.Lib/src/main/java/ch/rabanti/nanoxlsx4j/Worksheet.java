@@ -202,7 +202,7 @@ public class Worksheet {
 	private Map<Integer, Boolean> hiddenRows;
 	private Map<String, Range> mergedCells;
 	private Map<Integer, Float> rowHeights;
-	private Range selectedCells;
+	private List<Range> selectedCells;
 	private int sheetID;
 	private String sheetName;
 	private String sheetProtectionPassword = null;
@@ -415,45 +415,70 @@ public class Worksheet {
 	}
 
 	/**
-	 * Gets the range of selected cells of this worksheet. Null if no cells are
-	 * selected
+	 * Gets either null (if no cells are selected), or the first defined range of
+	 * selected cells
 	 *
-	 * @return Cell range of the selected cells
+	 * @return First cell range of the selected cells
+	 * @deprecated This method is a deprecated subset of the function
+	 *             SelectedCellRanges. SelectedCellRanges will get this function
+	 *             name in a future version. Therefore, the type will change
 	 */
 	public Range getSelectedCells() {
+		if (selectedCells.isEmpty()) {
+			return null;
+		}
+		else {
+			return selectedCells.get(0);
+		}
+	}
+
+	/**
+	 * Gets all ranges of selected cells of this worksheet. An empty list is
+	 * returned if no cells are selected
+	 * 
+	 * @return All ranges of the selected cells
+	 */
+	public List<Range> getSelectedCellRanges() {
 		return selectedCells;
 	}
 
 	/**
-	 * Sets the selected cells on this worksheet. Null removes the selected cell
-	 * range
+	 * Sets a single range of selected cells on this worksheet. All existing ranges
+	 * will be removed range
 	 *
 	 * @param range
-	 *            Cell range to select
+	 *            Range as string to set as single cell range for selected cells, or
+	 *            null to remove the selected cells
 	 * @throws RangeException
 	 *             Thrown if the passed range out of range
 	 * @throws FormatException
 	 *             Thrown if the passed range is malformed
+	 * @deprecated This method is a deprecated subset of the function
+	 *             AddSelectedCells. It will be removed in a future version
 	 */
 	public void setSelectedCells(String range) {
+		removeSelectedCells();
 		if (range == null) {
-			this.selectedCells = null;
+			this.selectedCells.clear();
+			return;
 		}
 		else {
-			this.selectedCells = Cell.resolveCellRange(range);
+			setSelectedCells(new Range(range));
 		}
-
 	}
 
 	/**
-	 * Sets the selected cells on this worksheet. Null removes the selected cell
-	 * range
+	 * Sets a single range of selected cells on this worksheet. All existing ranges
+	 * will be removed. Null will remove all selected cells
 	 *
 	 * @param range
-	 *            Cell range to select
+	 *            Range to set as single cell range for selected cells
+	 * @deprecated This method is a deprecated subset of the function
+	 *             AddSelectedCells. It will be removed in a future version
 	 */
 	public void setSelectedCells(Range range) {
-        this.selectedCells = range;
+		removeSelectedCells();
+		addSelectedCells(range);
 	}
 
 	/**
@@ -461,21 +486,52 @@ public class Worksheet {
 	 * selected cell range is removed
 	 *
 	 * @param startAddress
-	 *            Start address of the range
+	 *            Start address of the range to set as single cell range for
+	 *            selected cells
 	 * @param endAddress
-	 *            End address of the range
+	 *            End address of the range to set as single cell range for selected
+	 *            cells
 	 * @throws RangeException
 	 *             Thrown if either the start address or end address is null
+	 * @deprecated This method is a deprecated subset of the function
+	 *             AddSelectedCells. It will be removed in a future version
 	 */
 	public void setSelectedCells(Address startAddress, Address endAddress) {
-		if (startAddress == null && endAddress != null || startAddress != null && endAddress == null) {
-			throw new RangeException("Either the start or end address is null (invalid range)");
-		}
-		if (startAddress == null && endAddress == null) {
-			this.selectedCells = null;
-		}
-		else {
-			this.selectedCells = new Range(startAddress, endAddress);
+		setSelectedCells(new Range(startAddress, endAddress));
+	}
+
+	/**
+	 * Adds a range to the selected cells on this worksheet
+	 * 
+	 * @param range
+	 *            Cell range to be added as selected cells
+	 */
+	public void addSelectedCells(Range range) {
+		selectedCells.add(range);
+	}
+
+	/**
+	 * Adds a range to the selected cells on this worksheet
+	 * 
+	 * @param startAddress
+	 *            Start address of the range to add
+	 * @param endAddress
+	 *            End address of the range to add
+	 */
+	public void addSelectedCells(Address startAddress, Address endAddress) {
+		selectedCells.add(new Range(startAddress, endAddress));
+	}
+
+	/**
+	 * Adds a range to the selected cells on this worksheet. Null or empty as value
+	 * will be ignored
+	 * 
+	 * @param range
+	 *            Cell range to add as selected cells
+	 */
+	public void addSelectedCells(String range) {
+		if (range != null) {
+			selectedCells.add(Cell.resolveCellRange(range));
 		}
 	}
 
@@ -2350,6 +2406,7 @@ public class Worksheet {
 		this.sheetProtectionValues = new ArrayList<>();
 		this.hiddenRows = new HashMap<>();
 		this.columns = new HashMap<>();
+		this.selectedCells = new ArrayList<>();
 	}
 
 	/**
@@ -2465,8 +2522,7 @@ public class Worksheet {
 	/**
 	 * Method to resolve all merged cells of the worksheet. Only the value of the
 	 * very first cell of the merged cells range will be visible. The other values
-	 * are still present (set to EMPTY) but will not be stored in the
-	 * worksheet.<br>
+	 * are still present (set to EMPTY) but will not be stored in the worksheet.<br>
 	 * This is an internal method. There is no need to use it.
 	 *
 	 * @throws StyleException
@@ -2592,7 +2648,7 @@ public class Worksheet {
 	 * Removes the cell selection of this worksheet
 	 */
 	public void removeSelectedCells() {
-		this.selectedCells = null;
+		this.selectedCells.clear();
 	}
 
 	/**
@@ -2602,7 +2658,7 @@ public class Worksheet {
 	 *            Row number (zero-based)
 	 */
 	public void removeRowHeight(int rowNumber) {
-        rowHeights.remove(rowNumber);
+		rowHeights.remove(rowNumber);
 	}
 
 	/**
@@ -2612,7 +2668,7 @@ public class Worksheet {
 	 *            Allowed action on the worksheet or cells
 	 */
 	public void removeAllowedActionOnSheetProtection(SheetProtectionValue value) {
-        sheetProtectionValues.remove(value);
+		sheetProtectionValues.remove(value);
 	}
 
 	/**
@@ -2626,7 +2682,7 @@ public class Worksheet {
 	 *             set the active style
 	 */
 	public void setActiveStyle(Style style) {
-        this.useActiveStyle = style != null;
+		this.useActiveStyle = style != null;
 		this.activeStyle = style;
 	}
 
@@ -2835,8 +2891,10 @@ public class Worksheet {
 		for (Map.Entry<Integer, Float> row : this.rowHeights.entrySet()) {
 			copy.rowHeights.put(row.getKey(), row.getValue());
 		}
-		if (this.selectedCells != null) {
-			copy.selectedCells = this.selectedCells.copy();
+		if (this.selectedCells.size() > 0) {
+			for (Range selectedCellRange : this.selectedCells) {
+				copy.addSelectedCells(selectedCellRange);
+			}
 		}
 		copy.sheetProtectionPassword = this.sheetProtectionPassword;
 		copy.sheetProtectionPasswordHash = this.sheetProtectionPasswordHash;

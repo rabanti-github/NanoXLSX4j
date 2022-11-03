@@ -287,7 +287,7 @@ public class Metadata {
 	 * Default constructor
 	 */
 	public Metadata() {
-		this.application = Version.APPLICATIONNAME;
+		this.application = Version.APPLICATION_NAME;
 		this.applicationVersion = Version.VERSION;
 
 	}

@@ -205,7 +205,9 @@ public class XlsxReader {
 				ws.setDefaultRowHeight(reader.getValue().getDefaultRowHeight());
 			}
 			if (reader.getValue().getSelectedCells() != null) {
-				ws.setSelectedCells(reader.getValue().getSelectedCells());
+				for(Range range : reader.getValue().getSelectedCells()){
+					ws.addSelectedCells(range);
+				}
 			}
 			for (Range range : reader.getValue().getMergedCells()) {
 				ws.mergeCells(range);

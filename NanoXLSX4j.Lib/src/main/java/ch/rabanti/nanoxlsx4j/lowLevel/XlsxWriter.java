@@ -1183,11 +1183,15 @@ public class XlsxWriter {
 		}
 		sb.append(">");
 		createPaneString(worksheet, sb);
-		if (worksheet.getSelectedCells() != null) {
-			sb.append("<selection sqref=\"");
-			sb.append(worksheet.getSelectedCells().toString());
+		if (!worksheet.getSelectedCellRanges().isEmpty()) {
+			for (int i = 0; i < worksheet.getSelectedCellRanges().size(); i++) {
+				sb.append(worksheet.getSelectedCellRanges().get(i).toString());
+				if (i < worksheet.getSelectedCellRanges().size() - 1) {
+					sb.append(" ");
+				}
+			}
 			sb.append("\" activeCell=\"");
-			sb.append(worksheet.getSelectedCells().StartAddress);
+			sb.append(worksheet.getSelectedCellRanges().get(0).StartAddress.toString());
 			sb.append("\"/>");
 		}
 		sb.append("</sheetView></sheetViews>");

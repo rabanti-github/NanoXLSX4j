@@ -178,9 +178,9 @@ public class StyleReader {
 				}
 				XmlDocument.XmlNode backgroundNode = getChildNode(innerNode, "bgColor");
 				if (backgroundNode != null) {
-					String backgroundRgba = backgroundNode.getAttribute("rgb");
-					if (backgroundRgba != null) {
-						fillStyle.setBackgroundColor(backgroundRgba);
+					String backgroundArgb = backgroundNode.getAttribute("rgb");
+					if (backgroundArgb != null) {
+						fillStyle.setBackgroundColor(backgroundArgb);
 					}
 					String backgroundIndex = backgroundNode.getAttribute("indexed");
 					if (backgroundIndex != null) {

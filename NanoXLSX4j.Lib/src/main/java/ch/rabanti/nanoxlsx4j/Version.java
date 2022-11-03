@@ -17,10 +17,10 @@ public final class Version {
 	/**
 	 * Application name of the library
 	 */
-	public static final String APPLICATIONNAME = "NanoXLSX4j";
+	public static final String APPLICATION_NAME = "NanoXLSX4j";
 	/**
 	 * Version of the library
 	 */
-	public static final String VERSION = "2.0200"; // 2.0.2
+	public static final String VERSION = "2.1000"; // 2.1.0
 
 }
