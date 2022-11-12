@@ -254,15 +254,15 @@ public class NumberFormat extends AbstractStyle {
 	}
 
 	/**
-	 * Sets the custom format code in the notation of Excel
+	 * Sets the raw custom format code in the notation of Excel. <b>The code is not escaped or un-escaped (on workbook loading)</b>
 	 *
 	 * @param customFormatCode
 	 *            Custom format code
 	 * @throws FormatException
 	 *             thrown if the passed value is null or empty
-	 * @apiNote Do not escape backslashes in custom format codes by
-	 *          double-backslashes (four in code), since escaping will be performed
-	 *          on saving the file. Unescaping will be also performed on loading
+	 * @apiNote  Currently, there is no auto-escaping applied to custom format strings. For instance, to add a white space,
+	 * internally it is escaped by a backspace (\ ). To get a valid custom format code, this escaping must be applied manually,
+	 * according to OOXML specs: Part 1 - Fundamentals And Markup Language Reference, Chapter 18.8.31
 	 */
 	public void setCustomFormatCode(String customFormatCode) {
 		if (customFormatCode == null || customFormatCode.isEmpty()) {
@@ -420,34 +420,6 @@ public class NumberFormat extends AbstractStyle {
 			default:
 				return false;
 		}
-	}
-
-	/**
-	 * Method to escape Backslashes in custom format codes.
-	 *
-	 * @param rawFormatCode
-	 *            Raw value to escape
-	 * @return Escaped format code
-	 */
-	public static String escapeFormatCode(String rawFormatCode) {
-		return rawFormatCode.replace("\\", "\\\\");
-	}
-
-	/**
-	 * Method to unescape a custom format code when reading a workbook
-	 *
-	 * @param escapedFormatCode
-	 *            Escaped value to unescape
-	 * @return Unescaped format code
-	 */
-	public static String unEscapeFormatCode(String escapedFormatCode) {
-		if (!escapedFormatCode.contains("\\")) {
-			return escapedFormatCode;
-		}
-		// TODO: Add further rules, if discovered
-		String intermediateEscaped = escapedFormatCode.replace("\\\\", "\0");
-		intermediateEscaped = intermediateEscaped.replace("\\", "");
-		return intermediateEscaped.replace("\0", "\\");
 	}
 
 	// ### S U B - C L A S S E S ###

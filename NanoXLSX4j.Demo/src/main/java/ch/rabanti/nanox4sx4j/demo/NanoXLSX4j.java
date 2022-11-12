@@ -172,7 +172,7 @@ public class NanoXLSX4j {
         workbook.getCurrentWorksheet().addNextCellFormula("B1*22");         // Add cell A3 as formula (B1 times 22)
         workbook.getCurrentWorksheet().addNextCellFormula("ROUNDDOWN(A2,1)"); // Add cell B3 as formula (Floor A2 with one decimal place)
         workbook.getCurrentWorksheet().addNextCellFormula("PI()");          // Add cell C3 as formula (Pi = 3.14.... )
-        workbook.addWorksheet("Addresses");                                                    // Add new worksheet
+        workbook.addWorksheet("Addresses");                                 // Add new worksheet
         workbook.getCurrentWorksheet().setCurrentCellDirection(Worksheet.CellDirection.Disabled);    // Disable automatic addressing
         workbook.getCurrentWorksheet().addCell("Default", 0, 0);            // Add a value
         Address address = new Address(1, 0, Cell.AddressType.Default);      // Create Address with default behavior
@@ -398,28 +398,28 @@ public class NanoXLSX4j {
         workbook.addWorksheet(sanitizedSheetName);                               // Add new worksheet
         Worksheet ws = workbook.getCurrentWorksheet();                           // Create reference (shortening)
         List<Object> values = new ArrayList<>();                                 // Create a List of values
-        values.add("Cell A1");                                                // set a value
-        values.add("Cell B1");                                                // set a value
-        values.add("Cell C1");                                                // set a value
-        values.add("Cell D1");                                                // set a value
-        ws.addCellRange(values, "A1:D1");                                       // Insert cell range
-        values = new ArrayList<>();                                             // Create a List of values
-        values.add("Cell A2");                                               // set a value
-        values.add("Cell B2");                                               // set a value
-        values.add("Cell C2");                                               // set a value
-        values.add("Cell D2");                                               // set a value
-        ws.addCellRange(values, "A2:D2");                                      // Insert cell range
-        values = new ArrayList<>();                                            // Create a List of values
-        values.add("Cell A3");                                              // set a value
-        values.add("Cell B3");                                              // set a value
-        values.add("Cell C3");                                              // set a value
-        values.add("Cell D3");                                              // set a value
-        ws.addCellRange(values, "A3:D3");                                     // Insert cell range
-        ws.addHiddenColumn("C");                                              // Hide column C
-        ws.addHiddenRow(1);                                                   // Hider row 2 (zero-based: 1)
-        ws.setAutoFilter(1, 3);                                               // Set auto-filter for column B to D
+        values.add("Cell A1");                                                   // set a value
+        values.add("Cell B1");                                                   // set a value
+        values.add("Cell C1");                                                   // set a value
+        values.add("Cell D1");                                                   // set a value
+        ws.addCellRange(values, "A1:D1");                                        // Insert cell range
+        values = new ArrayList<>();                                              // Create a List of values
+        values.add("Cell A2");                                                   // set a value
+        values.add("Cell B2");                                                   // set a value
+        values.add("Cell C2");                                                   // set a value
+        values.add("Cell D2");                                                   // set a value
+        ws.addCellRange(values, "A2:D2");                                        // Insert cell range
+        values = new ArrayList<>();                                              // Create a List of values
+        values.add("Cell A3");                                                   // set a value
+        values.add("Cell B3");                                                   // set a value
+        values.add("Cell C3");                                                   // set a value
+        values.add("Cell D3");                                                   // set a value
+        ws.addCellRange(values, "A3:D3");                                        // Insert cell range
+        ws.addHiddenColumn("C");                                                 // Hide column C
+        ws.addHiddenRow(1);                                                      // Hider row 2 (zero-based: 1)
+        ws.setAutoFilter(1, 3);                                                  // Set auto-filter for column B to D
         try {
-            workbook.saveAs(outputFolder + "test7.xlsx");                     // Save the workbook            
+            workbook.saveAs(outputFolder + "test7.xlsx");                        // Save the workbook            
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

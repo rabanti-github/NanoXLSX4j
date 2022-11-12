@@ -460,7 +460,6 @@ public class Worksheet {
 		removeSelectedCells();
 		if (range == null) {
 			this.selectedCells.clear();
-			return;
 		}
 		else {
 			setSelectedCells(new Range(range));
@@ -538,7 +537,7 @@ public class Worksheet {
 	 *            Cell range to add as selected cells
 	 */
 	public void addSelectedCells(String range) {
-		if (range != null) {
+		if (!Helper.isNullOrEmpty(range)) {
 			selectedCells.add(Cell.resolveCellRange(range));
 		}
 	}
@@ -726,7 +725,7 @@ public class Worksheet {
 	 * @return Height of the top pane until the split line appears
 	 * @apiNote Note: This value will be modified to the Excel-internal
 	 *          representation, calculated by
-	 *          {@link Helper#getInternalPaneSplitHeight(float)}/>
+	 *          {@link Helper#getInternalPaneSplitHeight(float)}
 	 */
 	public Float getPaneSplitTopHeight() {
 		return paneSplitTopHeight;
@@ -744,7 +743,7 @@ public class Worksheet {
 	 * @return Width form the left border until the split line appears
 	 * @apiNote Note: This value will be modified to the Excel-internal
 	 *          representation, calculated by
-	 *          {@link Helper#getInternalColumnWidth(float)(float)} (float)}/>
+	 *          {@link Helper#getInternalColumnWidth(float, float, float)}}
 	 */
 	public Float getPaneSplitLeftWidth() {
 		return paneSplitLeftWidth;
@@ -2856,7 +2855,7 @@ public class Worksheet {
 	 * @apiNote Not considered in the copy are the internal ID, the worksheet name
 	 *          and the workbook reference. Since styles are managed in a shared
 	 *          repository, no dereferencing is applied (Styles are not
-	 *          deep-copied).<\br> Use
+	 *          deep-copied).<br> Use
 	 *          {@link Workbook#copyWorksheetTo(Worksheet, String, Workbook)}} or
 	 *          {@link Workbook#copyWorksheetIntoThis(Worksheet, String)} to add a
 	 *          copy of worksheet to a workbook. These methods will set the internal

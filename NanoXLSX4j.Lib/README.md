@@ -6,4 +6,4 @@ It contains:
 
 * Source code
 * Unit tests
-* Required resources for unit tets
+* Required resources for unit test

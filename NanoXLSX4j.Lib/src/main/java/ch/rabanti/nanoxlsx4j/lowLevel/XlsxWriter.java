@@ -802,8 +802,7 @@ public class XlsxWriter {
 					throw new FormatException(
 							"The number format style component with the ID " + numberFormatStyle.getCustomFormatID() + " cannot be null or empty");
 				}
-				String customFormat = NumberFormat.escapeFormatCode(numberFormatStyle.getCustomFormatCode());
-				sb.append("<numFmt formatCode=\"").append(escapeXMLAttributeChars(customFormat)).append("\" numFmtId=\"")
+				sb.append("<numFmt formatCode=\"").append(escapeXMLAttributeChars(numberFormatStyle.getCustomFormatCode())).append("\" numFmtId=\"")
 						.append(numberFormatStyle.getCustomFormatID()).append("\"/>");
 			}
 		}

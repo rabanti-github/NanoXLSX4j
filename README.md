@@ -43,6 +43,8 @@ There are some limitations:
 * There are some approximations for floating point numbers. These values (e.g. pane split widths) may deviate from the originally written values
 * Numeric values are cast to the appropriate Java types with the best effort. There are import options available to enforce specific types
 * No support of other objects than spreadsheet data at the moment
+* Due to the potential high complexity, custom number format codes are currently not automatically escaped on writing or un-escaped on reading
+
 ## Requirements
 
 NanoXLSX4j was initially created with Java 8 and currently build with OpenJDK 11
@@ -52,7 +54,7 @@ The only requirement for development is an up-to-date Java environment (OpenJDK 
 
 ### As JAR
 
-Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-2.0.1.jar**) into the lib folder of your project and create a library reference to it in your IDE.
+Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-2.1.0.jar**) into the lib folder of your project and create a library reference to it in your IDE.
 
 ### As source files
 
@@ -66,7 +68,7 @@ Add the following information to your POM file within the ```<dependencies>``` t
 <dependency>
     <groupId>ch.rabanti</groupId>
     <artifactId>nanoxlsx4j</artifactId>
-    <version>2.0.1</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
