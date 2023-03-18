@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2022
+ * Copyright Raphael Stoeckli © 2023
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -84,6 +85,22 @@ public class XlsxReader {
 	 *             Throws IOException in case of an error
 	 */
 	private InputStream getEntryStream(String name, ZipFile file) throws IOException {
+		return getEntryStream(name, file, true);
+	}
+
+	/**
+	 * Gets the input stream of the specified file in the archive (XLSX file)
+	 *
+	 * @param name
+	 *            Name of the XML file within the XLSX file
+	 * @param file
+	 *            Zip file (XLSX)
+	 * @param throwExceptionIfAbsent If true, an exception will be thrown if the stream could not be found, otherwise null is returned
+	 * @return InputStream of the specified file or null if the stream was not found and parameter throwExceptionIfAbsent was set to false
+	 * @throws IOException
+	 *             Throws IOException in case of an error and if throwExceptionIfAbsent is true
+	 */
+	private InputStream getEntryStream(String name, ZipFile file , boolean throwExceptionIfAbsent) throws IOException {
 		InputStream is = null;
 
 		try {
@@ -102,7 +119,7 @@ public class XlsxReader {
 					}
 				}
 			}
-			if (is == null) {
+			if (is == null && throwExceptionIfAbsent) {
 				throw new IOException("The entry '" + name + "' is missing in the file");
 			}
 			return is;
@@ -138,9 +155,10 @@ public class XlsxReader {
 			}
 			InputStream stream;
 			SharedStringsReader sharedStrings = new SharedStringsReader(importOptions);
-			stream = getEntryStream("xl/sharedStrings.xml", zf);
-			sharedStrings.read(stream);
-
+			stream = getEntryStream("xl/sharedStrings.xml", zf, false);
+			if (stream != null) {
+				sharedStrings.read(stream);
+			}
 			StyleRepository.getInstance().setImportInProgress(true);
 			StyleReader styleReader = new StyleReader();
 			stream = getEntryStream("xl/styles.xml", zf);
@@ -161,15 +179,27 @@ public class XlsxReader {
 			int worksheetIndex = 1;
 			WorksheetReader wr;
 			String nameTemplate = "sheet" + worksheetIndex + ".xml";
-			String name = "xl/worksheets/" + nameTemplate;
+			String name = "xl/worksheets/" + nameTemplate; // default
+			RelationshipReader relationships = new RelationshipReader();
+			stream = getEntryStream("xl/_rels/workbook.xml.rels", zf);
+			relationships.read(stream);
 			for (Map.Entry<Integer, WorkbookReader.WorksheetDefinition> definition : workbook.getWorksheetDefinitions().entrySet()) {
+				Optional<RelationshipReader.RelationShip> relationship = relationships.getRelationships().stream().filter(r -> r.getId().equals(definition.getValue().getRelId())).findFirst();
+				if (relationship.isPresent()){
+					// relationship resolution
+					name = relationship.get().getTarget();
+				}
 				stream = getEntryStream(name, zf);
 				wr = new WorksheetReader(sharedStrings, styleReaderContainer, importOptions);
 				wr.read(stream);
 				this.worksheets.put(definition.getKey(), wr);
+				// fallback resolution
 				worksheetIndex++;
 				nameTemplate = "sheet" + worksheetIndex + ".xml";
 				name = "xl/worksheets/" + nameTemplate;
+			}
+			if (this.worksheets.isEmpty()){
+				throw new IOException("No worksheet was found in the workbook");
 			}
 		}
 		catch (Exception ex) {

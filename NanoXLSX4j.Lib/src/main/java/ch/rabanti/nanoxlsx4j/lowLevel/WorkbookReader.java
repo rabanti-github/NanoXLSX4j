@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2022
+ * Copyright Raphael Stoeckli © 2023
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -191,9 +191,10 @@ public class WorkbookReader {
 				try {
 					String sheetName = node.getAttribute("name", "worksheet1");
 					int id = Integer.parseInt(node.getAttribute("sheetId")); // Default will rightly throw an exception
+					String relId = node.getAttribute("id"); // Note: namespace 'r' is stripped (r:id)
 					String state = node.getAttribute("state");
 					boolean hidden = state != null && state.equalsIgnoreCase("hidden");
-					WorksheetDefinition definition = new WorksheetDefinition(id, sheetName);
+					WorksheetDefinition definition = new WorksheetDefinition(id, sheetName, relId);
 					definition.setHidden(hidden);
 					worksheetDefinitions.put(id, definition);
 				}
@@ -212,6 +213,7 @@ public class WorkbookReader {
 	public static class WorksheetDefinition {
 		private final String worksheetName;
 		private final int sheetId;
+		private String relId;
 		private boolean hidden;
 
 		/**
@@ -234,7 +236,7 @@ public class WorkbookReader {
 		}
 
 		/**
-		 * gets the worksheet name
+		 * Gets the worksheet name
 		 *
 		 * @return Name as string
 		 */
@@ -252,16 +254,26 @@ public class WorkbookReader {
 		}
 
 		/**
+		 * Gets the reference ID
+		 * @return Reference ID as string
+		 */
+		public String getRelId() {
+			return relId;
+		}
+
+		/**
 		 * Default constructor with parameters
 		 *
 		 * @param worksheetName
 		 *            Worksheet name
 		 * @param sheetId
 		 *            Internal ID
+		 * @param relId Relationship ID
 		 */
-		public WorksheetDefinition(int sheetId, String worksheetName) {
-			this.worksheetName = worksheetName;
+		public WorksheetDefinition(int sheetId, String worksheetName, String relId) {
 			this.sheetId = sheetId;
+			this.worksheetName = worksheetName;
+			this.relId = relId;
 		}
 	}
 

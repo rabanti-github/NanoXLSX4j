@@ -375,6 +375,7 @@ public class ReadDataTest {
                     "invalid_metadata_core.xlsx",
                     "invalid_sharedStrings.xlsx",
                     "invalid_sharedStrings2.xlsx",
+                    "invalid_relationship.xlsx",
                     "missing_worksheet.xlsx",}
     )
     void failingReadInvalidDataTest(String invalidFile) {
@@ -382,6 +383,27 @@ public class ReadDataTest {
         // (malformed, missing start or end tags, missing attributes)
         InputStream stream = TestUtils.getResource(invalidFile);
         assertThrows(IOException.class, () -> Workbook.load(stream));
+    }
+
+    @DisplayName("Test of the workbook reader if the only workbook entry is a chart")
+    @Test()
+    public void readChartsheetTest() throws IOException, java.io.IOException {
+        InputStream stream = TestUtils.getResource("chartsheet.xlsx");
+        Workbook workbook = Workbook.load(stream);
+        assertEquals(1, workbook.getWorksheets().size());
+        assertTrue(workbook.getWorksheets().get(0).getCells().isEmpty());
+    }
+
+    @DisplayName("Test of the workbook reader if the workbook contains worksheets chats and embedded charts")
+    @Test()
+    public void readChartsheetTest2() throws IOException, java.io.IOException {
+        // Note: Sheet1 and Sheet3 contains data. Diagram1 (worksheet2) is just a chart and should be empty
+        InputStream stream = TestUtils.getResource("chartsheet2.xlsx");
+        Workbook workbook = Workbook.load(stream);
+        assertEquals(3, workbook.getWorksheets().size());
+        assertTrue(workbook.getWorksheet("Sheet1").getCells().size() > 0);
+        assertTrue(workbook.getWorksheet("Diagram1").getCells().isEmpty());
+        assertTrue(workbook.getWorksheet("Sheet3").getCells().size() > 0);
     }
 
     @DisplayName("Test of the reader functionality on an invalid stream")
