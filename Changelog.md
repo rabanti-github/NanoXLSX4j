@@ -1,5 +1,13 @@
 # Change Log
 
+## v2.1.1
+
+---
+Release Date: **18.03.2023**
+
+- Fixed a bug when a workbook contains charts instead of worksheets. Bug fix provided by Iivari Mokelainen for NanoXLSX (.NET) and ported to Java
+- Minor code maintenance
+
 ## v2.1.0
 
 ---
