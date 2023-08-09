@@ -1,0 +1,65 @@
+name: Generate Documentation
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore: 
+      - 'docs/**'
+      - '.github/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+      
+    steps:
+    - name: Install checkout
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.PUSH_TOKEN }}
+
+    - name: Install Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+      
+    - name: Check build origin and author
+      id: check_build_origin_and_author
+      shell: bash
+      run: |
+        set -ex
+        email=$(git log -n 1 --pretty=format:%ae)
+        echo "email is: $email"
+        name=$(git log -n 1 --pretty=format:%an)
+        if [ "$email" = "actions@github.com" ] && [ "$name" = "GitHub Actions" ]; then
+          echo "build_origin=skip" >> $GITHUB_ENV
+          echo "Skipping step because the last commit was system triggered"
+          echo "build_origin=skip" >> $GITHUB_ENV
+          exit 0
+        else
+          echo "build_origin=pass" >> $GITHUB_ENV
+          exit 0
+        fi
+    - name: Clean up docs folder
+      if: ${{ env.build_origin }} == 'pass'
+      run: |
+        cd docs
+        rm -rf ./*
+    - name: Build NanoXLSX4j project and javadoc
+      if: ${{ env.build_origin }} == 'pass'
+      run: mvn clean compile package -Pgithub-release -DskipTests=true
+        
+    - name: Push changes to GitHub
+      if: ${{ env.build_origin }} == 'pass'
+      env:
+        GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+      run: |
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+        git add -f docs/
+        git commit -m "Update documentation"
+        git push
+    
+    - name: Clean up docs folder
+      run: rm -rf docs/*
