@@ -13,9 +13,10 @@ public class VersionTest {
     @DisplayName("Test that the Version class returns non-null and non-empty values")
     @Test
     public void versionTest() {
-        Assertions.assertNotEquals("", Version.VERSION);
+        Assertions.assertNotEquals("", Version.getVersion());
         assertNotEquals("", Version.APPLICATION_NAME);
-        assertNotNull(Version.VERSION);
+        assertNotNull(Version.getVersion());
+        assertNotEquals("0.0000", Version.getVersion());
         assertNotNull(Version.APPLICATION_NAME);
     }
 }

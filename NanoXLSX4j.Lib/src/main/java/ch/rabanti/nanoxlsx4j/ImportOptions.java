@@ -62,7 +62,8 @@ public class ImportOptions {
 		/**
 		 * Every cell is cast to a string. An empty cell will be cast to an empty string
 		 */
-		EverythingToString
+		EverythingToString,
+
 	}
 
 	/**

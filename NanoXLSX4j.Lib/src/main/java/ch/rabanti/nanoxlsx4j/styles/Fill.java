@@ -366,10 +366,9 @@ public class Fill extends AbstractStyle {
 	 */
 	public static void validateColor(String hexCode, boolean useAlpha) {
 		int length;
-		String expression;
 		length = useAlpha ? 8 : 6;
 		if (hexCode == null || hexCode.length() != length) {
-			throw new StyleException("The value '" + hexCode + "' is invalid. A valid value must contain six hex characters");
+			throw new StyleException("The value '" + hexCode + "' is invalid. A valid value must contain " + length + " hex characters");
 		}
 		if (!hexCode.matches("[a-fA-F0-9]{6,8}")) {
 			throw new StyleException("The expression '" + hexCode + "' is a valid hex value");

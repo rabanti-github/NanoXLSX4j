@@ -1,5 +1,14 @@
 # Change Log
 
+## v2.2.0
+
+---
+Release Date: **09.08.2023**
+
+- Adapted hex color validation (clarified number of necessary characters)
+- Adaption of version handling. The constant VERSION in Version.java was replaced by the static method getVersion() 
+- Internal changes of build processes (Documentation generation is performed now by a GitHub Action)
+
 ## v2.1.1
 
 ---
@@ -125,6 +134,8 @@ Release Date: **03.09.2022 - Major Release**
 - All workbook elements that can be written can also be read (exception: passwords cannot be recovered)
 - All worksheet elements that can be written can also be read (exception: passwords cannot be recovered)
 - Better handling of dates and times, especially with invalid (too low and too high numbers) values
+
+Note: Phonetic characters  (like Ruby Characters / Furigana / Zhuyin / Pinyin) are discarded by default. If the import option "EnforcePhoneticCharacterImport" is set to true, the phonetic transcription will be displayed in brackets, right after the characters to be transcribed
 
 ### Misc
 - Added a unit test project with several thousand, partially parametrized test cases

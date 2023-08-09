@@ -39,3 +39,6 @@ build/
 .idea/
 NanoXLSX4j.Lib/dist/
 /NanoXLSX4j.Lib/target/
+
+# user defined
+/docs/*
