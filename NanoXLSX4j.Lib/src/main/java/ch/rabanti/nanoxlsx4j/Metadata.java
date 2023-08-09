@@ -288,7 +288,7 @@ public class Metadata {
 	 */
 	public Metadata() {
 		this.application = Version.APPLICATION_NAME;
-		this.applicationVersion = Version.VERSION;
+		this.applicationVersion = Version.getVersion();
 
 	}
 

@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"ch.rabanti.nanoxlsx4j"},{"l":"ch.rabanti.nanoxlsx4j.exceptions"},{"l":"ch.rabanti.nanoxlsx4j.lowLevel"},{"l":"ch.rabanti.nanoxlsx4j.styles"}]

@@ -376,6 +376,7 @@ public class ReadDataTest {
                     "invalid_sharedStrings.xlsx",
                     "invalid_sharedStrings2.xlsx",
                     "invalid_relationship.xlsx",
+                    "empty_worksheet.xlsx",
                     "missing_worksheet.xlsx",}
     )
     void failingReadInvalidDataTest(String invalidFile) {
