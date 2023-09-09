@@ -17,10 +17,11 @@ import java.util.List;
  */
 public class RelationshipReader {
 
-    private List<RelationShip> relationships;
+    private final List<RelationShip> relationships;
 
     /**
      * Gets the list of workbook relationship entries
+     *
      * @return
      */
     public List<RelationShip> getRelationships() {
@@ -35,8 +36,7 @@ public class RelationshipReader {
     }
 
     /**
-     * Reads the XML file form the passed stream and processes the relationship declaration
-     * table
+     * Reads the XML file form the passed stream and processes the relationship declaration table
      *
      * @param stream Stream of the XML file
      * @throws IOException Throws IOException in case of an error
@@ -59,9 +59,11 @@ public class RelationshipReader {
                     relationships.add(new RelationShip(id, type, target));
                 }
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             throw new IOException("The XML entry could not be read from the input stream. Please see the inner exception:", ex);
-        } finally {
+        }
+        finally {
             if (stream != null) {
                 stream.close();
             }

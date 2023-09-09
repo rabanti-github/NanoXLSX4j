@@ -55,9 +55,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class for low level handling (XML, formatting, preparing of packing)<br>
- * This class is only for internal use. Use the high level API (e.g. class
- * Workbook) to manipulate data and create Excel files.
+ * Class for low level handling (XML, formatting, preparing of packing)<br> This class is only for internal use. Use the
+ * high level API (e.g. class Workbook) to manipulate data and create Excel files.
  *
  * @author Raphael Stoeckli
  */
@@ -96,8 +95,7 @@ public class XlsxWriter {
     // ### M E T H O D S ###
 
     /**
-     * Method to append a simple XML tag with an enclosed value to the passed
-     * StringBuilder
+     * Method to append a simple XML tag with an enclosed value to the passed StringBuilder
      *
      * @param sb        StringBuilder to append
      * @param value     Value of the XML element
@@ -164,8 +162,7 @@ public class XlsxWriter {
     }
 
     /**
-     * Method to create the columns as XML string. This is used to define the width
-     * of columns
+     * Method to create the columns as XML string. This is used to define the width of columns
      *
      * @param worksheet Worksheet to process
      * @return String with formatted XML data
@@ -193,10 +190,12 @@ public class XlsxWriter {
             String value = sb.toString();
             if (value.length() > 0) {
                 return value;
-            } else {
+            }
+            else {
                 return "";
             }
-        } else {
+        }
+        else {
             return "";
         }
     }
@@ -271,8 +270,7 @@ public class XlsxWriter {
     }
 
     /**
-     * Method to create the XML string for the color-MRU part of the style sheet
-     * document (recent colors)
+     * Method to create the XML string for the color-MRU part of the style sheet document (recent colors)
      *
      * @return String with formatted XML data
      */
@@ -294,7 +292,8 @@ public class XlsxWriter {
             }
             sb.append("</mruColors>");
             return sb.toString();
-        } else {
+        }
+        else {
             return "";
         }
     }
@@ -334,7 +333,8 @@ public class XlsxWriter {
             typeDef = " ";
             if (item.getCellStyle() != null) {
                 styleDef = " s=\"" + item.getCellStyle().getInternalID() + "\" ";
-            } else {
+            }
+            else {
                 styleDef = "";
             }
             item.resolveCellType(); // Recalculate the type (for handling DEFAULT)
@@ -344,7 +344,8 @@ public class XlsxWriter {
                 boolValue = (boolean) item.getValue();
                 if (boolValue) {
                     value = "1";
-                } else {
+                }
+                else {
                     value = "0";
                 }
 
@@ -356,17 +357,23 @@ public class XlsxWriter {
                 Object o = item.getValue();
                 if (o instanceof Byte) {
                     value = Byte.toString((byte) item.getValue());
-                } else if (o instanceof BigDecimal) {
+                }
+                else if (o instanceof BigDecimal) {
                     value = item.getValue().toString();
-                } else if (o instanceof Double) {
+                }
+                else if (o instanceof Double) {
                     value = Double.toString((double) item.getValue());
-                } else if (o instanceof Float) {
+                }
+                else if (o instanceof Float) {
                     value = Float.toString((float) item.getValue());
-                } else if (o instanceof Integer) {
+                }
+                else if (o instanceof Integer) {
                     value = Integer.toString((int) item.getValue());
-                } else if (o instanceof Long) {
+                }
+                else if (o instanceof Long) {
                     value = Long.toString((long) item.getValue());
-                } else if (o instanceof Short) {
+                }
+                else if (o instanceof Short) {
                     value = Short.toString((short) item.getValue());
                 }
             }
@@ -383,16 +390,19 @@ public class XlsxWriter {
                 // times)
                 Duration time = (Duration) item.getValue();
                 value = Helper.getOATimeString(time);
-            } else {
+            }
+            else {
                 if (item.getValue() == null) {
                     typeAttribute = null;
                     value = null;
-                } else // Handle sharedStrings
+                }
+                else // Handle sharedStrings
                 {
                     if (item.getDataType().equals(Cell.CellType.FORMULA)) {
                         typeAttribute = "str";
                         value = item.getValue().toString();
-                    } else {
+                    }
+                    else {
                         typeAttribute = "s";
                         value = sharedStrings.add(item.getValue().toString(), Integer.toString(sharedStrings.size()));
                         sharedStringsTotalCount++;
@@ -404,11 +414,13 @@ public class XlsxWriter {
                 sb.append("<c").append(typeDef).append("r=\"").append(item.getCellAddress()).append("\"").append(styleDef).append(">");
                 if (item.getDataType().equals(Cell.CellType.FORMULA)) {
                     sb.append("<f>").append(XlsxWriter.escapeXMLChars(item.getValue().toString())).append("</f>");
-                } else {
+                }
+                else {
                     sb.append("<v>").append(XlsxWriter.escapeXMLChars(value)).append("</v>");
                 }
                 sb.append("</c>");
-            } else if (value == null || item.getDataType().equals(Cell.CellType.EMPTY)) // Empty cell
+            }
+            else if (value == null || item.getDataType().equals(Cell.CellType.EMPTY)) // Empty cell
             {
                 sb.append("<c r=\"").append(item.getCellAddress()).append("\"").append(styleDef).append("/>");
             }
@@ -445,10 +457,12 @@ public class XlsxWriter {
         sb.append("<si>");
         if (len == 0) {
             sb.append("<t></t>");
-        } else {
+        }
+        else {
             if (Character.isWhitespace(value.charAt(0)) || Character.isWhitespace(value.charAt(len - 1))) {
                 sb.append("<t xml:space=\"preserve\">");
-            } else {
+            }
+            else {
                 sb.append("<t>");
             }
             sb.append(normalizeNewLines(value)).append("</t>");
@@ -555,8 +569,7 @@ public class XlsxWriter {
     }
 
     /**
-     * Method to create the XML string for the border part of the style sheet
-     * document
+     * Method to create the XML string for the border part of the style sheet document
      *
      * @return String with formatted XML data
      */
@@ -566,66 +579,79 @@ public class XlsxWriter {
         for (Border borderStyle : borderStyles) {
             if (borderStyle.isDiagonalDown() && !borderStyle.isDiagonalUp()) {
                 sb.append("<border diagonalDown=\"1\">");
-            } else if (!borderStyle.isDiagonalDown() && borderStyle.isDiagonalUp()) {
+            }
+            else if (!borderStyle.isDiagonalDown() && borderStyle.isDiagonalUp()) {
                 sb.append("<border diagonalUp=\"1\">");
-            } else if (borderStyle.isDiagonalDown() && borderStyle.isDiagonalUp()) {
+            }
+            else if (borderStyle.isDiagonalDown() && borderStyle.isDiagonalUp()) {
                 sb.append("<border diagonalDown=\"1\" diagonalUp=\"1\">");
-            } else {
+            }
+            else {
                 sb.append("<border>");
             }
             if (borderStyle.getLeftStyle() != Border.StyleValue.none) {
                 sb.append("<left style=\"").append(Border.getStyleName(borderStyle.getLeftStyle())).append("\">");
                 if (!Helper.isNullOrEmpty(borderStyle.getLeftColor())) {
                     sb.append("<color rgb=\"").append(borderStyle.getLeftColor()).append("\"/>");
-                } else {
+                }
+                else {
                     sb.append("<color auto=\"1\"/>");
                 }
                 sb.append("</left>");
-            } else {
+            }
+            else {
                 sb.append("<left/>");
             }
             if (borderStyle.getRightStyle() != Border.StyleValue.none) {
                 sb.append("<right style=\"").append(Border.getStyleName(borderStyle.getRightStyle())).append("\">");
                 if (!Helper.isNullOrEmpty(borderStyle.getRightColor())) {
                     sb.append("<color rgb=\"").append(borderStyle.getRightColor()).append("\"/>");
-                } else {
+                }
+                else {
                     sb.append("<color auto=\"1\"/>");
                 }
                 sb.append("</right>");
-            } else {
+            }
+            else {
                 sb.append("<right/>");
             }
             if (borderStyle.getTopStyle() != Border.StyleValue.none) {
                 sb.append("<top style=\"").append(Border.getStyleName(borderStyle.getTopStyle())).append("\">");
                 if (!Helper.isNullOrEmpty(borderStyle.getTopColor())) {
                     sb.append("<color rgb=\"").append(borderStyle.getTopColor()).append("\"/>");
-                } else {
+                }
+                else {
                     sb.append("<color auto=\"1\"/>");
                 }
                 sb.append("</top>");
-            } else {
+            }
+            else {
                 sb.append("<top/>");
             }
             if (borderStyle.getBottomStyle() != Border.StyleValue.none) {
                 sb.append("<bottom style=\"").append(Border.getStyleName(borderStyle.getBottomStyle())).append("\">");
                 if (!Helper.isNullOrEmpty(borderStyle.getBottomColor())) {
                     sb.append("<color rgb=\"").append(borderStyle.getBottomColor()).append("\"/>");
-                } else {
+                }
+                else {
                     sb.append("<color auto=\"1\"/>");
                 }
                 sb.append("</bottom>");
-            } else {
+            }
+            else {
                 sb.append("<bottom/>");
             }
             if (borderStyle.getDiagonalStyle() != Border.StyleValue.none) {
                 sb.append("<diagonal style=\"").append(Border.getStyleName(borderStyle.getDiagonalStyle())).append("\">");
                 if (!Helper.isNullOrEmpty(borderStyle.getDiagonalColor())) {
                     sb.append("<color rgb=\"").append(borderStyle.getDiagonalColor()).append("\"/>");
-                } else {
+                }
+                else {
                     sb.append("<color auto=\"1\"/>");
                 }
                 sb.append("</diagonal>");
-            } else {
+            }
+            else {
                 sb.append("<diagonal/>");
             }
             sb.append("</border>");
@@ -651,7 +677,8 @@ public class XlsxWriter {
                 sb.append(fillStyle.getIndexedColor());
                 sb.append("\"/>");
                 sb.append("</patternFill>");
-            } else if (fillStyle.getPatternFill() == Fill.PatternValue.mediumGray ||
+            }
+            else if (fillStyle.getPatternFill() == Fill.PatternValue.mediumGray ||
                     fillStyle.getPatternFill() == Fill.PatternValue.lightGray ||
                     fillStyle.getPatternFill() == Fill.PatternValue.gray0625 ||
                     fillStyle.getPatternFill() == Fill.PatternValue.darkGray) {
@@ -661,7 +688,8 @@ public class XlsxWriter {
                     sb.append("<bgColor rgb=\"").append(fillStyle.getBackgroundColor()).append("\"/>");
                 }
                 sb.append("</patternFill>");
-            } else {
+            }
+            else {
                 sb.append("/>");
             }
             sb.append("</fill>");
@@ -691,17 +719,21 @@ public class XlsxWriter {
             if (fontStyle.getUnderline() == null || fontStyle.getUnderline() != Font.UnderlineValue.none) {
                 if (fontStyle.getUnderline() == Font.UnderlineValue.u_double) {
                     sb.append("<u val=\"double\"/>");
-                } else if (fontStyle.getUnderline() == Font.UnderlineValue.singleAccounting) {
+                }
+                else if (fontStyle.getUnderline() == Font.UnderlineValue.singleAccounting) {
                     sb.append("<u val=\"singleAccounting\"/>");
-                } else if (fontStyle.getUnderline() == Font.UnderlineValue.doubleAccounting) {
+                }
+                else if (fontStyle.getUnderline() == Font.UnderlineValue.doubleAccounting) {
                     sb.append("<u val=\"doubleAccounting\"/>");
-                } else {
+                }
+                else {
                     sb.append("<u/>");
                 }
             }
             if (fontStyle.getVerticalAlign() == Font.VerticalAlignValue.subscript) {
                 sb.append("<vertAlign val=\"subscript\"/>");
-            } else if (fontStyle.getVerticalAlign() == Font.VerticalAlignValue.superscript) {
+            }
+            else if (fontStyle.getVerticalAlign() == Font.VerticalAlignValue.superscript) {
                 sb.append("<vertAlign val=\"superscript\"/>");
             }
             sb.append("<sz val=\"");
@@ -711,7 +743,8 @@ public class XlsxWriter {
                 sb.append("<color theme=\"");
                 sb.append(fontStyle.getColorTheme());
                 sb.append("\"/>");
-            } else {
+            }
+            else {
                 sb.append("<color rgb=\"").append(fontStyle.getColorValue()).append("\"/>");
             }
             sb.append("<name val=\"").append(fontStyle.getName()).append("\"/>");
@@ -719,7 +752,8 @@ public class XlsxWriter {
             if (fontStyle.getScheme() != Font.SchemeValue.none) {
                 if (fontStyle.getScheme() == Font.SchemeValue.major) {
                     sb.append("<scheme val=\"major\"/>");
-                } else if (fontStyle.getScheme() == Font.SchemeValue.minor) {
+                }
+                else if (fontStyle.getScheme() == Font.SchemeValue.minor) {
                     sb.append("<scheme val=\"minor\"/>");
                 }
             }
@@ -732,8 +766,7 @@ public class XlsxWriter {
     }
 
     /**
-     * Method to create the XML string for the number format part of the style sheet
-     * document
+     * Method to create the XML string for the number format part of the style sheet document
      *
      * @return String with formatted XML data
      */
@@ -833,19 +866,26 @@ public class XlsxWriter {
                     sb2.append(" horizontal=\"");
                     if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.center) {
                         sb2.append("center");
-                    } else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.right) {
+                    }
+                    else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.right) {
                         sb2.append("right");
-                    } else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.centerContinuous) {
+                    }
+                    else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.centerContinuous) {
                         sb2.append("centerContinuous");
-                    } else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.distributed) {
+                    }
+                    else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.distributed) {
                         sb2.append("distributed");
-                    } else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.fill) {
+                    }
+                    else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.fill) {
                         sb2.append("fill");
-                    } else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.general) {
+                    }
+                    else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.general) {
                         sb2.append("general");
-                    } else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.justify) {
+                    }
+                    else if (style.getCellXf().getHorizontalAlign() == CellXf.HorizontalAlignValue.justify) {
                         sb2.append("justify");
-                    } else {
+                    }
+                    else {
                         sb2.append("left");
                     }
                     sb2.append("\"");
@@ -854,13 +894,17 @@ public class XlsxWriter {
                     sb2.append(" vertical=\"");
                     if (style.getCellXf().getVerticalAlign() == CellXf.VerticalAlignValue.center) {
                         sb2.append("center");
-                    } else if (style.getCellXf().getVerticalAlign() == CellXf.VerticalAlignValue.distributed) {
+                    }
+                    else if (style.getCellXf().getVerticalAlign() == CellXf.VerticalAlignValue.distributed) {
                         sb2.append("distributed");
-                    } else if (style.getCellXf().getVerticalAlign() == CellXf.VerticalAlignValue.justify) {
+                    }
+                    else if (style.getCellXf().getVerticalAlign() == CellXf.VerticalAlignValue.justify) {
                         sb2.append("justify");
-                    } else if (style.getCellXf().getVerticalAlign() == CellXf.VerticalAlignValue.top) {
+                    }
+                    else if (style.getCellXf().getVerticalAlign() == CellXf.VerticalAlignValue.top) {
                         sb2.append("top");
-                    } else {
+                    }
+                    else {
                         sb2.append("bottom");
                     }
                     sb2.append("\"");
@@ -877,7 +921,8 @@ public class XlsxWriter {
                 if (style.getCellXf().getAlignment() != CellXf.TextBreakValue.none) {
                     if (style.getCellXf().getAlignment() == CellXf.TextBreakValue.shrinkToFit) {
                         sb2.append(" shrinkToFit=\"1");
-                    } else {
+                    }
+                    else {
                         sb2.append(" wrapText=\"1");
                     }
                     sb2.append("\"");
@@ -893,16 +938,19 @@ public class XlsxWriter {
             if (style.getCellXf().isHidden() || style.getCellXf().isLocked()) {
                 if (style.getCellXf().isHidden() && style.getCellXf().isLocked()) {
                     protectionString = "<protection locked=\"1\" hidden=\"1\"/>";
-                } else if (style.getCellXf().isHidden() && !style.getCellXf().isLocked()) {
+                }
+                else if (style.getCellXf().isHidden() && !style.getCellXf().isLocked()) {
                     protectionString = "<protection hidden=\"1\" locked=\"0\"/>";
-                } else {
+                }
+                else {
                     protectionString = "<protection hidden=\"0\" locked=\"1\"/>";
                 }
             }
             sb.append("<xf numFmtId=\"");
             if (style.getNumberFormat().isCustomFormat()) {
                 sb.append(style.getNumberFormat().getCustomFormatID());
-            } else {
+            }
+            else {
                 formatNumber = style.getNumberFormat().getNumber().getValue();
                 sb.append(formatNumber);
             }
@@ -929,7 +977,8 @@ public class XlsxWriter {
             }
             if (style.getNumberFormat().getNumber() != NumberFormat.FormatNumber.none) {
                 sb.append("\" applyNumberFormat=\"1\"");
-            } else {
+            }
+            else {
                 sb.append("\"");
             }
             if (!alignmentString.isEmpty() || !protectionString.isEmpty()) {
@@ -937,7 +986,8 @@ public class XlsxWriter {
                 sb.append(alignmentString);
                 sb.append(protectionString);
                 sb.append("</xf>");
-            } else {
+            }
+            else {
                 sb.append("/>");
             }
         }
@@ -959,7 +1009,8 @@ public class XlsxWriter {
             sb.append("<bookViews><workbookView ");
             if (workbook.isHidden()) {
                 sb.append("visibility=\"hidden\"");
-            } else {
+            }
+            else {
                 sb.append("activeTab=\"").append(workbook.getSelectedWorksheet()).append("\"");
             }
             sb.append("/></bookViews>");
@@ -975,7 +1026,8 @@ public class XlsxWriter {
                 }
                 sb.append("/>");
             }
-        } else {
+        }
+        else {
             // Fallback on empty workbook
             sb.append("<sheet r:id=\"rId1\" sheetId=\"1\" name=\"sheet1\"/>");
         }
@@ -985,8 +1037,7 @@ public class XlsxWriter {
     }
 
     /**
-     * Method to create the (sub) part of the workbook protection within the
-     * workbook XML document
+     * Method to create the (sub) part of the workbook protection within the workbook XML document
      *
      * @param sb reference to the stringbuilder
      */
@@ -1093,8 +1144,7 @@ public class XlsxWriter {
     }
 
     /**
-     * Method to create the (sub) part of the sheet view (selected cells and panes)
-     * within the worksheet XML document
+     * Method to create the (sub) part of the sheet view (selected cells and panes) within the worksheet XML document
      *
      * @param worksheet worksheet object to process
      * @param sb        reference to the stringbuilder
@@ -1108,12 +1158,14 @@ public class XlsxWriter {
             if (worksheet.getViewType() == Worksheet.SheetViewType.pageLayout) {
                 if (worksheet.isShowingRuler()) {
                     sb.append(" showRuler=\"1\"");
-                } else {
+                }
+                else {
                     sb.append(" showRuler=\"0\"");
                 }
                 sb.append(" view=\"pageLayout\"");
 
-            } else if (worksheet.getViewType() == Worksheet.SheetViewType.pageBreakPreview) {
+            }
+            else if (worksheet.getViewType() == Worksheet.SheetViewType.pageBreakPreview) {
                 sb.append(" view=\"pageBreakPreview\"");
             }
         }
@@ -1130,9 +1182,11 @@ public class XlsxWriter {
             }
             if (scaleFactor.getKey() == Worksheet.SheetViewType.normal) {
                 sb.append(" zoomScaleNormal=\"").append(scaleFactor.getValue()).append("\"");
-            } else if (scaleFactor.getKey() == Worksheet.SheetViewType.pageBreakPreview) {
+            }
+            else if (scaleFactor.getKey() == Worksheet.SheetViewType.pageBreakPreview) {
                 sb.append(" zoomScaleSheetLayoutView=\"").append(scaleFactor.getValue()).append("\"");
-            } else if (scaleFactor.getKey() == Worksheet.SheetViewType.pageLayout) {
+            }
+            else if (scaleFactor.getKey() == Worksheet.SheetViewType.pageLayout) {
                 sb.append(" zoomScalePageLayoutView=\"").append(scaleFactor.getValue()).append("\"");
             }
         }
@@ -1154,8 +1208,7 @@ public class XlsxWriter {
     }
 
     /**
-     * Method to create the (sub) part of the pane (splitting and freezing) within
-     * the worksheet XML document
+     * Method to create the (sub) part of the pane (splitting and freezing) within the worksheet XML document
      *
      * @param worksheet worksheet">worksheet object to process
      * @param sb        reference to the stringbuilder
@@ -1174,7 +1227,8 @@ public class XlsxWriter {
             if (xSplit > 0) {
                 if (freeze) {
                     sb.append(" xSplit=\"").append(xSplit).append("\"");
-                } else {
+                }
+                else {
                     sb.append(" xSplit=\"").append(calculatePaneWidth(worksheet, xSplit)).append("\"");
                 }
                 applyXSplit = true;
@@ -1182,17 +1236,20 @@ public class XlsxWriter {
             if (ySplit > 0) {
                 if (freeze) {
                     sb.append(" ySplit=\"").append(ySplit).append("\"");
-                } else {
+                }
+                else {
                     sb.append(" ySplit=\"").append(calculatePaneHeight(worksheet, ySplit)).append("\"");
                 }
                 applyYSplit = true;
             }
             if (freeze && applyXSplit && applyYSplit) {
                 sb.append(" state=\"frozenSplit\"");
-            } else if (freeze) {
+            }
+            else if (freeze) {
                 sb.append(" state=\"frozen\"");
             }
-        } else {
+        }
+        else {
             if (worksheet.getPaneSplitLeftWidth() != null) {
                 sb.append(" xSplit=\"").append(Helper.getInternalPaneSplitWidth(worksheet.getPaneSplitLeftWidth())).append("\"");
                 applyXSplit = true;
@@ -1223,9 +1280,11 @@ public class XlsxWriter {
         sb.append("/>");
         if (applyXSplit && !applyYSplit) {
             sb.append("<selection pane=\"topRight\" activeCell=\"" + topLeftCell + "\"  sqref=\"" + topLeftCell + "\" />");
-        } else if (applyYSplit && !applyXSplit) {
+        }
+        else if (applyYSplit && !applyXSplit) {
             sb.append("<selection pane=\"bottomLeft\" activeCell=\"" + topLeftCell + "\"  sqref=\"" + topLeftCell + "\" />");
-        } else if (applyYSplit && applyXSplit) {
+        }
+        else if (applyYSplit && applyXSplit) {
             sb.append("<selection activeCell=\"" + topLeftCell + "\"  sqref=\"" + topLeftCell + "\" />");
         }
     }
@@ -1235,15 +1294,15 @@ public class XlsxWriter {
      *
      * @param worksheet    worksheet object to get the row definitions from
      * @param numberOfRows Number of rows from the top to the split position
-     * @return Internal height from the top of the worksheet to the pane split
-     * position
+     * @return Internal height from the top of the worksheet to the pane split position
      */
     private float calculatePaneHeight(Worksheet worksheet, int numberOfRows) {
         float height = 0;
         for (int i = 0; i < numberOfRows; i++) {
             if (worksheet.getRowHeights().containsKey(i)) {
                 height += Helper.getInternalRowHeight(worksheet.getRowHeights().get(i));
-            } else {
+            }
+            else {
                 height += Helper.getInternalRowHeight(Worksheet.DEFAULT_ROW_HEIGHT);
             }
         }
@@ -1255,15 +1314,15 @@ public class XlsxWriter {
      *
      * @param worksheet       worksheet object to get the column definitions from
      * @param numberOfColumns Number of columns from the left to the split position
-     * @return Internal width from the left of the worksheet to the pane split
-     * position
+     * @return Internal width from the left of the worksheet to the pane split position
      */
     private float calculatePaneWidth(Worksheet worksheet, int numberOfColumns) {
         float width = 0;
         for (int i = 0; i < numberOfColumns; i++) {
             if (worksheet.getColumns().containsKey(i)) {
                 width += Helper.getInternalColumnWidth(worksheet.getColumns().get(i).getWidth());
-            } else {
+            }
+            else {
                 width += Helper.getInternalColumnWidth(Worksheet.DEFAULT_COLUMN_WIDTH);
             }
         }
@@ -1288,7 +1347,8 @@ public class XlsxWriter {
             doc.setXmlVersion("1.0");
             doc.setXmlStandalone(true);
             return doc;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IOException("There was an error while creating the XML document. Please see the inner exception.", e);
         }
     }
@@ -1313,9 +1373,8 @@ public class XlsxWriter {
      * Method to sort the cells of a worksheet as preparation for the XML document
      *
      * @param sheet Worksheet to process
-     * @return Sorted list of dynamic rows that are either defined by cells or row
-     * widths / hidden states. The list is sorted by row numbers
-     * (zero-based)
+     * @return Sorted list of dynamic rows that are either defined by cells or row widths / hidden states. The list is
+     * sorted by row numbers (zero-based)
      */
     private List<DynamicRow> getSortedSheetData(Worksheet sheet) {
         List<Cell> temp = new ArrayList<>();
@@ -1370,7 +1429,8 @@ public class XlsxWriter {
         try {
             FileOutputStream dest = new FileOutputStream(this.workbook.getFilename());
             saveAsStream(dest);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IOException(
                     "There was an error while creating the workbook document during saving to a file. Please see the inner exception:" + e.getMessage(), e);
         }
@@ -1401,7 +1461,8 @@ public class XlsxWriter {
                     rel.addRelationshipEntry("/xl/worksheets/" + file, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet");
                     p.addPart("xl/worksheets/" + file, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml", doc);
                 }
-            } else {
+            }
+            else {
                 // Fallback on empty workbook
                 doc = createWorksheetPart(new Worksheet());
                 file = "sheet1.xml";
@@ -1417,7 +1478,8 @@ public class XlsxWriter {
             p.addPart("xl/workbook.xml", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml", book, false);
             p.addPart("xl/styles.xml", "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml", styles);
             p.pack(stream);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IOException(
                     "There was an error while creating the workbook document during writing to a stream. Please see the inner exception:" + e.getMessage(), e);
         }
@@ -1445,7 +1507,8 @@ public class XlsxWriter {
             byte[] bytes = bs.toByteArray();
             bs.close();
             return bytes;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IOException("There was an error while creating the byte array. Please see the inner exception.", e);
         }
     }
@@ -1463,11 +1526,9 @@ public class XlsxWriter {
     }
 
     /**
-     * Method to escape XML characters between two XML tags<br>
-     * Note: The XML specs allow characters up to the character value of 0x10FFFF.
-     * However, the Java char range is only up to 0xFFFF. PicoXLSX4j will neglect
-     * all values above this level in the sanitizing check. Illegal characters like
-     * 0x1 will be replaced with a white space (0x20)
+     * Method to escape XML characters between two XML tags<br> Note: The XML specs allow characters up to the character
+     * value of 0x10FFFF. However, the Java char range is only up to 0xFFFF. PicoXLSX4j will neglect all values above
+     * this level in the sanitizing check. Illegal characters like 0x1 will be replaced with a white space (0x20)
      *
      * @param input Input string to process
      * @return Escaped string
@@ -1490,11 +1551,13 @@ public class XlsxWriter {
             {
                 illegalCharacters.add(i);
                 characterTypes.add(1);
-            } else if (c == 0x3E) // >
+            }
+            else if (c == 0x3E) // >
             {
                 illegalCharacters.add(i);
                 characterTypes.add(2);
-            } else if (c == 0x26) // &
+            }
+            else if (c == 0x26) // &
             {
                 illegalCharacters.add(i);
                 characterTypes.add(3);
@@ -1513,13 +1576,16 @@ public class XlsxWriter {
             sb.append(input, lastIndex, j);
             if (type == 0) {
                 sb.append(' '); // Whitespace as fall back on illegal character
-            } else if (type == 1) // replace <
+            }
+            else if (type == 1) // replace <
             {
                 sb.append("&lt;");
-            } else if (type == 2) // replace >
+            }
+            else if (type == 2) // replace >
             {
                 sb.append("&gt;");
-            } else if (type == 3) // replace &
+            }
+            else if (type == 3) // replace &
             {
                 sb.append("&amp;");
             }
@@ -1532,8 +1598,8 @@ public class XlsxWriter {
     // ### H E L P E R C L A S S E S ###
 
     /**
-     * Class representing a row that is either empty or containing cells. Empty rows
-     * can also carry information about height or visibility
+     * Class representing a row that is either empty or containing cells. Empty rows can also carry information about
+     * height or visibility
      */
     private static class DynamicRow {
 
@@ -1568,8 +1634,7 @@ public class XlsxWriter {
         }
 
         /**
-         * Default constructor. Defines an empty row if no additional operations are
-         * made on the object
+         * Default constructor. Defines an empty row if no additional operations are made on the object
          */
         public DynamicRow() {
             this.cellDefinitions = new ArrayList<>();

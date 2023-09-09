@@ -13,32 +13,29 @@ package ch.rabanti.nanoxlsx4j.exceptions;
  */
 public class StyleException extends RuntimeException {
 
-	/**
-	 * Default constructor
-	 */
-	public StyleException() {
-		super();
-	}
+    /**
+     * Default constructor
+     */
+    public StyleException() {
+        super();
+    }
 
-	/**
-	 * Constructor with passed message
-	 *
-	 * @param message
-	 *            Message of the exception
-	 */
-	public StyleException(String message) {
-		super(message);
-	}
+    /**
+     * Constructor with passed message
+     *
+     * @param message Message of the exception
+     */
+    public StyleException(String message) {
+        super(message);
+    }
 
-	/**
-	 * Constructor with passed message
-	 *
-	 * @param message
-	 *            Message of the exception
-	 * @param inner
-	 *            Inner exception
-	 */
-	public StyleException(String message, Exception inner) {
-		super(message);
-	}
+    /**
+     * Constructor with passed message
+     *
+     * @param message Message of the exception
+     * @param inner   Inner exception
+     */
+    public StyleException(String message, Exception inner) {
+        super(message);
+    }
 }
