@@ -6,16 +6,6 @@
  */
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Column;
 import ch.rabanti.nanoxlsx4j.Helper;
@@ -26,6 +16,16 @@ import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 import ch.rabanti.nanoxlsx4j.styles.StyleRepository;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 /**
  * Class representing a reader to decompile XLSX files
@@ -225,6 +225,14 @@ public class XlsxReader {
 			WorkbookReader.WorksheetDefinition definition = workbook.getWorksheetDefinitions().get(reader.getKey());
 			ws = new Worksheet(definition.getWorksheetName(), definition.getSheetId(), wb);
 			ws.setHidden(definition.isHidden());
+			ws.setViewType(reader.getValue().getViewType());
+			ws.setShowingGridLines(reader.getValue().getShowGridLines());
+			ws.setShowingRowColumnHeaders(reader.getValue().getShowRowColHeaders());
+			ws.setShowingRuler(reader.getValue().getShowRuler());
+			ws.setZoomFactor(reader.getValue().getCurrentZoomScale());
+			for (Map.Entry<Worksheet.SheetViewType, Integer> zoomFactor : reader.getValue().getZoomFactors().entrySet()) {
+				ws.setZoomFactor(zoomFactor.getKey(), zoomFactor.getValue());
+			}
 			if (reader.getValue().getAutoFilterRange() != null) {
 				ws.setAutoFilter(reader.getValue().getAutoFilterRange().StartAddress.Column, reader.getValue().getAutoFilterRange().EndAddress.Column);
 			}
@@ -235,7 +243,7 @@ public class XlsxReader {
 				ws.setDefaultRowHeight(reader.getValue().getDefaultRowHeight());
 			}
 			if (reader.getValue().getSelectedCells() != null) {
-				for(Range range : reader.getValue().getSelectedCells()){
+				for (Range range : reader.getValue().getSelectedCells()) {
 					ws.addSelectedCells(range);
 				}
 			}

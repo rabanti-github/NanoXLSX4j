@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PaneWriteReadTest {
+public class ViewWriteReadTest {
     @DisplayName("Test of the 'PaneSplitTopHeight' property when writing and reading a worksheet")
     @ParameterizedTest(name = "Given height {0} and active pane {1} should lead to same value on worksheet {2} when writing and reading a worksheet")
     @CsvSource(
@@ -328,6 +328,153 @@ public class PaneWriteReadTest {
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
         assertColumnSplit(columnNumber, freeze, givenWorksheet, true);
         assertRowSplit(rowNumber, freeze, givenWorksheet);
+    }
+
+    @DisplayName("Test of the 'showGridLines' field, when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given value {0} should lead to the same value when reading worksheet {1}")
+    @CsvSource(
+            {
+                    "true, 0",
+                    "false, 0",
+                    "true, 2",
+                    "false, 2",
+            }
+    )
+    void showGridLinesWriteReadTest(boolean showGridLines, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        workbook.setCurrentWorksheet(sheetIndex);
+        workbook.getCurrentWorksheet().setShowingGridLines(showGridLines);
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(showGridLines, givenWorksheet.isShowingGridLines());
+    }
+
+    @DisplayName("Test of the 'showRowColumnHeaders' field, when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given value {0} should lead to the same value when reading worksheet {1}")
+    @CsvSource(
+            {
+                    "true, 0",
+                    "false, 0",
+                    "true, 2",
+                    "false, 2",
+            }
+    )
+    void showRowColumnHeadersWriteReadTest(boolean showRowColumnHeaders, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        workbook.setCurrentWorksheet(sheetIndex);
+        workbook.getCurrentWorksheet().setShowingRowColumnHeaders(showRowColumnHeaders);
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(showRowColumnHeaders, givenWorksheet.isShowingRowColumnHeaders());
+    }
+
+    @DisplayName("Test of the 'showRuler' field, when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given value {0} and view type {2} should lead to {1} when reading worksheet {3} ")
+    @CsvSource(
+            {
+                    "true, true, pageLayout, 0",
+                    "false, true, pageBreakPreview, 0",
+                    "true, true, normal, 2",
+                    "false, false, pageLayout, 2",
+                    "true, true, pageBreakPreview, 2",
+                    "false, true, normal, 1",
+            }
+    )
+    void showRulerWriteReadTest(boolean showRuler, boolean expectedShowRuler, Worksheet.SheetViewType viewType, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        workbook.setCurrentWorksheet(sheetIndex);
+        workbook.getCurrentWorksheet().setViewType(viewType);
+        workbook.getCurrentWorksheet().setShowingRuler(showRuler);
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(viewType, givenWorksheet.getViewType());
+        assertEquals(expectedShowRuler, givenWorksheet.isShowingRuler());
+    }
+
+    @DisplayName("Test of the 'viewType' field, when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given view type {0} should lead to the same value when reading worksheet {1}")
+    @CsvSource(
+            {
+                    "pageLayout, 0",
+                    "pageBreakPreview, 0",
+                    "normal,0",
+                    "pageLayout, 2",
+                    "pageBreakPreview, 2",
+                    "normal, 2",
+            }
+    )
+    void viewTypeWriteReadTest(Worksheet.SheetViewType viewType, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        workbook.setCurrentWorksheet(sheetIndex);
+        workbook.getCurrentWorksheet().setViewType(viewType);
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(viewType, givenWorksheet.getViewType());
+    }
+
+    @DisplayName("Test of the 'zoomFactor' field, when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given view type {0} and zoom factor {1} should lead to the same values when reading worksheet {2}")
+    @CsvSource(
+            {
+                    "normal, 0, 0",
+                    "normal, 10, 2",
+                    "normal, 100, 0",
+                    "normal, 250, 2",
+                    "normal, 400, 0",
+                    "pageLayout, 0, 2",
+                    "pageLayout, 10, 0",
+                    "pageLayout, 100, 2",
+                    "pageLayout, 250, 0",
+                    "pageLayout, 400, 2",
+                    "pageBreakPreview, 0, 0",
+                    "pageBreakPreview, 10, 2",
+                    "pageBreakPreview, 100, 0",
+                    "pageBreakPreview, 250, 2",
+                    "pageBreakPreview, 400, 0",
+            }
+    )
+    void zoomFactorWriteReadTest(Worksheet.SheetViewType viewType, int zoomFactor, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        workbook.setCurrentWorksheet(sheetIndex);
+        workbook.getCurrentWorksheet().setViewType(viewType);
+        workbook.getCurrentWorksheet().setZoomFactor(zoomFactor);
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(viewType, givenWorksheet.getViewType());
+        assertEquals(zoomFactor, givenWorksheet.getZoomFactor());
+    }
+
+    @DisplayName("Test of the 'setZoomFactor' function, when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given view type {0} and additional view type {1} and zoom factor {2} should lead to the same values when reading worksheet {3}")
+    @CsvSource(
+            {
+                    "pageLayout, normal, 0, 0",
+                    "pageBreakPreview, normal, 10, 2",
+                    "pageLayout, normal, 100, 0",
+                    "pageBreakPreview, normal, 250, 2",
+                    "pageLayout, normal, 400, 0",
+                    "normal, pageLayout, 0, 2",
+                    "pageBreakPreview, pageLayout, 10, 0",
+                    "normal, pageLayout, 100, 2",
+                    "pageBreakPreview, pageLayout, 250, 0",
+                    "normal, pageLayout, 400, 2",
+                    "normal, pageBreakPreview, 0, 0",
+                    "pageLayout, pageBreakPreview, 10, 2",
+                    "normal, pageBreakPreview, 100, 0",
+                    "pageLayout, pageBreakPreview, 250, 2",
+                    "normal, pageBreakPreview, 400, 0",
+            }
+    )
+    void setZoomFactorWriteReadTest(Worksheet.SheetViewType initialViewType, Worksheet.SheetViewType additionalViewType, int zoomFactor, int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        workbook.setCurrentWorksheet(sheetIndex);
+        workbook.getCurrentWorksheet().setViewType(initialViewType);
+        workbook.getCurrentWorksheet().setZoomFactor(additionalViewType, zoomFactor);
+        workbook.saveAs("c:\\purge-temp\\testZoom.xlsx");
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        if (initialViewType != Worksheet.SheetViewType.normal && additionalViewType != Worksheet.SheetViewType.normal) {
+            assertEquals(3, givenWorksheet.getZoomFactors().size());
+            assertEquals(100, givenWorksheet.getZoomFactors().get(Worksheet.SheetViewType.normal));
+        } else {
+            assertEquals(2, givenWorksheet.getZoomFactors().size());
+        }
+        assertEquals(zoomFactor, givenWorksheet.getZoomFactors().get(additionalViewType));
+        assertEquals(100, givenWorksheet.getZoomFactors().get(initialViewType));
     }
 
     private static void assertColumnSplit(int columnNumber, boolean freeze, Worksheet givenWorksheet, boolean xyApplied) {

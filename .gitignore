@@ -42,3 +42,4 @@ NanoXLSX4j.Lib/dist/
 
 # user defined
 /docs/*
+/.idea/

@@ -9,11 +9,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PaneTest {
+public class ViewTest {
     @DisplayName("Test of the get function of the paneSplitTopHeight field")
     @Test()
     void paneSplitTopHeightTest() {
@@ -395,6 +397,149 @@ public class PaneTest {
         worksheet.setSplit(5, 5, true, new Address("R6"), Worksheet.WorksheetPane.bottomLeft);
         worksheet.resetSplit();
         assertInitializedPaneSplit(worksheet);
+    }
+
+    @DisplayName("Test of the get function of the ShowGridLine field")
+    @Test()
+    void showGridLinesTest() {
+        Worksheet worksheet = new Worksheet();
+        assertTrue(worksheet.isShowingGridLines());
+        worksheet.setShowingGridLines(false);
+        assertFalse(worksheet.isShowingGridLines());
+    }
+
+    @DisplayName("Test of the get function of the ShowRowColumnHeaders field")
+    @Test()
+    void showRowColumnHeadersTest() {
+        Worksheet worksheet = new Worksheet();
+        assertTrue(worksheet.isShowingRowColumnHeaders());
+        worksheet.setShowingRowColumnHeaders(false);
+        assertFalse(worksheet.isShowingRowColumnHeaders());
+    }
+
+    @DisplayName("Test of the get function of the ShowRuler field")
+    @Test()
+    void showRulerTest() {
+        Worksheet worksheet = new Worksheet();
+        assertTrue(worksheet.isShowingRuler());
+        worksheet.setShowingRuler(false);
+        assertFalse(worksheet.isShowingRuler());
+    }
+
+    @DisplayName("Test of the get function of the ViewType field")
+    @ParameterizedTest(name = "Given view type {0} should lead to the same value")
+    @CsvSource(
+            {
+                    "normal",
+                    "pageBreakPreview",
+                    "pageLayout",
+            }
+    )
+    void viewTypeTest(Worksheet.SheetViewType viewType) {
+        Worksheet worksheet = new Worksheet();
+        assertEquals(Worksheet.SheetViewType.normal, worksheet.getViewType());
+        worksheet.setViewType(viewType);
+        assertEquals(viewType, worksheet.getViewType());
+    }
+
+    @DisplayName("Test of the get function of the ZoomFactor field on the current view type")
+    @ParameterizedTest(name = "Given zoom factor {0} should lead to the same value")
+    @CsvSource(
+            {
+                    "0",
+                    "10",
+                    "23",
+                    "100",
+                    "255",
+                    "399",
+                    "400",
+            }
+    )
+    void zoomFactorTest(int zoomFactor) {
+        Worksheet worksheet = new Worksheet();
+        assertEquals(100, worksheet.getZoomFactor());
+        worksheet.setZoomFactor(zoomFactor);
+        assertEquals(zoomFactor, worksheet.getZoomFactor());
+    }
+
+    @DisplayName("Test of the get function of the ZoomFactor and ZoomFactors fields when the view type changes")
+    @Test()
+    void zoomFactorTest2() {
+        int normalZoomFactor = 120;
+        int pageBreakZoomFactor = 50;
+        int pageLayoutZoomFactor = 400;
+
+        Worksheet worksheet = new Worksheet();
+        assertEquals(1, worksheet.getZoomFactors().size());
+        assertEquals(100, worksheet.getZoomFactor());
+        assertEquals(Worksheet.SheetViewType.normal, worksheet.getViewType());
+        worksheet.setZoomFactor(normalZoomFactor);
+        worksheet.setViewType(Worksheet.SheetViewType.pageBreakPreview);
+        worksheet.setZoomFactor(pageBreakZoomFactor);
+        worksheet.setViewType(Worksheet.SheetViewType.pageLayout);
+        worksheet.setZoomFactor(pageLayoutZoomFactor);
+
+        assertEquals(3, worksheet.getZoomFactors().size());
+        assertEquals(normalZoomFactor, worksheet.getZoomFactors().get(Worksheet.SheetViewType.normal));
+        assertEquals(pageBreakZoomFactor, worksheet.getZoomFactors().get(Worksheet.SheetViewType.pageBreakPreview));
+        assertEquals(pageLayoutZoomFactor, worksheet.getZoomFactors().get(Worksheet.SheetViewType.pageLayout));
+    }
+
+    @DisplayName("Test of the failing ZoomFactor set function")
+    @ParameterizedTest(name = "Given zoom factor should lead to an exception")
+    @CsvSource(
+            {
+                    "-1",
+                    "-99",
+                    "1",
+                    "9",
+                    "401",
+                    "999",
+            }
+    )
+    void zoomFactorFailTest(int zoomFactor) {
+        Worksheet worksheet = new Worksheet();
+        assertEquals(100, worksheet.getZoomFactor());
+        assertThrows(WorksheetException.class, () -> worksheet.setZoomFactor(zoomFactor));
+    }
+
+    @DisplayName("Test of the SetZoomFactor function")
+    @ParameterizedTest(name = "Given zoom factor {0} and view type {1} should lead to the same zoom factor for the given view types")
+    @CsvSource(
+            {
+                    "0, normal",
+                    "10, pageBreakPreview",
+                    "23, pageLayout",
+                    "101, normal",
+                    "255, pageBreakPreview",
+                    "399, pageLayout",
+                    "400, normal",
+            }
+    )
+    void setZoomFactorTest(int zoomFactor, Worksheet.SheetViewType viewType) {
+        Worksheet worksheet = new Worksheet();
+        assertEquals(100, worksheet.getZoomFactor());
+        worksheet.setZoomFactor(viewType, zoomFactor);
+        assertEquals(zoomFactor, worksheet.getZoomFactors().get(viewType));
+    }
+
+    @DisplayName("Test of the failing ZoomFactor set function")
+    @ParameterizedTest(name = "Given zoom factor {0} and view type {1} should lead to an exception")
+    @CsvSource(
+            {
+                    "-1, normal",
+                    "-99, pageBreakPreview",
+                    "1, normal",
+                    "9, normal",
+                    "401, pageLayout",
+                    "999, normal",
+            }
+    )
+    void setZoomFactorFailTest(int zoomFactor, Worksheet.SheetViewType viewType) {
+        Worksheet worksheet = new Worksheet();
+        assertInitializedPaneSplit(worksheet);
+        assertEquals(100, worksheet.getZoomFactor());
+        assertThrows(WorksheetException.class, () -> worksheet.setZoomFactor(viewType, zoomFactor));
     }
 
     private void assertInitializedPaneSplit(Worksheet worksheet) {

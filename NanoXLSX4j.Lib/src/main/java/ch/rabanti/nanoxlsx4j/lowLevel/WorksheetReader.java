@@ -64,6 +64,12 @@ public class WorksheetReader {
     private final Map<Worksheet.SheetProtectionValue, Integer> worksheetProtection = new HashMap<>();
     private String worksheetProtectionHash;
     private PaneDefinition paneSplitValue;
+    private boolean showGridLines = true;
+    private boolean showRowColHeaders = true;
+    private boolean showRuler = true;
+    private Worksheet.SheetViewType viewType = Worksheet.SheetViewType.normal;
+    private int currentZoomScale = 100;
+    private Map<Worksheet.SheetViewType, Integer> zoomFactors = new HashMap<>();
 
     /**
      * Gets the data of the worksheet as Hashmap of cell address-cell object tuples
@@ -176,6 +182,84 @@ public class WorksheetReader {
     }
 
     /**
+     * Gets whether grid lines are shown
+     *
+     * @return True if grid lines are visible
+     */
+    public boolean isShowingGridLines() {
+        return showGridLines;
+    }
+
+    /**
+     * Gets whether column and row headers are shown
+     *
+     * @return True if column and row header are visible
+     */
+    public boolean isShowingRowColHeaders() {
+        return showRowColHeaders;
+    }
+
+    /**
+     * Gets whether rulers are shown in view type: pageLayout
+     *
+     * @return True if rules are visible
+     */
+    public boolean isShowingRuler() {
+        return showRuler;
+    }
+
+    /**
+     * Gets the sheet view type of the current worksheet
+     *
+     * @return Current view type
+     */
+    public Worksheet.SheetViewType getViewType() {
+        return viewType;
+    }
+
+    /**
+     * Gets the zoom factor of the current view type
+     *
+     * @return Current zoom scale
+     */
+    public int getCurrentZoomScale() {
+        return currentZoomScale;
+    }
+
+    /**
+     * Gets all preserved zoom factors of the worksheet
+     *
+     * @return Map of all zoom factors of the current worksheet
+     */
+    public Map<Worksheet.SheetViewType, Integer> getZoomFactors() {
+        return zoomFactors;
+    }
+
+    /**
+     * Gets whether gridlines are shown in the current worksheet
+     * @return True if gridlines are shown
+     */
+    public boolean getShowGridLines() {
+        return showGridLines;
+    }
+
+    /**
+     * Gets whether row and column headers are shown in the current worksheet
+     * @return True if gridlines are shown
+     */
+    public boolean getShowRowColHeaders() {
+        return showRowColHeaders;
+    }
+
+    /**
+     * Gets whether rulers are shown in the current worksheet
+     * @return True if gridlines are shown
+     */
+    public boolean getShowRuler() {
+        return showRuler;
+    }
+
+    /**
      * Constructor with parameters and import options
      *
      * @param sharedStrings        SharedStringsReader object
@@ -262,13 +346,50 @@ public class WorksheetReader {
         XmlDocument.XmlNodeList sheetViewsNodes = xmlDocument.getDocumentElement().getElementsByTagName("sheetViews", true);
         if (sheetViewsNodes != null && sheetViewsNodes.size() > 0) {
             XmlDocument.XmlNodeList sheetViewNodes = sheetViewsNodes.get(0).getChildNodes();
+            String attribute;
             // Go through all possible views
             for (XmlDocument.XmlNode sheetView : sheetViewNodes) {
+
+                attribute = sheetView.getAttribute("view");
+                if (attribute != null) {
+                    viewType = Worksheet.SheetViewType.valueOf(attribute);
+                }
+                attribute = sheetView.getAttribute("zoomScale");
+                if (attribute != null) {
+                    currentZoomScale = Integer.parseInt(attribute);
+                }
+                attribute = sheetView.getAttribute("zoomScaleNormal");
+                if (attribute != null) {
+                    int scale = Integer.parseInt(attribute);
+                    zoomFactors.put(Worksheet.SheetViewType.normal, scale);
+                }
+                attribute = sheetView.getAttribute("zoomScalePageLayoutView");
+                if (attribute != null) {
+                    int scale = Integer.parseInt(attribute);
+                    zoomFactors.put(Worksheet.SheetViewType.pageLayout, scale);
+                }
+                attribute = sheetView.getAttribute("zoomScaleSheetLayoutView");
+                if (attribute != null) {
+                    int scale = Integer.parseInt(attribute);
+                    zoomFactors.put(Worksheet.SheetViewType.pageBreakPreview, scale);
+                }
+                attribute = sheetView.getAttribute("showGridLines");
+                if (attribute != null) {
+                    showGridLines = ReaderUtils.parseBinaryBoolean(attribute) == 1;
+                }
+                attribute = sheetView.getAttribute("showRowColHeaders");
+                if (attribute != null) {
+                    showRowColHeaders = ReaderUtils.parseBinaryBoolean(attribute) == 1;
+                }
+                attribute = sheetView.getAttribute("showRuler");
+                if (attribute != null) {
+                    showRuler = ReaderUtils.parseBinaryBoolean(attribute) == 1;
+                }
                 if (sheetView.getName().equalsIgnoreCase("sheetView")) {
                     XmlDocument.XmlNodeList selectionNodes = sheetView.getElementsByTagName("selection", true);
                     if (selectionNodes != null && selectionNodes.size() > 0) {
                         for (XmlDocument.XmlNode selectionNode : selectionNodes) {
-                            String attribute = selectionNode.getAttribute("sqref");
+                            attribute = selectionNode.getAttribute("sqref");
                             if (attribute != null) {
                                 if (attribute.contains(" ")) {
                                     // Multiple ranges
@@ -284,7 +405,7 @@ public class WorksheetReader {
                     }
                     XmlDocument.XmlNodeList paneNodes = sheetView.getElementsByTagName("pane", true);
                     if (paneNodes != null && paneNodes.size() > 0) {
-                        String attribute = paneNodes.get(0).getAttribute("state");
+                        attribute = paneNodes.get(0).getAttribute("state");
                         boolean useNumbers = false;
                         this.paneSplitValue = new PaneDefinition();
                         if (attribute != null) {
