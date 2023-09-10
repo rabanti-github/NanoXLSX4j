@@ -213,8 +213,10 @@ public class RowTest {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "B1");
         worksheet.addCell(23, "B2");
-        worksheet.addCell("test",
-                          "C2");
+        worksheet.addCell(
+                "test",
+                "C2"
+        );
         worksheet.addCell(true, "D2");
         worksheet.addCell(false, "B3");
         List<Cell> row = worksheet.getRow(1);

@@ -1172,7 +1172,7 @@ public class Worksheet {
     // ### M E T H O D S - A D D C E L L R A N G E ###
 
     /**
-     * Adds a list of object values to a defined cell range. If the type of the a particular value does not match with
+     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with
      * one of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast
      * but adjusted<br> Recognized are the following data types: Cell (prepared object), String, int, double, float,
      * long, Date, boolean. All other types will be cast into a String using the default toString() method
@@ -1188,7 +1188,7 @@ public class Worksheet {
     }
 
     /**
-     * Adds a list of object values to a defined cell range. If the type of the a particular value does not match with
+     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with
      * one of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast
      * but adjusted<br> Recognized are the following data types: Cell (prepared object), String, int, double, float,
      * long, Date, boolean. All other types will be cast into a String using the default toString() method
@@ -1205,7 +1205,7 @@ public class Worksheet {
     }
 
     /**
-     * Adds a list of object values to a defined cell range. If the type of the a particular value does not match with
+     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with
      * one of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast
      * but adjusted<br> The data types in the passed list can be mixed. Recognized are the following data types: Cell
      * (prepared object), String, int, double, float, long, Date, boolean. All other types will be cast into a String
@@ -1223,7 +1223,7 @@ public class Worksheet {
     }
 
     /**
-     * Adds a list of object values to a defined cell range. If the type of the a particular value does not match with
+     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with
      * one of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast
      * but adjusted<br> The data types in the passed list can be mixed. Recognized are the following data types: Cell
      * (prepared object), String, int, double, float, long, Date, boolean. All other types will be cast into a String
@@ -1694,7 +1694,7 @@ public class Worksheet {
      * Gets the first existing cell in the current worksheet (bottom right)
      *
      * @return Nullable Cell Address. If no cell address could be determined, null will be returned
-     * @apiNote getFirstCellAddress() will not return the first cell with data in any case. If there is a formated but
+     * @apiNote getFirstCellAddress() will not return the first cell with data in any case. If there is a formatted but
      * empty cell (or many) before the first cell with data, GetLastCellAddress() will return the address of this empty
      * cell. Use {@link Worksheet#getFirstDataCellAddress()} in this case.
      */

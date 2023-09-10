@@ -159,7 +159,7 @@ public class StyleManager {
      * Adds a style component to the manager with an ID
      *
      * @param style Component to add
-     * @param id    Id of the component
+     * @param id    ID of the component
      * @return Hash of the added or determined component
      */
     private int addStyleComponent(AbstractStyle style, Integer id) {

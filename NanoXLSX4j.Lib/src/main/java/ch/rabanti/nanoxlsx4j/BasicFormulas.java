@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 
 public final class BasicFormulas {
     /**
-     * Returns a cell with a average formula
+     * Returns a cell with an average formula
      *
      * @param range Cell range to apply the average operation to
      * @return Prepared Cell Object, ready to be added to a worksheet
@@ -29,7 +29,7 @@ public final class BasicFormulas {
     }
 
     /**
-     * Returns a cell with a average formula
+     * Returns a cell with an average formula
      *
      * @param target Target worksheet of the average operation. Can be null if on the same worksheet
      * @param range  Cell range to apply the average operation to

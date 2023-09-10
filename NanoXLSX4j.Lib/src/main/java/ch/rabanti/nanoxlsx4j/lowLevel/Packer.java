@@ -160,7 +160,7 @@ public class Packer {
      * Method to pack the data into a XLSX file. This is the actual compiling and writing method (to a OutputStream)
      *
      * @param stream OutputStream to save the data into
-     * @throws ch.rabanti.nanoxlsx4j.exceptions.IOException Thrown in case of a error while packing or writing
+     * @throws ch.rabanti.nanoxlsx4j.exceptions.IOException Thrown in case of an error while packing or writing
      */
     public void pack(OutputStream stream) throws ch.rabanti.nanoxlsx4j.exceptions.IOException {
         try {

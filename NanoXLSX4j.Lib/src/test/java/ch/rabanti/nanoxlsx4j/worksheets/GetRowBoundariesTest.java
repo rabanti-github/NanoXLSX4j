@@ -31,7 +31,8 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(2, 44.4f);
@@ -53,7 +54,8 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(10);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(10, 44.4f);
@@ -75,13 +77,16 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(10);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(10, 44.4f);
         }
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         int row = worksheet.getLastRowNumber();
         assertEquals(10, row);
     }
@@ -99,13 +104,16 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(2, 44.4f);
         }
-        worksheet.addCell("test",
-                          "F5");
+        worksheet.addCell(
+                "test",
+                "F5"
+        );
         int row = worksheet.getLastRowNumber();
         assertEquals(4, row);
     }
@@ -147,7 +155,8 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(2, 44.4f);
@@ -169,13 +178,16 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(10);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(10, 44.4f);
         }
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         int row = worksheet.getLastDataRowNumber();
         assertEquals(4, row);
     }
@@ -193,13 +205,16 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(0);
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(0, 22.2f);
             worksheet.setRowHeight(1, 33.3f);
             worksheet.setRowHeight(3, 44.4f);
         }
-        worksheet.addCell("test",
-                          "F5");
+        worksheet.addCell(
+                "test",
+                "F5"
+        );
         int row = worksheet.getLastDataRowNumber();
         assertEquals(4, row);
     }
@@ -225,7 +240,8 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
             worksheet.addHiddenRow(3);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(1, 22.2f);
             worksheet.setRowHeight(2, 33.3f);
             worksheet.setRowHeight(3, 44.4f);
@@ -247,7 +263,8 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
             worksheet.addHiddenRow(10);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(1, 22.2f);
             worksheet.setRowHeight(2, 33.3f);
             worksheet.setRowHeight(10, 44.4f);
@@ -269,13 +286,16 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(2);
             worksheet.addHiddenRow(3);
             worksheet.addHiddenRow(10);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(2, 22.2f);
             worksheet.setRowHeight(3, 33.3f);
             worksheet.setRowHeight(10, 44.4f);
         }
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         int row = worksheet.getFirstRowNumber();
         assertEquals(2, row);
     }
@@ -293,13 +313,16 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(6);
             worksheet.addHiddenRow(7);
             worksheet.addHiddenRow(8);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(6, 22.2f);
             worksheet.setRowHeight(7, 33.3f);
             worksheet.setRowHeight(8, 44.4f);
         }
-        worksheet.addCell("test",
-                          "F5");
+        worksheet.addCell(
+                "test",
+                "F5"
+        );
         int row = worksheet.getFirstRowNumber();
         assertEquals(4, row);
     }
@@ -341,7 +364,8 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
             worksheet.addHiddenRow(3);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(1, 22.2f);
             worksheet.setRowHeight(2, 33.3f);
             worksheet.setRowHeight(3, 44.4f);
@@ -363,13 +387,16 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(2);
             worksheet.addHiddenRow(3);
             worksheet.addHiddenRow(10);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(2, 22.2f);
             worksheet.setRowHeight(3, 33.3f);
             worksheet.setRowHeight(10, 44.4f);
         }
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         int row = worksheet.getFirstDataRowNumber();
         assertEquals(4, row);
     }
@@ -387,13 +414,16 @@ public class GetRowBoundariesTest {
             worksheet.addHiddenRow(1);
             worksheet.addHiddenRow(2);
             worksheet.addHiddenRow(3);
-        } else {
+        }
+        else {
             worksheet.setRowHeight(1, 22.2f);
             worksheet.setRowHeight(2, 33.3f);
             worksheet.setRowHeight(3, 44.4f);
         }
-        worksheet.addCell("test",
-                          "F5");
+        worksheet.addCell(
+                "test",
+                "F5"
+        );
         int row = worksheet.getFirstDataRowNumber();
         assertEquals(4, row);
     }
@@ -423,8 +453,10 @@ public class GetRowBoundariesTest {
         worksheet.addHiddenRow(2);
         worksheet.addHiddenRow(3);
         worksheet.addHiddenRow(10);
-        worksheet.addCell("test",
-                          "F5");
+        worksheet.addCell(
+                "test",
+                "F5"
+        );
         int minRow = worksheet.getFirstDataRowNumber();
         int maxRow = worksheet.getLastDataRowNumber();
         assertEquals(4, minRow);

@@ -327,14 +327,18 @@ public class CellTest {
         TestUtils.assertCellsEqual(null, null, "Data", this.cellAddress);
         TestUtils.assertCellsEqual(27, 27, 28, this.cellAddress);
         TestUtils.assertCellsEqual(0.27778f, 0.27778f, 0.27777f, this.cellAddress);
-        TestUtils.assertCellsEqual("ABC",
-                                   "ABC",
-                                   "abc",
-                                   this.cellAddress);
-        TestUtils.assertCellsEqual("",
-                                   "",
-                                   " ",
-                                   this.cellAddress);
+        TestUtils.assertCellsEqual(
+                "ABC",
+                "ABC",
+                "abc",
+                this.cellAddress
+        );
+        TestUtils.assertCellsEqual(
+                "",
+                "",
+                " ",
+                this.cellAddress
+        );
         TestUtils.assertCellsEqual(true, true, false, this.cellAddress);
         TestUtils.assertCellsEqual(false, false, true, this.cellAddress);
         Calendar calendarInstance = Calendar.getInstance();

@@ -238,7 +238,7 @@ public class Fill extends AbstractStyle {
     // ### M E T H O D S ###
 
     /**
-     * Sets the color and the depending fill type
+     * Sets the color and the depending on fill type
      *
      * @param value    Color value
      * @param fillType Fill type (fill or pattern)

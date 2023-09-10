@@ -124,7 +124,7 @@ public class XlsxWriter {
     }
 
     /**
-     * Method to create the app-properties (part of meta data) as XML document
+     * Method to create the app-properties (part of metadata) as XML document
      *
      * @return Formatted XML document
      * @throws IOException Thrown in case of an error while creating the XML document
@@ -201,7 +201,7 @@ public class XlsxWriter {
     }
 
     /**
-     * Method to create the core-properties (part of meta data) as XML document
+     * Method to create the core-properties (part of metadata) as XML document
      *
      * @return Formatted XML document
      * @throws IOException Thrown in case of an error while creating the XML document
@@ -285,7 +285,7 @@ public class XlsxWriter {
                 tempColors.add(item);
             }
         }
-        if (tempColors.size() > 0) {
+        if (!tempColors.isEmpty()) {
             sb.append("<mruColors>");
             for (int i = 0; i < tempColors.size(); i++) {
                 sb.append("<color rgb=\"").append(tempColors.get(i)).append("\"/>");

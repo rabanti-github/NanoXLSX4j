@@ -5,7 +5,7 @@
     <parent>
         <artifactId>nanoxlsx4j-root</artifactId>
         <groupId>ch.rabanti</groupId>
-        <version>2.2.0</version>
+        <version>2.3.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -136,8 +136,21 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.0.2</version>
+                        <version>3.1.0</version>
                         <executions>
+                            <execution>
+                                <id>filter-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>resources</goal>
+                                </goals>
+                                <configuration>
+                                    <delimiters>
+                                        <delimiter>@</delimiter>
+                                    </delimiters>
+                                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <id>copy-javadoc-docs</id>
                                 <phase>package</phase>
@@ -247,6 +260,27 @@
                             <!-- Set to false, to check manually on the repository before releasing (use 'mvn nexus-staging:release'; drop with 'mvn nexus-staging:drop') -->
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
                         </configuration>
+                    </plugin>
+                    <!-- ADD THE MAVEN RESOURCES PLUGIN CONFIGURATION HERE -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.1.0</version> <!-- Change to the latest version -->
+                        <executions>
+                            <execution>
+                                <id>filter-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>resources</goal>
+                                </goals>
+                                <configuration>
+                                    <delimiters>
+                                        <delimiter>@</delimiter>
+                                    </delimiters>
+                                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

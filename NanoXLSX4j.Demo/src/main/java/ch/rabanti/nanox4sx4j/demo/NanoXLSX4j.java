@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Observable;
 
 /**
  * Demo Program for NanoXLSX4j
@@ -86,7 +85,8 @@ public class NanoXLSX4j {
         workbook.getCurrentWorksheet().addNextCell("Test3");                // Add cell C1
         try {
             workbook.save();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -111,7 +111,8 @@ public class NanoXLSX4j {
             wb2.getCurrentWorksheet().getCells().forEach((k, v) -> {
                 System.out.println("Cell address: " + k + ": content:'" + v.getValue() + "'");
             });
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             System.out.println("Error: " + ex);
         }
 
@@ -127,14 +128,15 @@ public class NanoXLSX4j {
         wb.WS.right(2);                                                                 // Move to cell E1
         wb.WS.value(true);                                                              // Add cell E1
         wb.addWorksheet("Sheet2");                                                      // Add a new worksheet
-        wb.getCurrentWorksheet().setCurrentCellDirection(Worksheet.CellDirection.RowToRow); // Change the cell direction
+        wb.getCurrentWorksheet().setCurrentCellDirection(Worksheet.CellDirection.RowToRow);   // Change the cell direction
         wb.WS.value("This is another text");                                            // Add cell A1
         wb.WS.formula("=A1");                                                           // Add a formula in Cell A2
         wb.WS.down();                                                                   // Go to cell A4
         wb.WS.value("Formatted Text", BasicStyles.Bold());                              // Add a formatted value to cell A4
         try {
             wb.save();                                                                  // Save the workbook
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -151,13 +153,15 @@ public class NanoXLSX4j {
         try {
             fs = new FileOutputStream(outputFolder + "stream.xlsx");        // Create a file output stream (could be whatever output stream you want)
             workbook.saveAsStream(fs);                                      // Save the workbook into the stream
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
 
     /**
-     * This method shows the usage of AddNextCell with several data types and formulas. Furthermore, the several types of Addresses are demonstrated
+     * This method shows the usage of AddNextCell with several data types and formulas. Furthermore, the several types
+     * of Addresses are demonstrated
      */
     private static void demo1() {
         Workbook workbook = new Workbook(outputFolder + "test1.xlsx", "Sheet1");  // Create new workbook
@@ -188,18 +192,20 @@ public class NanoXLSX4j {
         workbook.getCurrentWorksheet().addCell(address.toString(), 1, 3);   // Add the string of the address
         try {
             workbook.save();                                                // Save the workbook
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     /**
-     * This demo shows the usage of several data types, the method AddCell, more than one worksheet and the SaveAs method
+     * This demo shows the usage of several data types, the method AddCell, more than one worksheet and the SaveAs
+     * method
      */
     private static void demo2() {
         Workbook workbook = new Workbook(false);                            // Create new workbook
         workbook.addWorksheet("Sheet1");                                    // Add a new Worksheet and set it as current sheet
-        workbook.getCurrentWorksheet().addNextCell("月曜日");                // Add cell A1 (Unicode)
+        workbook.getCurrentWorksheet().addNextCell("月曜日");               // Add cell A1 (Unicode)
         workbook.getCurrentWorksheet().addNextCell(-987);                   // Add cell B1
         workbook.getCurrentWorksheet().addNextCell(false);                  // Add cell C1
         workbook.getCurrentWorksheet().goToNextRow();                       // Go to Row 2
@@ -219,13 +225,15 @@ public class NanoXLSX4j {
         try {
             workbook.saveAs(outputFolder + "test2.xlsx");                   // Save the workbook
             workbook.saveAs(outputFolder + "test2.xlsx");                   // Save the workbook
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     /**
-     * This demo shows the usage of CellDirection when using AddNextCell, reading of the current cell address, and retrieving of cell values
+     * This demo shows the usage of CellDirection when using AddNextCell, reading of the current cell address, and
+     * retrieving of cell values
      */
     private static void demo3() {
         Workbook workbook = new Workbook(outputFolder + "test3.xlsx", "Sheet1"); // Create new workbook
@@ -253,7 +261,8 @@ public class NanoXLSX4j {
         workbook.getCurrentWorksheet().addCell("Text C", 3, 2);                 // Add manually placed value
         try {
             workbook.save();                                                    // Save the workbook
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -290,7 +299,7 @@ public class NanoXLSX4j {
 
         workbook.getCurrentWorksheet().getCells().get("B2").setStyle(s);                    // Assign style to cell
         workbook.getCurrentWorksheet().goToNextRow();                                       // Go to Row 3
-        workbook.getCurrentWorksheet().addNextCell(new Date(115, 9, 3));  // Add cell B1
+        workbook.getCurrentWorksheet().addNextCell(new Date(115, 9, 3));    // Add cell B1
         workbook.getCurrentWorksheet().addNextCell(true);                                   // Add cell B2
         workbook.getCurrentWorksheet().addNextCell(false, s2);                              // Add cell B3 with style in the same step
         workbook.getCurrentWorksheet().getCells().get("C2").setStyle(BasicStyles.BorderFrame()); // Assign predefined basic style to cell
@@ -308,7 +317,8 @@ public class NanoXLSX4j {
         workbook.getCurrentWorksheet().setRowHeight(1, 30);                                 // Set row height
         try {
             workbook.save();                                                                // Save the workbook
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -351,39 +361,42 @@ public class NanoXLSX4j {
         workbook.getWorkbookMetadata().setKeywords("Keyword1;Keyword2;Keyword3");       // Add meta data to workbook
         try {
             workbook.save();                                                            // Save the workbook
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     /**
-     * This demo shows the usage of merging cells, protecting cells, worksheet password protection and workbook protection
+     * This demo shows the usage of merging cells, protecting cells, worksheet password protection and workbook
+     * protection
      */
     private static void demo6() {
-        Workbook workbook = new Workbook(outputFolder + "test6.xlsx", "Sheet1");  // Create new workbook
-        workbook.getCurrentWorksheet().addNextCell("Merged1");                  // Add cell A1
-        workbook.getCurrentWorksheet().mergeCells("A1:C1");                     // Merge cells from A1 to C1
-        workbook.getCurrentWorksheet().goToNextRow();                           // Go to next row
-        workbook.getCurrentWorksheet().addNextCell(false);                      // Add cell A2
-        workbook.getCurrentWorksheet().mergeCells("A2:D2");                     // Merge cells from A2 to D1
-        workbook.getCurrentWorksheet().goToNextRow();                           // Go to next row
-        workbook.getCurrentWorksheet().addNextCell("22.2d");                    // Add cell A3
-        workbook.getCurrentWorksheet().mergeCells("A3:E4");                     // Merge cells from A3 to E4
-        workbook.addWorksheet("Protected");                                     // Add a new worksheet
+        Workbook workbook = new Workbook(outputFolder + "test6.xlsx", "Sheet1"); // Create new workbook
+        workbook.getCurrentWorksheet().addNextCell("Merged1");                   // Add cell A1
+        workbook.getCurrentWorksheet().mergeCells("A1:C1");                      // Merge cells from A1 to C1
+        workbook.getCurrentWorksheet().goToNextRow();                            // Go to next row
+        workbook.getCurrentWorksheet().addNextCell(false);                       // Add cell A2
+        workbook.getCurrentWorksheet().mergeCells("A2:D2");                      // Merge cells from A2 to D1
+        workbook.getCurrentWorksheet().goToNextRow();                            // Go to next row
+        workbook.getCurrentWorksheet().addNextCell("22.2d");                     // Add cell A3
+        workbook.getCurrentWorksheet().mergeCells("A3:E4");                      // Merge cells from A3 to E4
+        workbook.addWorksheet("Protected");                                      // Add a new worksheet
         workbook.getCurrentWorksheet().addAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.sort);               // Allow to sort sheet (worksheet is automatically set as protected)
         workbook.getCurrentWorksheet().addAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.insertRows);         // Allow to insert rows
         workbook.getCurrentWorksheet().addAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.selectLockedCells);  // Allow to select cells (locked cells caused automatically to select unlocked cells)
-        workbook.getCurrentWorksheet().addNextCell("Cell A1");                  // Add cell A1
-        workbook.getCurrentWorksheet().addNextCell("Cell B1");                  // Add cell B1
+        workbook.getCurrentWorksheet().addNextCell("Cell A1");                   // Add cell A1
+        workbook.getCurrentWorksheet().addNextCell("Cell B1");                   // Add cell B1
         workbook.getCurrentWorksheet().getCells().get("A1").setCellLockedState(false, true); // Set the locking state of cell A1 (not locked but value is hidden when cell selected)
-        workbook.addWorksheet("PWD-Protected");                                 // Add a new worksheet
+        workbook.addWorksheet("PWD-Protected");                                  // Add a new worksheet
         workbook.getCurrentWorksheet().addCell("This worksheet is password protected. The password is:", 0, 0);  // Add cell A1
-        workbook.getCurrentWorksheet().addCell("test123", 0, 1);                // Add cell A2
-        workbook.getCurrentWorksheet().setSheetProtectionPassword("test123");   // Set the password "test123"
-        workbook.setWorkbookProtection(true, true, true, null);                 // Set workbook protection (windows locked, structure locked, no password)
-        try {
-            workbook.save();                                                    // Save the workbook            
-        } catch (Exception e) {
+        workbook.getCurrentWorksheet().addCell("test123", 0, 1);                 // Add cell A2
+        workbook.getCurrentWorksheet().setSheetProtectionPassword("test123");    // Set the password "test123"
+        workbook.setWorkbookProtection(true, true, true, null);                  // Set workbook protection (windows locked, structure locked, no password)
+        try { 
+            workbook.save();                                                     // Save the workbook            
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -398,29 +411,30 @@ public class NanoXLSX4j {
         workbook.addWorksheet(sanitizedSheetName);                               // Add new worksheet
         Worksheet ws = workbook.getCurrentWorksheet();                           // Create reference (shortening)
         List<Object> values = new ArrayList<>();                                 // Create a List of values
-        values.add("Cell A1");                                                   // set a value
-        values.add("Cell B1");                                                   // set a value
-        values.add("Cell C1");                                                   // set a value
-        values.add("Cell D1");                                                   // set a value
+        values.add("Cell A1");                                                 // set a value
+        values.add("Cell B1");                                                 // set a value
+        values.add("Cell C1");                                                 // set a value
+        values.add("Cell D1");                                                 // set a value
         ws.addCellRange(values, "A1:D1");                                        // Insert cell range
         values = new ArrayList<>();                                              // Create a List of values
-        values.add("Cell A2");                                                   // set a value
-        values.add("Cell B2");                                                   // set a value
-        values.add("Cell C2");                                                   // set a value
-        values.add("Cell D2");                                                   // set a value
+        values.add("Cell A2");                                                 // set a value
+        values.add("Cell B2");                                                 // set a value
+        values.add("Cell C2");                                                 // set a value
+        values.add("Cell D2");                                                 // set a value
         ws.addCellRange(values, "A2:D2");                                        // Insert cell range
         values = new ArrayList<>();                                              // Create a List of values
-        values.add("Cell A3");                                                   // set a value
-        values.add("Cell B3");                                                   // set a value
-        values.add("Cell C3");                                                   // set a value
-        values.add("Cell D3");                                                   // set a value
+        values.add("Cell A3");                                                 // set a value
+        values.add("Cell B3");                                                 // set a value
+        values.add("Cell C3");                                                 // set a value
+        values.add("Cell D3");                                                 // set a value
         ws.addCellRange(values, "A3:D3");                                        // Insert cell range
         ws.addHiddenColumn("C");                                                 // Hide column C
         ws.addHiddenRow(1);                                                      // Hider row 2 (zero-based: 1)
         ws.setAutoFilter(1, 3);                                                  // Set auto-filter for column B to D
         try {
             workbook.saveAs(outputFolder + "test7.xlsx");                        // Save the workbook            
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -431,7 +445,7 @@ public class NanoXLSX4j {
     private static void demo8() {
         Workbook workbook = new Workbook(outputFolder + "test8.xlsx", "Sheet*1", true);     // Create new workbook with invalid sheet name (*); Auto-Sanitizing will replace * with _
         workbook.getCurrentWorksheet().addNextCell("Test");                                 // Add cell A1
-        workbook.getCurrentWorksheet().addSelectedCells("A5:B10");		                    // Set the selection to the range A5:B10
+        workbook.getCurrentWorksheet().addSelectedCells("A5:B10");                          // Set the selection to the range A5:B10
         workbook.getCurrentWorksheet().addSelectedCells("D2:D2");                           // Add another cell as selected on this worksheet
         workbook.addWorksheet("Sheet2");                                                    // Create new worksheet
         workbook.getCurrentWorksheet().addNextCell("Test2");                                // Add cell A1
@@ -439,12 +453,13 @@ public class NanoXLSX4j {
         workbook.getCurrentWorksheet().setSelectedCells(range);                             // Set the selection to the range (deprecated method to clear all previous definitions)
         workbook.addWorksheet("Sheet2", true);                                              // Create new worksheet with already existing name; The name will be changed to Sheet21 due to auto-sanitizing (appending of 1)
         workbook.getCurrentWorksheet().addNextCell("Test3");                                // Add cell A1
-        workbook.getCurrentWorksheet().addSelectedCells(new Address(2, 2), new Address(4, 4));	// Set the selection to the range C3:E5
-        workbook.getCurrentWorksheet().addSelectedCells(new Address(5, 1), new Address(5, 1));	// Set the selection to F2 as range
+        workbook.getCurrentWorksheet().addSelectedCells(new Address(2, 2), new Address(4, 4));    // Set the selection to the range C3:E5
+        workbook.getCurrentWorksheet().addSelectedCells(new Address(5, 1), new Address(5, 1));    // Set the selection to F2 as range
         workbook.setSelectedWorksheet(1);                                                   // Set the second Tab as selected (zero-based: 1)
         try {
             workbook.save();                                                                // Save the workbook            
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -511,7 +526,8 @@ public class NanoXLSX4j {
 
         try {
             workbook.save();                                                // Save the workbook
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -538,7 +554,8 @@ public class NanoXLSX4j {
         wb.WS.value("Another test", chainedStyle);                                      // Add text and the appended style
         try {
             wb.save();                                                                  // Save the workbook
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }

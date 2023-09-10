@@ -11,7 +11,8 @@ public class RangeMatchers {
 
     public static Matcher<Range> hasStartAddress(Matcher<? super Address> matcher) {
         return new FeatureMatcher<Range, Address>(matcher, "resolved start address",
-                                                  "startAddress") {
+                                                  "startAddress"
+        ) {
             @Override
             protected Address featureValueOf(Range range) {
                 return range.StartAddress;
@@ -25,7 +26,8 @@ public class RangeMatchers {
 
     public static Matcher<Range> hasEndAddress(Matcher<? super Address> matcher) {
         return new FeatureMatcher<Range, Address>(matcher, "resolved end address",
-                                                  "endAddress") {
+                                                  "endAddress"
+        ) {
             @Override
             protected Address featureValueOf(Range range) {
                 return range.EndAddress;
@@ -39,7 +41,8 @@ public class RangeMatchers {
 
     public static Matcher<Range> hasRangeString(Matcher<? super String> matcher) {
         return new FeatureMatcher<Range, String>(matcher, "resolved range string",
-                                                 "rangeString") {
+                                                 "rangeString"
+        ) {
             @Override
             protected String featureValueOf(Range range) {
                 return range.toString();

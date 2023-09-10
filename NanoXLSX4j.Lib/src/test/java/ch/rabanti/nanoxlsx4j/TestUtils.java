@@ -42,7 +42,8 @@ public class TestUtils {
                 try {
                     Number number = NumberFormat.getInstance().parse(stringValue);
                     return number.intValue();
-                } catch (Exception ex) {
+                }
+                catch (Exception ex) {
                     throw new IllegalArgumentException("Cannot cast to int: " + sourceType);
                 }
             case "LONG":
@@ -120,7 +121,8 @@ public class TestUtils {
         V actualValue = method.apply(mapValue);
         if (actualValue == null) {
             assertNull(expectedValue);
-        } else {
+        }
+        else {
             assertEquals(actualValue, expectedValue);
         }
     }
@@ -189,7 +191,8 @@ public class TestUtils {
             Cell cell = givenWorkbook.getCurrentWorksheet().getCell(new Address(targetCellAddress));
             assertEquals(expectedValue, cell.getValue());
             return cell;
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             return null;
         }
     }

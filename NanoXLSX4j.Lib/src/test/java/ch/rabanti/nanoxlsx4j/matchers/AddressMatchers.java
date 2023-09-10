@@ -10,7 +10,8 @@ import static org.hamcrest.Matchers.equalTo;
 public class AddressMatchers {
     public static Matcher<Address> hasRowNumber(Matcher<? super Integer> matcher) {
         return new FeatureMatcher<Address, Integer>(matcher, "zero-based row number",
-                                                    "row") {
+                                                    "row"
+        ) {
             @Override
             protected Integer featureValueOf(Address address) {
                 return address.Row;
@@ -24,7 +25,8 @@ public class AddressMatchers {
 
     public static Matcher<Address> hasColumnNumber(Matcher<? super Integer> matcher) {
         return new FeatureMatcher<Address, Integer>(matcher, "zero-based column number",
-                                                    "column") {
+                                                    "column"
+        ) {
             @Override
             protected Integer featureValueOf(Address address) {
                 return address.Column;
@@ -38,7 +40,8 @@ public class AddressMatchers {
 
     public static Matcher<Address> hasType(Matcher<? super Cell.AddressType> matcher) {
         return new FeatureMatcher<Address, Cell.AddressType>(matcher, "address type",
-                                                             "type") {
+                                                             "type"
+        ) {
             @Override
             protected Cell.AddressType featureValueOf(Address address) {
                 return address.Type;
@@ -52,7 +55,8 @@ public class AddressMatchers {
 
     public static Matcher<Address> hasAddress(Matcher<? super String> matcher) {
         return new FeatureMatcher<Address, String>(matcher, "resolved address",
-                                                   "address") {
+                                                   "address"
+        ) {
             @Override
             protected String featureValueOf(Address address) {
                 return address.getAddress();
@@ -66,7 +70,8 @@ public class AddressMatchers {
 
     public static Matcher<Address> hasColumnName(Matcher<? super String> matcher) {
         return new FeatureMatcher<Address, String>(matcher, "resolved column name",
-                                                   "columnName") {
+                                                   "columnName"
+        ) {
             @Override
             protected String featureValueOf(Address address) {
                 return address.getColumn();

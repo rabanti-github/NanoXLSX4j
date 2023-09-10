@@ -203,7 +203,7 @@ public class XmlDocument {
         }
 
         /**
-         * Gets whether child nodes are availble in this node
+         * Gets whether child nodes are available in this node
          *
          * @return True if sub-nodes exist
          */

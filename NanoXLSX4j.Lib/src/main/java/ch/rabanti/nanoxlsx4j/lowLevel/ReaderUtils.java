@@ -46,7 +46,7 @@ public class ReaderUtils {
     }
 
     /**
-     * Parser class to handle nullable integers
+     * Low-level parser class to handle nullable integers
      */
     protected static class IntParser {
         public boolean hasValue;

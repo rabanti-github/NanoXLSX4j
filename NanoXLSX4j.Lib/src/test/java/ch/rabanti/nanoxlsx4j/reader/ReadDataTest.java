@@ -31,46 +31,86 @@ public class ReadDataTest {
     @Test()
     void readStringTest() throws Exception {
         Map<String, String> cells = new HashMap<>();
-        cells.put("A1",
-                  "Test");
-        cells.put("B2",
-                  "22");
-        cells.put("C3",
-                  "");
-        cells.put("D4",
-                  " ");
-        cells.put("E4",
-                  "x ");
-        cells.put("F4",
-                  " X");
-        cells.put("G4",
-                  " x ");
-        cells.put("H4",
-                  "x x");
-        cells.put("E5",
-                  "#@+-\"'?!\\(){}[]<>/|.,;:");
-        cells.put("L6",
-                  "\t");
-        cells.put("M6",
-                  "\tx");
-        cells.put("N6",
-                  "x\t");
-        cells.put("E7",
-                  "日本語");
-        cells.put("F7",
-                  "हिन्दी");
-        cells.put("G7",
-                  "한국어");
-        cells.put("H7",
-                  "官話");
-        cells.put("I7",
-                  "ελληνική γλώσσα");
-        cells.put("J7",
-                  "русский язык");
-        cells.put("K7",
-                  "עברית");
-        cells.put("L7",
-                  "اَلْعَرَبِيَّة");
+        cells.put(
+                "A1",
+                "Test"
+        );
+        cells.put(
+                "B2",
+                "22"
+        );
+        cells.put(
+                "C3",
+                ""
+        );
+        cells.put(
+                "D4",
+                " "
+        );
+        cells.put(
+                "E4",
+                "x "
+        );
+        cells.put(
+                "F4",
+                " X"
+        );
+        cells.put(
+                "G4",
+                " x "
+        );
+        cells.put(
+                "H4",
+                "x x"
+        );
+        cells.put(
+                "E5",
+                "#@+-\"'?!\\(){}[]<>/|.,;:"
+        );
+        cells.put(
+                "L6",
+                "\t"
+        );
+        cells.put(
+                "M6",
+                "\tx"
+        );
+        cells.put(
+                "N6",
+                "x\t"
+        );
+        cells.put(
+                "E7",
+                "日本語"
+        );
+        cells.put(
+                "F7",
+                "हिन्दी"
+        );
+        cells.put(
+                "G7",
+                "한국어"
+        );
+        cells.put(
+                "H7",
+                "官話"
+        );
+        cells.put(
+                "I7",
+                "ελληνική γλώσσα"
+        );
+        cells.put(
+                "J7",
+                "русский язык"
+        );
+        cells.put(
+                "K7",
+                "עברית"
+        );
+        cells.put(
+                "L7",
+                "اَلْعَرَبِيَّة"
+        );
         assertValues(cells, ReadDataTest::assertEqualsFunction);
     }
 
@@ -78,55 +118,103 @@ public class ReadDataTest {
     @Test()
     void readStringNewLineTest() throws Exception {
         Map<String, String> given = new HashMap<>();
-        given.put("A1",
-                  "\r");
-        given.put("A2",
-                  "\n");
-        given.put("A3",
-                  "\r\n");
-        given.put("A4",
-                  "a\n");
-        given.put("A5",
-                  "\nx");
-        given.put("A6",
-                  "a\r");
-        given.put("A7",
-                  "\rx");
-        given.put("A8",
-                  "a\r\n");
-        given.put("A9",
-                  "\r\nx");
-        given.put("A10",
-                  "\n\n\n");
-        given.put("A11",
-                  "\r\r\r");
-        given.put("A12",
-                  "\n\r"); // irregular use
+        given.put(
+                "A1",
+                "\r"
+        );
+        given.put(
+                "A2",
+                "\n"
+        );
+        given.put(
+                "A3",
+                "\r\n"
+        );
+        given.put(
+                "A4",
+                "a\n"
+        );
+        given.put(
+                "A5",
+                "\nx"
+        );
+        given.put(
+                "A6",
+                "a\r"
+        );
+        given.put(
+                "A7",
+                "\rx"
+        );
+        given.put(
+                "A8",
+                "a\r\n"
+        );
+        given.put(
+                "A9",
+                "\r\nx"
+        );
+        given.put(
+                "A10",
+                "\n\n\n"
+        );
+        given.put(
+                "A11",
+                "\r\r\r"
+        );
+        given.put(
+                "A12",
+                "\n\r"
+        ); // irregular use
         Map<String, String> expected = new HashMap<>();
-        expected.put("A1",
-                     "\r\n");
-        expected.put("A2",
-                     "\r\n");
-        expected.put("A3",
-                     "\r\n");
-        expected.put("A4",
-                     "a\r\n");
-        expected.put("A5",
-                     "\r\nx");
-        expected.put("A6",
-                     "a\r\n");
-        expected.put("A7",
-                     "\r\nx");
-        expected.put("A8",
-                     "a\r\n");
-        expected.put("A9",
-                     "\r\nx");
-        expected.put("A10",
-                     "\r\n\r\n\r\n");
-        expected.put("A11",
-                     "\r\n\r\n\r\n");
-        expected.put("A12",
-                     "\r\n\r\n");
+        expected.put(
+                "A1",
+                "\r\n"
+        );
+        expected.put(
+                "A2",
+                "\r\n"
+        );
+        expected.put(
+                "A3",
+                "\r\n"
+        );
+        expected.put(
+                "A4",
+                "a\r\n"
+        );
+        expected.put(
+                "A5",
+                "\r\nx"
+        );
+        expected.put(
+                "A6",
+                "a\r\n"
+        );
+        expected.put(
+                "A7",
+                "\r\nx"
+        );
+        expected.put(
+                "A8",
+                "a\r\n"
+        );
+        expected.put(
+                "A9",
+                "\r\nx"
+        );
+        expected.put(
+                "A10",
+                "\r\n\r\n\r\n"
+        );
+        expected.put(
+                "A11",
+                "\r\n\r\n\r\n"
+        );
+        expected.put(
+                "A12",
+                "\r\n\r\n"
+        );
         assertValues(given, ReadDataTest::assertEqualsFunction, expected);
     }
 
@@ -276,12 +364,18 @@ public class ReadDataTest {
     void readFormulaTest() throws Exception {
         Map<String, String> cells = new HashMap<>();
         long lmax = Long.MAX_VALUE;
-        cells.put("A1",
-                  "=B2");
-        cells.put("A2",
-                  "MIN(C2:D2)");
-        cells.put("A3",
-                  "MAX(worksheet2!A1:worksheet2:A100");
+        cells.put(
+                "A1",
+                "=B2"
+        );
+        cells.put(
+                "A2",
+                "MIN(C2:D2)"
+        );
+        cells.put(
+                "A3",
+                "MAX(worksheet2!A1:worksheet2:A100"
+        );
 
         Workbook workbook = new Workbook("worksheet1");
         for (Map.Entry<String, String> cell : cells.entrySet()) {
@@ -440,13 +534,15 @@ public class ReadDataTest {
             T value;
             if (expectedCells == null) {
                 value = givenCells.get(address);
-            } else {
+            }
+            else {
                 value = expectedCells.get(address);
             }
 
             if (value == null) {
                 assertEquals(Cell.CellType.EMPTY, givenCell.getDataType());
-            } else {
+            }
+            else {
                 assertionConsumer.accept(value, (T) givenCell.getValue());
             }
         }
@@ -460,7 +556,8 @@ public class ReadDataTest {
             D expectedValue = expectedCells.get(address);
             if (givenValue == null) {
                 assertEquals(Cell.CellType.EMPTY, givenCell.getDataType());
-            } else {
+            }
+            else {
                 assertionConsumer.accept(givenValue, expectedValue);
             }
         }

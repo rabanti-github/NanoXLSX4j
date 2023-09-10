@@ -156,9 +156,12 @@ public class ViewTest {
         Address address = new Address(topLeftCellAddress);
         if (expectedValid) {
             worksheet.setHorizontalSplit(rowNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft);
-        } else {
-            assertThrows(WorksheetException.class,
-                         () -> worksheet.setHorizontalSplit(rowNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft));
+        }
+        else {
+            assertThrows(
+                    WorksheetException.class,
+                    () -> worksheet.setHorizontalSplit(rowNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft)
+            );
         }
     }
 
@@ -231,12 +234,17 @@ public class ViewTest {
         Address address = new Address(topLeftCellAddress);
         if (expectedValid) {
             worksheet.setVerticalSplit(columnNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft);
-        } else {
-            assertThrows(WorksheetException.class,
-                         () -> worksheet.setVerticalSplit(columnNumber,
-                                                          freeze,
-                                                          address,
-                                                          Worksheet.WorksheetPane.bottomLeft));
+        }
+        else {
+            assertThrows(
+                    WorksheetException.class,
+                    () -> worksheet.setVerticalSplit(
+                            columnNumber,
+                            freeze,
+                            address,
+                            Worksheet.WorksheetPane.bottomLeft
+                    )
+            );
         }
     }
 
@@ -329,13 +337,18 @@ public class ViewTest {
         Address address = new Address(topLeftCellAddress);
         if (expectedValid) {
             worksheet.setSplit(columnNumber, rowNumber, freeze, address, Worksheet.WorksheetPane.bottomLeft);
-        } else {
-            assertThrows(WorksheetException.class,
-                         () -> worksheet.setSplit(columnNumber,
-                                                  rowNumber,
-                                                  freeze,
-                                                  address,
-                                                  Worksheet.WorksheetPane.bottomLeft));
+        }
+        else {
+            assertThrows(
+                    WorksheetException.class,
+                    () -> worksheet.setSplit(
+                            columnNumber,
+                            rowNumber,
+                            freeze,
+                            address,
+                            Worksheet.WorksheetPane.bottomLeft
+                    )
+            );
         }
     }
 

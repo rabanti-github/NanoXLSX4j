@@ -27,7 +27,7 @@ public class Range {
     // ### C O N S T R U C T O R S ###
 
     /**
-     * Constructor with with addresses as arguments. The addresses are automatically swapped if the start address is
+     * Constructor with addresses as arguments. The addresses are automatically swapped if the start address is
      * greater than the end address
      *
      * @param start Start address of the range

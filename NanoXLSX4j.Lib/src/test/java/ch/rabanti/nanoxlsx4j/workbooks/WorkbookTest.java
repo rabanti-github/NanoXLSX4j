@@ -68,7 +68,8 @@ public class WorkbookTest {
             workbook.setFilename(filename);
             workbook.save();
             assertExistingFile(filename, true);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             fail();
         }
     }
@@ -200,7 +201,8 @@ public class WorkbookTest {
             assertNotNull(workbook.getCurrentWorksheet());
             assertEquals(expectedName, workbook.getWorksheets().get(0).getSheetName());
             assertEquals(1, workbook.getWorksheets().size());
-        } else {
+        }
+        else {
             assertEquals(0, workbook.getWorksheets().size());
             assertNull(workbook.getCurrentWorksheet());
         }
@@ -263,7 +265,8 @@ public class WorkbookTest {
     void workbookConstructorTest5(boolean sanitize, String fileName, String givenSheetName, String expectedSheetName, boolean expectException) {
         if (expectException) {
             assertThrows(FormatException.class, () -> new Workbook(fileName, givenSheetName, sanitize));
-        } else {
+        }
+        else {
             Workbook workbook = new Workbook(fileName, givenSheetName, sanitize);
             assertNotNull(workbook.getCurrentWorksheet());
             assertEquals(expectedSheetName, workbook.getWorksheets().get(0).getSheetName());
@@ -337,7 +340,8 @@ public class WorkbookTest {
             assertEquals(2, workbook.getWorksheets().size());
             assertEquals(expectedSheetName, workbook.getWorksheets().get(1).getSheetName());
             assertEquals(expectedSheetName, workbook.getCurrentWorksheet().getSheetName());
-        } else {
+        }
+        else {
             assertThrows(Exception.class, () -> workbook.addWorksheet(name2, sanitize));
         }
     }
@@ -405,7 +409,8 @@ public class WorkbookTest {
             assertEquals(2, workbook.getWorksheets().size());
             assertEquals(expectedSheetName, workbook.getWorksheets().get(1).getSheetName());
             assertEquals(expectedSheetName, workbook.getCurrentWorksheet().getSheetName());
-        } else {
+        }
+        else {
             assertThrows(Exception.class, () -> workbook.addWorksheet(worksheet, sanitize));
         }
     }
@@ -483,14 +488,16 @@ public class WorkbookTest {
                 expected = name;
             }
         }
-        assertWorksheetRemoval(workbook,
-                               workbook::removeWorksheet,
-                               worksheetCount,
-                               current,
-                               selectedWorksheetIndex,
-                               toRemove,
-                               expected,
-                               expectedSelectedWorksheetIndex);
+        assertWorksheetRemoval(
+                workbook,
+                workbook::removeWorksheet,
+                worksheetCount,
+                current,
+                selectedWorksheetIndex,
+                toRemove,
+                expected,
+                expectedSelectedWorksheetIndex
+        );
     }
 
     @DisplayName("Test of the RemoveWorksheet function by index")
@@ -526,14 +533,16 @@ public class WorkbookTest {
                 expected = name;
             }
         }
-        assertWorksheetRemoval(workbook,
-                               workbook::removeWorksheet,
-                               worksheetCount,
-                               current,
-                               selectedWorksheetIndex,
-                               toRemove,
-                               expected,
-                               expectedSelectedWorksheetIndex);
+        assertWorksheetRemoval(
+                workbook,
+                workbook::removeWorksheet,
+                worksheetCount,
+                current,
+                selectedWorksheetIndex,
+                toRemove,
+                expected,
+                expectedSelectedWorksheetIndex
+        );
     }
 
     @DisplayName("Test of the failing removeWorksheet function on an non-existing name")
@@ -651,14 +660,20 @@ public class WorkbookTest {
     @Test()
     void getWorksheetTest() {
         Workbook workbook = new Workbook("worksheet1");
-        workbook.getCurrentWorksheet().addCell("WS1",
-                                               "A1");
+        workbook.getCurrentWorksheet().addCell(
+                "WS1",
+                "A1"
+        );
         workbook.addWorksheet("worksheet2");
-        workbook.getCurrentWorksheet().addCell("WS2",
-                                               "A1");
+        workbook.getCurrentWorksheet().addCell(
+                "WS2",
+                "A1"
+        );
         workbook.addWorksheet("worksheet3");
-        workbook.getCurrentWorksheet().addCell("WS3",
-                                               "A1");
+        workbook.getCurrentWorksheet().addCell(
+                "WS3",
+                "A1"
+        );
         Worksheet givenWorksheet = workbook.getWorksheet("worksheet2");
         assertEquals("WS2", givenWorksheet.getCell("A1").getValue());
     }
@@ -667,14 +682,20 @@ public class WorkbookTest {
     @Test()
     void getWorksheetTest2() {
         Workbook workbook = new Workbook("worksheet1");
-        workbook.getCurrentWorksheet().addCell("WS1",
-                                               "A1");
+        workbook.getCurrentWorksheet().addCell(
+                "WS1",
+                "A1"
+        );
         workbook.addWorksheet("worksheet2");
-        workbook.getCurrentWorksheet().addCell("WS2",
-                                               "A1");
+        workbook.getCurrentWorksheet().addCell(
+                "WS2",
+                "A1"
+        );
         workbook.addWorksheet("worksheet3");
-        workbook.getCurrentWorksheet().addCell("WS3",
-                                               "A1");
+        workbook.getCurrentWorksheet().addCell(
+                "WS3",
+                "A1"
+        );
         Worksheet givenWorksheet = workbook.getWorksheet(1);
         assertEquals("WS2", givenWorksheet.getCell("A1").getValue());
     }
@@ -702,7 +723,8 @@ public class WorkbookTest {
         assertEquals(worksheetCount - 1, workbook.getWorksheets().size());
         if (expectedCurrentWorksheet == null) {
             assertNull(workbook.getCurrentWorksheet());
-        } else {
+        }
+        else {
             assertEquals(expectedCurrentWorksheet, workbook.getCurrentWorksheet().getSheetName());
         }
         assertEquals(expectedSelectedWorksheetIndex, workbook.getSelectedWorksheet());
@@ -714,7 +736,8 @@ public class WorkbookTest {
         if (deleteAfterAssertion) {
             try {
                 file.delete();
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 System.out.println("Could not delete " + expectedPath);
             }
         }
@@ -722,9 +745,11 @@ public class WorkbookTest {
 
     public static String getRandomName() throws Exception {
         File tmp = new File(System.getProperty("java.io.tmpdir"));
-        File file = File.createTempFile("tmp",
-                                        ".xlsx",
-                                        tmp);
+        File file = File.createTempFile(
+                "tmp",
+                ".xlsx",
+                tmp
+        );
         if (file.exists()) {
             file.delete();
         }

@@ -87,9 +87,9 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
 
     /**
      * Internal method to copy altered fields from a source object. The decision whether a field is copied is dependent
-     * on a untouched reference object
+     * on an untouched reference object
      *
-     * @param source    Style or sub-class of Style that extends AbstractStyle
+     * @param source    Style or subclass of Style that extends AbstractStyle
      * @param reference Source object with properties to copy
      * @param <T>       Reference object to decide whether the fields from the source objects are altered or not
      */

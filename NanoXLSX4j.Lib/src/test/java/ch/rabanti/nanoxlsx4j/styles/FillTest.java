@@ -44,8 +44,10 @@ public class FillTest {
     @DisplayName("Test of the constructor")
     @Test()
     void constructorTest2() {
-        Fill fill = new Fill("FFAABBCC",
-                             "FF001122");
+        Fill fill = new Fill(
+                "FFAABBCC",
+                "FF001122"
+        );
         assertEquals(Fill.DEFAULT_INDEXED_COLOR, fill.getIndexedColor());
         assertEquals(Fill.PatternValue.solid, fill.getPatternFill());
         assertEquals("FFAABBCC", fill.getForegroundColor());
@@ -262,7 +264,8 @@ public class FillTest {
         if (expectedValid) {
             // Should not throw
             Fill.validateColor(color, useAlpha, allowEmpty);
-        } else {
+        }
+        else {
             assertThrows(StyleException.class, () -> Fill.validateColor(color, useAlpha, allowEmpty));
         }
 

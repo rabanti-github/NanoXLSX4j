@@ -123,7 +123,7 @@ public class ImportOptions {
     /**
      * gets the type enforcing rules during import for particular columns
      *
-     * @return Map of column numers and enforced types
+     * @return Map of column numbers and enforced types
      */
     public Map<Integer, ColumnType> getEnforcedColumnTypes() {
         return enforcedColumnTypes;

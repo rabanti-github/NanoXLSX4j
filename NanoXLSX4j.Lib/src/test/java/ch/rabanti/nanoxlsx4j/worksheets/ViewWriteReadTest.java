@@ -32,9 +32,11 @@ public class ViewWriteReadTest {
         for (int i = 0; i <= sheetIndex; i++) {
             if (sheetIndex == i) {
                 workbook.setCurrentWorksheet(i);
-                workbook.getCurrentWorksheet().setHorizontalSplit(height,
-                                                                  new Address("A1"),
-                                                                  parsePane(activePaneString));
+                workbook.getCurrentWorksheet().setHorizontalSplit(
+                        height,
+                        new Address("A1"),
+                        parsePane(activePaneString)
+                );
             }
         }
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
@@ -66,10 +68,12 @@ public class ViewWriteReadTest {
         for (int i = 0; i <= sheetIndex; i++) {
             if (sheetIndex == i) {
                 workbook.setCurrentWorksheet(i);
-                workbook.getCurrentWorksheet().setHorizontalSplit(rowNumber,
-                                                                  freeze,
-                                                                  new Address(topLeftCellAddress),
-                                                                  parsePane(activePaneString));
+                workbook.getCurrentWorksheet().setHorizontalSplit(
+                        rowNumber,
+                        freeze,
+                        new Address(topLeftCellAddress),
+                        parsePane(activePaneString)
+                );
             }
         }
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
@@ -89,7 +93,8 @@ public class ViewWriteReadTest {
         for (int i = 0; i < 4; i++) {
             if (workbook.getCurrentWorksheet().getRowHeights().containsKey(i)) {
                 expectedHeight += Helper.getInternalRowHeight(workbook.getCurrentWorksheet().getRowHeights().get(i));
-            } else {
+            }
+            else {
                 expectedHeight += Helper.getInternalRowHeight(Worksheet.DEFAULT_ROW_HEIGHT);
             }
         }
@@ -152,10 +157,12 @@ public class ViewWriteReadTest {
         for (int i = 0; i <= sheetIndex; i++) {
             if (sheetIndex == i) {
                 workbook.setCurrentWorksheet(i);
-                workbook.getCurrentWorksheet().setVerticalSplit(columnNumber,
-                                                                freeze,
-                                                                new Address(topLeftCellAddress),
-                                                                parsePane(activePaneString));
+                workbook.getCurrentWorksheet().setVerticalSplit(
+                        columnNumber,
+                        freeze,
+                        new Address(topLeftCellAddress),
+                        parsePane(activePaneString)
+                );
             }
         }
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
@@ -176,7 +183,8 @@ public class ViewWriteReadTest {
             if (workbook.getCurrentWorksheet().getColumns().containsKey(i)) {
                 expectedWidth += Helper
                         .getInternalColumnWidth(workbook.getCurrentWorksheet().getColumns().get(i).getWidth());
-            } else {
+            }
+            else {
                 expectedWidth += Helper.getInternalColumnWidth(Worksheet.DEFAULT_COLUMN_WIDTH);
             }
 
@@ -279,7 +287,8 @@ public class ViewWriteReadTest {
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
         if (width == null) {
             assertNull(givenWorksheet.getPaneSplitLeftWidth());
-        } else {
+        }
+        else {
             // There may be a deviation by rounding
             float delta = Math.abs(width - givenWorksheet.getPaneSplitLeftWidth());
             assertTrue(delta < 0.1);
@@ -318,11 +327,13 @@ public class ViewWriteReadTest {
         for (int i = 0; i <= sheetIndex; i++) {
             if (sheetIndex == i) {
                 workbook.setCurrentWorksheet(i);
-                workbook.getCurrentWorksheet().setSplit(columnNumber,
-                                                        rowNumber,
-                                                        freeze,
-                                                        new Address(topLeftCellAddress),
-                                                        parsePane(activePaneString));
+                workbook.getCurrentWorksheet().setSplit(
+                        columnNumber,
+                        rowNumber,
+                        freeze,
+                        new Address(topLeftCellAddress),
+                        parsePane(activePaneString)
+                );
             }
         }
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
@@ -470,7 +481,8 @@ public class ViewWriteReadTest {
         if (initialViewType != Worksheet.SheetViewType.normal && additionalViewType != Worksheet.SheetViewType.normal) {
             assertEquals(3, givenWorksheet.getZoomFactors().size());
             assertEquals(100, givenWorksheet.getZoomFactors().get(Worksheet.SheetViewType.normal));
-        } else {
+        }
+        else {
             assertEquals(2, givenWorksheet.getZoomFactors().size());
         }
         assertEquals(zoomFactor, givenWorksheet.getZoomFactors().get(additionalViewType));
@@ -482,16 +494,19 @@ public class ViewWriteReadTest {
             // No split at all (row 0)
             assertNull(givenWorksheet.getPaneSplitAddress());
             assertNull(givenWorksheet.getFreezeSplitPanes());
-        } else {
+        }
+        else {
             if (freeze) {
                 assertEquals(columnNumber, givenWorksheet.getPaneSplitAddress().Column);
                 assertEquals(freeze, givenWorksheet.getFreezeSplitPanes());
-            } else {
+            }
+            else {
                 float width = Helper.getInternalColumnWidth(Worksheet.DEFAULT_COLUMN_WIDTH) * columnNumber;
                 if (width == 0) {
                     // Not applied as x split
                     assertNull(givenWorksheet.getPaneSplitLeftWidth());
-                } else {
+                }
+                else {
                     // There may be a deviation by rounding
                     float delta = Math.abs(width - givenWorksheet.getPaneSplitLeftWidth());
                     assertTrue(delta < 0.1);
@@ -506,11 +521,13 @@ public class ViewWriteReadTest {
             // No split at all (row 0)
             assertNull(givenWorksheet.getPaneSplitAddress());
             assertNull(givenWorksheet.getFreezeSplitPanes());
-        } else {
+        }
+        else {
             if (freeze) {
                 assertEquals(rowNumber, givenWorksheet.getPaneSplitAddress().Row);
                 assertEquals(freeze, givenWorksheet.getFreezeSplitPanes());
-            } else {
+            }
+            else {
                 float height = Worksheet.DEFAULT_ROW_HEIGHT * rowNumber;
                 assertEquals(height, givenWorksheet.getPaneSplitTopHeight());
                 assertNull(givenWorksheet.getFreezeSplitPanes());

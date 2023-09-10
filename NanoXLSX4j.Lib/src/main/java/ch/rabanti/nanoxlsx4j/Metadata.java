@@ -9,7 +9,7 @@ package ch.rabanti.nanoxlsx4j;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 
 /**
- * Class representing the meta data of a workbook
+ * Class representing the metadata of a workbook
  *
  * @author Raphael Stoeckli
  */
@@ -168,18 +168,18 @@ public class Metadata {
     }
 
     /**
-     * Gets the hyper-link base of the document
+     * Gets the hyperlink base of the document
      *
-     * @return Hyper-link base of the document
+     * @return Hyperlink base of the document
      */
     public String getHyperlinkBase() {
         return hyperlinkBase;
     }
 
     /**
-     * Sets the hyper-link base of the document
+     * Sets the hyperlink base of the document
      *
-     * @param hyperlinkBase Hyper-link base of the document
+     * @param hyperlinkBase Hyperlink base of the document
      */
     public void setHyperlinkBase(String hyperlinkBase) {
         this.hyperlinkBase = hyperlinkBase;

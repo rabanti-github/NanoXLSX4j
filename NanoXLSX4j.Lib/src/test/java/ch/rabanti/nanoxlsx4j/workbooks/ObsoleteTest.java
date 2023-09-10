@@ -20,8 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Note: All tests of this class are just for code coverage. The tested
- * functions will be removed in the future
+ * Note: All tests of this class are just for code coverage. The tested functions will be removed in the future
  */
 public class ObsoleteTest {
     @DisplayName("Test of the addStyle function (only for code coverage)")

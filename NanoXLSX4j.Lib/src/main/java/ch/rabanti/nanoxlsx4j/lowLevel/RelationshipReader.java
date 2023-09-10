@@ -22,7 +22,7 @@ public class RelationshipReader {
     /**
      * Gets the list of workbook relationship entries
      *
-     * @return
+     * @return Worksheet relationships
      */
     public List<RelationShip> getRelationships() {
         return relationships;

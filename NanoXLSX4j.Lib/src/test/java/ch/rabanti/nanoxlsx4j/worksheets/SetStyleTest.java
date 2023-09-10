@@ -55,7 +55,8 @@ public class SetStyleTest {
         Range range = new Range(rangeString);
         if (rangeRepresentation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, BasicStyles.BoldItalic());
-        } else {
+        }
+        else {
             worksheet.setStyle(rangeString, BasicStyles.BoldItalic());
         }
         List<String> emptyCells = range.resolveEnclosedAddresses().stream().map(i -> i.getAddress())
@@ -84,7 +85,8 @@ public class SetStyleTest {
         Range range = new Range(rangeString);
         if (rangeRepresentation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, null);
-        } else {
+        }
+        else {
             worksheet.setStyle(rangeString, null);
         }
         assertEquals(0, worksheet.getCells().size()); // Should not create empty cells
@@ -116,7 +118,8 @@ public class SetStyleTest {
         Range range = new Range(rangeString);
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, BasicStyles.Bold());
-        } else {
+        }
+        else {
             worksheet.setStyle(rangeString, BasicStyles.Bold());
         }
         List<String> emptyCells = TestUtils.splitValuesAsList(expectedEmptyCells);
@@ -149,7 +152,8 @@ public class SetStyleTest {
         Range range = new Range(rangeString);
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, null);
-        } else {
+        }
+        else {
             worksheet.setStyle(rangeString, null);
         }
         assertRemovedStyles(worksheet, cellCount);
@@ -191,7 +195,8 @@ public class SetStyleTest {
         Range range = new Range(rangeString);
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, BasicStyles.BoldItalic());
-        } else {
+        }
+        else {
             worksheet.setStyle(rangeString, BasicStyles.BoldItalic());
         }
 
@@ -235,7 +240,8 @@ public class SetStyleTest {
         Range range = new Range(rangeString);
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, null);
-        } else {
+        }
+        else {
             worksheet.setStyle(rangeString, null);
         }
         assertRemovedStyles(worksheet, cellCount);
@@ -259,7 +265,8 @@ public class SetStyleTest {
         Range range = new Range("A1:C3");
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, BasicStyles.BorderFrame());
-        } else {
+        }
+        else {
             worksheet.setStyle("A1:C3", BasicStyles.BorderFrame());
         }
 
@@ -285,7 +292,8 @@ public class SetStyleTest {
         Range range = new Range("A1:C3");
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(range, null);
-        } else {
+        }
+        else {
             worksheet.setStyle("A1:C3", null);
         }
         assertRemovedStyles(worksheet, cellCount);
@@ -477,7 +485,8 @@ public class SetStyleTest {
         assertEquals(0, worksheet.getCells().size());
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("C2"), BasicStyles.BoldItalic());
-        } else {
+        }
+        else {
             worksheet.setStyle("C2", BasicStyles.BoldItalic());
         }
         Range range = new Range("C2:C2");
@@ -498,7 +507,8 @@ public class SetStyleTest {
         assertEquals(0, worksheet.getCells().size());
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("C2"), null);
-        } else {
+        }
+        else {
             worksheet.setStyle("C2", null);
         }
         assertEquals(0, worksheet.getCells().size());
@@ -515,13 +525,16 @@ public class SetStyleTest {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "B2");
         worksheet.addCell(false, "B3");
-        worksheet.addCell("test",
-                          "B4");
+        worksheet.addCell(
+                "test",
+                "B4"
+        );
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), BasicStyles.Bold());
-        } else {
+        }
+        else {
             worksheet.setStyle("B2", BasicStyles.Bold());
         }
         assertCellRange("B2:B2", BasicStyles.Bold(), worksheet, new ArrayList<>(), 3);
@@ -538,13 +551,16 @@ public class SetStyleTest {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "B2");
         worksheet.addCell(false, "B3");
-        worksheet.addCell("test",
-                          "B4");
+        worksheet.addCell(
+                "test",
+                "B4"
+        );
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), null);
-        } else {
+        }
+        else {
             worksheet.setStyle("B2", null);
         }
         assertRemovedStyles(worksheet, cellCount);
@@ -561,14 +577,17 @@ public class SetStyleTest {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "B2", BasicStyles.Bold());
         worksheet.addCell(false, "B3", BasicStyles.Bold());
-        worksheet.addCell("test",
-                          "B4",
-                          BasicStyles.Bold());
+        worksheet.addCell(
+                "test",
+                "B4",
+                BasicStyles.Bold()
+        );
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), BasicStyles.Bold());
-        } else {
+        }
+        else {
             worksheet.setStyle("B2", BasicStyles.Bold());
         }
         assertCellRange("B2:B2", BasicStyles.Bold(), worksheet, new ArrayList<>(), 3);
@@ -585,14 +604,17 @@ public class SetStyleTest {
         Worksheet worksheet = new Worksheet();
         worksheet.addCell(22, "B2", BasicStyles.Bold());
         worksheet.addCell(false, "B3", BasicStyles.Bold());
-        worksheet.addCell("test",
-                          "B4",
-                          BasicStyles.Bold());
+        worksheet.addCell(
+                "test",
+                "B4",
+                BasicStyles.Bold()
+        );
         int cellCount = worksheet.getCells().size();
         assertNotEquals(0, cellCount);
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), null);
-        } else {
+        }
+        else {
             worksheet.setStyle("B2", null);
         }
         assertNull(worksheet.getCells().get("B2").getCellStyle());
@@ -618,7 +640,8 @@ public class SetStyleTest {
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), BasicStyles.BorderFrame());
             worksheet.setStyle(new Address("B3"), BasicStyles.BorderFrame());
-        } else {
+        }
+        else {
             worksheet.setStyle("B2", BasicStyles.BorderFrame());
             worksheet.setStyle("B3", BasicStyles.BorderFrame());
         }
@@ -643,7 +666,8 @@ public class SetStyleTest {
         if (representation == RangeRepresentation.RangeObject) {
             worksheet.setStyle(new Address("B2"), null);
             worksheet.setStyle(new Address("B3"), null);
-        } else {
+        }
+        else {
             worksheet.setStyle("B2", null);
             worksheet.setStyle("B3", null);
         }
@@ -673,7 +697,8 @@ public class SetStyleTest {
             assertTrue(worksheet.getCells().containsKey(address.getAddress()));
             if (expectedStyle == null) {
                 assertNull(worksheet.getCells().get(address.getAddress()).getCellStyle());
-            } else {
+            }
+            else {
                 assertEquals(expectedStyle, worksheet.getCells().get(address.getAddress()).getCellStyle());
             }
             if (createdCells != null && createdCells.contains(address.getAddress())) {

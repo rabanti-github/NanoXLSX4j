@@ -142,7 +142,7 @@ public class MetaDataReader {
      *
      * @param stream Stream of the XML file
      */
-    public void ReadAppData(InputStream stream) throws IOException, java.io.IOException {
+    public void readAppData(InputStream stream) throws IOException, java.io.IOException {
         try {
             XmlDocument xr = new XmlDocument();
             xr.load(stream);
@@ -179,7 +179,7 @@ public class MetaDataReader {
      *
      * @param stream Stream of the XML file
      */
-    public void ReadCoreData(InputStream stream) throws IOException, java.io.IOException {
+    public void readCoreData(InputStream stream) throws IOException, java.io.IOException {
         try {
             XmlDocument xr = new XmlDocument();
             xr.load(stream);

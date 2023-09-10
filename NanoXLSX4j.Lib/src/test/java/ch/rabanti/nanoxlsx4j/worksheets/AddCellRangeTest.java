@@ -233,7 +233,8 @@ public class AddCellRangeTest {
             String expectedAddress = expectedData.getAddresses().get(i).getAddress();
             if (expectedData.getStyles().get(i) == null) {
                 assertEquals(expectedSourceStyle, worksheet.getCells().get(expectedAddress).getCellStyle());
-            } else {
+            }
+            else {
                 Style mergedStyle = (Style) expectedSourceStyle.copy();
                 mergedStyle.append(expectedData.getStyles().get(i));
                 assertEquals(mergedStyle, worksheet.getCells().get(expectedAddress).getCellStyle());
@@ -245,7 +246,8 @@ public class AddCellRangeTest {
         ListTuple data;
         if (testType == TestType.RandomList) {
             data = getRandomList(startColumn, startRow, type);
-        } else {
+        }
+        else {
             data = getCellList(startColumn, startRow, type);
         }
         return data;
@@ -274,7 +276,8 @@ public class AddCellRangeTest {
         list.add(LocalTime.of(13, 16, 22), Cell.CellType.TIME);
         if (addNull) {
             list.add(null, Cell.CellType.EMPTY);
-        } else {
+        }
+        else {
             list.add("substitute", Cell.CellType.STRING);
         }
         return list;
@@ -302,7 +305,8 @@ public class AddCellRangeTest {
         list.add(new Cell(LocalTime.of(13, 15, 22), Cell.CellType.DEFAULT, "X11"), Cell.CellType.TIME);
         if (addNull) {
             list.add(new Cell(null, Cell.CellType.DEFAULT, "X12"), Cell.CellType.EMPTY);
-        } else {
+        }
+        else {
             list.add(new Cell("substitute2", Cell.CellType.DEFAULT, "X12"), Cell.CellType.STRING);
         }
         return list;
@@ -352,16 +356,19 @@ public class AddCellRangeTest {
         public void add(Object value, Cell.CellType type) {
             if (value instanceof Cell) {
                 values.add(((Cell) value).getValue());
-            } else {
+            }
+            else {
                 values.add(value);
             }
             types.add(type);
             addresses.add(preparedAddresses.get(currentIndex));
             if (type.equals(Cell.CellType.DATE)) {
                 styles.add(BasicStyles.DateFormat());
-            } else if (type.equals(Cell.CellType.TIME)) {
+            }
+            else if (type.equals(Cell.CellType.TIME)) {
                 styles.add(BasicStyles.TimeFormat());
-            } else {
+            }
+            else {
                 styles.add(null);
             }
             currentIndex++;

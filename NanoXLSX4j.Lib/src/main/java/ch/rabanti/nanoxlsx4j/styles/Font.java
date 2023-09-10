@@ -51,7 +51,7 @@ public class Font extends AbstractStyle {
     public static final VerticalAlignValue DEFAULT_VERTICAL_ALIGN = VerticalAlignValue.none;
 
     /**
-     * Enum for the vertical alignment of the text from base line
+     * Enum for the vertical alignment of the text from baseline
      */
     public enum VerticalAlignValue {
         // baseline, // Maybe not used in Excel

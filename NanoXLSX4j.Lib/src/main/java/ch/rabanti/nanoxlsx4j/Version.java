@@ -57,4 +57,9 @@ public final class Version {
         }
         return versionNumber;
     }
+
+    // ### C O N S T R U C T O R S ###
+    private Version(){
+        // Do not instantiate
+    }
 }

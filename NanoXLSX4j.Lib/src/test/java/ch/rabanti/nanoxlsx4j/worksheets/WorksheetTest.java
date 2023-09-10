@@ -71,8 +71,10 @@ public class WorksheetTest {
                     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, 255",}
     )
     void constructorTest2(String name, int id) {
-        Workbook workbook = new Workbook("test.xlsx",
-                                         "sheet2");
+        Workbook workbook = new Workbook(
+                "test.xlsx",
+                "sheet2"
+        );
         Worksheet worksheet = new Worksheet(name, id, workbook);
         assertConstructorBasics(worksheet);
         assertNotNull(worksheet.getWorkbookReference());
@@ -107,8 +109,10 @@ public class WorksheetTest {
     )
     void constructorFailingTest2(String sourceType, String sourceValue, int id) {
         String name = (String) TestUtils.createInstance(sourceType, sourceValue);
-        Workbook workbook = new Workbook("test.xlsx",
-                                         "sheet2");
+        Workbook workbook = new Workbook(
+                "test.xlsx",
+                "sheet2"
+        );
         assertThrows(FormatException.class, () -> new Worksheet(name, id, workbook));
     }
 
@@ -130,14 +134,18 @@ public class WorksheetTest {
         Worksheet worksheet = new Worksheet();
         assertNotNull(worksheet.getCells());
         assertEquals(0, worksheet.getCells().size());
-        worksheet.addCell("test",
-                          "C3");
+        worksheet.addCell(
+                "test",
+                "C3"
+        );
         worksheet.addCell(22, "D4");
         assertEquals(2, worksheet.getCells().size());
-        TestUtils.assertMapEntry("C3",
-                                 "test",
-                                 worksheet.getCells(),
-                                 Cell::getValue);
+        TestUtils.assertMapEntry(
+                "C3",
+                "test",
+                worksheet.getCells(),
+                Cell::getValue
+        );
         TestUtils.assertMapEntry("D4", 22, worksheet.getCells(), Cell::getValue);
         worksheet.removeCell("C3");
         assertEquals(1, worksheet.getCells().size());
@@ -372,8 +380,10 @@ public class WorksheetTest {
     @DisplayName("Test of the workbookReference field")
     @Test()
     void workbookReferenceTest() {
-        Workbook workbook = new Workbook("test.xlsx",
-                                         "test");
+        Workbook workbook = new Workbook(
+                "test.xlsx",
+                "test"
+        );
         Worksheet worksheet = new Worksheet();
         assertNull(worksheet.getWorkbookReference());
         worksheet.setWorkbookReference(workbook);
@@ -522,7 +532,8 @@ public class WorksheetTest {
         Worksheet.SheetProtectionValue additionalValue;
         if (typeOfProtection == Worksheet.SheetProtectionValue.objects) {
             additionalValue = Worksheet.SheetProtectionValue.sort;
-        } else {
+        }
+        else {
             additionalValue = Worksheet.SheetProtectionValue.objects;
         }
         worksheet.addAllowedActionOnSheetProtection(additionalValue);
@@ -681,8 +692,10 @@ public class WorksheetTest {
     )
     void hasCellFailTest(int givenColumn, int givenRow) {
         Worksheet worksheet = new Worksheet();
-        worksheet.addCell("test",
-                          "C3");
+        worksheet.addCell(
+                "test",
+                "C3"
+        );
         assertThrows(RangeException.class, () -> worksheet.getCell(givenColumn, givenRow));
     }
 
@@ -756,8 +769,10 @@ public class WorksheetTest {
         worksheet.addHiddenRow(0);
         worksheet.addHiddenRow(1);
         worksheet.setRowHeight(10, 22.2f);
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         Address address = worksheet.getLastCellAddress();
         assertNotNull(address);
         assertEquals("K11", address.getAddress());
@@ -773,8 +788,10 @@ public class WorksheetTest {
         worksheet.addHiddenRow(0);
         worksheet.addHiddenRow(1);
         worksheet.setRowHeight(10, 22.2f);
-        worksheet.addCell("test",
-                          "L12");
+        worksheet.addCell(
+                "test",
+                "L12"
+        );
         Address address = worksheet.getLastCellAddress();
         assertNotNull(address);
         assertEquals("L12", address.getAddress());
@@ -824,8 +841,10 @@ public class WorksheetTest {
         worksheet.addHiddenRow(0);
         worksheet.addHiddenRow(1);
         worksheet.setRowHeight(10, 22.2f);
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         Address address = worksheet.getLastDataCellAddress();
         assertNotNull(address);
         assertEquals("E5", address.getAddress());
@@ -841,8 +860,10 @@ public class WorksheetTest {
         worksheet.addHiddenRow(0);
         worksheet.addHiddenRow(1);
         worksheet.setRowHeight(10, 22.2f);
-        worksheet.addCell("test",
-                          "L12");
+        worksheet.addCell(
+                "test",
+                "L12"
+        );
         Address address = worksheet.getLastDataCellAddress();
         assertNotNull(address);
         assertEquals("L12", address.getAddress());
@@ -918,8 +939,10 @@ public class WorksheetTest {
         worksheet.addHiddenRow(1);
         worksheet.addHiddenRow(2);
         worksheet.setRowHeight(10, 22.2f);
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         Address address = worksheet.getFirstCellAddress();
         assertNotNull(address);
         assertEquals("B2", address.getAddress());
@@ -935,8 +958,10 @@ public class WorksheetTest {
         worksheet.addHiddenRow(3);
         worksheet.addHiddenRow(4);
         worksheet.setRowHeight(100, 22.2f);
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         Address address = worksheet.getFirstCellAddress();
         assertNotNull(address);
         assertEquals("D4", address.getAddress());
@@ -986,10 +1011,14 @@ public class WorksheetTest {
         worksheet.addHiddenRow(2);
         worksheet.addHiddenRow(3);
         worksheet.setRowHeight(4, 22.2f);
-        worksheet.addCell("test",
-                          "E5");
-        worksheet.addCell("test",
-                          "F6");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
+        worksheet.addCell(
+                "test",
+                "F6"
+        );
         Address address = worksheet.getFirstDataCellAddress();
         assertNotNull(address);
         assertEquals("E5", address.getAddress());
@@ -1005,10 +1034,14 @@ public class WorksheetTest {
         worksheet.addHiddenRow(1);
         worksheet.addHiddenRow(2);
         worksheet.setRowHeight(10, 22.2f);
-        worksheet.addCell("test",
-                          "C3");
-        worksheet.addCell("test",
-                          "D4");
+        worksheet.addCell(
+                "test",
+                "C3"
+        );
+        worksheet.addCell(
+                "test",
+                "D4"
+        );
         Address address = worksheet.getFirstDataCellAddress();
         assertNotNull(address);
         assertEquals("C3", address.getAddress());
@@ -1038,17 +1071,21 @@ public class WorksheetTest {
         String returnedAddress;
         if (representation == RangeRepresentation.Addresses) {
             returnedAddress = worksheet.mergeCells(startAddress, endAddress);
-        } else if (representation == RangeRepresentation.StringExpression) {
+        }
+        else if (representation == RangeRepresentation.StringExpression) {
             returnedAddress = worksheet.mergeCells(range.toString());
-        } else {
+        }
+        else {
             returnedAddress = worksheet.mergeCells(range);
         }
 
         assertEquals(1, worksheet.getMergedCells().size());
         assertEquals(expectedMergedCells, returnedAddress);
         assertTrue(worksheet.getMergedCells().containsKey(expectedMergedCells));
-        assertEquals(expectedCount,
-                     worksheet.getMergedCells().get(expectedMergedCells).resolveEnclosedAddresses().size());
+        assertEquals(
+                expectedCount,
+                worksheet.getMergedCells().get(expectedMergedCells).resolveEnclosedAddresses().size()
+        );
     }
 
     @DisplayName("Test of the mergeCells function with more than one range")
@@ -1075,17 +1112,21 @@ public class WorksheetTest {
         String returnedAddress;
         if (representation == RangeRepresentation.Addresses) {
             returnedAddress = worksheet.mergeCells(startAddress, endAddress);
-        } else if (representation == RangeRepresentation.StringExpression) {
+        }
+        else if (representation == RangeRepresentation.StringExpression) {
             returnedAddress = worksheet.mergeCells(range.toString());
-        } else {
+        }
+        else {
             returnedAddress = worksheet.mergeCells(range);
         }
         String returnedAddress2 = worksheet.mergeCells("X1:X2");
         assertEquals(2, worksheet.getMergedCells().size());
         assertEquals(expectedMergedCells, returnedAddress);
         assertTrue(worksheet.getMergedCells().containsKey(expectedMergedCells));
-        assertEquals(expectedCount,
-                     worksheet.getMergedCells().get(expectedMergedCells).resolveEnclosedAddresses().size());
+        assertEquals(
+                expectedCount,
+                worksheet.getMergedCells().get(expectedMergedCells).resolveEnclosedAddresses().size()
+        );
         assertTrue(worksheet.getMergedCells().containsKey(returnedAddress2));
         assertEquals(2, worksheet.getMergedCells().get(returnedAddress2).resolveEnclosedAddresses().size());
     }
@@ -1122,12 +1163,18 @@ public class WorksheetTest {
         Worksheet worksheet = new Worksheet();
         worksheet.recalculateAutoFilter(); // Dummy call
         assertNull(worksheet.getAutoFilterRange());
-        worksheet.addCell("test",
-                          "A100");
-        worksheet.addCell("test",
-                          "D50"); // Will expand the range to row 50
-        worksheet.addCell("test",
-                          "F2");
+        worksheet.addCell(
+                "test",
+                "A100"
+        );
+        worksheet.addCell(
+                "test",
+                "D50"
+        ); // Will expand the range to row 50
+        worksheet.addCell(
+                "test",
+                "F2"
+        );
         worksheet.setAutoFilter("B1:E1");
         worksheet.getColumns().get(2).setAutoFilter(false);
         worksheet.resetColumn(2);
@@ -1154,8 +1201,10 @@ public class WorksheetTest {
     @Test()
     void resolveMergedCellsTest() {
         Worksheet worksheet = new Worksheet();
-        worksheet.addCell("test",
-                          "B1");
+        worksheet.addCell(
+                "test",
+                "B1"
+        );
         worksheet.addCell(22.2f, "C1");
         assertEquals(2, worksheet.getCells().size());
         worksheet.mergeCells("B1:D1");
@@ -1227,8 +1276,10 @@ public class WorksheetTest {
     @Test()
     void removeMergedCellsTest() {
         Worksheet worksheet = new Worksheet();
-        worksheet.addCell("test",
-                          "B2");
+        worksheet.addCell(
+                "test",
+                "B2"
+        );
         worksheet.addCell(22, "B3");
         worksheet.mergeCells("B1:B4");
         assertTrue(worksheet.getMergedCells().containsKey("B1:B4"));
@@ -1240,8 +1291,10 @@ public class WorksheetTest {
     @Test()
     void removeMergedCellsTest2() {
         Worksheet worksheet = new Worksheet();
-        worksheet.addCell("test",
-                          "B2");
+        worksheet.addCell(
+                "test",
+                "B2"
+        );
         worksheet.addCell(22, "B3");
         worksheet.mergeCells("B1:B4");
         assertTrue(worksheet.getMergedCells().containsKey("B1:B4"));
@@ -1266,8 +1319,10 @@ public class WorksheetTest {
     void removeMergedCellsFailTest(String sourceType, String sourceValue) {
         String range = (String) TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
-        worksheet.addCell("test",
-                          "B2");
+        worksheet.addCell(
+                "test",
+                "B2"
+        );
         worksheet.addCell(22, "B3");
         worksheet.mergeCells("B1:B4");
         assertTrue(worksheet.getMergedCells().containsKey("B1:B4"));
@@ -1650,7 +1705,8 @@ public class WorksheetTest {
         if (expectedValid) {
             worksheet.setSheetName(name);
             assertEquals(expectedName, worksheet.getSheetName());
-        } else {
+        }
+        else {
             assertThrows(FormatException.class, () -> worksheet.setSheetName(name));
         }
     }
@@ -1690,7 +1746,8 @@ public class WorksheetTest {
         if (expectedValid) {
             worksheet.setSheetName(name, useSanitation);
             assertEquals(expectedName, worksheet.getSheetName());
-        } else {
+        }
+        else {
             assertThrows(FormatException.class, () -> worksheet.setSheetName(name, useSanitation));
         }
     }
@@ -1709,7 +1766,8 @@ public class WorksheetTest {
         TestUtils.assertMapEntry(expectedAddress, expectedAddress, worksheet.getCells(), Cell::getCellAddress);
         if (expectedStyle == null) {
             assertNull(worksheet.getCells().get(expectedAddress).getCellStyle());
-        } else {
+        }
+        else {
             assertEquals(expectedStyle, worksheet.getCells().get(expectedAddress).getCellStyle());
         }
         assertEquals(nextColumn, worksheet.getCurrentColumnNumber());
@@ -1758,7 +1816,8 @@ public class WorksheetTest {
         Range r;
         if (range.contains(":")) {
             r = new Range(range);
-        } else {
+        }
+        else {
             r = new Range(range + ":" + range);
         }
         return r;

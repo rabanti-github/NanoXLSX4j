@@ -159,13 +159,15 @@ public class ConvertArrayTest {
         array[1] = new Cell("test", Cell.CellType.STRING);
         array[2] = new Cell("x", Cell.CellType.STRING);
         array[3] = new Cell(" ", Cell.CellType.STRING);
-        assertArray(array,
-                    String.class,
-                    new String[]{
-                            "",
-                            "test",
-                            "x",
-                            " "});
+        assertArray(
+                array,
+                String.class,
+                new String[]{
+                        "",
+                        "test",
+                        "x",
+                        " "}
+        );
     }
 
     @DisplayName("Test of the convertArray method on string")
@@ -225,7 +227,8 @@ public class ConvertArrayTest {
             }
             if (actualValues == null) {
                 assertEquals(array[i], cell.getValue());
-            } else {
+            }
+            else {
                 assertEquals(actualValues[i], cell.getValue());
             }
 

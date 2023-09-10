@@ -137,7 +137,7 @@ public class Cell implements Comparable<Cell> {
      * Sets the combined cell Address as string in the format A1 - XFD1048576
      *
      * @param address Cell address
-     * @throws RangeException Thrown in case of a illegal address
+     * @throws RangeException Thrown in case of an illegal address
      */
     public void setCellAddress(String address) {
         Address temp = Cell.resolveCellCoordinate(address);

@@ -53,23 +53,29 @@ public class ShortenerTest {
     void valueTest() {
         Workbook workbook = new Workbook("Sheet1");
         Map<String, Object> values = new HashMap<String, Object>();
-        values.put("A1",
-                   "Test");
+        values.put(
+                "A1",
+                "Test"
+        );
         values.put("B1", 22);
-        assertValue(workbook,
-                    workbook.WS::value,
-                    null,
-                    values,
-                    Worksheet.CellDirection.ColumnToColumn,
-                    0,
-                    0,
-                    2,
-                    0,
-                    null);
+        assertValue(
+                workbook,
+                workbook.WS::value,
+                null,
+                values,
+                Worksheet.CellDirection.ColumnToColumn,
+                0,
+                0,
+                2,
+                0,
+                null
+        );
 
         values.clear();
-        values.put("C3",
-                   "Test2");
+        values.put(
+                "C3",
+                "Test2"
+        );
         values.put("C4", 22.2);
         assertValue(workbook, workbook.WS::value, null, values, Worksheet.CellDirection.RowToRow, 2, 2, 2, 4, null);
     }
@@ -80,19 +86,23 @@ public class ShortenerTest {
         Workbook workbook = new Workbook("Sheet1");
         Map<String, Object> values = new HashMap<String, Object>();
         values.put("A1", true);
-        values.put("B1",
-                   "");
+        values.put(
+                "B1",
+                ""
+        );
         Style style = BasicStyles.BoldItalic();
-        assertValue(workbook,
-                    null,
-                    workbook.WS::value,
-                    values,
-                    Worksheet.CellDirection.ColumnToColumn,
-                    0,
-                    0,
-                    2,
-                    0,
-                    style);
+        assertValue(
+                workbook,
+                null,
+                workbook.WS::value,
+                values,
+                Worksheet.CellDirection.ColumnToColumn,
+                0,
+                0,
+                2,
+                0,
+                style
+        );
 
         values.clear();
         values.put("C3", -22.3);
@@ -106,26 +116,36 @@ public class ShortenerTest {
     void formulaTest() {
         Workbook workbook = new Workbook("Sheet1");
         Map<String, String> values = new HashMap<String, String>();
-        values.put("A1",
-                   "=A3");
-        values.put("B1",
-                   "=ROUNDDOWN(22.1)");
-        assertValue(workbook,
-                    workbook.WS::formula,
-                    null,
-                    values,
-                    Worksheet.CellDirection.ColumnToColumn,
-                    0,
-                    0,
-                    2,
-                    0,
-                    null);
+        values.put(
+                "A1",
+                "=A3"
+        );
+        values.put(
+                "B1",
+                "=ROUNDDOWN(22.1)"
+        );
+        assertValue(
+                workbook,
+                workbook.WS::formula,
+                null,
+                values,
+                Worksheet.CellDirection.ColumnToColumn,
+                0,
+                0,
+                2,
+                0,
+                null
+        );
 
         values.clear();
-        values.put("C3",
-                   "=C3");
-        values.put("C4",
-                   "=ROUNDDOWN(11.1)");
+        values.put(
+                "C3",
+                "=C3"
+        );
+        values.put(
+                "C4",
+                "=ROUNDDOWN(11.1)"
+        );
         assertValue(workbook, workbook.WS::value, null, values, Worksheet.CellDirection.RowToRow, 2, 2, 2, 4, null);
     }
 
@@ -134,27 +154,37 @@ public class ShortenerTest {
     void formulaTest2() {
         Workbook workbook = new Workbook("Sheet1");
         Map<String, String> values = new HashMap<String, String>();
-        values.put("A1",
-                   "=A3");
-        values.put("B1",
-                   "=ROUNDDOWN(22.1)");
+        values.put(
+                "A1",
+                "=A3"
+        );
+        values.put(
+                "B1",
+                "=ROUNDDOWN(22.1)"
+        );
         Style style = BasicStyles.BoldItalic();
-        assertValue(workbook,
-                    null,
-                    workbook.WS::formula,
-                    values,
-                    Worksheet.CellDirection.ColumnToColumn,
-                    0,
-                    0,
-                    2,
-                    0,
-                    style);
+        assertValue(
+                workbook,
+                null,
+                workbook.WS::formula,
+                values,
+                Worksheet.CellDirection.ColumnToColumn,
+                0,
+                0,
+                2,
+                0,
+                style
+        );
 
         values.clear();
-        values.put("C3",
-                   "=C3");
-        values.put("C4",
-                   "=ROUNDDOWN(11.1)");
+        values.put(
+                "C3",
+                "=C3"
+        );
+        values.put(
+                "C4",
+                "=ROUNDDOWN(11.1)"
+        );
         style = BasicStyles.DoubleUnderline();
         assertValue(workbook, null, workbook.WS::formula, values, Worksheet.CellDirection.RowToRow, 2, 2, 2, 4, style);
     }
@@ -427,7 +457,8 @@ public class ShortenerTest {
         for (Map.Entry<String, T> cell : values.entrySet()) {
             if (style == null) {
                 consumer.accept(cell.getValue());
-            } else {
+            }
+            else {
                 styleConsumer.accept(cell.getValue(), style);
             }
         }
@@ -437,8 +468,10 @@ public class ShortenerTest {
             T value = (T) workbook.getCurrentWorksheet().getCell(address).getValue();
             assertEquals(cell.getValue(), value);
             if (style != null) {
-                assertEquals(style.hashCode(),
-                             workbook.getCurrentWorksheet().getCell(address).getCellStyle().hashCode());
+                assertEquals(
+                        style.hashCode(),
+                        workbook.getCurrentWorksheet().getCell(address).getCellStyle().hashCode()
+                );
             }
         }
         assertEquals(expectedEndColumn, workbook.getCurrentWorksheet().getCurrentColumnNumber());

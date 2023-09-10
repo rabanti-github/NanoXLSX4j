@@ -47,10 +47,14 @@ public class CopyWorksheetTest {
         Worksheet worksheet2 = createWorksheet();
         worksheet2.setSheetName("worksheet2");
         workbook1.addWorksheet(worksheet2);
-        assertThrows(WorksheetException.class,
-                     () -> workbook1.copyWorksheetIntoThis("worksheet2",
-                                                           "worksheet1",
-                                                           false));
+        assertThrows(
+                WorksheetException.class,
+                () -> workbook1.copyWorksheetIntoThis(
+                        "worksheet2",
+                        "worksheet1",
+                        false
+                )
+        );
     }
 
     @DisplayName("Test of the 'copyWorksheetIntoThis' function by index")
@@ -133,11 +137,15 @@ public class CopyWorksheetTest {
         Worksheet worksheet2 = createWorksheet();
         worksheet2.setSheetName("worksheet2");
         workbook1.addWorksheet(worksheet2);
-        assertThrows(WorksheetException.class,
-                     () -> workbook1.copyWorksheetTo("worksheet2",
-                                                     "worksheet1",
-                                                     workbook2,
-                                                     false));
+        assertThrows(
+                WorksheetException.class,
+                () -> workbook1.copyWorksheetTo(
+                        "worksheet2",
+                        "worksheet1",
+                        workbook2,
+                        false
+                )
+        );
     }
 
     @DisplayName("Test of the 'copyWorksheetTo' function by index")
@@ -195,8 +203,10 @@ public class CopyWorksheetTest {
         Worksheet worksheet2 = createWorksheet();
         worksheet2.setSheetName("worksheet2");
         workbook1.addWorksheet(worksheet2);
-        assertThrows(WorksheetException.class,
-                     () -> Workbook.copyWorksheetTo(worksheet2, "worksheet1", workbook2, false));
+        assertThrows(
+                WorksheetException.class,
+                () -> Workbook.copyWorksheetTo(worksheet2, "worksheet1", workbook2, false)
+        );
     }
 
     @DisplayName("Test of the failing 'copyWorksheetTo' function when no Workbook was defined")
@@ -310,7 +320,8 @@ public class CopyWorksheetTest {
     private void assertStyle(Style style1, Style style2) {
         if (style1 == null) {
             assertNull(style2);
-        } else {
+        }
+        else {
             assertEquals(style2.hashCode(), style1.hashCode());
         }
     }
@@ -319,15 +330,19 @@ public class CopyWorksheetTest {
         Worksheet w = new Worksheet();
         Style s1 = BasicStyles.BoldItalic();
         Style s2 = BasicStyles.Bold().append(BasicStyles.DateFormat());
-        w.addCell("A1",
-                  "A1",
-                  s1);
+        w.addCell(
+                "A1",
+                "A1",
+                s1
+        );
         w.addCell(true, "B2");
         w.addCell(100, "C3", s2);
         w.addCell(2.23f, "D4");
         w.addCell(false, "D5");
-        w.addCellFormula("=A2",
-                         "E5");
+        w.addCellFormula(
+                "=A2",
+                "E5"
+        );
         w.setColumnWidth(2, 31.2f);
         w.setRowHeight(2, 50.6f);
         w.addHiddenColumn(1);

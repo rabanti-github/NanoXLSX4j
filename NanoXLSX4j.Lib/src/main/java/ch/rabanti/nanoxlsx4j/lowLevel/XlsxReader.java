@@ -163,9 +163,9 @@ public class XlsxReader {
 
             metaDataReader = new MetaDataReader();
             stream = getEntryStream("docProps/app.xml", zf);
-            this.metaDataReader.ReadAppData(stream);
+            this.metaDataReader.readAppData(stream);
             stream = getEntryStream("docProps/core.xml", zf);
-            this.metaDataReader.ReadCoreData(stream);
+            this.metaDataReader.readCoreData(stream);
 
             int worksheetIndex = 1;
             WorksheetReader wr;
@@ -217,9 +217,9 @@ public class XlsxReader {
             ws = new Worksheet(definition.getWorksheetName(), definition.getSheetId(), wb);
             ws.setHidden(definition.isHidden());
             ws.setViewType(reader.getValue().getViewType());
-            ws.setShowingGridLines(reader.getValue().getShowGridLines());
-            ws.setShowingRowColumnHeaders(reader.getValue().getShowRowColHeaders());
-            ws.setShowingRuler(reader.getValue().getShowRuler());
+            ws.setShowingGridLines(reader.getValue().isShowingGridLines());
+            ws.setShowingRowColumnHeaders(reader.getValue().isShowingRowColHeaders());
+            ws.setShowingRuler(reader.getValue().isShowingRuler());
             ws.setZoomFactor(reader.getValue().getCurrentZoomScale());
             for (Map.Entry<Worksheet.SheetViewType, Integer> zoomFactor : reader.getValue().getZoomFactors().entrySet()) {
                 ws.setZoomFactor(zoomFactor.getKey(), zoomFactor.getValue());

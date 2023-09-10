@@ -32,7 +32,7 @@ public class Address implements Comparable<Address> {
     // ### C O N S T R U C T O R S ###
 
     /**
-     * Constructor with with row and column as arguments. The referencing type of the address is default (e.g. 'C20')
+     * Constructor with row and column as arguments. The referencing type of the address is default (e.g. 'C20')
      *
      * @param column Column of the address (zero-based)
      * @param row    Row of the address (zero-based)
@@ -43,7 +43,7 @@ public class Address implements Comparable<Address> {
     }
 
     /**
-     * Constructor with with row, column and address type as arguments
+     * Constructor with row, column and address type as arguments
      *
      * @param column Column of the address (zero-based)
      * @param row    Row of the address (zero-based)

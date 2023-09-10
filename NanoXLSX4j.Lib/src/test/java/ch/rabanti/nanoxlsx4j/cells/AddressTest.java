@@ -147,7 +147,8 @@ public class AddressTest {
         Address otherAddress = new Address(address2);
         if (expectedEquality) {
             assertEquals(currentAddress.hashCode(), otherAddress.hashCode());
-        } else {
+        }
+        else {
             assertNotEquals(currentAddress.hashCode(), otherAddress.hashCode());
         }
     }
@@ -204,7 +205,8 @@ public class AddressTest {
             assertThrows(FormatException.class, () -> {
                 new Address(address);
             });
-        } else {
+        }
+        else {
             // Out of range addresses
             assertThrows(RangeException.class, () -> {
                 new Address(address);

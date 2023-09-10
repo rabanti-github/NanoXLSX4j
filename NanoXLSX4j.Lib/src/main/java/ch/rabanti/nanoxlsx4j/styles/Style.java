@@ -201,11 +201,11 @@ public class Style extends AbstractStyle {
     // ### M E T H O D S ###
 
     /**
-     * Appends the specified style parts to the current one. The parts can be instances of sub-classes like Border or
+     * Appends the specified style parts to the current one. The parts can be instances of subclasses like Border or
      * CellXf or a Style instance. Only the altered properties of the specified style or style part that differs from a
      * new / untouched style instance will be appended. This enables method chaining
      *
-     * @param styleToAppend The style to append or a sub-class of Style
+     * @param styleToAppend The style to append or a subclass of Style
      * @return Current style with appended style parts
      */
     public Style append(AbstractStyle styleToAppend) {

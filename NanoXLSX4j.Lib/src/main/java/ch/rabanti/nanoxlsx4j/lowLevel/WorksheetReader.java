@@ -235,33 +235,6 @@ public class WorksheetReader {
     }
 
     /**
-     * Gets whether gridlines are shown in the current worksheet
-     *
-     * @return True if gridlines are shown
-     */
-    public boolean getShowGridLines() {
-        return showGridLines;
-    }
-
-    /**
-     * Gets whether row and column headers are shown in the current worksheet
-     *
-     * @return True if gridlines are shown
-     */
-    public boolean getShowRowColHeaders() {
-        return showRowColHeaders;
-    }
-
-    /**
-     * Gets whether rulers are shown in the current worksheet
-     *
-     * @return True if gridlines are shown
-     */
-    public boolean getShowRuler() {
-        return showRuler;
-    }
-
-    /**
      * Constructor with parameters and import options
      *
      * @param sharedStrings        SharedStringsReader object

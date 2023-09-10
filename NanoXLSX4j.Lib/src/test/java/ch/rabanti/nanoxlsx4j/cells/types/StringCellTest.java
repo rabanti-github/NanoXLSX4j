@@ -49,11 +49,14 @@ public class StringCellTest {
         Cell cell2 = utils.createVariantCell(v2, utils.getCellAddress());
         if (cell1.getValue() == null && cell2.getValue() == null) {
             assertEquals(expectedResult, 0);
-        } else if (cell1.getValue() == null && cell2.getValue() != null) {
+        }
+        else if (cell1.getValue() == null && cell2.getValue() != null) {
             assertEquals(expectedResult, -1);
-        } else if (cell1.getValue() != null && cell2.getValue() == null) {
+        }
+        else if (cell1.getValue() != null && cell2.getValue() == null) {
             assertEquals(expectedResult, 1);
-        } else {
+        }
+        else {
             int comparison = ((String) cell1.getValue()).compareTo((String) cell2.getValue());
             assertEquals(comparison, expectedResult);
         }
@@ -63,7 +66,8 @@ public class StringCellTest {
     private static String resolveString(String input) {
         if (input == null || input.equalsIgnoreCase("NULL")) {
             return null;
-        } else {
+        }
+        else {
             return input;
         }
     }
@@ -71,7 +75,8 @@ public class StringCellTest {
     private static boolean compareString(String current, String other) {
         if (current == null && other == null) {
             return true;
-        } else if (current == null) {
+        }
+        else if (current == null) {
             return false;
         }
         return current.equals(other);

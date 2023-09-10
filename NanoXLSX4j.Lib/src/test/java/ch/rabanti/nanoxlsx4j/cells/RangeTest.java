@@ -106,7 +106,8 @@ public class RangeTest {
         Range range2 = new Range(rangeExpression2);
         if (expectedEquality) {
             assertEquals(range1.hashCode(), range2.hashCode());
-        } else {
+        }
+        else {
             assertNotEquals(range1.hashCode(), range2.hashCode());
         }
     }

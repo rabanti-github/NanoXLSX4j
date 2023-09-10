@@ -43,13 +43,15 @@ public class NumericCellTest {
                     "Byte.MAX_VALUE",}
     )
     void byteCellTest(String byteString) {
-        genericAssertion(byteUtils,
-                         byteString,
-                         (byte) 8,
-                         Byte.MIN_VALUE,
-                         Byte.MAX_VALUE,
-                         Byte::parseByte,
-                         Byte::equals);
+        genericAssertion(
+                byteUtils,
+                byteString,
+                (byte) 8,
+                Byte.MIN_VALUE,
+                Byte.MAX_VALUE,
+                Byte::parseByte,
+                Byte::equals
+        );
     }
 
     @DisplayName("BigDecimal value cell test: Test of the cell values, as well as proper modification")
@@ -64,13 +66,15 @@ public class NumericCellTest {
     )
     void bigDecimalCellTest(String byteString) {
         // Note: BigDecimal has no defined MIN and MAX
-        genericAssertion(bigDecimalUtils,
-                         byteString,
-                         BigDecimal.valueOf(8),
-                         BigDecimal.valueOf(Integer.MIN_VALUE),
-                         BigDecimal.valueOf(Integer.MAX_VALUE),
-                         BigDecimal::new,
-                         BigDecimal::equals);
+        genericAssertion(
+                bigDecimalUtils,
+                byteString,
+                BigDecimal.valueOf(8),
+                BigDecimal.valueOf(Integer.MIN_VALUE),
+                BigDecimal.valueOf(Integer.MAX_VALUE),
+                BigDecimal::new,
+                BigDecimal::equals
+        );
     }
 
     @DisplayName("Double value cell test: Test of the cell values, as well as proper modification")
@@ -83,13 +87,15 @@ public class NumericCellTest {
                     "Double.MAX_VALUE",}
     )
     void doubleCellTest(String doubleString) {
-        genericAssertion(doubleUtils,
-                         doubleString,
-                         8d,
-                         Double.MIN_VALUE,
-                         Double.MAX_VALUE,
-                         Double::parseDouble,
-                         NumericCellTest::compareDouble);
+        genericAssertion(
+                doubleUtils,
+                doubleString,
+                8d,
+                Double.MIN_VALUE,
+                Double.MAX_VALUE,
+                Double::parseDouble,
+                NumericCellTest::compareDouble
+        );
     }
 
     @DisplayName("Float value cell test: Test of the cell values, as well as proper modification")
@@ -102,13 +108,15 @@ public class NumericCellTest {
                     "Float.MAX_VALUE",}
     )
     void floatCellTest(String floatString) {
-        genericAssertion(floatUtils,
-                         floatString,
-                         8f,
-                         Float.MIN_VALUE,
-                         Float.MAX_VALUE,
-                         Float::parseFloat,
-                         NumericCellTest::compareFloat);
+        genericAssertion(
+                floatUtils,
+                floatString,
+                8f,
+                Float.MIN_VALUE,
+                Float.MAX_VALUE,
+                Float::parseFloat,
+                NumericCellTest::compareFloat
+        );
     }
 
     @DisplayName("Integer value cell test: Test of the cell values, as well as proper modification")
@@ -122,13 +130,15 @@ public class NumericCellTest {
                     "Integer.MAX_VALUE",}
     )
     void integerCellTest(String integerString) {
-        genericAssertion(integerUtils,
-                         integerString,
-                         8,
-                         Integer.MIN_VALUE,
-                         Integer.MAX_VALUE,
-                         Integer::parseInt,
-                         Objects::equals);
+        genericAssertion(
+                integerUtils,
+                integerString,
+                8,
+                Integer.MIN_VALUE,
+                Integer.MAX_VALUE,
+                Integer::parseInt,
+                Objects::equals
+        );
     }
 
     @DisplayName("Long value cell test: Test of the cell values, as well as proper modification")
@@ -156,13 +166,15 @@ public class NumericCellTest {
                     "Short.MAX_VALUE",}
     )
     void shortCellTest(String shortString) {
-        genericAssertion(shortUtils,
-                         shortString,
-                         (short) 8,
-                         Short.MIN_VALUE,
-                         Short.MAX_VALUE,
-                         Short::parseShort,
-                         Objects::equals);
+        genericAssertion(
+                shortUtils,
+                shortString,
+                (short) 8,
+                Short.MIN_VALUE,
+                Short.MAX_VALUE,
+                Short::parseShort,
+                Objects::equals
+        );
     }
 
     @DisplayName("Test of the byte comparison method on cells")
@@ -259,9 +271,11 @@ public class NumericCellTest {
         T value;
         if (valueString.toUpperCase().contains("MIN_VALUE")) {
             value = min;
-        } else if (valueString.toUpperCase().contains("MAX_VALUE")) {
+        }
+        else if (valueString.toUpperCase().contains("MAX_VALUE")) {
             value = max;
-        } else {
+        }
+        else {
             value = parser.apply(valueString);
         }
         utilsInstance.assertCellCreation(initialValue, value, Cell.CellType.NUMBER, comparer);

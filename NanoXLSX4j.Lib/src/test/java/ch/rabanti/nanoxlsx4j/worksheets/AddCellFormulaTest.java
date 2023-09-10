@@ -34,47 +34,57 @@ public class AddCellFormulaTest {
     @Test()
     void addCellFormulaTest2() {
         worksheet = WorksheetTest.initWorksheet(worksheet, "D2", Worksheet.CellDirection.RowToRow);
-        invokeAddCellFormulaTest("=B2",
-                                 2,
-                                 3,
-                                 BasicStyles.BoldItalic(),
-                                 worksheet::addCellFormula,
-                                 "C4",
-                                 2,
-                                 4,
-                                 BasicStyles.BoldItalic());
+        invokeAddCellFormulaTest(
+                "=B2",
+                2,
+                3,
+                BasicStyles.BoldItalic(),
+                worksheet::addCellFormula,
+                "C4",
+                2,
+                4,
+                BasicStyles.BoldItalic()
+        );
         Address address = new Address(3, 1);
         worksheet = WorksheetTest.initWorksheet(worksheet, "R3", Worksheet.CellDirection.ColumnToColumn);
-        invokeAddCellFormulaTest("=B2",
-                                 address.getAddress(),
-                                 BasicStyles.Bold(),
-                                 worksheet::addCellFormula,
-                                 "D2",
-                                 4,
-                                 1,
-                                 BasicStyles.Bold());
+        invokeAddCellFormulaTest(
+                "=B2",
+                address.getAddress(),
+                BasicStyles.Bold(),
+                worksheet::addCellFormula,
+                "D2",
+                4,
+                1,
+                BasicStyles.Bold()
+        );
     }
 
     @DisplayName("Test of the addCellFormula function with value and active worksheet style (with address and column/row invocation)")
     @Test()
     void addCellFormulaTest3() {
-        worksheet = WorksheetTest.initWorksheet(worksheet,
-                                                "D2",
-                                                Worksheet.CellDirection.RowToRow,
-                                                BasicStyles.BorderFrameHeader());
+        worksheet = WorksheetTest.initWorksheet(
+                worksheet,
+                "D2",
+                Worksheet.CellDirection.RowToRow,
+                BasicStyles.BorderFrameHeader()
+        );
         invokeAddCellFormulaTest("=B2", 2, 3, worksheet::addCellFormula, "C4", 2, 4, BasicStyles.BorderFrameHeader());
         Address address = new Address(3, 1);
-        worksheet = WorksheetTest.initWorksheet(worksheet,
-                                                "R3",
-                                                Worksheet.CellDirection.ColumnToColumn,
-                                                BasicStyles.BorderFrameHeader());
-        invokeAddCellFormulaTest("=B2",
-                                 address.getAddress(),
-                                 worksheet::addCellFormula,
-                                 "D2",
-                                 4,
-                                 1,
-                                 BasicStyles.BorderFrameHeader());
+        worksheet = WorksheetTest.initWorksheet(
+                worksheet,
+                "R3",
+                Worksheet.CellDirection.ColumnToColumn,
+                BasicStyles.BorderFrameHeader()
+        );
+        invokeAddCellFormulaTest(
+                "=B2",
+                address.getAddress(),
+                worksheet::addCellFormula,
+                "D2",
+                4,
+                1,
+                BasicStyles.BorderFrameHeader()
+        );
     }
 
     @DisplayName("Test of the AddCell function for a nested cell object with a formula (with address and column/row invocation)")
@@ -120,49 +130,61 @@ public class AddCellFormulaTest {
     @DisplayName("Test of the AddCell function for a nested cell object with a formula and active worksheet style (with address and column/row invocation)")
     @Test()
     void addCellFormulaTest6() {
-        worksheet = WorksheetTest.initWorksheet(worksheet,
-                                                "D2",
-                                                Worksheet.CellDirection.RowToRow,
-                                                BasicStyles.BorderFrame());
+        worksheet = WorksheetTest.initWorksheet(
+                worksheet,
+                "D2",
+                Worksheet.CellDirection.RowToRow,
+                BasicStyles.BorderFrame()
+        );
         Cell cell = new Cell("=B2", Cell.CellType.FORMULA, "R1"); // Address should be replaced
         worksheet.addCell(cell, 3, 1);
-        WorksheetTest.assertAddedCell(worksheet,
-                                      1,
-                                      "D2",
-                                      Cell.CellType.FORMULA,
-                                      BasicStyles.BorderFrame(),
-                                      "=B2",
-                                      3,
-                                      2);
-        worksheet = WorksheetTest.initWorksheet(worksheet,
-                                                "D2",
-                                                Worksheet.CellDirection.ColumnToColumn,
-                                                BasicStyles.BorderFrame());
+        WorksheetTest.assertAddedCell(
+                worksheet,
+                1,
+                "D2",
+                Cell.CellType.FORMULA,
+                BasicStyles.BorderFrame(),
+                "=B2",
+                3,
+                2
+        );
+        worksheet = WorksheetTest.initWorksheet(
+                worksheet,
+                "D2",
+                Worksheet.CellDirection.ColumnToColumn,
+                BasicStyles.BorderFrame()
+        );
         Address address = new Address(3, 1);
         worksheet.addCell(cell, address.getAddress());
-        WorksheetTest.assertAddedCell(worksheet,
-                                      1,
-                                      "D2",
-                                      Cell.CellType.FORMULA,
-                                      BasicStyles.BorderFrame(),
-                                      "=B2",
-                                      4,
-                                      1);
+        WorksheetTest.assertAddedCell(
+                worksheet,
+                1,
+                "D2",
+                Cell.CellType.FORMULA,
+                BasicStyles.BorderFrame(),
+                "=B2",
+                4,
+                1
+        );
 
-        worksheet = WorksheetTest.initWorksheet(worksheet,
-                                                "D2",
-                                                Worksheet.CellDirection.RowToRow,
-                                                BasicStyles.BorderFrame());
+        worksheet = WorksheetTest.initWorksheet(
+                worksheet,
+                "D2",
+                Worksheet.CellDirection.RowToRow,
+                BasicStyles.BorderFrame()
+        );
         cell = new Cell("=B2", Cell.CellType.FORMULA, "R2");
         cell.setStyle(BasicStyles.Bold());
         Style mixedStyle = BasicStyles.BorderFrame();
         mixedStyle.append(BasicStyles.Bold());
         worksheet.addCell(cell, 3, 1);
         WorksheetTest.assertAddedCell(worksheet, 1, "D2", Cell.CellType.FORMULA, mixedStyle, "=B2", 3, 2);
-        worksheet = WorksheetTest.initWorksheet(worksheet,
-                                                "D2",
-                                                Worksheet.CellDirection.ColumnToColumn,
-                                                BasicStyles.BorderFrame());
+        worksheet = WorksheetTest.initWorksheet(
+                worksheet,
+                "D2",
+                Worksheet.CellDirection.ColumnToColumn,
+                BasicStyles.BorderFrame()
+        );
         worksheet.addCell(cell, address.getAddress());
         WorksheetTest.assertAddedCell(worksheet, 1, "D2", Cell.CellType.FORMULA, mixedStyle, "=B2", 4, 1);
     }
@@ -178,20 +200,24 @@ public class AddCellFormulaTest {
     void addCellFormulaTest7(String worksheetAddress, int initialColumn, int initialRow, Worksheet.CellDirection cellDirection, int expectedNextColumn, int expectedNextRow) {
         Address initialAddress = new Address(initialColumn, initialRow);
         worksheet = WorksheetTest.initWorksheet(worksheet, worksheetAddress, cellDirection);
-        invokeAddCellFormulaTest("=B2",
-                                 initialColumn,
-                                 initialRow,
-                                 worksheet::addCellFormula,
-                                 initialAddress.getAddress(),
-                                 expectedNextColumn,
-                                 expectedNextRow);
+        invokeAddCellFormulaTest(
+                "=B2",
+                initialColumn,
+                initialRow,
+                worksheet::addCellFormula,
+                initialAddress.getAddress(),
+                expectedNextColumn,
+                expectedNextRow
+        );
         worksheet = WorksheetTest.initWorksheet(worksheet, worksheetAddress, cellDirection);
-        invokeAddCellFormulaTest("=B2",
-                                 initialAddress.getAddress(),
-                                 worksheet::addCellFormula,
-                                 initialAddress.getAddress(),
-                                 expectedNextColumn,
-                                 expectedNextRow);
+        invokeAddCellFormulaTest(
+                "=B2",
+                initialAddress.getAddress(),
+                worksheet::addCellFormula,
+                initialAddress.getAddress(),
+                expectedNextColumn,
+                expectedNextRow
+        );
     }
 
     private <T1> void invokeAddCellFormulaTest(String value, T1 parameter1, BiConsumer<String, T1> action, String expectedAddress, int expectedNextColumn, int expectedNextRow) {
@@ -201,62 +227,72 @@ public class AddCellFormulaTest {
     private <T1> void invokeAddCellFormulaTest(String value, T1 parameter1, BiConsumer<String, T1> action, String expectedAddress, int expectedNextColumn, int expectedNextRow, Style expectedStyle) {
         assertEquals(0, worksheet.getCells().size());
         action.accept(value, parameter1);
-        assertAddedFormulaCell(worksheet,
-                               1,
-                               expectedAddress,
-                               expectedStyle,
-                               value,
-                               expectedNextColumn,
-                               expectedNextRow);
+        assertAddedFormulaCell(
+                worksheet,
+                1,
+                expectedAddress,
+                expectedStyle,
+                value,
+                expectedNextColumn,
+                expectedNextRow
+        );
         worksheet = new Worksheet(); // Auto-reset
     }
 
     private <T1, T2> void invokeAddCellFormulaTest(String value, T1 parameter1, T2 parameter2, TestUtils.TriConsumer<String, T1, T2> action, String expectedAddress, int expectedNextColumn, int expectedNextRow) {
-        invokeAddCellFormulaTest(value,
-                                 parameter1,
-                                 parameter2,
-                                 action,
-                                 expectedAddress,
-                                 expectedNextColumn,
-                                 expectedNextRow,
-                                 null);
+        invokeAddCellFormulaTest(
+                value,
+                parameter1,
+                parameter2,
+                action,
+                expectedAddress,
+                expectedNextColumn,
+                expectedNextRow,
+                null
+        );
     }
 
     private <T1, T2> void invokeAddCellFormulaTest(String value, T1 parameter1, T2 parameter2, TestUtils.TriConsumer<String, T1, T2> action, String expectedAddress, int expectedNextColumn, int expectedNextRow, Style expectedStyle) {
         assertEquals(0, worksheet.getCells().size());
         action.accept(value, parameter1, parameter2);
-        assertAddedFormulaCell(worksheet,
-                               1,
-                               expectedAddress,
-                               expectedStyle,
-                               value,
-                               expectedNextColumn,
-                               expectedNextRow);
+        assertAddedFormulaCell(
+                worksheet,
+                1,
+                expectedAddress,
+                expectedStyle,
+                value,
+                expectedNextColumn,
+                expectedNextRow
+        );
         worksheet = new Worksheet(); // Auto-reset
     }
 
     private <T1, T2, T3> void invokeAddCellFormulaTest(String value, T1 parameter1, T2 parameter2, T3 parameter3, TestUtils.QuadConsumer<String, T1, T2, T3> action, String expectedAddress, int expectedNextColumn, int expectedNextRow) {
-        invokeAddCellFormulaTest(value,
-                                 parameter1,
-                                 parameter2,
-                                 parameter3,
-                                 action,
-                                 expectedAddress,
-                                 expectedNextColumn,
-                                 expectedNextRow,
-                                 null);
+        invokeAddCellFormulaTest(
+                value,
+                parameter1,
+                parameter2,
+                parameter3,
+                action,
+                expectedAddress,
+                expectedNextColumn,
+                expectedNextRow,
+                null
+        );
     }
 
     private <T1, T2, T3> void invokeAddCellFormulaTest(String value, T1 parameter1, T2 parameter2, T3 parameter3, TestUtils.QuadConsumer<String, T1, T2, T3> action, String expectedAddress, int expectedNextColumn, int expectedNextRow, Style expectedStyle) {
         assertEquals(0, worksheet.getCells().size());
         action.accept(value, parameter1, parameter2, parameter3);
-        assertAddedFormulaCell(worksheet,
-                               1,
-                               expectedAddress,
-                               expectedStyle,
-                               value,
-                               expectedNextColumn,
-                               expectedNextRow);
+        assertAddedFormulaCell(
+                worksheet,
+                1,
+                expectedAddress,
+                expectedStyle,
+                value,
+                expectedNextColumn,
+                expectedNextRow
+        );
         worksheet = new Worksheet(); // Auto-reset
     }
 
@@ -267,7 +303,8 @@ public class AddCellFormulaTest {
         assertEquals(expectedValue, worksheet.getCells().get(expectedAddress).getValue());
         if (expectedStyle == null) {
             assertNull(worksheet.getCells().get(expectedAddress).getCellStyle());
-        } else {
+        }
+        else {
             assertEquals(expectedStyle, worksheet.getCells().get(expectedAddress).getCellStyle());
         }
         assertEquals(nextColumn, worksheet.getCurrentColumnNumber());

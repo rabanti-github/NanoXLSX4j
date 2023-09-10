@@ -47,8 +47,10 @@ public class GetColumBoundariesTest {
         worksheet.addHiddenColumn(0);
         worksheet.addHiddenColumn(1);
         worksheet.addHiddenColumn(10);
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         int column = worksheet.getLastColumnNumber();
         assertEquals(10, column);
     }
@@ -60,8 +62,10 @@ public class GetColumBoundariesTest {
         worksheet.addHiddenColumn(0);
         worksheet.addHiddenColumn(1);
         worksheet.addHiddenColumn(2);
-        worksheet.addCell("test",
-                          "F5");
+        worksheet.addCell(
+                "test",
+                "F5"
+        );
         int column = worksheet.getLastColumnNumber();
         assertEquals(5, column);
     }
@@ -119,8 +123,10 @@ public class GetColumBoundariesTest {
         worksheet.addHiddenColumn(3);
         worksheet.addHiddenColumn(8);
         worksheet.addHiddenColumn(10);
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         int column = worksheet.getFirstColumnNumber();
         assertEquals(3, column);
     }
@@ -132,8 +138,10 @@ public class GetColumBoundariesTest {
         worksheet.addHiddenColumn(7);
         worksheet.addHiddenColumn(8);
         worksheet.addHiddenColumn(9);
-        worksheet.addCell("test",
-                          "F5");
+        worksheet.addCell(
+                "test",
+                "F5"
+        );
         int column = worksheet.getFirstColumnNumber();
         assertEquals(5, column);
     }
@@ -180,8 +188,10 @@ public class GetColumBoundariesTest {
         worksheet.addHiddenColumn(0);
         worksheet.addHiddenColumn(1);
         worksheet.addHiddenColumn(10);
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         int column = worksheet.getLastDataColumnNumber();
         assertEquals(4, column);
     }
@@ -193,8 +203,10 @@ public class GetColumBoundariesTest {
         worksheet.addHiddenColumn(0);
         worksheet.addHiddenColumn(1);
         worksheet.addHiddenColumn(10);
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         int column = worksheet.getLastDataColumnNumber();
         assertEquals(4, column);
     }
@@ -225,8 +237,10 @@ public class GetColumBoundariesTest {
         worksheet.addHiddenColumn(2);
         worksheet.addHiddenColumn(3);
         worksheet.addHiddenColumn(10);
-        worksheet.addCell("test",
-                          "E5");
+        worksheet.addCell(
+                "test",
+                "E5"
+        );
         int column = worksheet.getFirstDataColumnNumber();
         assertEquals(4, column);
     }
@@ -238,8 +252,10 @@ public class GetColumBoundariesTest {
         worksheet.addHiddenColumn(2);
         worksheet.addHiddenColumn(3);
         worksheet.addHiddenColumn(10);
-        worksheet.addCell("test",
-                          "F5");
+        worksheet.addCell(
+                "test",
+                "F5"
+        );
         int column = worksheet.getFirstDataColumnNumber();
         assertEquals(5, column);
     }
@@ -269,8 +285,10 @@ public class GetColumBoundariesTest {
         worksheet.addHiddenColumn(2);
         worksheet.addHiddenColumn(3);
         worksheet.addHiddenColumn(10);
-        worksheet.addCell("test",
-                          "F5");
+        worksheet.addCell(
+                "test",
+                "F5"
+        );
         int minColumn = worksheet.getFirstDataColumnNumber();
         int maxColumn = worksheet.getLastDataColumnNumber();
         assertEquals(5, minColumn);

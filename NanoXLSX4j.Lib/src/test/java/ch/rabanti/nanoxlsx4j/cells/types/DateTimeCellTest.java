@@ -28,10 +28,12 @@ public class DateTimeCellTest {
         // Date is hard to parametrize, therefore hardcoded
         Date defaultDateTime = buildDate(2020, 11, 1, 11, 22, 13, 99);
         dateUtils.assertCellCreation(defaultDateTime, buildDate(1900, 1, 1), Cell.CellType.DATE, Date::equals);
-        dateUtils.assertCellCreation(defaultDateTime,
-                                     buildDate(9999, 12, 31, 23, 59, 59),
-                                     Cell.CellType.DATE,
-                                     Date::equals);
+        dateUtils.assertCellCreation(
+                defaultDateTime,
+                buildDate(9999, 12, 31, 23, 59, 59),
+                Cell.CellType.DATE,
+                Date::equals
+        );
     }
 
     @DisplayName("Duration value cell test: Test of the cell values, as well as proper modification")
@@ -94,10 +96,12 @@ public class DateTimeCellTest {
     private static <T extends Comparable> void assertCompareTo(int threshold, T v1, T v2) {
         if (threshold == 0) {
             assertEquals(0, v1.compareTo(v2));
-        } else if (threshold > 0) {
+        }
+        else if (threshold > 0) {
             int result = v1.compareTo(v2);
             assertTrue(result >= threshold);
-        } else {
+        }
+        else {
             int result = v1.compareTo(v2);
             assertTrue(result <= threshold);
         }

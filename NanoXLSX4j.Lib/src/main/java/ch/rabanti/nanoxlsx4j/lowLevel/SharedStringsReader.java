@@ -38,7 +38,7 @@ public class SharedStringsReader {
      * Gets the value of the shared string table by its index
      *
      * @param index Index of the stared string entry
-     * @return Determined shared string value. Returns null in case of a invalid index
+     * @return Determined shared string value. Returns null in case of an invalid index
      */
     public String getString(int index) {
         if (!hasElements() || index > sharedStrings.size() - 1 || index < 0) {
@@ -72,7 +72,7 @@ public class SharedStringsReader {
         try {
             XmlDocument xr = new XmlDocument();
             xr.load(stream);
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb;
             for (XmlDocument.XmlNode node : xr.getDocumentElement().getChildNodes()) {
                 if (node.getName().equalsIgnoreCase("si")) {
                     sb = new StringBuilder();
@@ -155,7 +155,7 @@ public class SharedStringsReader {
     /**
      * Class to represent a phonetic transcription of character sequence.
      *
-     * @implNote Invalid values will lead to a crash. The specifications requires a start index, an end index and a
+     * @implNote Invalid values will lead to a crash. The specifications require a start index, an end index and a
      * value
      */
     private static class PhoneticInfo {

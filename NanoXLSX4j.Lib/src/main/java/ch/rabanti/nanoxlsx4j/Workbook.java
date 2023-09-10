@@ -97,18 +97,18 @@ public class Workbook {
     }
 
     /**
-     * Gets the meta data object of the workbook
+     * Gets the metadata object of the workbook
      *
-     * @return Meta data object
+     * @return Metadata object
      */
     public Metadata getWorkbookMetadata() {
         return workbookMetadata;
     }
 
     /**
-     * Sets the meta data object of the workbook
+     * Sets the metadata object of the workbook
      *
-     * @param workbookMetadata Meta data object
+     * @param workbookMetadata Metadata object
      */
     public void setWorkbookMetadata(Metadata workbookMetadata) {
         this.workbookMetadata = workbookMetadata;

@@ -54,7 +54,8 @@ public class WorksheetWriteReadTest {
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
         if (autoFilterRange == null) {
             assertNull(givenWorksheet.getAutoFilterRange());
-        } else {
+        }
+        else {
             assertEquals(range, givenWorksheet.getAutoFilterRange());
         }
     }
@@ -288,7 +289,8 @@ public class WorksheetWriteReadTest {
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
         if (mergedCellsRanges == null) {
             assertEquals(0, givenWorksheet.getMergedCells().size());
-        } else {
+        }
+        else {
             for (Range range : ranges) {
                 assertEquals(range, givenWorksheet.getMergedCells().get(range.toString()));
             }
@@ -323,7 +325,8 @@ public class WorksheetWriteReadTest {
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
         if (selectedCellsRange == null) {
             assertNull(givenWorksheet.getSelectedCells());
-        } else {
+        }
+        else {
             assertEquals(range, givenWorksheet.getSelectedCells());
         }
     }
@@ -371,7 +374,8 @@ public class WorksheetWriteReadTest {
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
         if (selectedCellsRanges.equals("")) {
             assertEquals(0, givenWorksheet.getSelectedCellRanges().size());
-        } else {
+        }
+        else {
             assertEquals(definedRanges, givenWorksheet.getSelectedCellRanges().size());
             for (String range : ranges) {
                 assertTrue(givenWorksheet.getSelectedCellRanges().stream().anyMatch(x -> x.toString().equals(new Range(range).toString())));
@@ -397,18 +401,26 @@ public class WorksheetWriteReadTest {
         workbook.addWorksheet(sheetName4);
         id4 = workbook.getCurrentWorksheet().getSheetID();
         Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
-        assertEquals(id1,
-                     givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName1))
-                             .findFirst().map(Worksheet::getSheetID).get());
-        assertEquals(id2,
-                     givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName2))
-                             .findFirst().map(Worksheet::getSheetID).get());
-        assertEquals(id3,
-                     givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName3))
-                             .findFirst().map(Worksheet::getSheetID).get());
-        assertEquals(id4,
-                     givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName4))
-                             .findFirst().map(Worksheet::getSheetID).get());
+        assertEquals(
+                id1,
+                givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName1))
+                        .findFirst().map(Worksheet::getSheetID).get()
+        );
+        assertEquals(
+                id2,
+                givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName2))
+                        .findFirst().map(Worksheet::getSheetID).get()
+        );
+        assertEquals(
+                id3,
+                givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName3))
+                        .findFirst().map(Worksheet::getSheetID).get()
+        );
+        assertEquals(
+                id4,
+                givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetName().equals(sheetName4))
+                        .findFirst().map(Worksheet::getSheetID).get()
+        );
     }
 
     @DisplayName("Test of the 'SheetName'  property when writing and reading a worksheet")
@@ -429,18 +441,26 @@ public class WorksheetWriteReadTest {
         workbook.addWorksheet(sheetName4);
         id4 = workbook.getCurrentWorksheet().getSheetID();
         Workbook givenWorkbook = TestUtils.saveAndLoadWorkbook(workbook, null);
-        assertEquals(sheetName1,
-                     givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id1).findFirst()
-                             .map(Worksheet::getSheetName).get());
-        assertEquals(sheetName2,
-                     givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id2).findFirst()
-                             .map(Worksheet::getSheetName).get());
-        assertEquals(sheetName3,
-                     givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id3).findFirst()
-                             .map(Worksheet::getSheetName).get());
-        assertEquals(sheetName4,
-                     givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id4).findFirst()
-                             .map(Worksheet::getSheetName).get());
+        assertEquals(
+                sheetName1,
+                givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id1).findFirst()
+                        .map(Worksheet::getSheetName).get()
+        );
+        assertEquals(
+                sheetName2,
+                givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id2).findFirst()
+                        .map(Worksheet::getSheetName).get()
+        );
+        assertEquals(
+                sheetName3,
+                givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id3).findFirst()
+                        .map(Worksheet::getSheetName).get()
+        );
+        assertEquals(
+                sheetName4,
+                givenWorkbook.getWorksheets().stream().filter(w -> w.getSheetID() == id4).findFirst()
+                        .map(Worksheet::getSheetName).get()
+        );
     }
 
     @DisplayName("Test of the 'SheetProtectionValues'  and 'UseSheetProtection' property when writing and reading a worksheet")
@@ -572,29 +592,41 @@ public class WorksheetWriteReadTest {
         Style xfStyle = new Style();
         xfStyle.getCellXf().setAlignment(CellXf.TextBreakValue.shrinkToFit);
         Style style = BasicStyles.Bold().append(xfStyle);
-        workbook.getCurrentWorksheet().addCell("",
-                                               "A1",
-                                               style);
-        workbook.getCurrentWorksheet().addCell("B",
-                                               "A2",
-                                               style);
-        workbook.getCurrentWorksheet().addCell("",
-                                               "A3",
-                                               style);
+        workbook.getCurrentWorksheet().addCell(
+                "",
+                "A1",
+                style
+        );
+        workbook.getCurrentWorksheet().addCell(
+                "B",
+                "A2",
+                style
+        );
+        workbook.getCurrentWorksheet().addCell(
+                "",
+                "A3",
+                style
+        );
         workbook.getCurrentWorksheet().mergeCells(new Range("A1:A3"));
         assertFalse(workbook.getCurrentWorksheet().getCell("A1").getCellStyle().getCellXf().isForceApplyAlignment());
         assertFalse(workbook.getCurrentWorksheet().getCell("A2").getCellStyle().getCellXf().isForceApplyAlignment());
         assertFalse(workbook.getCurrentWorksheet().getCell("A3").getCellStyle().getCellXf().isForceApplyAlignment());
         Worksheet givenWorksheet = writeAndReadWorksheet(workbook, 0);
         assertTrue(givenWorksheet.getCell("A1").getCellStyle().getCellXf().isForceApplyAlignment());
-        assertEquals(CellXf.TextBreakValue.shrinkToFit,
-                     givenWorksheet.getCell("A1").getCellStyle().getCellXf().getAlignment());
+        assertEquals(
+                CellXf.TextBreakValue.shrinkToFit,
+                givenWorksheet.getCell("A1").getCellStyle().getCellXf().getAlignment()
+        );
         assertTrue(givenWorksheet.getCell("A2").getCellStyle().getCellXf().isForceApplyAlignment());
-        assertEquals(CellXf.TextBreakValue.shrinkToFit,
-                     givenWorksheet.getCell("A2").getCellStyle().getCellXf().getAlignment());
+        assertEquals(
+                CellXf.TextBreakValue.shrinkToFit,
+                givenWorksheet.getCell("A2").getCellStyle().getCellXf().getAlignment()
+        );
         assertTrue(givenWorksheet.getCell("A3").getCellStyle().getCellXf().isForceApplyAlignment());
-        assertEquals(CellXf.TextBreakValue.shrinkToFit,
-                     givenWorksheet.getCell("A3").getCellStyle().getCellXf().getAlignment());
+        assertEquals(
+                CellXf.TextBreakValue.shrinkToFit,
+                givenWorksheet.getCell("A3").getCellStyle().getCellXf().getAlignment()
+        );
     }
 
     private static Map<Worksheet.SheetProtectionValue, Boolean> prepareSheetProtectionValues(String tokenString) {
@@ -608,7 +640,8 @@ public class WorksheetWriteReadTest {
             Worksheet.SheetProtectionValue value = Worksheet.SheetProtectionValue.valueOf(subTokens[0]);
             if (subTokens[1].equals("1")) {
                 map.put(value, true);
-            } else {
+            }
+            else {
                 map.put(value, false);
             }
         }

@@ -26,7 +26,8 @@ public class SaveTest {
             assertFalse(fi.exists());
             workbook.save();
             WorkbookTest.assertExistingFile(fileName, true);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             fail();
         }
     }
@@ -55,7 +56,8 @@ public class SaveTest {
             assertFalse(fi.exists());
             workbook.saveAs(fileName);
             WorkbookTest.assertExistingFile(fileName, true);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             fail();
         }
     }
@@ -83,7 +85,8 @@ public class SaveTest {
             FileOutputStream fs = new FileOutputStream(fileName);
             workbook.saveAsStream(fs);
             WorkbookTest.assertExistingFile(fileName, true);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             throw new AssertionError("Stream exception", ex);
         }
     }
@@ -98,7 +101,8 @@ public class SaveTest {
             fs.write(0);
             fs.close();
             assertThrows(Exception.class, () -> workbook.saveAsStream(fs));
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             throw new AssertionError("Stream exception", ex);
         }
     }
@@ -109,7 +113,8 @@ public class SaveTest {
         try {
             Workbook workbook = new Workbook("test");
             assertThrows(Exception.class, () -> workbook.saveAsStream(null));
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             throw new AssertionError("Stream exception", ex);
         }
     }

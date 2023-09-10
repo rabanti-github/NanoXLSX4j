@@ -185,9 +185,9 @@ public class WorkbookReader {
                     int id = Integer.parseInt(node.getAttribute("sheetId")); // Default will rightly throw an exception
                     String relId = node.getAttribute("id"); // Note: namespace 'r' is stripped (r:id)
                     String state = node.getAttribute("state");
-                    boolean hidden = state != null && state.equalsIgnoreCase("hidden");
+                    boolean hiddenState = state != null && state.equalsIgnoreCase("hidden");
                     WorksheetDefinition definition = new WorksheetDefinition(id, sheetName, relId);
-                    definition.setHidden(hidden);
+                    definition.setHidden(hiddenState);
                     worksheetDefinitions.put(id, definition);
                 }
                 catch (Exception e) {
@@ -238,7 +238,7 @@ public class WorkbookReader {
         /**
          * Internal worksheet ID
          *
-         * @return Intenal id
+         * @return Internal id
          */
         public int getSheetId() {
             return sheetId;
