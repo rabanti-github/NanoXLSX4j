@@ -1,5 +1,25 @@
 # Change Log
 
+## v2.3.3
+
+---
+Release Date: **24.02.2024**
+
+- Fixed a bug when reading min and max values in the GetLastDataColumnNumber function. Bug fix provided by pokorny for NanoXLSX (.NET) and ported to Java
+- Fixed a bug in the GetFirstDataCellAddress function
+- Fixed test cases
+- Code maintenance
+
+
+## v2.3.1 & v2.3.2
+
+---
+Release Date: ---
+- Code maintenance and bug fixing
+
+Note: These versions were not released as artifacts since they were ported form NanoXLSX for .NET at the same date. All relevant changes will be published in a later version
+
+
 ## v2.3.0
 
 ---
