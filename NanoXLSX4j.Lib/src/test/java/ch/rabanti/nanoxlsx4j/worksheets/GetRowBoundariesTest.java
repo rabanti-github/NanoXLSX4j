@@ -422,10 +422,10 @@ public class GetRowBoundariesTest {
         }
         worksheet.addCell(
                 "test",
-                "F5"
+                "F6"
         );
         int row = worksheet.getFirstDataRowNumber();
-        assertEquals(4, row);
+        assertEquals(5, row);
     }
 
     @DisplayName("Test of the getFirstDataRowNumber and getLastDataRowNumber functions with an explicitly defined, empty cell besides other row definitions")
@@ -455,7 +455,7 @@ public class GetRowBoundariesTest {
         worksheet.addHiddenRow(10);
         worksheet.addCell(
                 "test",
-                "F5"
+                "C5"
         );
         int minRow = worksheet.getFirstDataRowNumber();
         int maxRow = worksheet.getLastDataRowNumber();

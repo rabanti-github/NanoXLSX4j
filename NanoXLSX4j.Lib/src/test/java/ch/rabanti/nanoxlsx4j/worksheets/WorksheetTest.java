@@ -843,11 +843,11 @@ public class WorksheetTest {
         worksheet.setRowHeight(10, 22.2f);
         worksheet.addCell(
                 "test",
-                "E5"
+                "E7"
         );
         Address address = worksheet.getLastDataCellAddress();
         assertNotNull(address);
-        assertEquals("E5", address.getAddress());
+        assertEquals("E7", address.getAddress());
     }
 
     @DisplayName("Test of the getLastDataCellAddress function with defined columns and rows where cells are defined above the last column and row")
@@ -904,55 +904,59 @@ public class WorksheetTest {
     @Test()
     void getFirstCellAddressTest2() {
         Worksheet worksheet = new Worksheet();
-        worksheet.addHiddenColumn(1);
         worksheet.addHiddenColumn(2);
         worksheet.addHiddenColumn(3);
+        worksheet.addHiddenColumn(4);
         worksheet.addHiddenRow(1);
         worksheet.addHiddenRow(2);
         Address address = worksheet.getFirstCellAddress();
         assertNotNull(address);
-        assertEquals("B2", address.getAddress());
+        assertEquals("C2", address.getAddress());
     }
 
     @DisplayName("Test of the getFirstCellAddress function with an empty worksheet but defined columns and rows with gaps")
     @Test()
     void getFirstCellAddressTest3() {
         Worksheet worksheet = new Worksheet();
-        worksheet.addHiddenColumn(1);
         worksheet.addHiddenColumn(2);
+        worksheet.addHiddenColumn(3);
         worksheet.addHiddenColumn(10);
-        worksheet.addHiddenRow(1);
-        worksheet.addHiddenRow(2);
+        worksheet.addHiddenRow(3);
+        worksheet.addHiddenRow(4);
         worksheet.setRowHeight(10, 22.2f);
         Address address = worksheet.getFirstCellAddress();
         assertNotNull(address);
-        assertEquals("B2", address.getAddress());
+        assertEquals("C4", address.getAddress());
     }
 
     @DisplayName("Test of the getFirstCellAddress function with defined columns and rows where cells are defined above the first column and row")
     @Test()
     void getFirstCellAddressTest4() {
         Worksheet worksheet = new Worksheet();
-        worksheet.addHiddenColumn(1);
-        worksheet.addHiddenColumn(2);
+        worksheet.addHiddenColumn(3);
+        worksheet.addHiddenColumn(4);
         worksheet.addHiddenColumn(10);
-        worksheet.addHiddenRow(1);
-        worksheet.addHiddenRow(2);
+        worksheet.addHiddenRow(4);
+        worksheet.addHiddenRow(5);
         worksheet.setRowHeight(10, 22.2f);
         worksheet.addCell(
                 "test",
-                "E5"
+                "R5"
+        );
+        worksheet.addCell(
+                "test",
+                "F11"
         );
         Address address = worksheet.getFirstCellAddress();
         assertNotNull(address);
-        assertEquals("B2", address.getAddress());
+        assertEquals("D5", address.getAddress());
     }
 
     @DisplayName("Test of the getFirstCellAddress function with defined columns and rows where cells are defined below the first column and row")
     @Test()
     void getFirstCellAddressTest5() {
         Worksheet worksheet = new Worksheet();
-        worksheet.addHiddenColumn(3);
+        worksheet.addHiddenColumn(2);
         worksheet.addHiddenColumn(4);
         worksheet.addHiddenColumn(10);
         worksheet.addHiddenRow(3);
@@ -964,7 +968,7 @@ public class WorksheetTest {
         );
         Address address = worksheet.getFirstCellAddress();
         assertNotNull(address);
-        assertEquals("D4", address.getAddress());
+        assertEquals("C4", address.getAddress());
     }
 
     @DisplayName("Test of the getFirstDataCellAddress function with an empty worksheet")
@@ -1001,7 +1005,7 @@ public class WorksheetTest {
         assertNull(address);
     }
 
-    @DisplayName("Test of the getFirstCellAddress function with defined columns and rows where cells are defined above the first column and row")
+    @DisplayName("Test of the getFirstDataCellAddress function with defined columns and rows where cells are defined above the first column and row")
     @Test()
     void getFirstDataCellAddressTest2() {
         Worksheet worksheet = new Worksheet();
@@ -1017,7 +1021,7 @@ public class WorksheetTest {
         );
         worksheet.addCell(
                 "test",
-                "F6"
+                "H9"
         );
         Address address = worksheet.getFirstDataCellAddress();
         assertNotNull(address);
@@ -1036,15 +1040,15 @@ public class WorksheetTest {
         worksheet.setRowHeight(10, 22.2f);
         worksheet.addCell(
                 "test",
-                "C3"
+                "C5"
         );
         worksheet.addCell(
                 "test",
-                "D4"
+                "D7"
         );
         Address address = worksheet.getFirstDataCellAddress();
         assertNotNull(address);
-        assertEquals("C3", address.getAddress());
+        assertEquals("C5", address.getAddress());
     }
 
     @DisplayName("Test of the MergeCells function")

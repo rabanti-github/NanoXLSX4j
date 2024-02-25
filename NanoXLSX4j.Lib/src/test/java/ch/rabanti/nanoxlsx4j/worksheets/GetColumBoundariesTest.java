@@ -211,6 +211,16 @@ public class GetColumBoundariesTest {
         assertEquals(4, column);
     }
 
+    @DisplayName("Test of the getLastDataColumnNumber function with an empty worksheet")
+    @Test()
+    void getLastDataColumnNumberTest5() {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addCell("test", "A1");
+        worksheet.addCell("test", "B1");
+        int column = worksheet.getLastDataColumnNumber();
+        assertEquals(1, column);
+    }
+
     @DisplayName("Test of the getFirstDataColumnNumber function with an empty worksheet")
     @Test()
     void getFirstDataColumnNumberTest() {
@@ -258,6 +268,16 @@ public class GetColumBoundariesTest {
         );
         int column = worksheet.getFirstDataColumnNumber();
         assertEquals(5, column);
+    }
+
+    @DisplayName("Test of the getFirstDataColumnNumber function with two defined columns")
+    @Test()
+    public void GetFirstDataColumnNumberTest5() {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addCell("test", "A1");
+        worksheet.addCell("test", "B1");
+        int column = worksheet.getFirstDataColumnNumber();
+        assertEquals(0, column);
     }
 
     @DisplayName("Test of the getFirstDataColumnNumber and getLastDataColumnNumber functions with an explicitly defined, empty cell besides other column definitions")
