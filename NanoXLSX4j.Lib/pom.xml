@@ -187,8 +187,8 @@
                                             <directory>${basedir}/target</directory>
                                             <filtering>true</filtering>
                                             <includes>
-                                                <include>**/${artifactId}-${version}.jar</include>
-                                                <include>**/${artifactId}-${version}-javadoc.jar</include>
+                                                <include>**/${project.artifactId}-${project.version}.jar</include>
+                                                <include>**/${project.artifactId}-${project.version}-javadoc.jar</include>
                                             </includes>
                                         </resource>
                                     </resources>
