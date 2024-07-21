@@ -9,6 +9,7 @@ import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
 import ch.rabanti.nanoxlsx4j.styles.CellXf;
 import ch.rabanti.nanoxlsx4j.styles.Style;
+import ch.rabanti.nanoxlsx4j.styles.StyleManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -62,28 +63,28 @@ public class WorksheetWriteReadTest {
 
     @DisplayName("Test of the 'Columns' property when writing and reading a worksheet")
     @ParameterizedTest(
-            name = "Given column indices {0} with width definition: {1} and hidden definition: {2} should lead to the same columns in the read worksheet with the index {1}"
+            name = "Given column indices {0} with width definition: {1}, hidden definition: {3} and default styleDefinition {4} should lead to the same columns in the read worksheet with the index {1}"
     )
     @CsvSource(
             {
-                    "'', 0, true, false",
-                    "'0', 0, true, false",
-                    "'0,1,2', 0, true, false",
-                    "'1,3,5', 0, true, false",
-                    "'', 1, true, false",
-                    "'0', 1, true, false",
-                    "'0,1,2', 2, true, false",
-                    "'1,3,5', 3, true, false",
-                    "'', 0, false, true",
-                    "'0', 0, false, true",
-                    "'0,1,2', 0, false, true",
-                    "'1,3,5', 0, false, true",
-                    "'', 1, false, true",
-                    "'0', 1, false, true",
-                    "'0,1,2', 2, false, true",
-                    "'1,3,5', 3, false, true",}
+                    "'', 0, true, false, false",
+                    "'0', 0, true, false, true",
+                    "'0,1,2', 0, true, false, false",
+                    "'1,3,5', 0, true, false, true",
+                    "'', 1, true, false, false",
+                    "'0', 1, true, false, true",
+                    "'0,1,2', 2, true, false, false",
+                    "'1,3,5', 3, true, false, true",
+                    "'', 0, false, true, false",
+                    "'0', 0, false, true, true",
+                    "'0,1,2', 0, false, true, false",
+                    "'1,3,5', 0, false, true, true",
+                    "'', 1, false, true, false",
+                    "'0', 1, false, true, true",
+                    "'0,1,2', 2, false, true, false",
+                    "'1,3,5', 3, false, true, true",}
     )
-    void columnsWriteReadTest(String columnDefinitions, int sheetIndex, boolean setWidth, boolean setHidden)
+    void columnsWriteReadTest(String columnDefinitions, int sheetIndex, boolean setWidth, boolean setHidden, boolean setStyle)
             throws Exception {
         String[] tokens = columnDefinitions.split(",");
         List<Integer> columnIndices = new ArrayList<>();
@@ -91,6 +92,11 @@ public class WorksheetWriteReadTest {
             if (!token.equals("")) {
                 columnIndices.add(Integer.parseInt(token));
             }
+        }
+        Style defaultStyle = null;
+        Style expectedStyle = null;
+        if (setStyle){
+            defaultStyle = BasicStyles.BoldItalic().append(BasicStyles.font("Arial", 13));
         }
         Workbook workbook = prepareWorkbook(4, "test");
         for (int i = 0; i <= sheetIndex; i++) {
@@ -103,6 +109,7 @@ public class WorksheetWriteReadTest {
                     if (setHidden) {
                         workbook.getCurrentWorksheet().addHiddenColumn(index);
                     }
+                   expectedStyle = workbook.getCurrentWorksheet().setColumnDefaultStyle(index, defaultStyle);
                 }
             }
         }
@@ -115,6 +122,12 @@ public class WorksheetWriteReadTest {
             }
             if (setHidden) {
                 assertTrue(column.getValue().isHidden());
+            }
+            if (setStyle){
+                assertEquals(expectedStyle.hashCode(), column.getValue().getDefaultColumnStyle().hashCode());
+            }
+            else{
+                assertNull(column.getValue().getDefaultColumnStyle());
             }
         }
     }

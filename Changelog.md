@@ -1,5 +1,17 @@
 # Change Log
 
+## v2.4.0
+
+---
+Release Date: **21.07.2024**
+
+- Adapted handling of the font scheme in styles. The scheme is now determined automatically
+- Added column option to define a default column style
+- Added tests
+- Removed unused dev dependencies
+- Removed project dependency (POM) in nanoxlsx4j (lib) to nanoxlsx4j-root, since root is only for development purpose
+- Code maintenance
+
 ## v2.3.3
 
 ---

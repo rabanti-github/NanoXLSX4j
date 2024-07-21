@@ -586,10 +586,20 @@ public class WorksheetReader {
                     hidden = true;
                 }
             }
+            attribute = columnNode.getAttribute("style");
+            Style defaultStyle = null;
+            if (attribute != null) {
+                if (resolvedStyles.containsKey(attribute)) {
+                    defaultStyle = resolvedStyles.get(attribute);
+                }
+            }
             for (int index : indices) {
                 Column column = new Column(index - 1); // transform to zero-based
                 column.setWidth(width);
                 column.setHidden(hidden);
+                if (defaultStyle != null) {
+                    column.setDefaultColumnStyle(defaultStyle);
+                }
                 this.columns.add(column);
             }
         }

@@ -265,6 +265,9 @@ public class XlsxReader {
                 if (column.isHidden()) {
                     ws.addHiddenColumn(column.getNumber());
                 }
+                if (column.getDefaultColumnStyle() != null){
+                    ws.setColumnDefaultStyle(column.getColumnAddress(), column.getDefaultColumnStyle());
+                }
             }
             for (Map.Entry<String, Cell> cell : reader.getValue().getData().entrySet()) {
                 if (reader.getValue().getStyleAssignment().containsKey(cell.getKey())) {

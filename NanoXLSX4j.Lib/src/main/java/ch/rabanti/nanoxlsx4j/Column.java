@@ -7,6 +7,9 @@
 package ch.rabanti.nanoxlsx4j;
 
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
+import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
+import ch.rabanti.nanoxlsx4j.styles.Style;
+import ch.rabanti.nanoxlsx4j.styles.StyleRepository;
 
 /**
  * Class representing a column of a worksheet
@@ -21,6 +24,7 @@ public class Column {
     private boolean hidden;
     private int number;
     private float width;
+    private Style defaultColumnStyle;
 
     // ### G E T T E R S & S E T T E R S ###
 
@@ -122,6 +126,49 @@ public class Column {
         this.hidden = isHidden;
     }
 
+    /**
+     * Gets the default style of the column
+     *
+     * @return Default style
+     */
+    public Style getDefaultColumnStyle() {
+        return defaultColumnStyle;
+    }
+
+    /**
+     * Sets the style of the cell
+     *
+     * @param defaultColumnStyle style to assign as default column style. Can be null (to clear)
+     * @return If the passed style already exists in the repository, the existing one will be returned, otherwise the
+     * passed one
+     */
+    public Style setDefaultColumnStyle(Style defaultColumnStyle) {
+        return setDefaultColumnStyle(defaultColumnStyle, false);
+    }
+
+    /**
+     * Sets the style of the cell
+     *
+     * @param defaultColumnStyle style to assign as default column style. Can be null (to clear)
+     * @param unmanaged          Internally used: If true, the style repository is not invoked and only the style object
+     *                           of the column is updated. Do not use!
+     * @return If the passed style already exists in the repository, the existing one will be returned, otherwise the
+     * passed one
+     */
+    public Style setDefaultColumnStyle(Style defaultColumnStyle, boolean unmanaged) {
+        if (defaultColumnStyle == null) {
+            this.defaultColumnStyle = null;
+            return null;
+        }
+        if (unmanaged) {
+            this.defaultColumnStyle = defaultColumnStyle;
+        }
+        else {
+            this.defaultColumnStyle = StyleRepository.getInstance().addStyle(defaultColumnStyle);
+        }
+        return this.defaultColumnStyle;
+    }
+
     // ### C O N S T R U C T O R S ###
 
     /**
@@ -149,6 +196,7 @@ public class Column {
     public Column(int number) {
         this();
         this.setNumber(number);
+        this.defaultColumnStyle = null;
     }
 
     /**
@@ -163,6 +211,9 @@ public class Column {
         copy.setAutoFilter(this.autoFilter);
         copy.columnAddress = this.columnAddress;
         copy.number = this.number;
+        if (this.defaultColumnStyle != null) {
+            copy.setDefaultColumnStyle(this.defaultColumnStyle, true);
+        }
         return copy;
     }
 

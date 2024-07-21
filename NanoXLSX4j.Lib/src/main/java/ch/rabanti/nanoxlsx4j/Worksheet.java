@@ -1172,10 +1172,10 @@ public class Worksheet {
     // ### M E T H O D S - A D D C E L L R A N G E ###
 
     /**
-     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with
-     * one of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast
-     * but adjusted<br> Recognized are the following data types: Cell (prepared object), String, int, double, float,
-     * long, Date, boolean. All other types will be cast into a String using the default toString() method
+     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with one
+     * of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast but
+     * adjusted<br> Recognized are the following data types: Cell (prepared object), String, int, double, float, long,
+     * Date, boolean. All other types will be cast into a String using the default toString() method
      *
      * @param values       List of unspecified objects to insert
      * @param startAddress Start address
@@ -1188,10 +1188,10 @@ public class Worksheet {
     }
 
     /**
-     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with
-     * one of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast
-     * but adjusted<br> Recognized are the following data types: Cell (prepared object), String, int, double, float,
-     * long, Date, boolean. All other types will be cast into a String using the default toString() method
+     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with one
+     * of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast but
+     * adjusted<br> Recognized are the following data types: Cell (prepared object), String, int, double, float, long,
+     * Date, boolean. All other types will be cast into a String using the default toString() method
      *
      * @param values       List of unspecified objects to insert
      * @param startAddress Start address
@@ -1205,9 +1205,9 @@ public class Worksheet {
     }
 
     /**
-     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with
-     * one of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast
-     * but adjusted<br> The data types in the passed list can be mixed. Recognized are the following data types: Cell
+     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with one
+     * of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast but
+     * adjusted<br> The data types in the passed list can be mixed. Recognized are the following data types: Cell
      * (prepared object), String, int, double, float, long, Date, boolean. All other types will be cast into a String
      * using the default toString() method
      *
@@ -1223,9 +1223,9 @@ public class Worksheet {
     }
 
     /**
-     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with
-     * one of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast
-     * but adjusted<br> The data types in the passed list can be mixed. Recognized are the following data types: Cell
+     * Adds a list of object values to a defined cell range. If the type of the particular value does not match with one
+     * of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast but
+     * adjusted<br> The data types in the passed list can be mixed. Recognized are the following data types: Cell
      * (prepared object), String, int, double, float, long, Date, boolean. All other types will be cast into a String
      * using the default toString() method
      *
@@ -1897,15 +1897,74 @@ public class Worksheet {
     }
 
     /**
-     * Set the current cell address
+     * Sets the width of the passed column address
      *
-     * @param columnAddress Column number (zero based)
-     * @param width         Row number (zero based)
-     * @throws RangeException Thrown if the address is out of the valid range. Range is from 0 to 16383 (16384 columns)
+     * @param columnAddress Column address (A - XFD)
+     * @param width         Width from 0 to 255.0
+     * @throws RangeException Thrown if the address is out of the valid range (from 0 to 16383) or if the width is out
+     *                        of range (0 to 255)
      */
     public void setColumnWidth(String columnAddress, float width) {
         int columnNumber = Cell.resolveColumn(columnAddress);
         setColumnWidth(columnNumber, width);
+    }
+
+    /**
+     * Sets the width of the passed column number (zero-based)
+     *
+     * @param columnNumber Column number (zero-based, from 0 to 16383)
+     * @param width        Width from 0 to 255.0
+     * @throws RangeException Thrown if the colum number is out of the valid range (from 0 to 16383) or if the width is
+     *                        out of range (0 to 255)
+     */
+    public void setColumnWidth(int columnNumber, float width) {
+        Cell.validateColumnNumber(columnNumber);
+        if (width < MIN_COLUMN_WIDTH || width > MAX_COLUMN_WIDTH) {
+            throw new RangeException(
+                    "The column width (" + width + ") is out of range. Range is from " + MIN_COLUMN_WIDTH + " to " + MAX_COLUMN_WIDTH + " (chars).");
+        }
+        if (this.columns.containsKey(columnNumber)) {
+            this.columns.get(columnNumber).setWidth(width);
+        }
+        else {
+            Column c = new Column(columnNumber);
+            c.setWidth(width);
+            this.columns.put(columnNumber, c);
+        }
+    }
+
+    /**
+     * Sets the default column style
+     *
+     * @param columnAddress Column address (A - XFD)
+     * @param style         Style to set as default. If null, the style is cleared
+     * @return Assigned style or null if cleared
+     * @throws RangeException Thrown if the address is out of the valid range (from 0 to 16383)
+     */
+    public Style setColumnDefaultStyle(String columnAddress, Style style) {
+        int columnNumber = Cell.resolveColumn(columnAddress);
+        return setColumnDefaultStyle(columnNumber, style);
+    }
+
+    /**
+     * Sets the default column style
+     *
+     * @param columnNumber Column number (zero-based, from 0 to 16383)
+     * @param style        Style to set as default. If null, the style is cleared
+     * @return Assigned style or null if cleared
+     * @throws RangeException Thrown if the column number is out of the valid range (from 0 to 16383)
+     */
+    public Style setColumnDefaultStyle(int columnNumber, Style style) {
+        Cell.validateColumnNumber(columnNumber);
+        if (this.columns.containsKey(columnNumber)) {
+            return this.columns.get(columnNumber).setDefaultColumnStyle(style);
+        }
+        else {
+            Column c = new Column(columnNumber);
+            Style returnStyle = c.setDefaultColumnStyle(style);
+            this.columns.put(columnNumber, c);
+            return returnStyle;
+        }
     }
 
     /**
@@ -2501,29 +2560,6 @@ public class Worksheet {
                 Math.abs(columns.get(columnNumber).getWidth() - DEFAULT_COLUMN_WIDTH) <= FLOAT_THRESHOLD &&
                 !columns.get(columnNumber).hasAutoFilter()) {
             columns.remove(columnNumber);
-        }
-    }
-
-    /**
-     * Sets the width of the passed column number (zero-based)
-     *
-     * @param columnNumber Column number (zero-based, from 0 to 16383)
-     * @param width        Width from 0 to 255.0
-     * @throws RangeException Thrown if the address is out of the valid range. Range is from 0 to 16383 (16384 columns)
-     */
-    public void setColumnWidth(int columnNumber, float width) {
-        Cell.validateColumnNumber(columnNumber);
-        if (width < MIN_COLUMN_WIDTH || width > MAX_COLUMN_WIDTH) {
-            throw new RangeException(
-                    "The column width (" + width + ") is out of range. Range is from " + MIN_COLUMN_WIDTH + " to " + MAX_COLUMN_WIDTH + " (chars).");
-        }
-        if (this.columns.containsKey(columnNumber)) {
-            this.columns.get(columnNumber).setWidth(width);
-        }
-        else {
-            Column c = new Column(columnNumber);
-            c.setWidth(width);
-            this.columns.put(columnNumber, c);
         }
     }
 

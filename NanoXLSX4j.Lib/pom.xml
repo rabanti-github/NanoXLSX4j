@@ -2,14 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>nanoxlsx4j-root</artifactId>
-        <groupId>ch.rabanti</groupId>
-        <version>2.3.3</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>ch.rabanti</groupId>
     <artifactId>nanoxlsx4j</artifactId>
+    <version>2.4.0</version> <!-- Maintain also in demo project -->
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -18,7 +16,8 @@
     </properties>
 
     <name>NanoXLSX4j</name>
-    <description>NanoXLSX4j is a small Java library to create and read XLSX files (Microsoft Excel 2007 or newer) in an easy and native way. The library is originated form PicoXLSX4j and has basic support of reading spreadsheets
+    <description>NanoXLSX4j is a small Java library to create and read XLSX files (Microsoft Excel 2007 or newer) in an
+        easy and native way. The library is originated form PicoXLSX4j and has basic support of reading spreadsheets
     </description>
     <url>https://PicoXLSX.rabanti.ch</url>
     <licenses>
@@ -42,12 +41,6 @@
 
     <!-- DEV DEPENDENCIES -->
     <dependencies>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>2.2</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -122,13 +115,27 @@
                                     <placement>a</placement>
                                     <head>Implementation Note:</head>
                                 </tag>
-                                <tag><name>param</name></tag>
-                                <tag><name>return</name></tag>
-                                <tag><name>throws</name></tag>
-                                <tag><name>since</name></tag>
-                                <tag><name>version</name></tag>
-                                <tag><name>serialData</name></tag>
-                                <tag><name>see</name></tag>
+                                <tag>
+                                    <name>param</name>
+                                </tag>
+                                <tag>
+                                    <name>return</name>
+                                </tag>
+                                <tag>
+                                    <name>throws</name>
+                                </tag>
+                                <tag>
+                                    <name>since</name>
+                                </tag>
+                                <tag>
+                                    <name>version</name>
+                                </tag>
+                                <tag>
+                                    <name>serialData</name>
+                                </tag>
+                                <tag>
+                                    <name>see</name>
+                                </tag>
                             </tags>
                         </configuration>
                     </plugin>

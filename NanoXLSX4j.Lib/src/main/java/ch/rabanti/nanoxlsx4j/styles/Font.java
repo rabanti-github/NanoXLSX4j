@@ -14,11 +14,27 @@ import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
  * @author Raphael Stoeckli
  */
 public class Font extends AbstractStyle {
-    // ### E N U M S ###
+    // ### C O N S T A N T S ###
+
+    /**
+     * The default font name that is declared as Major Font (See {@link ch.rabanti.nanoxlsx4j.styles.Font.SchemeValue})
+     */
+    public static final String DEFAULT_MAJOR_FONT = "Calibri Light";
+
+    /**
+     * The default font name that is declared as Minor Font (See {@link ch.rabanti.nanoxlsx4j.styles.Font.SchemeValue})
+     */
+    public static final String DEFAULT_MINOR_FONT = "Calibri";
+
     /**
      * Default font family as constant
      */
-    public static final String DEFAULT_FONT_NAME = "Calibri";
+    public static final String DEFAULT_FONT_NAME = DEFAULT_MINOR_FONT;
+
+    /**
+     * Default font scheme
+     */
+    public static final SchemeValue DEFAULT_FONT_SCHEME = SchemeValue.minor;
 
     /**
      * Maximum possible font size
@@ -41,14 +57,13 @@ public class Font extends AbstractStyle {
     public static final String DEFAULT_FONT_FAMILY = "2";
 
     /**
-     * Default font scheme
-     */
-    public static final SchemeValue DEFAULT_FONT_SCHEME = SchemeValue.minor;
-
-    /**
      * Default vertical alignment
      */
     public static final VerticalAlignValue DEFAULT_VERTICAL_ALIGN = VerticalAlignValue.none;
+
+
+
+    // ### E N U M S ###
 
     /**
      * Enum for the vertical alignment of the text from baseline
@@ -274,10 +289,8 @@ public class Font extends AbstractStyle {
      * exceed more than 31 characters
      */
     public void setName(String name) {
-        if ((name == null || name.isEmpty()) && !StyleRepository.getInstance().isImportInProgress()) {
-            throw new StyleException("The font name was null or empty");
-        }
         this.name = name;
+        validateFontScheme();
     }
 
     /**
@@ -420,6 +433,26 @@ public class Font extends AbstractStyle {
         this.scheme = DEFAULT_FONT_SCHEME;
         this.verticalAlign = DEFAULT_VERTICAL_ALIGN;
         this.underline = UnderlineValue.none;
+    }
+
+    // ### M E T O D S ###
+
+    /**
+     * Validates the font name and sets the scheme automatically
+     */
+    private void validateFontScheme(){
+        if ((name == null || name.isEmpty()) && !StyleRepository.getInstance().isImportInProgress()) {
+            throw new StyleException("The font name was null or empty");
+        }
+        if (name.equals(DEFAULT_MINOR_FONT)){
+            scheme = SchemeValue.minor;
+        }
+        else if (name.equals(DEFAULT_MAJOR_FONT)){
+            scheme = SchemeValue.major;
+        }
+        else {
+            scheme = SchemeValue.none;
+        }
     }
 
     /**
