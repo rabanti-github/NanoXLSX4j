@@ -6,7 +6,7 @@
 
     <groupId>ch.rabanti</groupId>
     <artifactId>nanoxlsx4j</artifactId>
-    <version>2.4.0</version> <!-- Maintain also in demo project -->
+    <version>2.4.0</version> <!-- Maintain also in demo and root project -->
     <packaging>jar</packaging>
 
     <properties>
