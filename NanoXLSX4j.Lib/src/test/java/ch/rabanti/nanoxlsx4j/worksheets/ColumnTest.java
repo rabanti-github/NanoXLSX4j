@@ -6,6 +6,8 @@ import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
+import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
+import ch.rabanti.nanoxlsx4j.styles.Style;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -331,6 +333,52 @@ public class ColumnTest {
         String address = (String) TestUtils.createInstance(sourceType, sourceValue);
         Worksheet worksheet = new Worksheet();
         assertThrows(Exception.class, () -> worksheet.setColumnWidth(address, width));
+    }
+
+    @DisplayName("Test of the set setDefaultColumnStyle function with with a style and resetting it")
+    @Test()
+    void setDefaultColumnStyle() {
+        Worksheet worksheet = new Worksheet();
+        assertEquals(0, worksheet.getColumns().size());
+        Style style1 = BasicStyles.font("Calibri Light", 13).append(BasicStyles.BoldItalic());
+        Style style2 = BasicStyles.font("Arial", 11).append(BasicStyles.DoubleUnderline());
+        worksheet.setColumnDefaultStyle(0, style1);
+        worksheet.setColumnDefaultStyle("B", style2);
+        assertEquals(2, worksheet.getColumns().size());
+        assertEquals(style1.hashCode(), worksheet.getColumns().get(0).getDefaultColumnStyle().hashCode());
+        assertEquals(style2.hashCode(), worksheet.getColumns().get(1).getDefaultColumnStyle().hashCode());
+        worksheet.setColumnDefaultStyle(0, null);
+        worksheet.setColumnDefaultStyle("B", null);
+        assertEquals(2, worksheet.getColumns().size()); // No removal so far
+        assertNull(worksheet.getColumns().get(0).getDefaultColumnStyle());
+        assertNull(worksheet.getColumns().get(1).getDefaultColumnStyle());
+    }
+
+    @DisplayName("Test of the failing DefaultColumnStyle function with column number")
+    @ParameterizedTest(name = "Given column number {0} should lead to an exception")
+    @CsvSource(
+            {
+                    "-1",
+                    "16384",}
+    )
+    void setDefaultColumnStyleTest(int columnNumber) {
+        Worksheet worksheet = new Worksheet();
+        assertThrows(Exception.class, () -> worksheet.setColumnDefaultStyle(columnNumber, BasicStyles.Bold()));
+    }
+
+    @DisplayName("Test of the failing DefaultColumnStyle function with column address")
+    @ParameterizedTest(name = "Given column address {1} (type: {0}) should lead to an exception")
+    @CsvSource(
+            {
+                    "NULL, ''1",
+                    "STRING, ''",
+                    "STRING, ':'",
+                    "STRING, 'XFE'",}
+    )
+    void setDefaultColumnStyleTes2(String sourceType, String sourceValue) {
+        String address = (String) TestUtils.createInstance(sourceType, sourceValue);
+        Worksheet worksheet = new Worksheet();
+        assertThrows(Exception.class, () -> worksheet.setColumnDefaultStyle(address, BasicStyles.BoldItalic()));
     }
 
     @DisplayName("Test of the setCurrentColumnNumber function")

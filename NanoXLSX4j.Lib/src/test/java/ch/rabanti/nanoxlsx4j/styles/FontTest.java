@@ -489,4 +489,21 @@ public class FontTest {
         assertEquals(2, Font.VerticalAlignValue.superscript.getValue());
     }
 
+    @DisplayName("Test of the automatic assignment of font schemes on font names")
+    @ParameterizedTest(name = "Given font name {0} should lead to the scheme {1}")
+    @CsvSource(
+            {
+                    "Calibri, minor",
+                    "Calibri Light, major",
+                    "Arial, none",
+                    "---, none",
+                    // Not a font but a valid string
+            }
+    )
+    void validateFontSchemeTest(String fontName, Font.SchemeValue scheme) {
+        Font font = new Font();
+        font.setName(fontName);
+        assertEquals(scheme, font.getScheme());
+    }
+
 }

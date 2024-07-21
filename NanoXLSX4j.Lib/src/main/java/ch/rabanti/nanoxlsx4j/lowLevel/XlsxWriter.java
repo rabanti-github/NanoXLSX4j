@@ -184,8 +184,11 @@ public class XlsxWriter {
                 }
                 col = Integer.toString(column.getKey() + 1); // Add 1 for Address
                 float width = Helper.getInternalColumnWidth(column.getValue().getWidth());
-                sb.append("<col customWidth=\"1\" width=\"").append(width).append("\" max=\"").append(col).append("\" min=\"").append(col).append("\"")
-                        .append(hidden).append("/>");
+                sb.append("<col customWidth=\"1\" width=\"").append(width).append("\" max=\"").append(col).append("\" min=\"").append(col).append("\"");
+                if (column.getValue().getDefaultColumnStyle() != null) {
+                    sb.append(" style=\"").append(column.getValue().getDefaultColumnStyle().getInternalID()).append("\"");
+                }
+                sb.append(hidden).append("/>");
             }
             String value = sb.toString();
             if (value.length() > 0) {

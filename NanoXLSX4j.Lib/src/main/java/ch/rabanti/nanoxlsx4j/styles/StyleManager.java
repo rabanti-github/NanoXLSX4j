@@ -7,6 +7,7 @@
 package ch.rabanti.nanoxlsx4j.styles;
 
 import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Column;
 import ch.rabanti.nanoxlsx4j.Workbook;
 
 import java.util.ArrayList;
@@ -253,6 +254,12 @@ public class StyleManager {
                 if (cell.getValue().getCellStyle() != null) {
                     Style resolvedStyle = styleManager.addStyle(cell.getValue().getCellStyle());
                     workbook.getWorksheets().get(i).getCells().get(cell.getKey()).setStyle(resolvedStyle, true);
+                }
+            }
+            for (Map.Entry<Integer, Column> column : workbook.getWorksheets().get(i).getColumns().entrySet()) {
+                if (column.getValue().getDefaultColumnStyle() != null) {
+                    Style resolvedStyle = styleManager.addStyle(column.getValue().getDefaultColumnStyle());
+                    workbook.getWorksheets().get(i).getColumns().get(column.getKey()).setDefaultColumnStyle(resolvedStyle, true);
                 }
             }
         }

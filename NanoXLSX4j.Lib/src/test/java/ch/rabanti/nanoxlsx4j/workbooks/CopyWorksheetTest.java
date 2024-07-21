@@ -111,6 +111,57 @@ public class CopyWorksheetTest {
         assertThrows(WorksheetException.class, () -> workbook1.copyWorksheetIntoThis(worksheet2, "worksheet1", false));
     }
 
+    @DisplayName("Test of the 'copyWorksheetIntoThis' function by name without explicit sanitation")
+    @ParameterizedTest(name = "Given source worksheet {1}, copied as {2}, should lead to a copy, named {3}")
+    @CsvSource(
+            {
+                    "worksheet1, worksheet2, copy, copy",
+                    "worksheet1, worksheet2, copy, copy",
+                    "worksheet1, worksheet2, worksheet1, worksheet2",}
+    )
+    void copyWorksheetIntoThisTest4(String givenWorksheetName1, String givenSourceWsName, String copyName, String expectedTargetWsName) {
+        Workbook workbook1 = new Workbook(givenWorksheetName1);
+        Worksheet worksheet2 = createWorksheet();
+        worksheet2.setSheetName(givenSourceWsName);
+        workbook1.addWorksheet(worksheet2);
+        workbook1.copyWorksheetIntoThis(givenSourceWsName, copyName);
+        assertCopy(workbook1, givenSourceWsName, workbook1, expectedTargetWsName);
+    }
+
+    @DisplayName("Test of the 'copyWorksheetIntoThis' function by index without explicit sanitation")
+    @ParameterizedTest(name = "Given source worksheet {1}, copied as {2}, should lead to a copy, named {3}")
+    @CsvSource(
+            {
+                    "worksheet1, worksheet2, copy, copy",
+                    "worksheet1, worksheet2, copy, copy",
+                    "worksheet1, worksheet2, worksheet1, worksheet2",}
+    )
+    void copyWorksheetIntoThisTest5(String givenWorksheetName1, String givenSourceWsName, String copyName, String expectedTargetWsName) {
+        Workbook workbook1 = new Workbook(givenWorksheetName1);
+        Worksheet worksheet2 = createWorksheet();
+        worksheet2.setSheetName(givenSourceWsName);
+        workbook1.addWorksheet(worksheet2);
+        workbook1.copyWorksheetIntoThis(1, copyName);
+        assertCopy(workbook1, givenSourceWsName, workbook1, expectedTargetWsName);
+    }
+
+    @DisplayName("Test of the 'copyWorksheetIntoThis' function by reference without explicit sanitation")
+    @ParameterizedTest(name = "Given source worksheet {1}, copied as {2}, should lead to a copy, named {3}")
+    @CsvSource(
+            {
+                    "worksheet1, worksheet2, copy, copy",
+                    "worksheet1, worksheet2, copy, copy",
+                    "worksheet1, worksheet2, worksheet1, worksheet2",}
+    )
+    void copyWorksheetIntoThisTest6(String givenWorksheetName1, String givenSourceWsName, String copyName, String expectedTargetWsName) {
+        Workbook workbook1 = new Workbook(givenWorksheetName1);
+        Worksheet worksheet2 = createWorksheet();
+        worksheet2.setSheetName(givenSourceWsName);
+        workbook1.addWorksheet(worksheet2);
+        workbook1.copyWorksheetIntoThis(worksheet2, copyName);
+        assertCopy(workbook1, givenSourceWsName, workbook1, expectedTargetWsName);
+    }
+
     @DisplayName("Test of the 'copyWorksheetTo' function by name")
     @ParameterizedTest(name = "Given source worksheet {2}, copied as {3}, should lead to a copy, named {4}, with sanitation: {0}")
     @CsvSource(
@@ -163,6 +214,42 @@ public class CopyWorksheetTest {
         worksheet2.setSheetName(givenSourceWsName);
         workbook1.addWorksheet(worksheet2);
         workbook1.copyWorksheetTo(1, copyName, workbook2, sanitize);
+        assertCopy(workbook1, givenSourceWsName, workbook2, expectedTargetWsName);
+    }
+
+    @DisplayName("Test of the 'copyWorksheetTo' function by name without explicit sanitation")
+    @ParameterizedTest(name = "Given source worksheet {1}, copied as {2}, should lead to a copy, named {3}")
+    @CsvSource(
+            {
+                    "worksheet1, worksheet2, copy, copy",
+                    "worksheet1, worksheet2, copy, copy",
+                    "worksheet1, worksheet2, worksheet1, worksheet2",}
+    )
+    void copyWorksheetToTest3(String givenWorksheetName1, String givenSourceWsName, String copyName, String expectedTargetWsName) {
+        Workbook workbook1 = new Workbook(givenWorksheetName1);
+        Workbook workbook2 = new Workbook(givenWorksheetName1);
+        Worksheet worksheet2 = createWorksheet();
+        worksheet2.setSheetName(givenSourceWsName);
+        workbook1.addWorksheet(worksheet2);
+        workbook1.copyWorksheetTo(givenSourceWsName, copyName, workbook2);
+        assertCopy(workbook1, givenSourceWsName, workbook2, expectedTargetWsName);
+    }
+
+    @DisplayName("Test of the 'copyWorksheetTo' function by index without explicit sanitation")
+    @ParameterizedTest(name = "Given source worksheet {1}, copied as {2}, should lead to a copy, named {3}")
+    @CsvSource(
+            {
+                    "worksheet1, worksheet2, copy, copy",
+                    "worksheet1, worksheet2, copy, copy",
+                    "worksheet1, worksheet2, worksheet1, worksheet2",}
+    )
+    void copyWorksheetToTest4(String givenWorksheetName1, String givenSourceWsName, String copyName, String expectedTargetWsName) {
+        Workbook workbook1 = new Workbook(givenWorksheetName1);
+        Workbook workbook2 = new Workbook(givenWorksheetName1);
+        Worksheet worksheet2 = createWorksheet();
+        worksheet2.setSheetName(givenSourceWsName);
+        workbook1.addWorksheet(worksheet2);
+        workbook1.copyWorksheetTo(1, copyName, workbook2);
         assertCopy(workbook1, givenSourceWsName, workbook2, expectedTargetWsName);
     }
 
@@ -347,6 +434,7 @@ public class CopyWorksheetTest {
         w.setRowHeight(2, 50.6f);
         w.addHiddenColumn(1);
         w.addHiddenColumn(3);
+        w.setColumnDefaultStyle(1, BasicStyles.font("Comic Sans", 42));
         w.addAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.sort);
         w.addAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.autoFilter);
         w.setSheetProtectionPassword("pwd");
