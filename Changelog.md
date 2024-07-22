@@ -1,5 +1,15 @@
 # Change Log
 
+## v2.4.1
+
+---
+Release Date: **22.07.2024**
+
+- Fixed a potential null-pointer in the handling of the Column class
+- Fixed handling of auto-filters (columns) to accept a single address as range
+- Fixed Javadoc
+- Added tests for auto-filter handling and resolution of cell ranges
+
 ## v2.4.0
 
 ---

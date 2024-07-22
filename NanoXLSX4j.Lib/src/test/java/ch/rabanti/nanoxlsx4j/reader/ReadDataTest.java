@@ -3,6 +3,7 @@ package ch.rabanti.nanoxlsx4j.reader;
 import ch.rabanti.nanoxlsx4j.Address;
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Helper;
+import ch.rabanti.nanoxlsx4j.Range;
 import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
@@ -506,6 +507,15 @@ public class ReadDataTest {
     void readInvalidStreamTest() {
         InputStream nullStream = null;
         assertThrows(IOException.class, () -> Workbook.load(nullStream));
+    }
+
+    @DisplayName("Test of the AutoFilter behavior when a worksheet is read on an address instead of a range")
+    @Test()
+    void autoFilterReadTest() throws IOException, java.io.IOException {
+        // The file contains an auto filter on Column "A1", described as an address instead of a range
+        InputStream stream = TestUtils.getResource("autofilter.xlsx");
+        Workbook workbook = Workbook.load(stream);
+        assertEquals(new Range("A1:A1").toString(), workbook.getWorksheet(0).getAutoFilterRange().toString());
     }
 
     private static <T> void assertEqualsFunction(T expected, T given) {

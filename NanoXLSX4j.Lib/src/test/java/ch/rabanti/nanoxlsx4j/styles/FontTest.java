@@ -299,6 +299,31 @@ public class FontTest {
         assertFalse(font.isDefaultFont());
     }
 
+    @DisplayName("Test of the getValue function of the VerticalAlignValue enum")
+    @Test()
+    void verticalAlignValueTest() {
+        assertEquals(0, Font.VerticalAlignValue.none.getValue());
+        assertEquals(1, Font.VerticalAlignValue.subscript.getValue());
+        assertEquals(2, Font.VerticalAlignValue.superscript.getValue());
+    }
+
+    @DisplayName("Test of the automatic assignment of font schemes on font names")
+    @ParameterizedTest(name = "Given font name {0} should lead to the scheme {1}")
+    @CsvSource(
+            {
+                    "Calibri, minor",
+                    "Calibri Light, major",
+                    "Arial, none",
+                    "---, none",
+                    // Not a font but a valid string
+            }
+    )
+    void validateFontSchemeTest(String fontName, Font.SchemeValue scheme) {
+        Font font = new Font();
+        font.setName(fontName);
+        assertEquals(scheme, font.getScheme());
+    }
+
     @DisplayName("Test of the copy function")
     @Test()
     void copyTest() {
@@ -480,30 +505,4 @@ public class FontTest {
         font.setName("YXZ");
         assertNotEquals(s1, font.toString()); // An explicit value comparison is probably not sensible
     }
-
-    @DisplayName("Test of the getValue function of the VerticalAlignValue enum")
-    @Test()
-    void verticalAlignValueTest() {
-        assertEquals(0, Font.VerticalAlignValue.none.getValue());
-        assertEquals(1, Font.VerticalAlignValue.subscript.getValue());
-        assertEquals(2, Font.VerticalAlignValue.superscript.getValue());
-    }
-
-    @DisplayName("Test of the automatic assignment of font schemes on font names")
-    @ParameterizedTest(name = "Given font name {0} should lead to the scheme {1}")
-    @CsvSource(
-            {
-                    "Calibri, minor",
-                    "Calibri Light, major",
-                    "Arial, none",
-                    "---, none",
-                    // Not a font but a valid string
-            }
-    )
-    void validateFontSchemeTest(String fontName, Font.SchemeValue scheme) {
-        Font font = new Font();
-        font.setName(fontName);
-        assertEquals(scheme, font.getScheme());
-    }
-
 }

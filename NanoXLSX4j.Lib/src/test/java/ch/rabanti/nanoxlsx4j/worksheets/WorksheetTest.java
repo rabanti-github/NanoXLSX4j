@@ -1158,7 +1158,6 @@ public class WorksheetTest {
         assertThrows(FormatException.class, () -> worksheet.mergeCells(""));
         String nullValue = null;
         assertThrows(FormatException.class, () -> worksheet.mergeCells(nullValue));
-        assertThrows(FormatException.class, () -> worksheet.mergeCells("A1"));
     }
 
     @DisplayName("Test of the internal RecalculateAutoFilter function")

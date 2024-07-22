@@ -597,10 +597,10 @@ public class CellTest {
 
     @DisplayName("Test of the failing resolveCellRange method")
     @Test()
-    void resolveCellRangeTest2() {
+    void resolveCellRangeFailTest() {
         assertThrows(FormatException.class, () -> Cell.resolveCellRange(null));
         assertThrows(FormatException.class, () -> Cell.resolveCellRange(""));
-        assertThrows(FormatException.class, () -> Cell.resolveCellRange("C3"));
+        assertThrows(FormatException.class, () -> Cell.resolveCellRange("A2:B3:C4"));
     }
 
     @DisplayName("Test of the resolveColumn method")

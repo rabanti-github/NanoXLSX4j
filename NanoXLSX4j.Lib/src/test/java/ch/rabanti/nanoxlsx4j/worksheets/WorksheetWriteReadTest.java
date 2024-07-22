@@ -9,7 +9,6 @@ import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
 import ch.rabanti.nanoxlsx4j.styles.CellXf;
 import ch.rabanti.nanoxlsx4j.styles.Style;
-import ch.rabanti.nanoxlsx4j.styles.StyleManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -95,7 +94,7 @@ public class WorksheetWriteReadTest {
         }
         Style defaultStyle = null;
         Style expectedStyle = null;
-        if (setStyle){
+        if (setStyle) {
             defaultStyle = BasicStyles.BoldItalic().append(BasicStyles.font("Arial", 13));
         }
         Workbook workbook = prepareWorkbook(4, "test");
@@ -109,7 +108,7 @@ public class WorksheetWriteReadTest {
                     if (setHidden) {
                         workbook.getCurrentWorksheet().addHiddenColumn(index);
                     }
-                   expectedStyle = workbook.getCurrentWorksheet().setColumnDefaultStyle(index, defaultStyle);
+                    expectedStyle = workbook.getCurrentWorksheet().setColumnDefaultStyle(index, defaultStyle);
                 }
             }
         }
@@ -123,10 +122,10 @@ public class WorksheetWriteReadTest {
             if (setHidden) {
                 assertTrue(column.getValue().isHidden());
             }
-            if (setStyle){
+            if (setStyle) {
                 assertEquals(expectedStyle.hashCode(), column.getValue().getDefaultColumnStyle().hashCode());
             }
-            else{
+            else {
                 assertNull(column.getValue().getDefaultColumnStyle());
             }
         }

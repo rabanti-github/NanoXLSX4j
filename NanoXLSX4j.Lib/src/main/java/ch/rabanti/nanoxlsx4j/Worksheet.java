@@ -1934,7 +1934,7 @@ public class Worksheet {
     }
 
     /**
-     * Sets the default column style
+     * Sets the default column style of the passed column address
      *
      * @param columnAddress Column address (A - XFD)
      * @param style         Style to set as default. If null, the style is cleared
@@ -1947,7 +1947,7 @@ public class Worksheet {
     }
 
     /**
-     * Sets the default column style
+     * Sets the default column style of the passed column number (zero-based)
      *
      * @param columnNumber Column number (zero-based, from 0 to 16383)
      * @param style        Style to set as default. If null, the style is cleared

@@ -269,7 +269,6 @@ public class ColumnTest {
             {
                     "NULL, ''",
                     "STRING, ''",
-                    "STRING, 'A1'",
                     "STRING, ':'",}
     )
     void setAutoFilterFailingTest2(String sourceType, String sourceValue) {
@@ -335,9 +334,9 @@ public class ColumnTest {
         assertThrows(Exception.class, () -> worksheet.setColumnWidth(address, width));
     }
 
-    @DisplayName("Test of the set setDefaultColumnStyle function with with a style and resetting it")
+    @DisplayName("Test of the setDefaultColumnStyle function with with a style and resetting it")
     @Test()
-    void setDefaultColumnStyle() {
+    void setDefaultColumnStyleTest() {
         Worksheet worksheet = new Worksheet();
         assertEquals(0, worksheet.getColumns().size());
         Style style1 = BasicStyles.font("Calibri Light", 13).append(BasicStyles.BoldItalic());

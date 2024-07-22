@@ -136,9 +136,9 @@ public class Column {
     }
 
     /**
-     * Sets the style of the cell
+     * Sets the default style of the column
      *
-     * @param defaultColumnStyle style to assign as default column style. Can be null (to clear)
+     * @param defaultColumnStyle Style to assign as default column style. Can be null (to clear)
      * @return If the passed style already exists in the repository, the existing one will be returned, otherwise the
      * passed one
      */
@@ -147,9 +147,9 @@ public class Column {
     }
 
     /**
-     * Sets the style of the cell
+     * Sets the default style of the column
      *
-     * @param defaultColumnStyle style to assign as default column style. Can be null (to clear)
+     * @param defaultColumnStyle Style to assign as default column style. Can be null (to clear)
      * @param unmanaged          Internally used: If true, the style repository is not invoked and only the style object
      *                           of the column is updated. Do not use!
      * @return If the passed style already exists in the repository, the existing one will be returned, otherwise the
@@ -176,6 +176,7 @@ public class Column {
      */
     private Column() {
         this.width = Worksheet.DEFAULT_COLUMN_WIDTH;
+        this.defaultColumnStyle = null;
     }
 
     /**
@@ -196,7 +197,6 @@ public class Column {
     public Column(int number) {
         this();
         this.setNumber(number);
-        this.defaultColumnStyle = null;
     }
 
     /**

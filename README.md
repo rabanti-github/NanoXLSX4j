@@ -54,7 +54,7 @@ The only requirement for development is an up-to-date Java environment (OpenJDK 
 
 ### As JAR
 
-Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-2.4.0.jar**) into the lib folder of your project and create a library reference to it in your IDE.
+Simply place the NanoXLSX4j jar file (e.g. **nanoxlsx4j-2.4.1.jar**) into the lib folder of your project and create a library reference to it in your IDE.
 
 ### As source files
 
@@ -68,7 +68,7 @@ Add the following information to your POM file within the ```<dependencies>``` t
 <dependency>
     <groupId>ch.rabanti</groupId>
     <artifactId>nanoxlsx4j</artifactId>
-    <version>2.4.0</version>
+    <version>2.4.1</version>
 </dependency>
 ```
 

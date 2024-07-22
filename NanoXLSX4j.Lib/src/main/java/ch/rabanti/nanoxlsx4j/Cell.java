@@ -776,16 +776,9 @@ public class Cell implements Comparable<Cell> {
         }
         String[] split = range.split(":");
         if (split.length != 2) {
-            throw new FormatException("The cell range (" + range + ") is malformed and could not be resolved");
+            return  new Range(resolveCellCoordinate(range), resolveCellCoordinate(range));
         }
-        try {
-            Address start = resolveCellCoordinate(split[0]);
-            Address end = resolveCellCoordinate(split[1]);
-            return new Range(start, end);
-        }
-        catch (Exception e) {
-            throw new FormatException("The start address or end address could not be resolved. See inner exception", e);
-        }
+        return new Range(resolveCellCoordinate(split[0]), resolveCellCoordinate(split[1]));
     }
 
     /**
