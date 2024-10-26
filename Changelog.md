@@ -1,5 +1,13 @@
 # Change Log
 
+## v2.4.2
+
+---
+Release Date: **26.10.2024**
+
+- Fixed a bug regarding the determination of the first data cell in an empty worksheet. Bug fix provided by Martin Stránský for NanoXLSX (.NET)
+- Updated Javadoc
+
 ## v2.4.1
 
 ---

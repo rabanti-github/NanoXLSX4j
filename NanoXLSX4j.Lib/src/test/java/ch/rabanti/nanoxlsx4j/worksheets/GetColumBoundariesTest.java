@@ -315,4 +315,23 @@ public class GetColumBoundariesTest {
         assertEquals(5, maxColumn);
     }
 
+    @DisplayName("Test of the getFirstDataRowNumber and getLastDataRowNumber functions with an explicitly defined, cell with empty string besides other row definitions")
+    @ParameterizedTest(name = "Given empty cell address {0} should lead to -1 as  first and last column")
+    @CsvSource(
+            {
+                    "'F5'",
+                    "'A1'"}
+    )
+    void getFirstOrLastDataRowNumberTest3(String emptyCellAddress)
+    {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addHiddenRow(3);
+        worksheet.addHiddenRow(4);
+        worksheet.addCell("", emptyCellAddress);
+        int minRow = worksheet.getFirstDataRowNumber();
+        int maxRow = worksheet.getLastDataRowNumber();
+        assertEquals(-1, minRow);
+        assertEquals(-1, maxRow);
+    }
+
 }

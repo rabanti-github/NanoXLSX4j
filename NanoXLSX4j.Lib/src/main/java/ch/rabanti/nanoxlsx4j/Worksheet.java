@@ -930,8 +930,9 @@ public class Worksheet {
     /**
      * Adds an object to the next cell position. If the type of the value does not match with one of the supported data
      * types, it will be cast to a String. A prepared object of the type Cell will not be cast but adjusted<br>
-     * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean.
-     * All other types will be cast into a String using the default toString() method
+     * Recognized are the following data types: Cell (prepared object), String, short, int, byte, double, float,
+     * boolean, long, BigDecimal, Date, Time, LocalTime. All other types will be cast into a String using the default
+     * toString() method
      *
      * @param value Unspecified value to insert
      * @throws RangeException Thrown if the next cell is out of range (on row or column)
@@ -943,8 +944,9 @@ public class Worksheet {
     /**
      * Adds an object to the next cell position. If the type of the value does not match with one of the supported data
      * types, it will be cast to a String.A prepared object of the type Cell will not be cast but adjusted<br>
-     * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean.
-     * All other types will be cast into a String using the default toString() method
+     * Recognized are the following data types: Cell (prepared object), String, short, int, byte, double, float,
+     * boolean, long, BigDecimal, Date, Time, LocalTime. All other types will be cast into a String using the default
+     * toString() method
      *
      * @param value Unspecified value to insert
      * @param style Style object to apply on this cell
@@ -1016,8 +1018,9 @@ public class Worksheet {
     /**
      * Adds an object to the defined cell address. If the type of the value does not match with one of the supported
      * data types, it will be cast to a String. A prepared object of the type Cell will not be cast but adjusted<br>
-     * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean.
-     * All other types will be cast into a String using the default toString() method
+     * Recognized are the following data types: Cell (prepared object), String, short, int, byte, double, float,
+     * boolean, long, BigDecimal, Date, Time, LocalTime. All other types will be cast into a String using the default
+     * toString() method
      *
      * @param value        Unspecified value to insert
      * @param columnNumber Column number (zero based)
@@ -1032,8 +1035,9 @@ public class Worksheet {
     /**
      * Adds an object to the defined cell address. If the type of the value does not match with one of the supported
      * data types, it will be cast to a String. A prepared object of the type Cell will not be cast but adjusted<br>
-     * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean.
-     * All other types will be cast into a String using the default toString() method
+     * Recognized are the following data types: Cell (prepared object), String, short, int, byte, double, float,
+     * boolean, long, BigDecimal, Date, Time, LocalTime. All other types will be cast into a String using the default
+     * toString() method
      *
      * @param value        Unspecified value to insert
      * @param columnNumber Column number (zero based)
@@ -1050,8 +1054,9 @@ public class Worksheet {
     /**
      * Adds an object to the defined cell address. If the type of the value does not match with one of the supported
      * data types, it will be cast to a String. A prepared object of the type Cell will not be cast but adjusted<br>
-     * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean.
-     * All other types will be cast into a String using the default toString() method
+     * Recognized are the following data types: Cell (prepared object), String, short, int, byte, double, float,
+     * boolean, long, BigDecimal, Date, Time, LocalTime. All other types will be cast into a String using the default
+     * toString() method
      *
      * @param value   Unspecified value to insert
      * @param address Cell address in the format A1 - XFD1048576
@@ -1067,8 +1072,9 @@ public class Worksheet {
     /**
      * Adds an object to the defined cell address. If the type of the value does not match with one of the supported
      * data types, it will be cast to a String. A prepared object of the type Cell will not be cast but adjusted<br>
-     * Recognized are the following data types: Cell (prepared object), String, int, double, float, long, Date, boolean.
-     * All other types will be cast into a String using the default toString() method
+     * Recognized are the following data types: Cell (prepared object), String, short, int, byte, double, float,
+     * boolean, long, BigDecimal, Date, Time, LocalTime. All other types will be cast into a String using the default
+     * toString() method
      *
      * @param value   Unspecified value to insert
      * @param address Cell address in the format A1 - XFD1048576
@@ -1174,8 +1180,9 @@ public class Worksheet {
     /**
      * Adds a list of object values to a defined cell range. If the type of the particular value does not match with one
      * of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast but
-     * adjusted<br> Recognized are the following data types: Cell (prepared object), String, int, double, float, long,
-     * Date, boolean. All other types will be cast into a String using the default toString() method
+     * Recognized are the following data types: Cell (prepared object), String, short, int, byte, double, float,
+     * boolean, long, BigDecimal, Date, Time, LocalTime. All other types will be cast into a String using the default
+     * toString() method
      *
      * @param values       List of unspecified objects to insert
      * @param startAddress Start address
@@ -1190,8 +1197,9 @@ public class Worksheet {
     /**
      * Adds a list of object values to a defined cell range. If the type of the particular value does not match with one
      * of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast but
-     * adjusted<br> Recognized are the following data types: Cell (prepared object), String, int, double, float, long,
-     * Date, boolean. All other types will be cast into a String using the default toString() method
+     * Recognized are the following data types: Cell (prepared object), String, short, int, byte, double, float,
+     * boolean, long, BigDecimal, Date, Time, LocalTime. All other types will be cast into a String using the default
+     * toString() method
      *
      * @param values       List of unspecified objects to insert
      * @param startAddress Start address
@@ -1208,8 +1216,8 @@ public class Worksheet {
      * Adds a list of object values to a defined cell range. If the type of the particular value does not match with one
      * of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast but
      * adjusted<br> The data types in the passed list can be mixed. Recognized are the following data types: Cell
-     * (prepared object), String, int, double, float, long, Date, boolean. All other types will be cast into a String
-     * using the default toString() method
+     * (prepared object), String, short, int, byte, double, float, boolean, long, BigDecimal, Date, Time, LocalTime. All
+     * other types will be cast into a String using the default toString() method
      *
      * @param values    List of unspecified objects to insert
      * @param cellRange Cell range as string in the format like A1:D1 or X10:X22
@@ -1226,8 +1234,8 @@ public class Worksheet {
      * Adds a list of object values to a defined cell range. If the type of the particular value does not match with one
      * of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast but
      * adjusted<br> The data types in the passed list can be mixed. Recognized are the following data types: Cell
-     * (prepared object), String, int, double, float, long, Date, boolean. All other types will be cast into a String
-     * using the default toString() method
+     *      * (prepared object), String, short, int, byte, double, float, boolean, long, BigDecimal, Date, Time, LocalTime. All
+     *      * other types will be cast into a String using the default toString() method
      *
      * @param values    List of unspecified objects to insert
      * @param cellRange Cell range as string in the format like A1:D1 or X10:X22
@@ -1749,23 +1757,21 @@ public class Worksheet {
                 return cells.values().stream().max(Comparator.comparingInt(Cell::getColumnNumber)).get().getColumnNumber();
             }
         }
-        List<Cell> nonEmptyCells = cells.values().stream().filter(x -> x.getValue() != null).collect(Collectors.toList());
+        List<Cell> nonEmptyCells = cells.values().stream().filter(x -> x.getValue() != null && !x.getValue().toString().isEmpty()).collect(Collectors.toList());
         if (nonEmptyCells.isEmpty()) {
             return -1;
         }
         if (row && min) {
-            return nonEmptyCells.stream().filter(x -> x.getValue().toString() != "").min(Comparator.comparingInt(Cell::getRowNumber)).get().getRowNumber();
+            return nonEmptyCells.stream().min(Comparator.comparingInt(Cell::getRowNumber)).get().getRowNumber();
         }
         else if (row) {
-            return nonEmptyCells.stream().filter(x -> x.getValue().toString() != "").max(Comparator.comparingInt(Cell::getRowNumber)).get().getRowNumber();
+            return nonEmptyCells.stream().max(Comparator.comparingInt(Cell::getRowNumber)).get().getRowNumber();
         }
         else if (min) {
-            return nonEmptyCells.stream().filter(x -> x.getValue().toString() != "").min(Comparator.comparingInt(Cell::getColumnNumber)).get()
-                    .getColumnNumber();
+            return nonEmptyCells.stream().min(Comparator.comparingInt(Cell::getColumnNumber)).get().getColumnNumber();
         }
         else {
-            return nonEmptyCells.stream().filter(x -> x.getValue().toString() != "").max(Comparator.comparingInt(Cell::getColumnNumber)).get()
-                    .getColumnNumber();
+            return nonEmptyCells.stream().max(Comparator.comparingInt(Cell::getColumnNumber)).get().getColumnNumber();
         }
     }
 
