@@ -44,7 +44,7 @@ public class Cell implements Comparable<Cell> {
          */
         STRING,
         /**
-         * Type for all numeric types (long, short, integer, float, double and BigDecimal)
+         * Type for all numeric types (long, short, byte, integer, float, double and BigDecimal)
          */
         NUMBER,
         /**
@@ -776,7 +776,7 @@ public class Cell implements Comparable<Cell> {
         }
         String[] split = range.split(":");
         if (split.length != 2) {
-            return  new Range(resolveCellCoordinate(range), resolveCellCoordinate(range));
+            return new Range(resolveCellCoordinate(range), resolveCellCoordinate(range));
         }
         return new Range(resolveCellCoordinate(split[0]), resolveCellCoordinate(split[1]));
     }
@@ -799,7 +799,7 @@ public class Cell implements Comparable<Cell> {
 
         for (int i = columnAddress.length() - 1; i >= 0; i--) {
             chr = columnAddress.charAt(i);
-            chr = chr - 64;
+            chr = chr - ASCII_OFFSET;
             result = result + (chr * multiplier);
             multiplier = multiplier * 26;
         }
@@ -817,28 +817,14 @@ public class Cell implements Comparable<Cell> {
     public static String resolveColumnAddress(int columnNumber) {
         validateColumnNumber(columnNumber);
         // A - XFD
-        int j = 0;
-        int k = 0;
-        int l = 0;
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i <= columnNumber; i++) {
-            if (j > 25) {
-                k++;
-                j = 0;
-            }
-            if (k > 25) {
-                l++;
-                k = 0;
-            }
-            j++;
+        columnNumber++;
+        while (columnNumber > 0) {
+            columnNumber--;
+            sb.insert(0, (char) ('A' + (columnNumber % 26)));
+            columnNumber /= 26;
         }
-        if (l > 0) {
-            sb.append((char) (l + 64));
-        }
-        if (k > 0) {
-            sb.append((char) (k + 64));
-        }
-        sb.append((char) (j + 64));
+
         return sb.toString();
     }
 

@@ -609,6 +609,8 @@ public class CellTest {
             {
                     "A, 0",
                     "c, 2",
+                    "zE, 680",
+                    "aAm, 714",
                     "XFD, 16383",}
     )
     void resolveColumnTest(String address, int expectedColumn) {
@@ -630,6 +632,8 @@ public class CellTest {
             {
                     "0, A",
                     "2, C",
+                    "680, ZE",
+                    "714, AAM",
                     "16383, XFD",}
     )
     void resolveColumnAddressTest(int columnNumber, String expectedAddress) {
