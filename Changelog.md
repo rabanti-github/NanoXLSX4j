@@ -3,9 +3,10 @@
 ## v2.4.3
 
 ---
-Release Date: **23.11.2024**
+Release Date: **24.11.2024**
 
 - Fixed a bug of the column address (letter) resolution. Column letters above 'Z' were resolved incorrectly
+- Fixed handling of the workbook reader when shared strings are missing (workbooks with non-string content only)
 - Added tests for column address resolution
 
 ## v2.4.2

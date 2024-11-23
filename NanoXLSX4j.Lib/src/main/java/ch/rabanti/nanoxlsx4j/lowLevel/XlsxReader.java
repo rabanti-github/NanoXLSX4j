@@ -117,7 +117,12 @@ public class XlsxReader {
             return is;
         }
         catch (Exception ex) {
-            throw new IOException("There was an error while extracting a stream from a XLSX file. Please see the inner exception:", ex);
+            if (throwExceptionIfAbsent) {
+                throw new IOException("There was an error while extracting a stream from a XLSX file. Please see the inner exception:", ex);
+            }
+            else {
+                return null;
+            }
         }
     }
 
