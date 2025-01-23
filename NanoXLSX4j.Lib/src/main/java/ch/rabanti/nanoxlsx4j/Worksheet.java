@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2024
+ * Copyright Raphael Stoeckli © 2025
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -1233,9 +1235,9 @@ public class Worksheet {
     /**
      * Adds a list of object values to a defined cell range. If the type of the particular value does not match with one
      * of the supported data types, it will be cast to a String. A prepared object of the type Cell will not be cast but
-     * adjusted<br> The data types of the passed list can be mixed. Recognized are the following data types: Cell
-     *      * (prepared object), String, short, int, byte, double, float, boolean, long, BigDecimal, Date, Time, LocalTime. All
-     *      * other types will be cast into a String using the default toString() method
+     * adjusted<br> The data types of the passed list can be mixed. Recognized are the following data types: Cell *
+     * (prepared object), String, short, int, byte, double, float, boolean, long, BigDecimal, Date, Time, LocalTime. All
+     * * other types will be cast into a String using the default toString() method
      *
      * @param values    List of unspecified objects to insert
      * @param cellRange Cell range as string in the format like A1:D1 or X10:X22
@@ -1402,174 +1404,7 @@ public class Worksheet {
         }
     }
 
-    // ### C O M M O N M E T H O D S ###
-
-    /**
-     * Method to add allowed actions if the worksheet is protected. If one or more values are added, UseSheetProtection
-     * will be set to true
-     *
-     * @param typeOfProtection Allowed action on the worksheet or cells
-     * @apiNote If {@link SheetProtectionValue#selectLockedCells} is added,
-     * {@link SheetProtectionValue#selectUnlockedCells} is added automatically
-     */
-    public void addAllowedActionOnSheetProtection(SheetProtectionValue typeOfProtection) {
-        if (typeOfProtection == null) {
-            return;
-        }
-        if (!this.sheetProtectionValues.contains(typeOfProtection)) {
-            if (typeOfProtection == SheetProtectionValue.selectLockedCells && !this.sheetProtectionValues.contains(SheetProtectionValue.selectUnlockedCells)) {
-                this.sheetProtectionValues.add(SheetProtectionValue.selectUnlockedCells);
-            }
-            this.sheetProtectionValues.add(typeOfProtection);
-            this.setUseSheetProtection(true);
-        }
-    }
-
-    /**
-     * Sets the defined column as hidden
-     *
-     * @param columnNumber Column number to hide on the worksheet
-     * @throws RangeException Thrown if the passed row number was out of range
-     */
-    public void addHiddenColumn(int columnNumber) {
-        setColumnHiddenState(columnNumber, true);
-    }
-
-    /**
-     * Sets the defined column as hidden
-     *
-     * @param columnAddress Column address to hide on the worksheet
-     * @throws RangeException Thrown if the passed row number was out of range
-     */
-    public void addHiddenColumn(String columnAddress) {
-        int columnNumber = Cell.resolveColumn(columnAddress);
-        setColumnHiddenState(columnNumber, true);
-    }
-
-    /**
-     * Sets the defined row as hidden
-     *
-     * @param rowNumber Row number to hide on the worksheet
-     * @throws RangeException Thrown if the passed column number was out of range
-     */
-    public void addHiddenRow(int rowNumber) {
-        setRowHiddenState(rowNumber, true);
-    }
-
-    /**
-     * Method to cast a value or align an object of the type Cell to the context of the worksheet
-     *
-     * @param value  Unspecified value or object of the type Cell
-     * @param column Column index
-     * @param row    Row index
-     * @return Cell object
-     */
-    private Cell castValue(Object value, int column, int row) {
-        Cell c;
-        if (value instanceof Cell) {
-            c = (Cell) value;
-            c.setCellAddress2(new Address(column, row));
-        }
-        else {
-            c = new Cell(value, Cell.CellType.DEFAULT, column, row);
-        }
-        return c;
-    }
-
-    /**
-     * Clears the active style of the worksheet. All later added cells will contain no style unless another active style
-     * is set
-     */
-    public void clearActiveStyle() {
-        this.useActiveStyle = false;
-        this.activeStyle = null;
-    }
-
-    /**
-     * Gets the cell of the specified address
-     *
-     * @param address Address of the cell
-     * @return Cell object
-     * @throws WorksheetException Throws a WorksheetException if the cell was null or not found on the cell table of
-     *                            this worksheet
-     */
-    public Cell getCell(Address address) {
-        if (address == null) {
-            throw new WorksheetException("No address to get was provided");
-        }
-        return getCell(address.getAddress());
-    }
-
-    /**
-     * Gets the cell of the specified address as String
-     *
-     * @param address Address string of the cell
-     * @return Cell object
-     * @throws WorksheetException Throws a WorksheetException if the cell was not found on the cell table of this
-     *                            worksheet
-     */
-    public Cell getCell(String address) {
-        if (!this.cells.containsKey(address)) {
-            throw new WorksheetException("The cell with the address " + address + " does not exist in this worksheet");
-        }
-        return this.cells.get(address);
-    }
-
-    /**
-     * Gets the cell of the specified column and row number (zero-based)
-     *
-     * @param columnNumber Column number of the cell (zero-based)
-     * @param rowNumber    Row number of the cell (zero-based)
-     * @return Cell object
-     * @throws WorksheetException Throws a WorksheetException if the cell was not found on the cell table of this
-     *                            worksheet
-     */
-    public Cell getCell(int columnNumber, int rowNumber) {
-        return getCell(new Address(columnNumber, rowNumber));
-    }
-
-    /**
-     * Gets whether the specified address exists in the worksheet. Existing means that a value was stored at the
-     * address
-     *
-     * @param address Address to check
-     * @return True if the cell exists, otherwise false
-     */
-    public boolean hasCell(Address address) {
-        return this.cells.containsKey(address.getAddress());
-    }
-
-    /**
-     * Gets whether the specified address exists in the worksheet. Existing means that a value was stored at the
-     * address
-     *
-     * @param columnNumber Column number of the cell to check (zero-based)
-     * @param rowNumber    Row number of the cell to check (zero-based)
-     * @return True if the cell exists, otherwise false
-     * @throws RangeException A RangeException is thrown if the column or row number is invalid
-     */
-    public boolean hasCell(int columnNumber, int rowNumber) {
-        return hasCell(new Address(columnNumber, rowNumber));
-    }
-
-    /**
-     * Resets the defined column, if existing. The corresponding instance will be removed from
-     * {@link WorksheetPane#getColumns()}
-     *
-     * @param columnNumber Column number to reset (zero-based)
-     * @apiNote If the column is inside an autoFilter-Range, the column cannot be entirely removed from
-     * {@link #getColumns()}. The hidden state will be set to false and width to default, in this case.
-     */
-    public void resetColumn(int columnNumber) {
-        if (columns.containsKey(columnNumber) && !columns.get(columnNumber).hasAutoFilter()) // AutoFilters cannot have gaps
-        {
-            columns.remove(columnNumber);
-        }
-        else if (columns.containsKey(columnNumber)) {
-            columns.get(columnNumber).setHidden(false);
-            columns.get(columnNumber).setWidth(DEFAULT_COLUMN_WIDTH);
-        }
-    }
+    // ### B O U N D A R Y   F U N C T I O N S ###
 
     /**
      * Gets the first existing column number in the current worksheet (zero-based)
@@ -1855,6 +1690,339 @@ public class Worksheet {
         }
         return lowest == Integer.MAX_VALUE ? -1 : lowest;
     }
+
+    // ### I N S E R T  /  S E A R C H  /  R E P L A C E ###
+
+    /**
+     * Inserts 'count' rows below the specified 'rowNumber'. Existing cells are moved down by the number of new rows.
+     * The inserted, new rows inherits the style of the original cell at the defined row number. The inserted cells are
+     * empty. The values can be set later
+     *
+     * @param rowNumber       Row number below which the new row(s) will be inserted.
+     * @param numberOfNewRows Number of rows to insert.
+     * @apiNote Formulas / references are not adjusted
+     */
+    public void insertRow(int rowNumber, int numberOfNewRows) {
+        // All cells below the first row must receive a new address (row + count);
+        var upperRow = this.getRow(rowNumber);
+
+        // Identify all cells below the insertion point to adjust their addresses
+        var cellsToChange = this.getCells().entrySet().stream().filter(c -> c.getValue().getCellAddress2().Row > rowNumber).collect(Collectors.toList());
+
+        // Make a copy of the cells to be moved and then delete the original cells;
+        Map<String, Cell> newCells = new HashMap<>();
+        for (var cell : cellsToChange) {
+            var row = cell.getValue().getCellAddress2().Row;
+            var col = cell.getValue().getCellAddress2().Column;
+            Address newAddress = new Address(col, row + numberOfNewRows);
+
+            Cell newCell = new Cell(cell.getValue().getValue(), cell.getValue().getDataType(), newAddress);
+            if (cell.getValue().getCellStyle() != null) {
+                newCell.setStyle(cell.getValue().getCellStyle()); // Apply the style from the "old" cell.
+            }
+            newCells.put(newAddress.getAddress(), newCell);
+
+            // Delete the original cells since the key cannot be changed.
+            this.getCells().remove(cell.getKey());
+        }
+
+        // Fill the gap with new cells, using the same style as the first row.
+        for (Cell cell : upperRow) {
+            for (int i = 0; i < numberOfNewRows; i++) {
+                Address newAddress = new Address(cell.getCellAddress2().Column, cell.getCellAddress2().Row + 1 + i);
+                Cell newCell = new Cell(null, Cell.CellType.EMPTY, newAddress);
+                if (cell.getCellStyle() != null)
+                    newCell.setStyle(cell.getCellStyle());
+                this.getCells().put(newAddress.getAddress(), newCell);
+            }
+        }
+
+        // Re-add the previous cells from the copy back with a new key.
+        for (Map.Entry<String, Cell> cellKeyValue : newCells.entrySet()) {
+            this.getCells().put(cellKeyValue.getKey(), cellKeyValue.getValue());  //cell.Value is the cell incl. Style etc.
+        }
+    }
+
+    /**
+     * Inserts 'count' columns right of the specified 'columnNumber'. Existing cells are moved to the right by the
+     * number of new columns. The inserted, new columns inherits the style of the original cell at the defined column
+     * number. The inserted cells are empty. The values can be set later
+     *
+     * @param columnNumber       Column number right which the new column(s) will be inserted.
+     * @param numberOfNewColumns Number of columns to insert.
+     * @apiNote Formulas / references are not adjusted
+     */
+    public void insertColumn(int columnNumber, int numberOfNewColumns) {
+        var leftColumn = this.getColumn(columnNumber);
+        var cellsToChange = this.getCells().entrySet().stream().filter(c -> c.getValue().getCellAddress2().Column > columnNumber).collect(Collectors.toList());
+
+        Map<String, Cell> newCells = new HashMap<>();
+        for (var cell : cellsToChange) {
+            var row = cell.getValue().getCellAddress2().Row;
+            var col = cell.getValue().getCellAddress2().Column;
+            Address newAddress = new Address(col + numberOfNewColumns, row);
+
+            Cell newCell = new Cell(cell.getValue().getValue(), cell.getValue().getDataType(), newAddress);
+            if (cell.getValue().getCellStyle() != null) {
+                newCell.setStyle(cell.getValue().getCellStyle()); // Apply the style from the "old" cell.
+            }
+            newCells.put(newAddress.getAddress(), newCell);
+
+            // Delete the original cells since the key cannot be changed.
+            this.getCells().remove(cell.getKey());
+        }
+
+        // Fill the gap with new cells, using the same style as the first row.
+        for (Cell cell : leftColumn) {
+            for (int i = 0; i < numberOfNewColumns; i++) {
+                Address newAddress = new Address(cell.getCellAddress2().Column + 1 + i, cell.getCellAddress2().Row);
+                Cell newCell = new Cell(null, Cell.CellType.EMPTY, newAddress);
+                if (cell.getCellStyle() != null)
+                    newCell.setStyle(cell.getCellStyle());
+                this.getCells().put(newAddress.getAddress(), newCell);
+            }
+        }
+
+        // Re-add the previous cells from the copy back with a new key.
+        for (Map.Entry<String, Cell> cellKeyValue : newCells.entrySet()) {
+            this.getCells().put(cellKeyValue.getKey(), cellKeyValue.getValue());  //cell.Value is the cell incl. Style etc.
+        }
+    }
+
+    /**
+     * Searches for the first occurrence of the value.
+     *
+     * @param searchValue The value to search for.
+     * @return The first cell containing the searched value or null if the value was not found
+     */
+    public Cell firstCellByValue(Object searchValue) {
+        return this.getCells()
+                .entrySet()
+                .stream()
+                .filter(entry -> Objects.equals(entry.getValue().getValue(), searchValue))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Searches for the first occurrence of the expression. Example: Cell cell = worksheet.firstOrDefaultCell(c ->
+     * c.getValue() != null && c.getValue().toString().contains("searchValue"));
+     *
+     * @param predicate The condition to match a cell.
+     * @return The first cell containing the searched value or null if the value was not found.
+     */
+    public Cell firstOrDefaultCell(Predicate<Cell> predicate) {
+        return cells.values()
+                .stream()
+                .filter(c -> c != null && (c.getValue() == null || predicate.test(c)))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Searches for cells that contain the specified value and returns a list of these cells.
+     *
+     * @param searchValue The value to search for.
+     * @return A list of cells that contain the specified value.
+     */
+    public List<Cell> cellsByValue(Object searchValue) {
+        return cells.entrySet()
+                .stream()
+                .filter(entry -> Objects.equals(entry.getValue().getValue(), searchValue))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Replaces all occurrences of 'oldValue' with 'newValue' and returns the number of replacements.
+     *
+     * @param oldValue Old value.
+     * @param newValue New value that should replace the old one.
+     * @return Count of replaced cell values.
+     */
+    public int replaceCellValue(Object oldValue, Object newValue) {
+        // Get the list of cells containing the old value
+        List<Cell> foundCells = cellsByValue(oldValue);
+        int count = 0;
+
+        // Replace the value in each cell
+        for (Cell cell : foundCells) {
+            cell.setValue(newValue);
+            count++;
+        }
+        return count;
+    }
+
+    // ### C O M M O N   M E T H O D S ###
+
+    /**
+     * Method to add allowed actions if the worksheet is protected. If one or more values are added, UseSheetProtection
+     * will be set to true
+     *
+     * @param typeOfProtection Allowed action on the worksheet or cells
+     * @apiNote If {@link SheetProtectionValue#selectLockedCells} is added,
+     * {@link SheetProtectionValue#selectUnlockedCells} is added automatically
+     */
+    public void addAllowedActionOnSheetProtection(SheetProtectionValue typeOfProtection) {
+        if (typeOfProtection == null) {
+            return;
+        }
+        if (!this.sheetProtectionValues.contains(typeOfProtection)) {
+            if (typeOfProtection == SheetProtectionValue.selectLockedCells && !this.sheetProtectionValues.contains(SheetProtectionValue.selectUnlockedCells)) {
+                this.sheetProtectionValues.add(SheetProtectionValue.selectUnlockedCells);
+            }
+            this.sheetProtectionValues.add(typeOfProtection);
+            this.setUseSheetProtection(true);
+        }
+    }
+
+    /**
+     * Sets the defined column as hidden
+     *
+     * @param columnNumber Column number to hide on the worksheet
+     * @throws RangeException Thrown if the passed row number was out of range
+     */
+    public void addHiddenColumn(int columnNumber) {
+        setColumnHiddenState(columnNumber, true);
+    }
+
+    /**
+     * Sets the defined column as hidden
+     *
+     * @param columnAddress Column address to hide on the worksheet
+     * @throws RangeException Thrown if the passed row number was out of range
+     */
+    public void addHiddenColumn(String columnAddress) {
+        int columnNumber = Cell.resolveColumn(columnAddress);
+        setColumnHiddenState(columnNumber, true);
+    }
+
+    /**
+     * Sets the defined row as hidden
+     *
+     * @param rowNumber Row number to hide on the worksheet
+     * @throws RangeException Thrown if the passed column number was out of range
+     */
+    public void addHiddenRow(int rowNumber) {
+        setRowHiddenState(rowNumber, true);
+    }
+
+    /**
+     * Method to cast a value or align an object of the type Cell to the context of the worksheet
+     *
+     * @param value  Unspecified value or object of the type Cell
+     * @param column Column index
+     * @param row    Row index
+     * @return Cell object
+     */
+    private Cell castValue(Object value, int column, int row) {
+        Cell c;
+        if (value instanceof Cell) {
+            c = (Cell) value;
+            c.setCellAddress2(new Address(column, row));
+        }
+        else {
+            c = new Cell(value, Cell.CellType.DEFAULT, column, row);
+        }
+        return c;
+    }
+
+    /**
+     * Clears the active style of the worksheet. All later added cells will contain no style unless another active style
+     * is set
+     */
+    public void clearActiveStyle() {
+        this.useActiveStyle = false;
+        this.activeStyle = null;
+    }
+
+    /**
+     * Gets the cell of the specified address
+     *
+     * @param address Address of the cell
+     * @return Cell object
+     * @throws WorksheetException Throws a WorksheetException if the cell was null or not found on the cell table of
+     *                            this worksheet
+     */
+    public Cell getCell(Address address) {
+        if (address == null) {
+            throw new WorksheetException("No address to get was provided");
+        }
+        return getCell(address.getAddress());
+    }
+
+    /**
+     * Gets the cell of the specified address as String
+     *
+     * @param address Address string of the cell
+     * @return Cell object
+     * @throws WorksheetException Throws a WorksheetException if the cell was not found on the cell table of this
+     *                            worksheet
+     */
+    public Cell getCell(String address) {
+        if (!this.cells.containsKey(address)) {
+            throw new WorksheetException("The cell with the address " + address + " does not exist in this worksheet");
+        }
+        return this.cells.get(address);
+    }
+
+    /**
+     * Gets the cell of the specified column and row number (zero-based)
+     *
+     * @param columnNumber Column number of the cell (zero-based)
+     * @param rowNumber    Row number of the cell (zero-based)
+     * @return Cell object
+     * @throws WorksheetException Throws a WorksheetException if the cell was not found on the cell table of this
+     *                            worksheet
+     */
+    public Cell getCell(int columnNumber, int rowNumber) {
+        return getCell(new Address(columnNumber, rowNumber));
+    }
+
+    /**
+     * Gets whether the specified address exists in the worksheet. Existing means that a value was stored at the
+     * address
+     *
+     * @param address Address to check
+     * @return True if the cell exists, otherwise false
+     */
+    public boolean hasCell(Address address) {
+        return this.cells.containsKey(address.getAddress());
+    }
+
+    /**
+     * Gets whether the specified address exists in the worksheet. Existing means that a value was stored at the
+     * address
+     *
+     * @param columnNumber Column number of the cell to check (zero-based)
+     * @param rowNumber    Row number of the cell to check (zero-based)
+     * @return True if the cell exists, otherwise false
+     * @throws RangeException A RangeException is thrown if the column or row number is invalid
+     */
+    public boolean hasCell(int columnNumber, int rowNumber) {
+        return hasCell(new Address(columnNumber, rowNumber));
+    }
+
+    /**
+     * Resets the defined column, if existing. The corresponding instance will be removed from
+     * {@link WorksheetPane#getColumns()}
+     *
+     * @param columnNumber Column number to reset (zero-based)
+     * @apiNote If the column is inside an autoFilter-Range, the column cannot be entirely removed from
+     * {@link #getColumns()}. The hidden state will be set to false and width to default, in this case.
+     */
+    public void resetColumn(int columnNumber) {
+        if (columns.containsKey(columnNumber) && !columns.get(columnNumber).hasAutoFilter()) // AutoFilters cannot have gaps
+        {
+            columns.remove(columnNumber);
+        }
+        else if (columns.containsKey(columnNumber)) {
+            columns.get(columnNumber).setHidden(false);
+            columns.get(columnNumber).setWidth(DEFAULT_COLUMN_WIDTH);
+        }
+    }
+
 
     /**
      * Gets a row as list of cell objects
@@ -2350,12 +2518,8 @@ public class Worksheet {
         for (Map.Entry<Integer, Column> col : this.getColumns().entrySet()) {
             if (!col.getValue().hasAutoFilter() &&
                     !col.getValue().isHidden() &&
-                    Math.abs(col.getValue().getWidth() - DEFAULT_COLUMN_WIDTH) <= FLOAT_THRESHOLD) {
-                columnsToDelete.add(col.getKey());
-            }
-            if (!col.getValue().hasAutoFilter() &&
-                    !col.getValue().isHidden() &&
-                    Math.abs(col.getValue().getWidth() - DEFAULT_COLUMN_WIDTH) <= FLOAT_THRESHOLD) {
+                    Math.abs(col.getValue().getWidth() - DEFAULT_COLUMN_WIDTH) <= FLOAT_THRESHOLD &&
+                    col.getValue().getDefaultColumnStyle() == null) {
                 columnsToDelete.add(col.getKey());
             }
         }

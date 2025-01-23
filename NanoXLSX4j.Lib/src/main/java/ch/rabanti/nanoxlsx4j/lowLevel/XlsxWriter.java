@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2024
+ * Copyright Raphael Stoeckli © 2025
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -63,6 +63,11 @@ import java.util.Map;
 public class XlsxWriter {
 
     // ### C O N S T A N T S ###
+
+    /**
+     * Threshold, using when floats are compared
+     */
+    private static final float FLOAT_THRESHOLD = 0.0001f;
 
     /**
      * Minimum valid OAdate value (1900-01-01)
@@ -174,7 +179,7 @@ public class XlsxWriter {
             StringBuilder sb = new StringBuilder();
 
             for (Map.Entry<Integer, Column> column : worksheet.getColumns().entrySet()) {
-                if (column.getValue().getWidth() == worksheet.getDefaultColumnWidth() && !column.getValue().isHidden()) {
+                if (Math.abs(column.getValue().getWidth() - worksheet.getDefaultColumnWidth()) < FLOAT_THRESHOLD && !column.getValue().isHidden() && column.getValue().getDefaultColumnStyle() == null) {
                     continue;
                 }
                 if (worksheet.getColumns().containsKey(column.getKey())) {
@@ -312,15 +317,11 @@ public class XlsxWriter {
         int rowNumber = dynamicRow.getRowNumber();
         String height = "";
         String hidden = "";
-        if (worksheet.getRowHeights().containsKey(rowNumber)) {
-            if (worksheet.getRowHeights().get(rowNumber) != worksheet.getDefaultRowHeight()) {
-                height = " x14ac:dyDescent=\"0.25\" customHeight=\"1\" ht=\"" + Helper.getInternalRowHeight(worksheet.getRowHeights().get(rowNumber)) + "\"";
-            }
+        if (worksheet.getRowHeights().containsKey(rowNumber) && Math.abs(worksheet.getRowHeights().get(rowNumber) - worksheet.getDefaultRowHeight()) > FLOAT_THRESHOLD) {
+            height = " x14ac:dyDescent=\"0.25\" customHeight=\"1\" ht=\"" + Helper.getInternalRowHeight(worksheet.getRowHeights().get(rowNumber)) + "\"";
         }
-        if (worksheet.getHiddenRows().containsKey(rowNumber)) {
-            if (worksheet.getHiddenRows().get(rowNumber)) {
-                hidden = " hidden=\"1\"";
-            }
+        if (worksheet.getHiddenRows().containsKey(rowNumber) && (worksheet.getHiddenRows().get(rowNumber))) {
+            hidden = " hidden=\"1\"";
         }
         StringBuilder sb = new StringBuilder();
         sb.append("<row r=\"").append((rowNumber + 1)).append("\"").append(height).append(hidden).append(">");

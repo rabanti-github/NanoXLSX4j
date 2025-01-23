@@ -18,7 +18,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -1761,6 +1763,308 @@ public class WorksheetTest {
         Worksheet worksheet = new Worksheet(); // Worksheet was not created over a workbook
         assertThrows(WorksheetException.class, () -> worksheet.setSheetName("test", true));
     }
+
+    // Tests for Insert-Search-Replace
+
+    @ParameterizedTest(name = "Test replaceCellValue: oldValue={1}, newValue={3}, differentValue={5}")
+    @CsvSource({
+            "STRING, 'oldValue', STRING,'newValue', STRING,'differentValue'",
+            "STRING, 'oldValue', INTEGER, 23, BOOLEAN, true",
+            "INTEGER, 25, INTEGER, 23, BOOLEAN, false",
+            "FLOAT, 23.7, STRING,'string', STRING,'otherString'",
+            "FLOAT, -0.01, INTEGER, 15, NULL, null",
+            "BOOLEAN, true, NULL, null, BOOLEAN, false",
+            "NULL, null, NULL, null, BOOLEAN, false",
+            "INTEGER, 0, NULL, null, NULL, null",
+            "NULL, null, STRING,'', INTEGER, 0",
+            "NULL, null, BOOLEAN, true, INTEGER, -1",
+            "NULL, null, INTEGER, 22, BOOLEAN, BOOLEAN, false",
+            "NULL, null, FLOAT, 0.01, FLOAT, 0.001",
+            "NULL, null, INTEGER,27, INTEGER, 0",
+            "INTEGER, 127, NULL, null, INTEGER, 128",
+            "INTEGER, 128, STRING, '128', INTEGER, -128"
+    })
+    void replaceCellValue_ShouldReplaceAllOccurrences(String oldType, String oldValueString, String newType, String newValueString, String differentType, String differentValueString) {
+        Worksheet worksheet = new Worksheet();
+        Object oldValue = TestUtils.createInstance(oldType, oldValueString);
+        Object newValue = TestUtils.createInstance(newType, newValueString);
+        Object differentValue = TestUtils.createInstance(differentType, differentValueString);
+
+        worksheet.addCell(oldValue, 0, 0);
+        worksheet.addCell(oldValue, 1, 0);
+        worksheet.addCell(oldValue, 2, 0);
+        worksheet.addCell(differentValue, 3, 0);
+
+        int replacedCount = worksheet.replaceCellValue(oldValue, newValue);
+
+        // Assertions
+        assertEquals(3, replacedCount);
+        assertEquals(newValue, worksheet.getCells().get("A1").getValue());
+        assertEquals(newValue, worksheet.getCells().get("B1").getValue());
+        assertEquals(newValue, worksheet.getCells().get("C1").getValue());
+        assertEquals(differentValue, worksheet.getCells().get("D1").getValue());
+    }
+
+    @DisplayName("Test replaceCellValue on a Date value")
+    @Test()
+    void replaceCellValue_ShouldReplaceAllOccurrences2() {
+        Worksheet worksheet = new Worksheet();
+        String oldValue = "oldValue";
+        worksheet.addCell(oldValue, 0, 0);
+        worksheet.addCell(oldValue, 1, 0);
+        worksheet.addCell(oldValue, 2, 0);
+        worksheet.addCell("differentValue", 3, 0);
+
+        Date newValue = TestUtils.buildDate(2025, 2, 10, 5, 6, 7);
+        int replacedCount = worksheet.replaceCellValue(oldValue, newValue);
+
+        // Assertions
+        assertEquals(3, replacedCount);
+        assertEquals(newValue, worksheet.getCells().get("A1").getValue());
+        assertEquals(newValue, worksheet.getCells().get("B1").getValue());
+        assertEquals(newValue, worksheet.getCells().get("C1").getValue());
+        assertEquals("differentValue", worksheet.getCells().get("D1").getValue());
+    }
+
+    @ParameterizedTest(name = "Test replaceCellValue: oldType={0}, oldValue={1}, newType={2}, newValue={3}, diffType={4}, diffValue={5}")
+    @CsvSource({
+            "STRING, 'oldValue', STRING, 'newValue', STRING, 'differentValue'",
+            "STRING, 'oldValue', INTEGER, 23, BOOLEAN, true",
+            "INTEGER, 25, INTEGER, 23, BOOLEAN, false",
+            "DOUBLE, 23.7, STRING, 'string', STRING, 'otherString'",
+            "DOUBLE, -0.01, INTEGER, 15, NULL, null",
+            "BOOLEAN, true, NULL, null, BOOLEAN, false",
+            "NULL, null, NULL, null, BOOLEAN, false",
+            "INTEGER, 0, NULL, null, NULL, null",
+            "NULL, null, STRING, '', INTEGER, 0",
+            "NULL, null, BOOLEAN, true, INTEGER, -1",
+            "NULL, null, INTEGER, 22, BOOLEAN, false",
+            "NULL, null, DOUBLE, 0.01, DOUBLE, 0.001",
+            "NULL, null, INTEGER, 127, INTEGER, 0",
+            "INTEGER, 127, NULL, null, INTEGER, 128",
+            "INTEGER, 128, STRING, '128', INTEGER, -128"
+    })
+    void replaceCellValue_ShouldNotReplaceAnyOccurrences(
+            String oldType, String oldValueString,
+            String newType, String newValueString,
+            String diffType, String diffValueString) {
+
+        Object oldValue = TestUtils.createInstance(oldType, oldValueString);
+        Object newValue = TestUtils.createInstance(newType, newValueString);
+        Object differentValue = TestUtils.createInstance(diffType, diffValueString);
+
+        Worksheet worksheet = new Worksheet();
+        String unrelatedValue = "UnrelatedValue";
+        worksheet.addCell(unrelatedValue, 0, 0);
+        worksheet.addCell(unrelatedValue, 1, 0);
+        worksheet.addCell(unrelatedValue, 2, 0);
+        worksheet.addCell(differentValue, 3, 0);
+
+        int replacedCount = worksheet.replaceCellValue(oldValue, newValue);
+
+        // Assert
+        assertEquals(0, replacedCount, "No replacements should be made");
+        assertEquals(unrelatedValue, worksheet.getCells().get("A1").getValue());
+        assertEquals(unrelatedValue, worksheet.getCells().get("B1").getValue());
+        assertEquals(unrelatedValue, worksheet.getCells().get("C1").getValue());
+        assertEquals(differentValue, worksheet.getCells().get("D1").getValue());
+    }
+    @ParameterizedTest(name = "Test firstOrDefaultCell: type={0}, matchingValue={1}")
+    @CsvSource({
+            "NULL, null",
+            "STRING, ''",       // Empty string
+            "INTEGER, 0",
+            "STRING, 'null'",   // String "null"
+            "INTEGER, -1",
+            "FLOAT, 0.05",
+            "BOOLEAN, true",
+            "BOOLEAN, false",
+            "FLOAT, -22.357"
+    })
+    void firstOrDefaultCell_ShouldReturnCorrectCell(String sourceType, String sourceValue) {
+        Worksheet worksheet = new Worksheet();
+        worksheet.addCell("value1", 0, 0);
+        Object matchingValue = TestUtils.createInstance(sourceType, sourceValue);
+        worksheet.addCell(matchingValue, 1, 0);
+        worksheet.addCell("value3", 2, 0);
+
+        Cell result = worksheet.firstOrDefaultCell(cell -> cell.getValue().equals(matchingValue));
+
+        // Assertions
+        assertNotNull(result);
+        assertEquals(matchingValue, result.getValue());
+    }
+
+    @ParameterizedTest(name = "Test firstOrDefaultCell when no existing values exists: matchingValue={1}")
+    @CsvSource({
+            "NULL, null",
+            "STRING, ''",       // Empty string
+            "INTEGER, 0",
+            "STRING, 'null'",   // String "null"
+            "INTEGER, -1",
+            "FLOAT, 0.05",
+            "BOOLEAN, true",
+            "BOOLEAN, false",
+            "FLOAT, -22.357"
+    })
+    void firstOrDefaultCell_NotFound(String sourceType, String sourceValue) {
+        Worksheet worksheet = new Worksheet();
+        Object nonMatchingValue = TestUtils.createInstance(sourceType, sourceValue);
+        worksheet.addCell("value1", 0, 0);
+        worksheet.addCell("value2", 1, 0);
+        worksheet.addCell("value3", 2, 0);
+
+        Cell result = worksheet.firstOrDefaultCell(cell -> cell.getValue().equals(nonMatchingValue));
+
+        // Assertions
+        assertNull(result);
+    }
+
+    @ParameterizedTest(name = "Test firstCellByValue: matchingValue={0}")
+    @CsvSource({
+            "NULL, null",
+            "STRING, ''",       // Empty string
+            "INTEGER, 0",
+            "STRING, 'null'",   // String "null"
+            "INTEGER, -1",
+            "FLOAT, 0.05",
+            "BOOLEAN, true",
+            "BOOLEAN, false",
+            "FLOAT, -22.357"
+    })
+    void firstOrDefaultCellByValue_ShouldReturnCorrectCell(String sourceType, String sourceValue) {
+        Worksheet worksheet = new Worksheet();
+
+        var cell1 = new Cell("Test1", Cell.CellType.STRING, "A1");
+        Object matchingValue = TestUtils.createInstance(sourceType, sourceValue);
+        var cell2 = new Cell(matchingValue, Cell.CellType.DEFAULT, "B1");
+        worksheet.getCells().put("A1", cell1);
+        worksheet.getCells().put("B1", cell2);
+
+        Cell result = worksheet.firstCellByValue(matchingValue);
+
+        // Assertions
+        assertNotNull(result);
+        assertEquals(matchingValue, result.getValue());
+        assertEquals("B1", result.getCellAddress());
+    }
+
+    @DisplayName("Test firstCellByValue on a Date value")
+    @Test()
+    void firstOrDefaultCellByValue_ShouldReturnCorrectCell2() {
+        Worksheet worksheet = new Worksheet();
+
+        var cell1 = new Cell("Test1", Cell.CellType.STRING, "A1");
+        Date matchingValue = TestUtils.buildDate(2025, 2, 10, 5, 6, 7);
+        var cell2 = new Cell(matchingValue, Cell.CellType.DATE, "B1");
+        worksheet.getCells().put("A1", cell1);
+        worksheet.getCells().put("B1", cell2);
+
+        Cell result = worksheet.firstCellByValue(matchingValue);
+
+        // Assertions
+        assertNotNull(result);
+        assertEquals(matchingValue, result.getValue());
+        assertEquals("B1", result.getCellAddress());
+    }
+
+    @ParameterizedTest(name = "Test FirstCellByValue when no existing value matches: notMatchingType={0}, notMatchingValue={1}")
+    @CsvSource({
+            "'NULL', null",
+            "'STRING', ''",
+            "'INTEGER', 0",
+            "'STRING', 'null'",
+            "'INTEGER', -1",
+            "'FLOAT', 0.05",
+            "'BOOLEAN', true",
+            "'BOOLEAN', false",
+            "'DOUBLE', -22.357"
+    })
+    void firstCellByValue_ShouldReturnNull_WhenValueNotFound(String notMatchingType, String notMatchingValueString) {
+
+        Object notMatchingValue = TestUtils.createInstance(notMatchingType, notMatchingValueString);
+        Worksheet worksheet = new Worksheet();
+        Cell cell1 = new Cell("Test1", Cell.CellType.STRING, "A1");
+        worksheet.getCells().put("A1", cell1);
+
+        Cell result = worksheet.firstCellByValue(notMatchingValue);
+
+        // Assert
+        assertNull(result, "Result should be null when the value is not found");
+    }
+
+    @DisplayName("Test of the insertRow function")
+    @Test
+    void testInsertRow() {
+        Worksheet worksheet = new Worksheet();
+        Style style1 = new Style();
+        style1.getFont().setBold(true);
+        Style style2 = new Style();
+        style2.getFont().setItalic(true);
+
+        worksheet.addCell("A1", 0, 0);
+        worksheet.addCell("A2", 0, 1, style1);
+        worksheet.addCell("A3", 0, 2, style2);
+        worksheet.addCell("A4", 0, 3);
+        worksheet.addCell("B6", 1, 5); // Gap
+
+        worksheet.insertRow(1, 2);
+
+        // Assert
+        assertEquals("A1", worksheet.getCells().get("A1").getValue());
+        assertEquals("A2", worksheet.getCells().get("A2").getValue());
+        assertNull(worksheet.getCells().get("A3").getValue(), "A3 should be null");
+        assertNull(worksheet.getCells().get("A4").getValue(), "A4 should be null");
+        assertEquals("A3", worksheet.getCells().get("A5").getValue());
+        assertEquals("A4", worksheet.getCells().get("A6").getValue());
+        assertFalse(worksheet.getCells().containsKey("B7"), "B7 should not exist (gap preserved)");
+        assertEquals("B6", worksheet.getCells().get("B8").getValue());
+
+        assertNull(worksheet.getCells().get("A1").getCellStyle(), "A1 should not have a style");
+        assertTrue(worksheet.getCells().get("A2").getCellStyle().getFont().isBold(), "A2 should be bold");
+        assertTrue(worksheet.getCells().get("A3").getCellStyle().getFont().isBold(), "A3 should be bold");
+        assertTrue(worksheet.getCells().get("A4").getCellStyle().getFont().isBold(), "A4 should be bold");
+        assertTrue(worksheet.getCells().get("A5").getCellStyle().getFont().isItalic(), "A5 should be italic");
+        assertNull(worksheet.getCells().get("A6").getCellStyle(), "A6 should not have a style");
+        assertNull(worksheet.getCells().get("B8").getCellStyle(), "B8 should not have a style");
+    }
+
+    @DisplayName("Test of the insertColumn function")
+    @Test
+    void testInsertColumn() {
+        Worksheet worksheet = new Worksheet();
+        Style style1 = new Style();
+        style1.getFont().setBold(true);
+        Style style2 = new Style();
+        style2.getFont().setItalic(true);
+
+        worksheet.addCell("A2", 0, 1);
+        worksheet.addCell("B2", 1, 1, style1);
+        worksheet.addCell("C2", 2, 1, style2);
+        worksheet.addCell("D2", 3, 1);
+        worksheet.addCell("F3", 5, 2); // Gap
+
+        worksheet.insertColumn(1, 2);
+
+        // Assert
+        assertEquals("A2", worksheet.getCells().get("A2").getValue());
+        assertEquals("B2", worksheet.getCells().get("B2").getValue());
+        assertNull(worksheet.getCells().get("C2").getValue(), "C2 should be null");
+        assertNull(worksheet.getCells().get("D2").getValue(), "D2 should be null");
+        assertEquals("C2", worksheet.getCells().get("E2").getValue());
+        assertEquals("D2", worksheet.getCells().get("F2").getValue());
+        assertFalse(worksheet.getCells().containsKey("G3"), "G3 should not exist (gap preserved)");
+        assertEquals("F3", worksheet.getCells().get("H3").getValue());
+
+        assertNull(worksheet.getCells().get("A2").getCellStyle(), "A2 should not have a style");
+        assertTrue(worksheet.getCells().get("B2").getCellStyle().getFont().isBold(), "B2 should be bold");
+        assertTrue(worksheet.getCells().get("C2").getCellStyle().getFont().isBold(), "C2 should be bold");
+        assertTrue(worksheet.getCells().get("D2").getCellStyle().getFont().isBold(), "D2 should be bold");
+        assertTrue(worksheet.getCells().get("E2").getCellStyle().getFont().isItalic(), "E2 should be italic");
+        assertNull(worksheet.getCells().get("F2").getCellStyle(), "F2 should not have a style");
+        assertNull(worksheet.getCells().get("H3").getCellStyle(), "H3 should not have a style");
+    }
+
 
     public static void assertAddedCell(Worksheet worksheet, int numberOfEntries, String expectedAddress, Cell.CellType expectedType, Style expectedStyle, Object expectedValue, int nextColumn, int nextRow) {
         assertEquals(numberOfEntries, worksheet.getCells().size());

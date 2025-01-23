@@ -24,12 +24,11 @@ public class BorderWriteReadTest {
     @ParameterizedTest(name = "Given value {0} should lead to a cell with this diagonal color style")
     @CsvSource(
             {
-
                     "'FFAACC00', 'STRING', 'test', true, true",
                     "'FFAADD00', 'FLOAT', '0.5f', true, false",
                     "'FFDDCC00', 'BOOLEAN', true, false, true",
                     "'FFAACCDD', 'NULL', '', false, false",
-                    ", 'INTEGER', '22', true, true"}
+                    "'', 'INTEGER', '22', true, true"}
     )
     void diagonalColorTest(String color, String sourceType, String sourceValue, boolean diagonalUp, boolean diagonalDown) {
         Object value = TestUtils.createInstance(sourceType, sourceValue);
@@ -51,18 +50,18 @@ public class BorderWriteReadTest {
     @ParameterizedTest(name = "Given value {0} should lead to a cell with this top style")
     @CsvSource(
             {
-
-                    "FFAACC00, test",
-                    "FFAADD00, 0.5f",
-                    "FFDDCC00, true",
-                    "FFAACCDD, null",
-                    ", null"}
+                    "FFAACC00, STRING, test",
+                    "FFAADD00, FLOAT, 0.5f",
+                    "FFDDCC00, BOOLEAN, true",
+                    "FFAACCDD, NULL, null",
+                    "'', INTEGER, 22"}
     )
-    void topColorTest(String color, Object value) {
+    void topColorTest(String color, String sourceType, String sourceValue) {
         Style style = new Style();
         style.getBorder().setTopColor(color);
         style.getBorder().setTopStyle(Border.StyleValue.s_double);
 
+        Object value = TestUtils.createInstance(sourceType, sourceValue);
         Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(color, cell.getCellStyle().getBorder().getTopColor());
@@ -73,18 +72,18 @@ public class BorderWriteReadTest {
     @ParameterizedTest(name = "Given value {0} should lead to a cell with this bottom style")
     @CsvSource(
             {
-
-                    "FFAACC00, test",
-                    "FFAADD00, 0.5f",
-                    "FFDDCC00, true",
-                    "FFAACCDD, null",
-                    ", null"}
+                    "FFAACC00, STRING, test",
+                    "FFAADD00, FLOAT, 0.5f",
+                    "FFDDCC00, BOOLEAN, true",
+                    "FFAACCDD, NULL, null",
+                    "'', INTEGER, 22"}
     )
-    void bottomColorTest(String color, Object value) {
+    void bottomColorTest(String color, String sourceType, String sourceValue) {
         Style style = new Style();
         style.getBorder().setBottomColor(color);
         style.getBorder().setBottomStyle(Border.StyleValue.thin);
 
+        Object value = TestUtils.createInstance(sourceType, sourceValue);
         Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(color, cell.getCellStyle().getBorder().getBottomColor());
@@ -95,18 +94,18 @@ public class BorderWriteReadTest {
     @ParameterizedTest(name = "Given value {0} should lead to a cell with this left style")
     @CsvSource(
             {
-
-                    "FFAACC00, test",
-                    "FFAADD00, 0.5f",
-                    "FFDDCC00, true",
-                    "FFAACCDD, null",
-                    ", null"}
+                    "FFAACC00, STRING, test",
+                    "FFAADD00, FLOAT, 0.5f",
+                    "FFDDCC00, BOOLEAN, true",
+                    "FFAACCDD, NULL, null",
+                    "'', INTEGER, 22"}
     )
-    void leftColorTest(String color, Object value) {
+    void leftColorTest(String color, String sourceType, String sourceValue) {
         Style style = new Style();
         style.getBorder().setLeftColor(color);
         style.getBorder().setLeftStyle(Border.StyleValue.dashDotDot);
 
+        Object value = TestUtils.createInstance(sourceType, sourceValue);
         Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(color, cell.getCellStyle().getBorder().getLeftColor());
@@ -117,18 +116,18 @@ public class BorderWriteReadTest {
     @ParameterizedTest(name = "Given value {0} should lead to a cell with this right style")
     @CsvSource(
             {
-
-                    "FFAACC00, test",
-                    "FFAADD00, 0.5f",
-                    "FFDDCC00, true",
-                    "FFAACCDD, null",
-                    ", null"}
+                    "FFAACC00, STRING, test",
+                    "FFAADD00, FLOAT, 0.5f",
+                    "FFDDCC00, BOOLEAN, true",
+                    "FFAACCDD, NULL, null",
+                    "'', INTEGER, 22"}
     )
-    void rightColorTest(String color, Object value) {
+    void rightColorTest(String color, String sourceType, String sourceValue) {
         Style style = new Style();
         style.getBorder().setRightColor(color);
         style.getBorder().setRightStyle(Border.StyleValue.dashed);
 
+        Object value = TestUtils.createInstance(sourceType, sourceValue);
         Cell cell = TestUtils.saveAndReadStyledCell(value, style, "A1");
 
         assertEquals(color, cell.getCellStyle().getBorder().getRightColor());

@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2024
+ * Copyright Raphael Stoeckli © 2025
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -408,7 +408,8 @@ public class StyleReader {
     }
 
     /**
-     * Resolves a color value from an XML node, when a rgb attribute exists
+     * Resolves a color value from an XML node, when a rgb attribute exists. If the value is null, the fallback will be
+     * returned
      *
      * @param node     Node to check
      * @param fallback Fallback value if the color could not be resolved
@@ -417,7 +418,10 @@ public class StyleReader {
     private static String getColor(XmlDocument.XmlNode node, String fallback) {
         XmlDocument.XmlNode childNode = getChildNode(node, "color");
         if (childNode != null) {
-            return childNode.getAttribute("rgb");
+            String color = childNode.getAttribute("rgb");
+            if (color != null) {
+                return color;
+            }
         }
         return fallback;
     }

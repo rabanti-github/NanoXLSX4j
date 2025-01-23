@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2024
+ * Copyright Raphael Stoeckli © 2025
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -147,7 +147,7 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
     static void addPropertyAsJson(StringBuilder sb, String name, Object value, boolean terminate) {
         sb.append("\"").append(name).append("\": ");
         if (value == null) {
-            sb.append("\"\"");
+            sb.append("__null__");
         }
         else {
             sb.append("\"").append(value.toString().replace("\"", "\\\"")).append("\"");

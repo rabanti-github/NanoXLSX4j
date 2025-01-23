@@ -154,6 +154,30 @@ public class WorksheetWriteReadTest {
         assertTrue(Math.abs(givenWorksheet.getDefaultColumnWidth() - width) < 0.001);
     }
 
+    @DisplayName("Test of the 'DefaultColumnWidth' property when writing and reading a worksheet")
+    @ParameterizedTest(name = "Given default column style should lead to the same style in the read worksheet with the index {0}")
+    @CsvSource(
+            {
+                    "0",
+                    "1",
+                    "2",}
+    )
+    void defaultColumnStyleTest(int sheetIndex) throws Exception {
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++) {
+            if (sheetIndex == i) {
+                workbook.setCurrentWorksheet(i);
+                workbook.getCurrentWorksheet().setColumnWidth(0, 22.5f); // to get column defined
+                workbook.getCurrentWorksheet().setColumnDefaultStyle(1, BasicStyles.BoldItalic());
+                workbook.getCurrentWorksheet().setColumnDefaultStyle("C", BasicStyles.BorderFrame());
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertNull(givenWorksheet.getColumns().get(0).getDefaultColumnStyle());
+        assertEquals(givenWorksheet.getColumns().get(1).getDefaultColumnStyle().hashCode(), BasicStyles.BoldItalic().hashCode());
+        assertTrue(BasicStyles.BorderFrame().equals(givenWorksheet.getColumns().get(2).getDefaultColumnStyle()));
+    }
+
     @DisplayName("Test of the 'DefaultRowHeight' property when writing and reading a worksheet")
     @ParameterizedTest(name = "Given default row height {0} should lead to the same height in the read worksheet with the index {1}")
     @CsvSource(

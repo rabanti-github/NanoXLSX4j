@@ -1,5 +1,23 @@
 # Change Log
 
+## v2.5.0
+
+---
+Release Date: **23.01.2025**
+
+- Added insertRow and insertColumn functions. Functionality provided by Alexander Schlecht for NanoXLSX (.NET)
+- Added firstCellByValue, firstOrDefaultCell, cellsByValue functions. Functionality provided by Alexander Schlecht for
+  NanoXLSX (.NET)
+- Added replaceCellValue function. Functionality provided by Alexander Schlecht for NanoXLSX (.NET)
+- Fixed a bug on writing default column styles (not persisted in some cases)
+- Adapted style reader: When a workbook is loaded, not defined color values of Border styles are now empty strings (were
+  null), as if a new style is created
+- Code maintenance
+
+  Note: The color values of Border styles are handled identical on writing XLSX files, either if null or empty. The
+  change of the reader behavior was to enforce the "What You Can Write Is What You Can Read" policy of the library (
+  writing an empty string as color value should lead to an empty string on read).
+
 ## v2.4.3
 
 ---
