@@ -5,7 +5,7 @@
     <parent>
         <artifactId>nanoxlsx4j-root</artifactId>
         <groupId>ch.rabanti</groupId>
-        <version>2.5.0</version> <!-- Maintained in lib -->
+        <version>2.5.1</version> <!-- Maintained in lib -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

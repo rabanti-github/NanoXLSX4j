@@ -481,6 +481,16 @@ public class ReadDataTest {
         assertThrows(IOException.class, () -> Workbook.load(stream));
     }
 
+    @DisplayName("Test of the reader functionality on missing docProps documents (should not crash)")
+    @Test()
+    public void readMissingDocPropsTest() throws IOException, java.io.IOException {
+        InputStream stream = TestUtils.getResource("missing_docProps.xlsx");
+        Workbook workbook = Workbook.load(stream);
+        assertEquals(1, workbook.getWorksheets().size());
+        assertNotNull(workbook.getWorkbookMetadata());
+    }
+
+
     @DisplayName("Test of the workbook reader if the only workbook entry is a chart")
     @Test()
     public void readChartsheetTest() throws IOException, java.io.IOException {

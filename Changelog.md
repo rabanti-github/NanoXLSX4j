@@ -1,5 +1,14 @@
 # Change Log
 
+## v2.5.1
+
+---
+Release Date: **01.02.2025**
+
+- Fixed a bug in the handling of reading workbooks, when docProps are missing
+- Added test case
+
+
 ## v2.5.0
 
 ---

@@ -167,11 +167,14 @@ public class XlsxReader {
             this.workbook.read(stream);
 
             metaDataReader = new MetaDataReader();
-            stream = getEntryStream("docProps/app.xml", zf);
-            this.metaDataReader.readAppData(stream);
-            stream = getEntryStream("docProps/core.xml", zf);
-            this.metaDataReader.readCoreData(stream);
-
+            stream = getEntryStream("docProps/app.xml", zf, false);
+            if (stream != null) { // If null, no docProps/app.xml seems to be defined
+                this.metaDataReader.readAppData(stream);
+            }
+            stream = getEntryStream("docProps/core.xml", zf, false);
+            if (stream != null) { // If null, no docProps/core.xml seems to be defined
+                this.metaDataReader.readCoreData(stream);
+            }
             int worksheetIndex = 1;
             WorksheetReader wr;
             String nameTemplate = "sheet" + worksheetIndex + ".xml";
@@ -270,7 +273,7 @@ public class XlsxReader {
                 if (column.isHidden()) {
                     ws.addHiddenColumn(column.getNumber());
                 }
-                if (column.getDefaultColumnStyle() != null){
+                if (column.getDefaultColumnStyle() != null) {
                     ws.setColumnDefaultStyle(column.getColumnAddress(), column.getDefaultColumnStyle());
                 }
             }
@@ -293,8 +296,10 @@ public class XlsxReader {
                         ws.setVerticalSplit(pane.getPaneSplitColumnIndex(), pane.getFrozenState(), pane.getTopLeftCell(), pane.getActivePane());
                     }
                     else if (pane.isYSplitDefined() && pane.isXSplitDefined()) {
-                        ws.setSplit(pane
-                                            .getPaneSplitColumnIndex(), pane.getPaneSplitRowIndex(), pane.getFrozenState(), pane.getTopLeftCell(), pane.getActivePane());
+                        ws.setSplit(
+                                pane
+                                        .getPaneSplitColumnIndex(), pane.getPaneSplitRowIndex(), pane.getFrozenState(), pane.getTopLeftCell(), pane.getActivePane()
+                        );
                     }
                 }
                 else {
