@@ -1009,7 +1009,7 @@ public class XlsxWriter {
         StringBuilder sb = new StringBuilder();
         sb.append(
                 "<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">");
-        if (workbook.getSelectedWorksheet() > 0 || workbook.isHidden()) {
+        if (workbook.getSelectedWorksheet() > 0 || workbook.isHidden() || workbook.getWorksheets().stream().anyMatch(this::hasPaneSplitting)) {
             sb.append("<bookViews><workbookView ");
             if (workbook.isHidden()) {
                 sb.append("visibility=\"hidden\"");

@@ -1,5 +1,12 @@
 # Change Log
 
+## v2.5.2
+
+---
+Release Date: **26.04.2025**
+
+- Fixed a bug that prevented adding new worksheets when a pane split was defined
+
 ## v2.5.1
 
 ---
