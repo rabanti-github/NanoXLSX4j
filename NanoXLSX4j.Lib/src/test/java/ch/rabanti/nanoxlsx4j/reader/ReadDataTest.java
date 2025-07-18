@@ -528,6 +528,20 @@ public class ReadDataTest {
         assertEquals(new Range("A1:A1").toString(), workbook.getWorksheet(0).getAutoFilterRange().toString());
     }
 
+    @DisplayName("Test of reading inline and shared strings from embedded resource")
+    @Test()
+    void readInlineAndSharedStringsTest() throws IOException, java.io.IOException {
+        InputStream stream = TestUtils.getResource("inline_shared_strings.xlsx");
+        Workbook workbook = Workbook.load(stream);
+        Worksheet worksheet = workbook.getCurrentWorksheet();
+
+        assertEquals(Cell.CellType.STRING, worksheet.getCells().get("A1").getDataType());
+        assertEquals("InlineString", worksheet.getCells().get("A1").getValue());
+
+        assertEquals(Cell.CellType.STRING, worksheet.getCells().get("B1").getDataType());
+        assertEquals("SharedString", worksheet.getCells().get("B1").getValue());
+    }
+
     private static <T> void assertEqualsFunction(T expected, T given) {
         assertEquals(expected, given);
     }

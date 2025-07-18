@@ -627,6 +627,11 @@ public class WorksheetReader {
                     if (valueNode.getName().equalsIgnoreCase("f")) {
                         value = valueNode.getInnerText();
                     }
+                    if (valueNode.getName().equalsIgnoreCase("is")) {
+                        if (valueNode.getChildNodes().hasNext()){
+                           value = valueNode.getChildNodes().next().getInnerText();
+                        }
+                    }
                 }
             }
         }
@@ -656,6 +661,10 @@ public class WorksheetReader {
         }
         else if (checkType(type, "str")) {
             importedType = Cell.CellType.FORMULA;
+            rawValue = raw;
+        }
+        else if (checkType(type, "inlineStr")){
+            importedType = Cell.CellType.STRING;
             rawValue = raw;
         }
         else if (dateStyles.contains(styleNumber) && (checkType(type, null) || checkType(type, "") || checkType(type, "n"))) {
