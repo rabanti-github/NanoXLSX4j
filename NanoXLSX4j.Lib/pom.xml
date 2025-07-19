@@ -265,7 +265,7 @@
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <nexusUrl>https://central.sonatype.com/account</nexusUrl>
                             // Set to false, to check manually on the repository before releasing (use 'mvn nexus-staging:release'; drop with 'mvn nexus-staging:drop')
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
                         </configuration>
