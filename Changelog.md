@@ -1,5 +1,14 @@
 # Change Log
 
+## v2.5.3
+
+---
+Release Date: **19.07.2025**
+
+- Added support for in-line string values (non-formatted). Change provided by Misir for
+  NanoXLSX (.NET)
+- Added test case
+
 ## v2.5.2
 
 ---
