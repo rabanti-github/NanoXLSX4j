@@ -13,6 +13,7 @@ import ch.rabanti.nanoxlsx4j.Helper;
 import ch.rabanti.nanoxlsx4j.ImportOptions;
 import ch.rabanti.nanoxlsx4j.Range;
 import ch.rabanti.nanoxlsx4j.Worksheet;
+import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.io.IOException;
@@ -595,7 +596,7 @@ public class WorksheetReader {
             }
             for (int index : indices) {
                 Column column = new Column(index - 1); // transform to zero-based
-                column.setWidth(width);
+                column.setWidth(getValidatedWidth(width));
                 column.setHidden(hidden);
                 if (defaultStyle != null) {
                     column.setDefaultColumnStyle(defaultStyle);
@@ -628,8 +629,8 @@ public class WorksheetReader {
                         value = valueNode.getInnerText();
                     }
                     if (valueNode.getName().equalsIgnoreCase("is")) {
-                        if (valueNode.getChildNodes().hasNext()){
-                           value = valueNode.getChildNodes().next().getInnerText();
+                        if (valueNode.getChildNodes().hasNext()) {
+                            value = valueNode.getChildNodes().next().getInnerText();
                         }
                     }
                 }
@@ -663,7 +664,7 @@ public class WorksheetReader {
             importedType = Cell.CellType.FORMULA;
             rawValue = raw;
         }
-        else if (checkType(type, "inlineStr")){
+        else if (checkType(type, "inlineStr")) {
             importedType = Cell.CellType.STRING;
             rawValue = raw;
         }
@@ -1322,6 +1323,37 @@ public class WorksheetReader {
         }
         catch (Exception ignore) {
             return null;
+        }
+    }
+
+    /**
+     * Gets the column width according to {@link ImportOptions#isEnforceValidColumnDimensions()}
+     *
+     * @param rawValue Raw column value
+     * @return Modified column width in case
+     * {@link ImportOptions#isEnforceValidColumnDimensions() is set to false, and the raw value was invalid
+     * @throws Throws a WorksheetException if the raw value was invalid and
+     *                {@link ImportOptions#isEnforceValidColumnDimensions() is set to true
+     */
+    private float getValidatedWidth(float rawValue) throws WorksheetException {
+        if (rawValue < Worksheet.MIN_COLUMN_WIDTH) {
+            if (importOptions.isEnforceValidColumnDimensions()) {
+                throw new WorksheetException(String.format("The worksheet contains an invalid column width (too small: %f) value. Consider using the ImportOption 'setEnforceValidColumnDimensions' to ignore this error.", rawValue));
+            }
+            else {
+                return Worksheet.MIN_COLUMN_WIDTH;
+            }
+        }
+        else if (rawValue > Worksheet.MAX_COLUMN_WIDTH) {
+            if (importOptions.isEnforceValidColumnDimensions()) {
+                throw new WorksheetException(String.format("The worksheet contains an invalid column width (too large: %f) value. Consider using the ImportOption 'setEnforceValidColumnDimensions' to ignore this error.", rawValue));
+            }
+            else {
+                return Worksheet.MAX_COLUMN_WIDTH;
+            }
+        }
+        else {
+            return rawValue;
         }
     }
 

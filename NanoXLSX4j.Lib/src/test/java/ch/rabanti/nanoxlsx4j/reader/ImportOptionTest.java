@@ -8,6 +8,7 @@ import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.styles.BasicStyles;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -1493,6 +1494,64 @@ public class ImportOptionTest {
         assertTrue(options.isEnforceDateTimesAsNumbers());
         assertTrue(options.isEnforceEmptyValuesAsString());
     }
+
+
+    @ParameterizedTest
+    @DisplayName("Test of the ImportOption property EnforceValidColumnDimensions")
+    @CsvSource({
+            "valid_column_row_dimensions.xlsx, true, false",
+            "invalid_column_width_min.xlsx, true, true",
+            "invalid_column_width_max.xlsx, true, true",
+            "invalid_row_height_min.xlsx, true, false",
+            "invalid_row_height_max.xlsx, true, false",
+            "valid_column_row_dimensions.xlsx, false, false",
+            "invalid_column_width_min.xlsx, false, false",
+            "invalid_column_width_max.xlsx, false, false",
+            "invalid_row_height_min.xlsx, false, false",
+            "invalid_row_height_max.xlsx, false, false"
+    })
+    void enforceValidColumnDimensionsTest(String fileName, boolean givenOptionValue, boolean expectedThrow) throws Exception {
+        ImportOptions options = new ImportOptions();
+        options.setEnforceValidColumnDimensions(givenOptionValue);
+        options.setEnforceValidRowDimensions(false);
+        InputStream stream = TestUtils.getResource(fileName);
+
+        if (expectedThrow) {
+            Assertions.assertThrows(Exception.class, () -> Workbook.load(stream, options));
+        } else {
+            Workbook workbook = Workbook.load(stream, options);
+            Assertions.assertNotNull(workbook);
+        }
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test of the ImportOption property EnforceValidRowDimensions")
+    @CsvSource({
+            "valid_column_row_dimensions.xlsx, true, false",
+            "invalid_row_height_min.xlsx, true, true",
+            "invalid_row_height_max.xlsx, true, true",
+            "invalid_column_width_min.xlsx, true, false",
+            "invalid_column_width_max.xlsx, true, false",
+            "valid_column_row_dimensions.xlsx, false, false",
+            "invalid_row_height_min.xlsx, false, false",
+            "invalid_row_height_max.xlsx, false, false",
+            "invalid_column_width_min.xlsx, false, false",
+            "invalid_column_width_max.xlsx, false, false"
+    })
+    void enforceValidRowDimensionsTest(String fileName, boolean givenOptionValue, boolean expectedThrow) throws Exception {
+        ImportOptions options = new ImportOptions();
+        options.setEnforceValidRowDimensions(givenOptionValue);
+        options.setEnforceValidColumnDimensions(false);
+        InputStream stream = TestUtils.getResource(fileName);
+
+        if (expectedThrow) {
+            Assertions.assertThrows(Exception.class, () -> Workbook.load(stream, options));
+        } else {
+            Workbook workbook = Workbook.load(stream, options);
+            Assertions.assertNotNull(workbook);
+        }
+    }
+
 
     private static <T, D> void assertValues(Map<String, T> givenCells, ImportOptions importOptions, BiConsumer<Object, Object> assertionAction)
             throws Exception {

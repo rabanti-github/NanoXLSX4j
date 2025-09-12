@@ -101,6 +101,8 @@ public class ImportOptions {
     private boolean enforceDateTimesAsNumbers = false;
     private boolean enforceEmptyValuesAsString = false;
     private boolean enforcePhoneticCharacterImport = false;
+    private boolean enforceValidColumnDimensions = true;
+    private boolean enforceValidRowDimensions;
     private final Map<Integer, ColumnType> enforcedColumnTypes = new HashMap<>();
     private int enforcingStartRowNumber = 0;
     private GlobalType globalEnforcingType = GlobalType.Default;
@@ -219,6 +221,52 @@ public class ImportOptions {
      */
     public void setEnforceEmptyValuesAsString(boolean enforceEmptyValuesAsString) {
         this.enforceEmptyValuesAsString = enforceEmptyValuesAsString;
+    }
+
+    /**
+     * Gets whether invalid column dimensions (larger than {@link Worksheet#MAX_COLUMN_WIDTH} or smaller than
+     * {@link Worksheet#MIN_COLUMN_WIDTH}) will throw an exception
+     *
+     * @return If true, invalid column dimensions will trow an exception. If false, such invalid values will be ignored
+     * and set to {@link Worksheet#MAX_COLUMN_WIDTH} or {@link Worksheet#MIN_COLUMN_WIDTH}. Default is true
+     */
+    public boolean isEnforceValidColumnDimensions() {
+        return enforceValidColumnDimensions;
+    }
+
+    /**
+     * Sets whether invalid column dimensions (larger than {@link Worksheet#MAX_COLUMN_WIDTH} or smaller than
+     * {@link Worksheet#MIN_COLUMN_WIDTH}) will throw an exception
+     *
+     * @param enforceValidColumnDimensions If true, invalid column dimensions will trow an exception. If false, such
+     *                                     invalid values will be ignored and set to {@link Worksheet#MAX_COLUMN_WIDTH}
+     *                                     or {@link Worksheet#MIN_COLUMN_WIDTH}. Default is true
+     */
+    public void setEnforceValidColumnDimensions(boolean enforceValidColumnDimensions) {
+        this.enforceValidColumnDimensions = enforceValidColumnDimensions;
+    }
+
+    /**
+     * Gets whether invalid row dimensions (larger than {@link Worksheet#MAX_ROW_HEIGHT} or smaller than
+     * {@link Worksheet#MIN_ROW_HEIGHT}) will throw an exception
+     *
+     * @return If true, invalid row dimensions will trow an exception. If false, such invalid values will be ignored and
+     * set to {@link Worksheet#MAX_ROW_HEIGHT} or {@link Worksheet#MIN_ROW_HEIGHT}. Default is true
+     */
+    public boolean isEnforceValidRowDimensions() {
+        return enforceValidRowDimensions;
+    }
+
+    /**
+     * Sets whether invalid row dimensions (larger than {@link Worksheet#MAX_ROW_HEIGHT} or smaller than
+     * {@link Worksheet#MIN_ROW_HEIGHT}) will throw an exception
+     *
+     * @param enforceValidRowDimensions If true, invalid row dimensions will trow an exception. If false, such invalid
+     *                                  values will be ignored and set to {@link Worksheet#MAX_ROW_HEIGHT} or
+     *                                  {@link Worksheet#MIN_ROW_HEIGHT}. Default is true
+     */
+    public void setEnforceValidRowDimensions(boolean enforceValidRowDimensions) {
+        this.enforceValidRowDimensions = enforceValidRowDimensions;
     }
 
     /**

@@ -14,6 +14,7 @@ import ch.rabanti.nanoxlsx4j.Range;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
+import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 import ch.rabanti.nanoxlsx4j.styles.StyleRepository;
 
@@ -263,7 +264,7 @@ public class XlsxReader {
                     ws.addHiddenRow(row.getKey());
                 }
                 if (row.getValue().getHeight() != null) {
-                    ws.setRowHeight(row.getKey(), row.getValue().getHeight());
+                    ws.setRowHeight(row.getKey(), getValidatedHeight(row.getValue().getHeight()));
                 }
             }
             for (Column column : reader.getValue().getColumns()) {
@@ -341,6 +342,37 @@ public class XlsxReader {
         wb.getWorkbookMetadata().setTitle(metaDataReader.getTitle());
         wb.setImportState(false);
         return wb;
+    }
+
+    /**
+     * Gets the row height according to {@link ImportOptions#isEnforceValidRowDimensions()}
+     *
+     * @param rawValue Raw row value
+     * @return Modified row height in case
+     * {@link ImportOptions#isEnforceValidRowDimensions() is set to false, and the raw value was invalid
+     * @throws Throws a WorksheetException if the raw value was invalid and
+     *                {@link ImportOptions#isEnforceValidRownDimensions() is set to true
+     */
+    private float getValidatedHeight(float rawValue) throws WorksheetException {
+        if (rawValue < Worksheet.MIN_ROW_HEIGHT) {
+            if (importOptions.isEnforceValidRowDimensions()) {
+                throw new WorksheetException(String.format("The worksheet contains an invalid row height (too small: %f) value. Consider using the ImportOption 'setEnforceValidRowDimensions' to ignore this error.", rawValue));
+            }
+            else {
+                return Worksheet.MIN_ROW_HEIGHT;
+            }
+        }
+        else if (rawValue > Worksheet.MAX_ROW_HEIGHT) {
+            if (importOptions.isEnforceValidRowDimensions()) {
+                throw new WorksheetException(String.format("The worksheet contains an invalid row height (too large: %f) value. Consider using the ImportOption 'setEnforceValidRowDimensions' to ignore this error.", rawValue));
+            }
+            else {
+                return Worksheet.MAX_ROW_HEIGHT;
+            }
+        }
+        else {
+            return rawValue;
+        }
     }
 
 }
