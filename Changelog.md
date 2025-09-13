@@ -1,12 +1,19 @@
 # Change Log
 
+## v2.5.4
+
+---
+Release Date: **13.09.2025**
+
+- Added import option to ignore invalid column widths or row heights. Concept provided by pokorny for NaoXLSX (.Net)
+- Added test case
+
 ## v2.5.3
 
 ---
 Release Date: **19.07.2025**
 
-- Added support for in-line string values (non-formatted). Change provided by Misir for
-  NanoXLSX (.NET)
+- Added support for in-line string values (non-formatted). Change provided by Misir for NanoXLSX (.NET)
 - Added test case
 
 ## v2.5.2
@@ -23,7 +30,6 @@ Release Date: **01.02.2025**
 
 - Fixed a bug in the handling of reading workbooks, when docProps are missing
 - Added test case
-
 
 ## v2.5.0
 
@@ -57,7 +63,8 @@ Release Date: **24.11.2024**
 ---
 Release Date: **26.10.2024**
 
-- Fixed a bug regarding the determination of the first data cell in an empty worksheet. Bug fix provided by Martin Stránský for NanoXLSX (.NET)
+- Fixed a bug regarding the determination of the first data cell in an empty worksheet. Bug fix provided by Martin
+  Stránský for NanoXLSX (.NET)
 - Updated Javadoc
 
 ## v2.4.1
@@ -87,20 +94,21 @@ Release Date: **21.07.2024**
 ---
 Release Date: **24.02.2024**
 
-- Fixed a bug when reading min and max values in the GetLastDataColumnNumber function. Bug fix provided by pokorny for NanoXLSX (.NET) and ported to Java
+- Fixed a bug when reading min and max values in the GetLastDataColumnNumber function. Bug fix provided by pokorny for
+  NanoXLSX (.NET) and ported to Java
 - Fixed a bug in the GetFirstDataCellAddress function
 - Fixed test cases
 - Code maintenance
-
 
 ## v2.3.1 & v2.3.2
 
 ---
 Release Date: ---
+
 - Code maintenance and bug fixing
 
-Note: These versions were not released as artifacts since they were ported form NanoXLSX for .NET at the same date. All relevant changes will be published in a later version
-
+Note: These versions were not released as artifacts since they were ported form NanoXLSX for .NET at the same date. All
+relevant changes will be published in a later version
 
 ## v2.3.0
 
@@ -116,14 +124,13 @@ Release Date: **10.09.2023**
 - Code maintenance
 - Code formatting
 
-
 ## v2.2.0
 
 ---
 Release Date: **09.08.2023**
 
 - Adapted hex color validation (clarified number of necessary characters)
-- Adaption of version handling. The constant VERSION in Version.java was replaced by the static method getVersion() 
+- Adaption of version handling. The constant VERSION in Version.java was replaced by the static method getVersion()
 - Internal changes of build processes (Documentation generation is performed now by a GitHub Action)
 
 ## v2.1.1
@@ -131,7 +138,8 @@ Release Date: **09.08.2023**
 ---
 Release Date: **18.03.2023**
 
-- Fixed a bug when a workbook contains charts instead of worksheets. Bug fix provided by Iivari Mokelainen for NanoXLSX (.NET) and ported to Java
+- Fixed a bug when a workbook contains charts instead of worksheets. Bug fix provided by Iivari Mokelainen for
+  NanoXLSX (.NET) and ported to Java
 - Minor code maintenance
 
 ## v2.1.0
@@ -147,11 +155,13 @@ Release Date: **12.11.2022**
 - Updated example in demo
 - Code maintenance
 
-Note: It seems that newer versions of Excel may store boolean attributes internally now as texts (true/false) and not anymore as numbers (1/0).
-      This release adds compatibility to read this newer format but will currently store files still in the old format
+Note: It seems that newer versions of Excel may store boolean attributes internally now as texts (true/false) and not
+anymore as numbers (1/0).
+This release adds compatibility to read this newer format but will currently store files still in the old format
 
 Note 2: The incomplete internal escaping of custom number format codes was removed due to the potential high complexity.
-        Escaping must be performed currently by hand, according to OOXML specs: Part 1 - Fundamentals And Markup Language Reference, Chapter 18.8.31
+Escaping must be performed currently by hand, according to OOXML specs: Part 1 - Fundamentals And Markup Language
+Reference, Chapter 18.8.31
 
 ## v2.0.1
 
@@ -160,7 +170,7 @@ Release Date: **04.10.2022**
 
 - Code maintenance
 - Documentation update
-- Updated code formatter (reverted unreadable parametrized  unit tests)
+- Updated code formatter (reverted unreadable parametrized unit tests)
 
 ## v2.0.1
 
@@ -175,7 +185,9 @@ Release Date: **03.10.2022**
 - Added some internal notes to prepare the development of the next mayor version
 
 Note:
-- When defining a custom number format, now the CustomFormatCode property must always be defined as well, since an empty value leads to an invalid Workbook
+
+- When defining a custom number format, now the CustomFormatCode property must always be defined as well, since an empty
+  value leads to an invalid Workbook
 - When a cell is now created (by constructor) with the type EMPTY, any passed value will be discarded in this cell
 
 ## v2.0.0
@@ -201,24 +213,29 @@ Release Date: **03.09.2022 - Major Release**
 ### Worksheet
 
 - Added a getter for the worksheet protection password hash (will be filled when loading a workbook)
-- Added the methods getFirstDataColumnNumber, getFirstDataColumnNumber, getFirstDataRowNumber, getFirstRowNumber, getLastDataColumnNumber, getFirstCellAddress, getFirstDataCellAddress, getLastDataColumnNumber, getLastDataRowNumber, getLastRowNumber, getLastCellAddress,  getLastCellAddress and getLastDataCellAddress
+- Added the methods getFirstDataColumnNumber, getFirstDataColumnNumber, getFirstDataRowNumber, getFirstRowNumber,
+  getLastDataColumnNumber, getFirstCellAddress, getFirstDataCellAddress, getLastDataColumnNumber, getLastDataRowNumber,
+  getLastRowNumber, getLastCellAddress, getLastCellAddress and getLastDataCellAddress
 - Added the methods getRow and getColumns by address string or index
 - Added the method copy to copy a worksheet (deep copy)
 - Added a constructor with only the worksheet name as parameter
 - Added and option in goToNextColumn and goToNextRow to either keep the current row or column
 - Added the methods removeRowHeight and removeAllowedActionOnSheetProtection
-- Renamed columnAddress and rowAddress to columnNumber and rowNumber in the addNextCell, addCellFormula and removeCell methods
+- Renamed columnAddress and rowAddress to columnNumber and rowNumber in the addNextCell, addCellFormula and removeCell
+  methods
 - Added several validations for worksheet data
 
 ### Cells, Rows and Columns
 
 - In Cell, the address can now have reference modifiers ($)
-- The worksheet reference in the Cell constructor was removed. Assigning to a worksheet is now managed automatically by the worksheet when adding a cell
+- The worksheet reference in the Cell constructor was removed. Assigning to a worksheet is now managed automatically by
+  the worksheet when adding a cell
 - Added a field cellAddressType in Cell
 - Cells can now have null as value, interpreted as empty
 - Added a new overloaded function resolveCellCoordinate to resolve the address type as well
 - Added validateColumnNumber and validateRowNumber in Cell
-- In Address, the constructor with string and address type now only needs a string, since reference modifiers ($) are resolved automatically
+- In Address, the constructor with string and address type now only needs a string, since reference modifiers ($) are
+  resolved automatically
 - Address objects are now comparable
 - Implemented better address validation
 - Range start and end addresses are swapped automatically, if reversed
@@ -245,16 +262,20 @@ Release Date: **03.09.2022 - Major Release**
 - Added default values for dates and times in the import options
 - Added global casting import options: AllNumbersToDouble, AllNumbersToBigDecimal, AllNumbersToInt, EverythingToString
 - Added column casting import options: Numeric, Double, BigDecimal
-- Added global import options: EnforcePhoneticCharacterImport, EnforceEmptyValuesAsString, DateTimeFormat, TemporalCultureInfo
+- Added global import options: EnforcePhoneticCharacterImport, EnforceEmptyValuesAsString, DateTimeFormat,
+  TemporalCultureInfo
 - Added a meta data reader
 - All style elements that can be written can also be read
 - All workbook elements that can be written can also be read (exception: passwords cannot be recovered)
 - All worksheet elements that can be written can also be read (exception: passwords cannot be recovered)
 - Better handling of dates and times, especially with invalid (too low and too high numbers) values
 
-Note: Phonetic characters  (like Ruby Characters / Furigana / Zhuyin / Pinyin) are discarded by default. If the import option "EnforcePhoneticCharacterImport" is set to true, the phonetic transcription will be displayed in brackets, right after the characters to be transcribed
+Note: Phonetic characters  (like Ruby Characters / Furigana / Zhuyin / Pinyin) are discarded by default. If the import
+option "EnforcePhoneticCharacterImport" is set to true, the phonetic transcription will be displayed in brackets, right
+after the characters to be transcribed
 
 ### Misc
+
 - Added a unit test project with several thousand, partially parametrized test cases
 - Added several constants for boundary dates in the Helper class
 - Added several functions for pane splitting in the Helper class
@@ -314,7 +335,8 @@ Release Date: **04.11.2018**
 ---
 Release Date: **24.08.2018**
 
-**Note**: Due to some refactoring (see below) in this version, changes of existing code may be necessary. However, most introduced changes are on a rather low level or can be fixed by search&replace
+**Note**: Due to some refactoring (see below) in this version, changes of existing code may be necessary. However, most
+introduced changes are on a rather low level or can be fixed by search&replace
 
 - Fixed a bug in the calculation of OA Dates (internal format)
 - Fixed a bug regarding formulas in the reader
@@ -349,7 +371,8 @@ Release Date: **03.07.2018**
 Release Date: **03.07.2018**
 
 - Added address types (no fixed rows and columns, fixed rows, fixed columns, fixed rows and columns)
-- Added new CellDirection Disabled, if the addresses of the cells are defined manually (addNextCell will override the current cell in this case)
+- Added new CellDirection Disabled, if the addresses of the cells are defined manually (addNextCell will override the
+  current cell in this case)
 - Altered Demo 3 to to demonstrate disabling of automatic cell addressing
 - Extended Demo 1 to demonstrate the new address types
 - Minor, internal changes
@@ -363,7 +386,8 @@ Release Date: **08.06.2018**
 - Added new basic styles colorizedText, colorizedBackground and font as functions
 - Added a new constructor for Workbooks without file name to handle stream-only workbooks more logical
 - Added the functions hasCell, getLastColumnNumber and getLastRowNumber in the Worksheet class
-- Renamed the function SetColor in the class Fill (Style) to setColor, to follow conventions. Minor refactoring in existing projects may be possible
+- Renamed the function SetColor in the class Fill (Style) to setColor, to follow conventions. Minor refactoring in
+  existing projects may be possible
 - Fixed a bug when overriding a worksheet name with sanitizing
 - Added new demo for the introduced style features
 - Internal optimizations and fixes
@@ -375,9 +399,11 @@ Release Date: **08.06.2018**
 Release Date: **31.05.2018**
 
 - Fixed versioning issue
-- Fixed a bug in the processing of column widths. Bug fix provided by Johan Lindvall for PicoXLSX, adapted for PicoXLSX4j and NanoXLSX4j
+- Fixed a bug in the processing of column widths. Bug fix provided by Johan Lindvall for PicoXLSX, adapted for
+  PicoXLSX4j and NanoXLSX4j
 - Added numeric data types Byte, BigDecimal, and Short (proposal by Johan Lindvall for PicoXLSX)
-- Changed the behavior of cell type casting. User defined cell types will now only be overwritten if the type is DEFAULT (proposal by Johan Lindvall for PicoXLSX)
+- Changed the behavior of cell type casting. User defined cell types will now only be overwritten if the type is
+  DEFAULT (proposal by Johan Lindvall for PicoXLSX)
 
 ## v1.0.0
 
