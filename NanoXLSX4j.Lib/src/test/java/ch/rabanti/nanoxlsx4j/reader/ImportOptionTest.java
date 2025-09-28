@@ -1499,18 +1499,18 @@ public class ImportOptionTest {
     @ParameterizedTest
     @DisplayName("Test of the ImportOption property EnforceValidColumnDimensions")
     @CsvSource({
-            "valid_column_row_dimensions.xlsx, true, false",
-            "invalid_column_width_min.xlsx, true, true",
-            "invalid_column_width_max.xlsx, true, true",
-            "invalid_row_height_min.xlsx, true, false",
-            "invalid_row_height_max.xlsx, true, false",
-            "valid_column_row_dimensions.xlsx, false, false",
-            "invalid_column_width_min.xlsx, false, false",
-            "invalid_column_width_max.xlsx, false, false",
-            "invalid_row_height_min.xlsx, false, false",
-            "invalid_row_height_max.xlsx, false, false"
+            "valid_column_row_dimensions.xlsx, true, false, 0",
+            "invalid_column_width_min.xlsx, true, true, -1",
+            "invalid_column_width_max.xlsx, true, true, 1",
+            "invalid_row_height_min.xlsx, true, false, 0",
+            "invalid_row_height_max.xlsx, true, false, 0",
+            "valid_column_row_dimensions.xlsx, false, false, 0",
+            "invalid_column_width_min.xlsx, false, false, 0",
+            "invalid_column_width_max.xlsx, false, false, 0",
+            "invalid_row_height_min.xlsx, false, false, 0",
+            "invalid_row_height_max.xlsx, false, fals, 0",
     })
-    void enforceValidColumnDimensionsTest(String fileName, boolean givenOptionValue, boolean expectedThrow) throws Exception {
+    void enforceValidColumnDimensionsTest(String fileName, boolean givenOptionValue, boolean expectedThrow, int columnFlag) throws Exception {
         ImportOptions options = new ImportOptions();
         options.setEnforceValidColumnDimensions(givenOptionValue);
         options.setEnforceValidRowDimensions(false);
@@ -1520,25 +1520,33 @@ public class ImportOptionTest {
             Assertions.assertThrows(Exception.class, () -> Workbook.load(stream, options));
         } else {
             Workbook workbook = Workbook.load(stream, options);
-            Assertions.assertNotNull(workbook);
+            if (columnFlag == -1){
+             Assertions.assertEquals(Worksheet.MIN_COLUMN_WIDTH, workbook.getWorksheet(0).getColumns().get(0).getWidth());
+            }
+            else if (columnFlag == 1){
+                Assertions.assertEquals(Worksheet.MAX_COLUMN_WIDTH, workbook.getWorksheet(0).getColumns().get(0).getWidth());
+            }
+            else {
+                Assertions.assertTrue(true);
+            }
         }
     }
 
     @ParameterizedTest
     @DisplayName("Test of the ImportOption property EnforceValidRowDimensions")
     @CsvSource({
-            "valid_column_row_dimensions.xlsx, true, false",
-            "invalid_row_height_min.xlsx, true, true",
-            "invalid_row_height_max.xlsx, true, true",
-            "invalid_column_width_min.xlsx, true, false",
-            "invalid_column_width_max.xlsx, true, false",
-            "valid_column_row_dimensions.xlsx, false, false",
-            "invalid_row_height_min.xlsx, false, false",
-            "invalid_row_height_max.xlsx, false, false",
-            "invalid_column_width_min.xlsx, false, false",
-            "invalid_column_width_max.xlsx, false, false"
+            "valid_column_row_dimensions.xlsx, true, false, 0",
+            "invalid_row_height_min.xlsx, true, true, -1",
+            "invalid_row_height_max.xlsx, true, true, 1",
+            "invalid_column_width_min.xlsx, true, false, 0",
+            "invalid_column_width_max.xlsx, true, false, 0",
+            "valid_column_row_dimensions.xlsx, false, false, 0",
+            "invalid_row_height_min.xlsx, false, false, 0",
+            "invalid_row_height_max.xlsx, false, false, 0",
+            "invalid_column_width_min.xlsx, false, false, 0",
+            "invalid_column_width_max.xlsx, false, false, 0"
     })
-    void enforceValidRowDimensionsTest(String fileName, boolean givenOptionValue, boolean expectedThrow) throws Exception {
+    void enforceValidRowDimensionsTest(String fileName, boolean givenOptionValue, boolean expectedThrow, int rowFlag) throws Exception {
         ImportOptions options = new ImportOptions();
         options.setEnforceValidRowDimensions(givenOptionValue);
         options.setEnforceValidColumnDimensions(false);
@@ -1548,14 +1556,16 @@ public class ImportOptionTest {
             Assertions.assertThrows(Exception.class, () -> Workbook.load(stream, options));
         } else {
             Workbook workbook = Workbook.load(stream, options);
-            Assertions.assertNotNull(workbook);
+            if (rowFlag == -1){
+                Assertions.assertEquals(Worksheet.MIN_ROW_HEIGHT, workbook.getWorksheet(0).getRowHeights().get(0));
+            }
+            else if (rowFlag == 1){
+                Assertions.assertEquals(Worksheet.MAX_ROW_HEIGHT, workbook.getWorksheet(0).getRowHeights().get(0));
+            }
+            else {
+                Assertions.assertTrue(true);
+            }
         }
-    }
-
-
-    private static <T, D> void assertValues(Map<String, T> givenCells, ImportOptions importOptions, BiConsumer<Object, Object> assertionAction)
-            throws Exception {
-        assertValues(givenCells, importOptions, assertionAction, null);
     }
 
     private static <T, D> void assertValues(Map<String, T> givenCells, ImportOptions importOptions, BiConsumer<Object, Object> assertionAction, Map<String, D> expectedCells)
