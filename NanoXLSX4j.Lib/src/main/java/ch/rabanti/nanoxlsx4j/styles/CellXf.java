@@ -384,6 +384,7 @@ public class CellXf extends AbstractStyle {
         alignment = DEFAULT_ALIGNMENT;
         textDirection = DEFAULT_TEXT_DIRECTION;
         verticalAlign = DEFAULT_VERTICAL_ALIGNMENT;
+        locked = true; // Default in Excel
         textRotation = 0;
         indent = 0;
     }

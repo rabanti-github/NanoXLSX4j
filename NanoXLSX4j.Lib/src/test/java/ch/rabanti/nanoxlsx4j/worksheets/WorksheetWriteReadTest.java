@@ -520,7 +520,7 @@ public class WorksheetWriteReadTest {
                     "true, 'objects:0', 'scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 0",
                     "true, 'scenarios:0', 'objects:1,selectLockedCells:1,selectUnlockedCells:1', 0",
                     "true, 'selectLockedCells:0', 'objects:1,scenarios:1', 0",
-                    "true, 'selectUnlockedCells:0', 'objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:0', 0",
+                    "true, 'selectUnlockedCells:0', 'objects:1,scenarios:1,selectLockedCells:1', 0",
                     "false, '', '', 1",
                     "false, 'autoFilter:0', '', 2",
                     "true, '', 'objects:1,scenarios:1,selectLockedCells:1,selectUnlockedCells:1', 3",
@@ -564,6 +564,31 @@ public class WorksheetWriteReadTest {
             }
         }
     }
+
+    @Test()
+    @DisplayName("Test of the 'SheetProtectionValues' when setting selectLockedCells alone (causes auto-fix)")
+    public void sheetProtectionWriteReadTest2() throws Exception {
+        int sheetIndex = 0;
+        Workbook workbook = prepareWorkbook(4, "test");
+        for (int i = 0; i <= sheetIndex; i++) {
+            if (sheetIndex == i) {
+                workbook.setCurrentWorksheet(i);
+                workbook.getCurrentWorksheet().addAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.selectUnlockedCells);
+                workbook.getCurrentWorksheet().addAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.selectLockedCells);
+                // Override default (technically invalid)
+                workbook.getCurrentWorksheet().removeAllowedActionOnSheetProtection(Worksheet.SheetProtectionValue.selectUnlockedCells);
+                workbook.getCurrentWorksheet().setUseSheetProtection(true);
+            }
+        }
+        Worksheet givenWorksheet = writeAndReadWorksheet(workbook, sheetIndex);
+        assertEquals(2, givenWorksheet.getSheetProtectionValues().size());
+        assertTrue(givenWorksheet.isUseSheetProtection());
+        assertTrue(givenWorksheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.objects));
+        assertTrue(givenWorksheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.scenarios));
+        assertFalse(givenWorksheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.selectLockedCells));
+        assertFalse(givenWorksheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.selectUnlockedCells));
+    }
+
 
     @DisplayName("Test of the 'sheetProtectionPasswordHash' property when writing and reading a worksheet")
     @ParameterizedTest(name = "Given password \"{0}\" should lead to the same hash on worksheet {1} when writing and reading a worksheet")

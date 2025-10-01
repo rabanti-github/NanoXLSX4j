@@ -332,9 +332,10 @@ public class StyleReader {
                     attribute = protectionNode.getAttribute("locked");
                     if (attribute != null) {
                         int value = ReaderUtils.parseBinaryBoolean(attribute);
-                        if (value == 1) {
-                            cellXfStyle.setLocked(true);
+                        if (value == 0) {
+                            cellXfStyle.setLocked(false);
                         }
+                        // else - NoOp - No need to set locked value, since true by default
                     }
                 }
 

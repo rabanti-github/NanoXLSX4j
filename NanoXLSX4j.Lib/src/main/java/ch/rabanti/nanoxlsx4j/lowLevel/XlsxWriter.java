@@ -498,28 +498,26 @@ public class XlsxWriter {
         if (!sheet.isUseSheetProtection()) {
             return "";
         }
-        HashMap<Worksheet.SheetProtectionValue, Integer> actualLockingValues = new HashMap<>();
-        if (sheet.getSheetProtectionValues().isEmpty()) {
-            actualLockingValues.put(Worksheet.SheetProtectionValue.selectLockedCells, 1);
-            actualLockingValues.put(Worksheet.SheetProtectionValue.selectUnlockedCells, 1);
-        }
+        Map<Worksheet.SheetProtectionValue, Integer> actualLockingValues = new HashMap<>();
         if (!sheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.objects)) {
             actualLockingValues.put(Worksheet.SheetProtectionValue.objects, 1);
         }
         if (!sheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.scenarios)) {
             actualLockingValues.put(Worksheet.SheetProtectionValue.scenarios, 1);
         }
-        if (!sheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.selectLockedCells)) {
-            if (!actualLockingValues.containsKey(Worksheet.SheetProtectionValue.selectLockedCells)) {
-                actualLockingValues.put(Worksheet.SheetProtectionValue.selectLockedCells, 1);
-            }
+        boolean allowSelectLocked = sheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.selectLockedCells);
+        boolean allowSelectUnlocked = sheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.selectUnlockedCells);
+        if (allowSelectLocked && !allowSelectUnlocked) {
+            // This shouldn't happen in Excel's UI, but handle it by allowing both
+            allowSelectUnlocked = true;
         }
-        if (!sheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.selectUnlockedCells) ||
-                !sheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.selectLockedCells)) {
-            if (!actualLockingValues.containsKey(Worksheet.SheetProtectionValue.selectUnlockedCells)) {
-                actualLockingValues.put(Worksheet.SheetProtectionValue.selectUnlockedCells, 1);
-            }
+        if (!allowSelectLocked) {
+            actualLockingValues.put(Worksheet.SheetProtectionValue.selectLockedCells, 1);
         }
+        if (!allowSelectUnlocked) {
+            actualLockingValues.put(Worksheet.SheetProtectionValue.selectUnlockedCells, 1);
+        }
+        // Explicit permissions (set to 0 when allowed)
         if (sheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.formatCells)) {
             actualLockingValues.put(Worksheet.SheetProtectionValue.formatCells, 0);
         }
@@ -554,21 +552,17 @@ public class XlsxWriter {
             actualLockingValues.put(Worksheet.SheetProtectionValue.pivotTables, 0);
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("<sheetProtection");
+        sb.append("<sheetProtection sheet=\"1\"");
+
         String temp;
-        Iterator<Map.Entry<Worksheet.SheetProtectionValue, Integer>> itr;
-        Map.Entry<Worksheet.SheetProtectionValue, Integer> item;
-        itr = actualLockingValues.entrySet().iterator();
-        while (itr.hasNext()) {
-            item = itr.next();
+        for (Map.Entry<Worksheet.SheetProtectionValue, Integer> item : actualLockingValues.entrySet()) {
             temp = item.getKey().name();// Note! If the enum names differs from the OOXML definitions, this method will
-            // cause invalid OOXML entries
-            sb.append(" ").append(temp).append("=\"").append(item.getValue()).append("\"");
+            sb.append(" ").append(temp).append("=\"").append(item.getValue().toString()).append('"');
         }
         if (!Helper.isNullOrEmpty(sheet.getSheetProtectionPasswordHash())) {
-            sb.append(" password=\"").append(sheet.getSheetProtectionPasswordHash()).append("\"");
+            sb.append(" password=\"").append(sheet.getSheetProtectionPasswordHash()).append('"');
         }
-        sb.append(" sheet=\"1\"/>");
+        sb.append("/>");
         return sb.toString();
     }
 
@@ -939,16 +933,14 @@ public class XlsxWriter {
                 sb2.append("/>"); // </xf>
                 alignmentString = sb2.toString();
             }
-            if (style.getCellXf().isHidden() || style.getCellXf().isLocked()) {
-                if (style.getCellXf().isHidden() && style.getCellXf().isLocked()) {
-                    protectionString = "<protection locked=\"1\" hidden=\"1\"/>";
-                }
-                else if (style.getCellXf().isHidden() && !style.getCellXf().isLocked()) {
-                    protectionString = "<protection hidden=\"1\" locked=\"0\"/>";
-                }
-                else {
-                    protectionString = "<protection hidden=\"0\" locked=\"1\"/>";
-                }
+            if (style.getCellXf().isHidden() && style.getCellXf().isLocked()) {
+                protectionString = "<protection hidden=\"1\"/>"; // Locked is true by default (no need to define)
+            }
+            else if (style.getCellXf().isHidden() && !style.getCellXf().isLocked()) {
+                protectionString = "<protection hidden=\"1\" locked=\"0\"/>";
+            }
+            else if (!style.getCellXf().isHidden() && !style.getCellXf().isLocked()) {
+                protectionString = "<protection locked=\"0\"/>";
             }
             sb.append("<xf numFmtId=\"");
             if (style.getNumberFormat().isCustomFormat()) {

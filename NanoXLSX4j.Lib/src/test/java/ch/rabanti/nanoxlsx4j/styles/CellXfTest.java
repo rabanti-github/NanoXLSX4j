@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CellXfTest {
 
@@ -52,7 +53,7 @@ public class CellXfTest {
     )
     void lockedTest(boolean value) {
         CellXf cellXf = new CellXf();
-        assertFalse(cellXf.isLocked());
+        assertTrue(cellXf.isLocked()); // Locked is set to true ba default (has no effect until protection is enabled))
         cellXf.setLocked(value);
         assertEquals(value, cellXf.isLocked());
     }
