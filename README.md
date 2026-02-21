@@ -1,6 +1,7 @@
 # NanoXLSX4j
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.rabanti/nanoxlsx4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.rabanti/nanoxlsx4j) ![GitHub license](https://img.shields.io/github/license/rabanti-github/picoXlsx4j.svg)
+![Maven Central Version](https://img.shields.io/maven-central/v/ch.rabanti/nanoxlsx4j)
+ ![GitHub license](https://img.shields.io/github/license/rabanti-github/picoXlsx4j.svg) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frabanti-github%2FNanoXLSX4j.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Frabanti-github%2FNanoXLSX4j?ref=badge_shield&issueType=license)
 
 NanoXLSX4j is a small Java library to create and read XLSX files (Microsoft Excel 2007 or newer) in an easy and native way. The library is originated form [PicoXLSX4j](https://github.com/rabanti-github/PicoXLSX4j) and has basic support of reading spreadsheets. PicoXLSX4j and thus NanoXLSX4j are direct ports of [PicoXLSX for C#](https://github.com/rabanti-github/PicoXLSX)
 
@@ -127,4 +128,9 @@ See the full <b>API-Documentation</b> at: [https://rabanti-github.github.io/Nano
 The [Demo module](https://github.com/rabanti-github/NanoXLSX4j/tree/master/NanoXLSX4j.Demo) contains 14 simple use cases. You can also look at the full API documentation or the Javadoc annotations in the particular .java files.
 
 Hint: You will find most certainly any function, and the way how to use it, in the [Unit Test Section](https://github.com/rabanti-github/NanoXLSX4j/tree/master/NanoXLSX4j.Lib/src/test/java/ch/rabanti/nanoxlsx4j)
+
+## License
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frabanti-github%2FNanoXLSX4j.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Frabanti-github%2FNanoXLSX4j?ref=badge_large&issueType=license)
+
 
