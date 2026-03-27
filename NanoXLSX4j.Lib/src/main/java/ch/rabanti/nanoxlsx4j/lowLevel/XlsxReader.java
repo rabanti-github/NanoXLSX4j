@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2025
+ * Copyright Raphael Stoeckli @ 2026
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -8,8 +8,8 @@ package ch.rabanti.nanoxlsx4j.lowLevel;
 
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Column;
-import ch.rabanti.nanoxlsx4j.Helper;
-import ch.rabanti.nanoxlsx4j.ImportOptions;
+import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
+import ch.rabanti.nanoxlsx4j.reader.ReaderOptions;
 import ch.rabanti.nanoxlsx4j.Range;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
@@ -41,17 +41,17 @@ public class XlsxReader {
     private final Map<Integer, WorksheetReader> worksheets;
     private WorkbookReader workbook;
     private MetaDataReader metaDataReader;
-    private final ImportOptions importOptions;
+    private final ReaderOptions importOptions;
     private StyleReaderContainer styleReaderContainer;
 
     /**
      * Constructor with stream and import options as parameter
      *
      * @param stream  Stream of the XLSX file to load
-     * @param options Import options to override the automatic approach of the reader. See {@link ImportOptions} for
-     *                information about import options
+     * @param options Import options to override the automatic approach of the reader. See {@link ReaderOptions} for
+     *                information about reader options
      */
-    public XlsxReader(InputStream stream, ImportOptions options) {
+    public XlsxReader(InputStream stream, ReaderOptions options) {
         this.worksheets = new HashMap<>();
         this.inputStream = stream;
         this.importOptions = options;
@@ -61,10 +61,10 @@ public class XlsxReader {
      * Constructor with file path and import options as parameter
      *
      * @param path    File path of the XLSX file to load
-     * @param options Import options to override the automatic approach of the reader. See {@link ImportOptions} for
-     *                information about import options
+     * @param options Import options to override the automatic approach of the reader. See {@link ReaderOptions} for
+     *                information about reader options
      */
-    public XlsxReader(String path, ImportOptions options) {
+    public XlsxReader(String path, ReaderOptions options) {
         this.filePath = path;
         this.worksheets = new HashMap<>();
         this.importOptions = options;
@@ -135,7 +135,7 @@ public class XlsxReader {
     public void read() throws IOException, java.io.IOException {
         ZipFile zf = null;
         try {
-            if (inputStream == null && !Helper.isNullOrEmpty(filePath)) {
+            if (inputStream == null && !ParserUtils.isNullOrEmpty(filePath)) {
                 zf = new ZipFile(this.filePath);
             }
             else if (inputStream != null) {
@@ -256,8 +256,8 @@ public class XlsxReader {
             if (!reader.getValue().getWorksheetProtection().isEmpty()) {
                 ws.setUseSheetProtection(true);
             }
-            if (!Helper.isNullOrEmpty(reader.getValue().getWorksheetProtectionHash())) {
-                ws.setSheetProtectionPasswordHash(reader.getValue().getWorksheetProtectionHash());
+            if (!ParserUtils.isNullOrEmpty(reader.getValue().getWorksheetProtectionHash())) {
+                ws.getSheetProtectionPassword().setPasswordHash(reader.getValue().getWorksheetProtectionHash());
             }
             for (Map.Entry<Integer, WorksheetReader.RowDefinition> row : reader.getValue().getRows().entrySet()) {
                 if (row.getValue().isHidden()) {
@@ -326,7 +326,7 @@ public class XlsxReader {
         wb.setSelectedWorksheet(workbook.getSelectedWorksheet());
         if (workbook.isProtected()) {
             wb.setWorkbookProtection(workbook.isProtected(), workbook.isLockWindows(), workbook.isLockStructure(), null);
-            wb.setWorkbookProtectionPasswordHash(workbook.getPasswordHash());
+            wb.getWorkbookProtectionPassword().setPasswordHash(workbook.getPasswordHash());
         }
         wb.getWorkbookMetadata().setApplication(metaDataReader.getApplication());
         wb.getWorkbookMetadata().setApplicationVersion(metaDataReader.getApplicationVersion());
@@ -345,26 +345,26 @@ public class XlsxReader {
     }
 
     /**
-     * Gets the row height according to {@link ImportOptions#isEnforceValidRowDimensions()}
+     * Gets the row height according to {@link ReaderOptions#isEnforceStrictValidation()}
      *
      * @param rawValue Raw row value
      * @return Modified row height in case
-     * {@link ImportOptions#isEnforceValidRowDimensions() is set to false, and the raw value was invalid
-     * @throws Throws a WorksheetException if the raw value was invalid and
-     *                {@link ImportOptions#isEnforceValidRownDimensions() is set to true
+     * {@link ReaderOptions#isEnforceStrictValidation()} is set to false, and the raw value was invalid
+     * @throws WorksheetException if the raw value was invalid and
+     *                            {@link ReaderOptions#isEnforceStrictValidation()} is set to true
      */
     private float getValidatedHeight(float rawValue) throws WorksheetException {
         if (rawValue < Worksheet.MIN_ROW_HEIGHT) {
-            if (importOptions.isEnforceValidRowDimensions()) {
-                throw new WorksheetException(String.format("The worksheet contains an invalid row height (too small: %f) value. Consider using the ImportOption 'setEnforceValidRowDimensions' to ignore this error.", rawValue));
+            if (importOptions.isEnforceStrictValidation()) {
+                throw new WorksheetException(String.format("The worksheet contains an invalid row height (too small: %f) value. Consider using the ReaderOption 'setEnforceStrictValidation' to ignore this error.", rawValue));
             }
             else {
                 return Worksheet.MIN_ROW_HEIGHT;
             }
         }
         else if (rawValue > Worksheet.MAX_ROW_HEIGHT) {
-            if (importOptions.isEnforceValidRowDimensions()) {
-                throw new WorksheetException(String.format("The worksheet contains an invalid row height (too large: %f) value. Consider using the ImportOption 'setEnforceValidRowDimensions' to ignore this error.", rawValue));
+            if (importOptions.isEnforceStrictValidation()) {
+                throw new WorksheetException(String.format("The worksheet contains an invalid row height (too large: %f) value. Consider using the ReaderOption 'setEnforceStrictValidation' to ignore this error.", rawValue));
             }
             else {
                 return Worksheet.MAX_ROW_HEIGHT;

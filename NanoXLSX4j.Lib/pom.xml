@@ -4,9 +4,29 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+        v3 UMBRELLA / META-PACKAGE
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+        This artifact (nanoxlsx4j) is the meta-package for NanoXLSX4j v3, equivalent to
+        the NuGet "NanoXLSX" package (https://www.nuget.org/packages/NanoXLSX).
+        It bundles nanoxlsx4j-core, nanoxlsx4j-reader, nanoxlsx4j-writer and
+        nanoxlsx4j-formatting as dependencies so that consumers only need a single dependency.
+
+        CURRENT STATE (preparation phase):
+          All source code still lives in this module. Individual module dependencies below
+          are commented out and will be activated progressively as source is migrated.
+          Once migration is complete, <packaging> will change to "pom" and all source
+          code will be removed from this module.
+    -->
+    <parent>
+        <groupId>ch.rabanti</groupId>
+        <artifactId>nanoxlsx4j-root</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
+
     <groupId>ch.rabanti</groupId>
     <artifactId>nanoxlsx4j</artifactId>
-    <version>2.5.5</version> <!-- Maintain also in demo and root project -->
+    <version>3.0.0-SNAPSHOT</version> <!-- Maintain also in root project -->
     <packaging>jar</packaging>
 
     <properties>
@@ -17,7 +37,8 @@
 
     <name>NanoXLSX4j</name>
     <description>NanoXLSX4j is a small Java library to create and read XLSX files (Microsoft Excel 2007 or newer) in an
-        easy and native way. The library is originated form PicoXLSX4j and has basic support of reading spreadsheets
+        easy and native way. The library is originated from PicoXLSX4j and has basic support of reading spreadsheets.
+        As of v3 this artifact is the umbrella meta-package bundling Core, Reader, Writer and Formatting.
     </description>
     <url>https://PicoXLSX.rabanti.ch</url>
     <licenses>
@@ -39,8 +60,35 @@
         <url>https://github.com/rabanti-github/NanoXLSX4j/tree/master</url>
     </scm>
 
-    <!-- DEV DEPENDENCIES -->
+    <!-- MODULE DEPENDENCIES (umbrella) -->
     <dependencies>
+        <!-- CORE: plugin registry, data model, styles, exceptions -->
+        <dependency>
+            <groupId>ch.rabanti</groupId>
+            <artifactId>nanoxlsx4j-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--
+            The dependencies below will be activated once source is migrated out of this module.
+
+        <dependency>
+            <groupId>ch.rabanti</groupId>
+            <artifactId>nanoxlsx4j-reader</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.rabanti</groupId>
+            <artifactId>nanoxlsx4j-writer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.rabanti</groupId>
+            <artifactId>nanoxlsx4j-formatting</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        -->
+
+        <!-- TEST -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -255,8 +303,8 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- STAGING (preformed with 'mvn clean deploy' -->
-                    <!-- TO BE REMOVED AFTER THE NEXT RELEASE, OF THE NEW CONFIGURATION WORKS -->
+                    <!-- STAGING (performed with 'mvn clean deploy') -->
+                    <!-- TO BE REMOVED AFTER THE NEXT RELEASE, IF THE NEW CONFIGURATION WORKS -->
                     <!--
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
@@ -270,7 +318,7 @@
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
-            -->
+                    -->
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
@@ -280,11 +328,11 @@
                             <publishingServerId>central</publishingServerId>
                         </configuration>
                     </plugin>
-                    <!-- ADD THE MAVEN RESOURCES PLUGIN CONFIGURATION HERE -->
+                    <!-- MAVEN RESOURCES PLUGIN -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.1.0</version> <!-- Change to the latest version -->
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <id>filter-resources</id>

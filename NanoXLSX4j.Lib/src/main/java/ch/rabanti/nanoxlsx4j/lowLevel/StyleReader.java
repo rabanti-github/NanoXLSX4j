@@ -1,11 +1,12 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2025
+ * Copyright Raphael Stoeckli @ 2026
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
+import ch.rabanti.nanoxlsx4j.colors.Color;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.styles.Border;
 import ch.rabanti.nanoxlsx4j.styles.CellXf;
@@ -153,10 +154,7 @@ public class StyleReader {
     private static Border.StyleValue parseBorderStyle(XmlDocument.XmlNode innerNode) {
         String value = innerNode.getAttribute("style");
         if (value != null) {
-            if (value.equalsIgnoreCase("double")) {
-                return Border.StyleValue.s_double; // special handling, since double is not a valid enum value
-            }
-            return getBorderEnumValue(value);
+            return Border.getStyleEnum(value);
         }
         return Border.StyleValue.none;
     }
@@ -167,7 +165,7 @@ public class StyleReader {
             XmlDocument.XmlNode innerNode = getChildNode(fill, "patternFill");
             if (innerNode != null) {
                 String pattern = innerNode.getAttribute("patternType");
-                fillStyle.setPatternFill(getFillPatternEnumValue(pattern));
+                fillStyle.setPatternFill(Fill.getPatternEnum(pattern));
                 LookupResult attribute = getAttributeOfChild(innerNode, "fgColor", "rgb");
                 if (attribute.attributeIsPresent) {
                     fillStyle.setForegroundColor(attribute.value);
@@ -180,7 +178,7 @@ public class StyleReader {
                     }
                     String backgroundIndex = backgroundNode.getAttribute("indexed");
                     if (backgroundIndex != null) {
-                        fillStyle.setIndexedColor(Integer.parseInt(backgroundIndex));
+                        fillStyle.setBackgroundColor(Color.createIndexed(Integer.parseInt(backgroundIndex)));
                     }
                 }
             }
@@ -205,6 +203,18 @@ public class StyleReader {
             if (strikeNode != null) {
                 fontStyle.setStrike(true);
             }
+            if (getChildNode(font, "outline") != null) {
+                fontStyle.setOutline(true);
+            }
+            if (getChildNode(font, "shadow") != null) {
+                fontStyle.setShadow(true);
+            }
+            if (getChildNode(font, "condense") != null) {
+                fontStyle.setCondense(true);
+            }
+            if (getChildNode(font, "extend") != null) {
+                fontStyle.setExtend(true);
+            }
             attribute = getAttributeOfChild(font, "u", "val");
             if (attribute.nodeIsPresent) {
                 fontStyle.setUnderline(Font.UnderlineValue.u_single); // default
@@ -225,7 +235,7 @@ public class StyleReader {
 
             attribute = getAttributeOfChild(font, "vertAlign", "val");
             if (attribute.attributeIsPresent) {
-                fontStyle.setVerticalAlign(getFontVerticalAlignEnumValue(attribute.value));
+                fontStyle.setVerticalAlign(Font.getVerticalTextAlignEnum(attribute.value));
             }
             attribute = getAttributeOfChild(font, "sz", "val");
             if (attribute.attributeIsPresent) {
@@ -235,7 +245,9 @@ public class StyleReader {
             if (colorNode != null) {
                 String theme = colorNode.getAttribute("theme");
                 if (theme != null) {
-                    fontStyle.setColorTheme(Integer.parseInt(theme));
+                    String tintStr = colorNode.getAttribute("tint");
+                    Double tint = tintStr != null ? Double.parseDouble(tintStr) : null;
+                    fontStyle.setColorValue(Color.createTheme(Integer.parseInt(theme), tint));
                 }
                 String rgb = colorNode.getAttribute("rgb");
                 if (rgb != null) {
@@ -248,7 +260,7 @@ public class StyleReader {
             }
             attribute = getAttributeOfChild(font, "family", "val");
             if (attribute.attributeIsPresent) {
-                fontStyle.setFamily(attribute.value);
+                fontStyle.setFamily(Font.getFontFamilyEnum(attribute.value));
             }
             attribute = getAttributeOfChild(font, "scheme", "val");
             if (attribute.attributeIsPresent) {
@@ -263,7 +275,7 @@ public class StyleReader {
             }
             attribute = getAttributeOfChild(font, "charset", "val");
             if (attribute.attributeIsPresent) {
-                fontStyle.setCharset(attribute.value);
+                fontStyle.setCharset(Font.getCharsetEnum(attribute.value));
             }
 
             fontStyle.setInternalID(styleReaderContainer.getNextFontId());
@@ -446,63 +458,13 @@ public class StyleReader {
     }
 
     /**
-     * Tries to determine a border StyleValue enum entry from a string
-     *
-     * @param styleValue String to check
-     * @return Enum value or {@link Border.StyleValue#none} if not found
-     */
-    private static Border.StyleValue getBorderEnumValue(String styleValue) {
-        try {
-            return Border.StyleValue.valueOf(styleValue);
-        }
-        catch (Exception e) {
-            return Border.StyleValue.none;
-        }
-    }
-
-    /**
-     * Tries to determine a pattern enum entry from a string
-     *
-     * @param styleValue String to check
-     * @return Enum value or {@link Fill.PatternValue#none} if not found
-     */
-    private static Fill.PatternValue getFillPatternEnumValue(String styleValue) {
-        try {
-            return Fill.PatternValue.valueOf(styleValue);
-        }
-        catch (Exception e) {
-            return Fill.PatternValue.none;
-        }
-    }
-
-    /**
-     * Tries to determine a vertical align enum entry from a string
-     *
-     * @param styleValue String to check
-     * @return Enum value or {@link Font.VerticalAlignValue#none} if not found
-     */
-    private static Font.VerticalAlignValue getFontVerticalAlignEnumValue(String styleValue) {
-        try {
-            return Font.VerticalAlignValue.valueOf(styleValue);
-        }
-        catch (Exception e) {
-            return Font.VerticalAlignValue.none;
-        }
-    }
-
-    /**
      * Tries to determine a horizontal align enum entry of cellXF from a string
      *
      * @param styleValue String to check
      * @return Enum value or {@link CellXf.HorizontalAlignValue#none} if not found
      */
     private static CellXf.HorizontalAlignValue getCellXfHorizontalAlignEnumValue(String styleValue) {
-        try {
-            return CellXf.HorizontalAlignValue.valueOf(styleValue);
-        }
-        catch (Exception e) {
-            return CellXf.HorizontalAlignValue.none;
-        }
+        return CellXf.getHorizontalAlignEnum(styleValue);
     }
 
     /**
@@ -512,12 +474,7 @@ public class StyleReader {
      * @return Enum value or {@link CellXf.VerticalAlignValue#none} if not found
      */
     private static CellXf.VerticalAlignValue getCellXfVerticalAlignEnumValue(String styleValue) {
-        try {
-            return CellXf.VerticalAlignValue.valueOf(styleValue);
-        }
-        catch (Exception e) {
-            return CellXf.VerticalAlignValue.none;
-        }
+        return CellXf.getVerticalAlignEnum(styleValue);
     }
 
     /**

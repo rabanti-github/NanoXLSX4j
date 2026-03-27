@@ -3,7 +3,7 @@ package ch.rabanti.nanoxlsx4j.reader;
 import ch.rabanti.nanoxlsx4j.Address;
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Helper;
-import ch.rabanti.nanoxlsx4j.ImportOptions;
+import ch.rabanti.nanoxlsx4j.reader.ReaderOptions;
 import ch.rabanti.nanoxlsx4j.TestUtils;
 import ch.rabanti.nanoxlsx4j.Workbook;
 import ch.rabanti.nanoxlsx4j.Worksheet;
@@ -90,8 +90,8 @@ public class ImportOptionTest {
                 "A10",
                 "=A1"
         );
-        ImportOptions options = new ImportOptions();
-        options.setGlobalEnforcingType(ImportOptions.GlobalType.EverythingToString);
+        ReaderOptions options = new ReaderOptions();
+        options.setGlobalEnforcingType(ReaderOptions.GlobalType.EverythingToString);
         assertValues(cells, options, ImportOptionTest::assertEqualsFunction, expectedCells);
     }
 
@@ -134,8 +134,8 @@ public class ImportOptionTest {
         expectedCells.put("A9", null);
         expectedCells.put("A10", BigDecimal.valueOf(27));
         expectedCells.put("A11", new Cell("=A1", Cell.CellType.FORMULA, "A11"));
-        ImportOptions options = new ImportOptions();
-        options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToBigDecimal);
+        ReaderOptions options = new ReaderOptions();
+        options.setGlobalEnforcingType(ReaderOptions.GlobalType.AllNumbersToDecimal);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
@@ -175,8 +175,8 @@ public class ImportOptionTest {
         expectedCells.put("A9", null);
         expectedCells.put("A10", 27d);
         expectedCells.put("A11", new Cell("=A1", Cell.CellType.FORMULA, "A11"));
-        ImportOptions options = new ImportOptions();
-        options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToDouble);
+        ReaderOptions options = new ReaderOptions();
+        options.setGlobalEnforcingType(ReaderOptions.GlobalType.AllNumbersToDouble);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
@@ -224,8 +224,8 @@ public class ImportOptionTest {
         expectedCells.put("A13", new Cell("=A1", Cell.CellType.FORMULA, "A13"));
         expectedCells.put("A14", 8589934592L);
         expectedCells.put("A15", 2147483650.6f);
-        ImportOptions options = new ImportOptions();
-        options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToInt);
+        ReaderOptions options = new ReaderOptions();
+        options.setGlobalEnforcingType(ReaderOptions.GlobalType.AllNumbersToInt);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
@@ -261,7 +261,7 @@ public class ImportOptionTest {
                 ""
         );
         expectedCells.put("A6", new Cell("=A1", Cell.CellType.FORMULA, "A6"));
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         options.setEnforceEmptyValuesAsString(true);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
@@ -297,9 +297,9 @@ public class ImportOptionTest {
                 "A7",
                 "=A1"
         );
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         options.setEnforcingStartRowNumber(2);
-        options.setGlobalEnforcingType(ImportOptions.GlobalType.EverythingToString);
+        options.setGlobalEnforcingType(ReaderOptions.GlobalType.EverythingToString);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
 
@@ -324,7 +324,7 @@ public class ImportOptionTest {
         expectedCells.put("A4", Helper.getOATime(time));
         expectedCells.put("A5", 22.5f); // Auto-import will cast this value to float
         expectedCells.put("A6", new Cell("=A1", Cell.CellType.FORMULA, "A6"));
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         options.setEnforceDateTimesAsNumbers(true);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
@@ -336,7 +336,7 @@ public class ImportOptionTest {
                     "Date, 'FLOAT', 22.5, 'DOUBLE', 22.5",
                     "Time, 'DOUBLE', 22.5, 'DOUBLE', 22.5",}
     )
-    void enforceDateTimesAsNumbersTest2(ImportOptions.ColumnType columnType, String givenType, String givenValue, String expectedType, String expectedValue)
+    void enforceDateTimesAsNumbersTest2(ReaderOptions.ColumnType columnType, String givenType, String givenValue, String expectedType, String expectedValue)
             throws Exception {
         Object givenLowNumber = TestUtils.createInstance(givenType, givenValue);
         Object expectedLowNumber = TestUtils.createInstance(expectedType, expectedValue);
@@ -362,7 +362,7 @@ public class ImportOptionTest {
         expectedCells.put("B2", Helper.getOATime(time));
         expectedCells.put("B3", expectedLowNumber);
         expectedCells.put("B4", new Cell("=A1", Cell.CellType.FORMULA, "B4"));
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         options.setEnforceDateTimesAsNumbers(true);
         options.addEnforcedColumn(1, columnType);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
@@ -427,12 +427,12 @@ public class ImportOptionTest {
         );
         expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         if (column instanceof String) {
-            options.addEnforcedColumn((String) column, ImportOptions.ColumnType.Double);
+            options.addEnforcedColumn((String) column, ReaderOptions.ColumnType.Double);
         }
         else {
-            options.addEnforcedColumn((Integer) column, ImportOptions.ColumnType.Double);
+            options.addEnforcedColumn((Integer) column, ReaderOptions.ColumnType.Double);
         }
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
@@ -511,12 +511,12 @@ public class ImportOptionTest {
         );
         expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         if (column instanceof String) {
-            options.addEnforcedColumn((String) column, ImportOptions.ColumnType.Numeric);
+            options.addEnforcedColumn((String) column, ReaderOptions.ColumnType.Numeric);
         }
         else {
-            options.addEnforcedColumn((Integer) column, ImportOptions.ColumnType.Numeric);
+            options.addEnforcedColumn((Integer) column, ReaderOptions.ColumnType.Numeric);
         }
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
@@ -527,12 +527,12 @@ public class ImportOptionTest {
             {
                     "Double, '2021-10-31 12:11:10', 44500.5077546296d",
                     "Double, '18:20:22', 0.764143518518519d",
-                    "BigDecimal, '2021-10-31 12:11:10', 44500.5077546296d",
-                    "BigDecimal, '18:20:22', 0.764143518518519d",
+                    "Decimal, '2021-10-31 12:11:10', 44500.5077546296d",
+                    "Decimal, '18:20:22', 0.764143518518519d",
                     "Numeric, '2021-10-31 12:11:10', 44500.5077546296d",
                     "Numeric, '18:20:22', 0.764143518518519d",}
     )
-    void enforcingColumnAsNumberTest3(ImportOptions.ColumnType columnType, String givenValue, double expectedValue)
+    void enforcingColumnAsNumberTest3(ReaderOptions.ColumnType columnType, String givenValue, double expectedValue)
             throws Exception {
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", true);
@@ -544,7 +544,7 @@ public class ImportOptionTest {
 
         Map<String, Object> expectedCells = new HashMap<>();
         expectedCells.put("A1", true);
-        if (columnType == ImportOptions.ColumnType.BigDecimal) {
+        if (columnType == ReaderOptions.ColumnType.Decimal) {
             expectedCells.put("B1", BigDecimal.valueOf(expectedValue));
         }
         else {
@@ -554,7 +554,7 @@ public class ImportOptionTest {
                 "C1",
                 "2"
         );
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         options.setEnforceDateTimesAsNumbers(true);
         options.addEnforcedColumn(1, columnType);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
@@ -566,15 +566,15 @@ public class ImportOptionTest {
             {
                     "STRING, 'B', Double",
                     "INTEGER, '1', Double",
-                    "STRING, 'B', BigDecimal",
-                    "INTEGER, '1', BigDecimal",}
+                    "STRING, 'B', Decimal",
+                    "INTEGER, '1', Decimal",}
     )
-    void enforcingColumnAsNumberTest4(String sourceType, String sourceValue, ImportOptions.ColumnType columnType)
+    void enforcingColumnAsNumberTest4(String sourceType, String sourceValue, ReaderOptions.ColumnType columnType)
             throws Exception {
         Object ob1, ob2, ob4;
         String ob3 = "5-7";
         String ob5 = "1870-06-01 12:12:00";
-        if (columnType == ImportOptions.ColumnType.Double) {
+        if (columnType == ReaderOptions.ColumnType.Double) {
             ob1 = -10d;
             ob2 = -5.5d;
             ob4 = -1d;
@@ -620,7 +620,7 @@ public class ImportOptionTest {
         expectedCells.put("B4", exB4);
         expectedCells.put("B5", exB5);
         expectedCells.put("C1", exC1);
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         if (column instanceof String) {
             options.addEnforcedColumn((String) column, columnType);
         }
@@ -719,12 +719,12 @@ public class ImportOptionTest {
         );
         expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         if (column instanceof String) {
-            options.addEnforcedColumn((String) column, ImportOptions.ColumnType.Bool);
+            options.addEnforcedColumn((String) column, ReaderOptions.ColumnType.Bool);
         }
         else {
-            options.addEnforcedColumn((Integer) column, ImportOptions.ColumnType.Bool);
+            options.addEnforcedColumn((Integer) column, ReaderOptions.ColumnType.Bool);
         }
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
@@ -740,7 +740,7 @@ public class ImportOptionTest {
         Object column = TestUtils.createInstance(sourceType, sourceValue);
         Duration time = buildTime(11, 12, 13);
         Date date = buildDate(2021, 8, 14, 18, 22, 13);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT);
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(ReaderOptions.DEFAULT_DATE_TIME_FORMAT);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 1);
         cells.put(
@@ -792,7 +792,7 @@ public class ImportOptionTest {
                 "B3",
                 "false"
         );
-        expectedCells.put("B4", TestUtils.formatTime(time, ImportOptions.DEFAULT_TIME_FORMAT));
+        expectedCells.put("B4", TestUtils.formatTime(time, ReaderOptions.DEFAULT_TIME_SPAN_FORMAT));
         expectedCells.put("B5", dateFormatter.format(date));
         expectedCells.put(
                 "B6",
@@ -839,12 +839,12 @@ public class ImportOptionTest {
         );
         expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         if (column instanceof String) {
-            options.addEnforcedColumn((String) column, ImportOptions.ColumnType.String);
+            options.addEnforcedColumn((String) column, ReaderOptions.ColumnType.String);
         }
         else {
-            options.addEnforcedColumn((Integer) column, ImportOptions.ColumnType.String);
+            options.addEnforcedColumn((Integer) column, ReaderOptions.ColumnType.String);
         }
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
@@ -860,8 +860,8 @@ public class ImportOptionTest {
         Object column = TestUtils.createInstance(sourceType, sourceValue);
         Duration time = buildTime(11, 12, 13);
         Date date = buildDate(2021, 7, 14, 18, 22, 13);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT);
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_TIME_FORMAT);
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(ReaderOptions.DEFAULT_DATE_TIME_FORMAT);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ReaderOptions.DEFAULT_TIME_SPAN_FORMAT);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 1);
         cells.put(
@@ -923,12 +923,12 @@ public class ImportOptionTest {
         );
         expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         if (column instanceof String) {
-            options.addEnforcedColumn((String) column, ImportOptions.ColumnType.Date);
+            options.addEnforcedColumn((String) column, ReaderOptions.ColumnType.Date);
         }
         else {
-            options.addEnforcedColumn((Integer) column, ImportOptions.ColumnType.Date);
+            options.addEnforcedColumn((Integer) column, ReaderOptions.ColumnType.Date);
         }
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
@@ -966,16 +966,16 @@ public class ImportOptionTest {
                 "D1",
                 "0"
         );
-        ImportOptions options = new ImportOptions();
-        options.setDateFormat(null);
-        options.setTimeFormat(null);
+        ReaderOptions options = new ReaderOptions();
+        options.setDateTimeFormat(null);
+        options.setTimeSpanFormat(null);
         if (column1 instanceof String) {
-            options.addEnforcedColumn((String) column1, ImportOptions.ColumnType.Time);
-            options.addEnforcedColumn((String) column2, ImportOptions.ColumnType.Date);
+            options.addEnforcedColumn((String) column1, ReaderOptions.ColumnType.Time);
+            options.addEnforcedColumn((String) column2, ReaderOptions.ColumnType.Date);
         }
         else {
-            options.addEnforcedColumn((Integer) column1, ImportOptions.ColumnType.Time);
-            options.addEnforcedColumn((Integer) column2, ImportOptions.ColumnType.Date);
+            options.addEnforcedColumn((Integer) column1, ReaderOptions.ColumnType.Time);
+            options.addEnforcedColumn((Integer) column2, ReaderOptions.ColumnType.Date);
         }
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
@@ -989,7 +989,7 @@ public class ImportOptionTest {
                     "STRING, 'B', Time",
                     "INTEGER, '1', Time",}
     )
-    public void enforcingColumnAsDateTest3(String sourceType, String sourceValue, ImportOptions.ColumnType type)
+    public void enforcingColumnAsDateTest3(String sourceType, String sourceValue, ReaderOptions.ColumnType type)
             throws Exception {
         Object column = TestUtils.createInstance(sourceType, sourceValue);
         Map<String, Object> cells = new HashMap<>();
@@ -1027,7 +1027,7 @@ public class ImportOptionTest {
         expectedCells.put("B4", exB4);
         expectedCells.put("B5", exB5);
         expectedCells.put("C1", exC1);
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         if (column instanceof String) {
             options.addEnforcedColumn((String) column, type);
         }
@@ -1048,8 +1048,8 @@ public class ImportOptionTest {
         Object column = TestUtils.createInstance(sourceType, sourceValue);
         Duration time = buildTime(11, 12, 13);
         Date date = buildDate(2021, 7, 14, 18, 22, 13);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(ImportOptions.DEFAULT_DATE_FORMAT);
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ImportOptions.DEFAULT_TIME_FORMAT);
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(ReaderOptions.DEFAULT_DATE_TIME_FORMAT);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(ReaderOptions.DEFAULT_TIME_SPAN_FORMAT);
         Map<String, Object> cells = new HashMap<>();
         cells.put("A1", 1);
         cells.put(
@@ -1107,12 +1107,12 @@ public class ImportOptionTest {
         );
         expectedCells.put("C2", buildTime(12, 14, 16));
         expectedCells.put("C3", new Cell("=A1", Cell.CellType.FORMULA, "C3"));
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         if (column instanceof String) {
-            options.addEnforcedColumn((String) column, ImportOptions.ColumnType.Time);
+            options.addEnforcedColumn((String) column, ReaderOptions.ColumnType.Time);
         }
         else {
-            options.addEnforcedColumn((Integer) column, ImportOptions.ColumnType.Time);
+            options.addEnforcedColumn((Integer) column, ReaderOptions.ColumnType.Time);
         }
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
     }
@@ -1130,7 +1130,7 @@ public class ImportOptionTest {
                     "String, 'FLOAT','16.5','STRING', '16.5'",
                     "String, 'BOOLEAN','true','STRING', 'true'",}
     )
-    void enforcingColumnStartRowTest(ImportOptions.ColumnType columnType, String givenType, String givenSourceValue, String expectedType, String expectedSourceValue)
+    void enforcingColumnStartRowTest(ReaderOptions.ColumnType columnType, String givenType, String givenSourceValue, String expectedType, String expectedSourceValue)
             throws Exception {
         Object givenValue = TestUtils.createInstance(givenType, givenSourceValue);
         Object expectedValue = TestUtils.createInstance(expectedType, expectedSourceValue);
@@ -1167,11 +1167,11 @@ public class ImportOptionTest {
                 "C3",
                 "Test"
         );
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         options.addEnforcedColumn(1, columnType);
         options.setEnforcingStartRowNumber(2);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
-        ImportOptions options2 = new ImportOptions();
+        ReaderOptions options2 = new ReaderOptions();
         options2.addEnforcedColumn("B", columnType);
         options2.setEnforcingStartRowNumber(2);
         assertValues(cells, options2, ImportOptionTest::assertApproximateFunction, expectedCells);
@@ -1184,7 +1184,7 @@ public class ImportOptionTest {
                     "Date",
                     "Time",}
     )
-    void enforcingColumnStartRowTest2(ImportOptions.ColumnType columnType) throws Exception {
+    void enforcingColumnStartRowTest2(ReaderOptions.ColumnType columnType) throws Exception {
         Duration time = buildTime(11, 12, 13);
         Duration expectedTime = buildTime(12, 13, 14);
         Date expectedDate = buildDate(2021, 7, 14, 18, 22, 13); // 7 = August
@@ -1196,7 +1196,7 @@ public class ImportOptionTest {
         cells.put("A2", 23);
         cells.put("A3", time);
         cells.put("B1", null);
-        if (columnType == ImportOptions.ColumnType.Time) {
+        if (columnType == ReaderOptions.ColumnType.Time) {
             cells.put(
                     "B2",
                     "12:13:14"
@@ -1206,7 +1206,7 @@ public class ImportOptionTest {
                     "12:13:14"
             );
         }
-        else if (columnType == ImportOptions.ColumnType.Date) {
+        else if (columnType == ReaderOptions.ColumnType.Date) {
             cells.put(
                     "B2",
                     "2021-08-14 18:22:13"
@@ -1230,14 +1230,14 @@ public class ImportOptionTest {
         expectedCells.put("A2", 23);
         expectedCells.put("A3", time);
         expectedCells.put("B1", null);
-        if (columnType == ImportOptions.ColumnType.Time) {
+        if (columnType == ReaderOptions.ColumnType.Time) {
             expectedCells.put(
                     "B2",
                     "12:13:14"
             );
             expectedCells.put("B3", expectedTime);
         }
-        else if (columnType == ImportOptions.ColumnType.Date) {
+        else if (columnType == ReaderOptions.ColumnType.Date) {
             expectedCells.put(
                     "B2",
                     "2021-08-14 18:22:13"
@@ -1250,11 +1250,11 @@ public class ImportOptionTest {
                 "C3",
                 "Test"
         );
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         options.addEnforcedColumn(1, columnType);
         options.setEnforcingStartRowNumber(2);
         assertValues(cells, options, ImportOptionTest::assertApproximateFunction, expectedCells);
-        ImportOptions options2 = new ImportOptions();
+        ReaderOptions options2 = new ReaderOptions();
         options2.addEnforcedColumn("B", columnType);
         options2.setEnforcingStartRowNumber(2);
         assertValues(cells, options2, ImportOptionTest::assertApproximateFunction, expectedCells);
@@ -1264,12 +1264,12 @@ public class ImportOptionTest {
     @ParameterizedTest(name = "Given global type {0} and column type {1} should lead to a valid, enforced import")
     @CsvSource(
             {
-                    "AllNumbersToBigDecimal, BigDecimal, '7', '23', 1.1, 'BIGDECIMAL'",
+                    "AllNumbersToDecimal, Decimal, '7', '23', 1.1, 'BIGDECIMAL'",
                     "AllNumbersToDouble, Double, '7', '23', 1.1, 'DOUBLE'",
                     "AllNumbersToInt, Numeric, '7', '23', 1.1, 'INTEGER'",
                     "EverythingToString, String, '7', '23', 1.1, 'STRING'",}
     )
-    void importEnforceOverlappingTest(ImportOptions.GlobalType globalType, ImportOptions.ColumnType columnType, Object givenA2Value, Object givenB1Value, Object givenB2Value, String expectedType)
+    void importEnforceOverlappingTest(ReaderOptions.GlobalType globalType, ReaderOptions.ColumnType columnType, Object givenA2Value, Object givenB1Value, Object givenB2Value, String expectedType)
             throws Exception {
         Map<String, Object> cells = new HashMap<>();
         Map<String, Object> expectedCells = new HashMap<>();
@@ -1287,7 +1287,7 @@ public class ImportOptionTest {
         expectedCells.put("A2", TestUtils.createInstance(expectedType, String.valueOf(givenA2Value)));
         expectedCells.put("B1", TestUtils.createInstance(expectedType, String.valueOf(givenB1Value)));
         expectedCells.put("B2", TestUtils.createInstance(expectedType, String.valueOf(givenB2Value)));
-        ImportOptions importOptions = new ImportOptions();
+        ReaderOptions importOptions = new ReaderOptions();
         importOptions.addEnforcedColumn(1, columnType);
         importOptions.setGlobalEnforcingType(globalType);
         assertValues(cells, importOptions, ImportOptionTest::assertApproximateFunction, expectedCells);
@@ -1297,13 +1297,13 @@ public class ImportOptionTest {
     @ParameterizedTest(name = "Given global type {0} and column type {1} should lead to a valid, enforced import")
     @CsvSource(
             {
-                    "BigDecimal, AllNumbersToBigDecimal, '7', '23', 1.1, 'BIGDECIMAL'",
+                    "Decimal, AllNumbersToDecimal, '7', '23', 1.1, 'BIGDECIMAL'",
                     "Double, AllNumbersToDouble, '7', '23', 1.1, 'DOUBLE'",
                     "Numeric, AllNumbersToInt, '7', '23', 1.1, 'INTEGER'",
                     "String, EverythingToString, '7', '23', 1.1, 'STRING'",
-                    "BigDecimal, EverythingToString, '7', '23', 1.1, 'STRING'",}
+                    "Decimal, EverythingToString, '7', '23', 1.1, 'STRING'",}
     )
-    void importEnforceOverruleTest(ImportOptions.ColumnType columnType, ImportOptions.GlobalType globalType, Object givenA2Value, Object givenB1Value, Object givenB2Value, String expectedType)
+    void importEnforceOverruleTest(ReaderOptions.ColumnType columnType, ReaderOptions.GlobalType globalType, Object givenA2Value, Object givenB1Value, Object givenB2Value, String expectedType)
             throws Exception {
         Map<String, Object> cells = new HashMap<>();
         Map<String, Object> expectedCells = new HashMap<>();
@@ -1321,7 +1321,7 @@ public class ImportOptionTest {
         expectedCells.put("A2", TestUtils.createInstance(expectedType, String.valueOf(givenA2Value)));
         expectedCells.put("B1", TestUtils.createInstance(expectedType, String.valueOf(givenB1Value)));
         expectedCells.put("B2", TestUtils.createInstance(expectedType, String.valueOf(givenB2Value)));
-        ImportOptions importOptions = new ImportOptions();
+        ReaderOptions importOptions = new ReaderOptions();
         importOptions.addEnforcedColumn(1, columnType);
         importOptions.setGlobalEnforcingType(globalType);
         assertValues(cells, importOptions, ImportOptionTest::assertApproximateFunction, expectedCells);
@@ -1337,24 +1337,24 @@ public class ImportOptionTest {
                     "Time, 'HH:mm:ss', '18:11:10', '18:11:10'",
                     "Time, 'HH', '12', '12:00:00'",}
     )
-    void parseDateTimeTest(ImportOptions.ColumnType columnType, String pattern, String givenValue, String expectedValue)
+    void parseDateTimeTest(ReaderOptions.ColumnType columnType, String pattern, String givenValue, String expectedValue)
             throws Exception {
 
         Map<String, Object> cells = new HashMap<>();
         Map<String, Object> expectedCells = new HashMap<>();
-        ImportOptions importOptions = new ImportOptions();
-        if (columnType == ImportOptions.ColumnType.Date) {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", ImportOptions.DEFAULT_LOCALE);
+        ReaderOptions importOptions = new ReaderOptions();
+        if (columnType == ReaderOptions.ColumnType.Date) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", ReaderOptions.DEFAULT_CULTURE_INFO);
             Date expected = formatter.parse(expectedValue);
             expectedCells.put("A1", expected);
-            importOptions.setDateFormat(pattern);
-            importOptions.addEnforcedColumn(0, ImportOptions.ColumnType.Date);
+            importOptions.setDateTimeFormat(pattern);
+            importOptions.addEnforcedColumn(0, ReaderOptions.ColumnType.Date);
         }
         else {
             Duration expected = Helper.parseTime(expectedValue, "HH:mm:ss", Locale.US);
             expectedCells.put("A1", expected);
-            importOptions.setTimeFormat(pattern);
-            importOptions.addEnforcedColumn(0, ImportOptions.ColumnType.Time);
+            importOptions.setTimeSpanFormat(pattern);
+            importOptions.addEnforcedColumn(0, ReaderOptions.ColumnType.Time);
         }
 
         cells.put("A1", givenValue);
@@ -1364,10 +1364,10 @@ public class ImportOptionTest {
     @DisplayName("Test of all the failing date casting on a missing date formatter")
     @Test
     void missingDateFormatterTest() throws Exception {
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         options.setEnforceDateTimesAsNumbers(true);
-        options.setDateFormat(null);
-        options.addEnforcedColumn("A", ImportOptions.ColumnType.Date);
+        options.setDateTimeFormat(null);
+        options.addEnforcedColumn("A", ReaderOptions.ColumnType.Date);
         Map<String, Object> cells = new HashMap<>();
         Map<String, Object> expectedCells = new HashMap<>();
         cells.put(
@@ -1384,10 +1384,10 @@ public class ImportOptionTest {
     @DisplayName("Test of all the failing date casting on a missing time formatter")
     @Test
     void missingTimeFormatterTest() throws Exception {
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         options.setEnforceDateTimesAsNumbers(true);
-        options.setTimeFormat(null);
-        options.addEnforcedColumn("A", ImportOptions.ColumnType.Time);
+        options.setTimeSpanFormat(null);
+        options.addEnforcedColumn("A", ReaderOptions.ColumnType.Time);
         Map<String, Object> cells = new HashMap<>();
         Map<String, Object> expectedCells = new HashMap<>();
         cells.put(
@@ -1412,8 +1412,8 @@ public class ImportOptionTest {
                     "Time, '1800-01-01 00:00:00'",
                     "Time, '-10:00:00'",}
     )
-    void invalidDateCastingTest(ImportOptions.ColumnType columnType, String value) throws Exception {
-        ImportOptions options = new ImportOptions();
+    void invalidDateCastingTest(ReaderOptions.ColumnType columnType, String value) throws Exception {
+        ReaderOptions options = new ReaderOptions();
         options.setEnforceDateTimesAsNumbers(true);
         options.addEnforcedColumn("A", columnType);
         Map<String, Object> cells = new HashMap<>();
@@ -1426,10 +1426,10 @@ public class ImportOptionTest {
     @DisplayName("Test of all the failing casting on an Duration with an invalid (too high) number of days")
     @Test()
     void invalidDateCastingTest2() throws Exception {
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         options.setEnforceDateTimesAsNumbers(true);
-        options.addEnforcedColumn("A", ImportOptions.ColumnType.Time);
-        options.setTimeFormat("HH:mm:ss n");
+        options.addEnforcedColumn("A", ReaderOptions.ColumnType.Time);
+        options.setTimeSpanFormat("HH:mm:ss n");
         Map<String, Object> cells = new HashMap<>();
         Map<String, Object> expectedCells = new HashMap<>();
         cells.put(
@@ -1458,7 +1458,7 @@ public class ImportOptionTest {
         // The cells in column C contains the values with the import option enabled.
         // The values start at Row 2 (Index 1)
 
-        ImportOptions options = new ImportOptions();
+        ReaderOptions options = new ReaderOptions();
         options.setEnforcePhoneticCharacterImport(importOptionValue);
         InputStream stream = TestUtils.getResource("phonetics.xlsx");
         Workbook workbook = Workbook.load(stream, options);
@@ -1473,23 +1473,23 @@ public class ImportOptionTest {
         }
     }
 
-    @DisplayName("Test of all getters of the ImportOptions class (code completion)")
+    @DisplayName("Test of all getters of the ReaderOptions class (code completion)")
     @Test
     void importOptionsGetterTest() {
-        ImportOptions options = new ImportOptions();
-        options.setTemporalLocale(Locale.ITALY);
-        options.setDateFormat("yyyy-mm-dd");
-        options.setTimeFormat("hh-mm");
-        options.setGlobalEnforcingType(ImportOptions.GlobalType.AllNumbersToInt);
+        ReaderOptions options = new ReaderOptions();
+        options.setTemporalCultureInfo(Locale.ITALY);
+        options.setDateTimeFormat("yyyy-mm-dd");
+        options.setTimeSpanFormat("hh-mm");
+        options.setGlobalEnforcingType(ReaderOptions.GlobalType.AllNumbersToInt);
         options.setEnforcingStartRowNumber(7);
         options.setEnforceDateTimesAsNumbers(true);
         options.setEnforceEmptyValuesAsString(true);
 
-        assertEquals(Locale.ITALY, options.getTemporalLocale());
-        assertEquals("yyyy-mm-dd", options.getDateFormat());
-        assertNotNull(options.getDateFormatter());
-        assertEquals("hh-mm", options.getTimeFormat());
-        assertEquals(ImportOptions.GlobalType.AllNumbersToInt, options.getGlobalEnforcingType());
+        assertEquals(Locale.ITALY, options.getTemporalCultureInfo());
+        assertEquals("yyyy-mm-dd", options.getDateTimeFormat());
+        assertNotNull(options.getDateTimeFormatter());
+        assertEquals("hh-mm", options.getTimeSpanFormat());
+        assertEquals(ReaderOptions.GlobalType.AllNumbersToInt, options.getGlobalEnforcingType());
         assertEquals(7, options.getEnforcingStartRowNumber());
         assertTrue(options.isEnforceDateTimesAsNumbers());
         assertTrue(options.isEnforceEmptyValuesAsString());
@@ -1497,78 +1497,32 @@ public class ImportOptionTest {
 
 
     @ParameterizedTest
-    @DisplayName("Test of the ImportOption property EnforceValidColumnDimensions")
+    @DisplayName("Test of the ReaderOptions property EnforceStrictValidation (covers column width and row height)")
     @CsvSource({
-            "valid_column_row_dimensions.xlsx, true, false, 0",
-            "invalid_column_width_min.xlsx, true, true, -1",
-            "invalid_column_width_max.xlsx, true, true, 1",
-            "invalid_row_height_min.xlsx, true, false, 0",
-            "invalid_row_height_max.xlsx, true, false, 0",
-            "valid_column_row_dimensions.xlsx, false, false, 0",
-            "invalid_column_width_min.xlsx, false, false, 0",
-            "invalid_column_width_max.xlsx, false, false, 0",
-            "invalid_row_height_min.xlsx, false, false, 0",
-            "invalid_row_height_max.xlsx, false, fals, 0",
+            "valid_column_row_dimensions.xlsx, true, false",
+            "invalid_column_width_min.xlsx, true, true",
+            "invalid_column_width_max.xlsx, true, true",
+            "invalid_row_height_min.xlsx, true, true",
+            "invalid_row_height_max.xlsx, true, true",
+            "valid_column_row_dimensions.xlsx, false, false",
+            "invalid_column_width_min.xlsx, false, false",
+            "invalid_column_width_max.xlsx, false, false",
+            "invalid_row_height_min.xlsx, false, false",
+            "invalid_row_height_max.xlsx, false, false",
     })
-    void enforceValidColumnDimensionsTest(String fileName, boolean givenOptionValue, boolean expectedThrow, int columnFlag) throws Exception {
-        ImportOptions options = new ImportOptions();
-        options.setEnforceValidColumnDimensions(givenOptionValue);
-        options.setEnforceValidRowDimensions(false);
+    void enforceStrictValidationTest(String fileName, boolean givenOptionValue, boolean expectedThrow) throws Exception {
+        ReaderOptions options = new ReaderOptions();
+        options.setEnforceStrictValidation(givenOptionValue);
         InputStream stream = TestUtils.getResource(fileName);
 
         if (expectedThrow) {
             Assertions.assertThrows(Exception.class, () -> Workbook.load(stream, options));
         } else {
-            Workbook workbook = Workbook.load(stream, options);
-            if (columnFlag == -1){
-             Assertions.assertEquals(Worksheet.MIN_COLUMN_WIDTH, workbook.getWorksheet(0).getColumns().get(0).getWidth());
-            }
-            else if (columnFlag == 1){
-                Assertions.assertEquals(Worksheet.MAX_COLUMN_WIDTH, workbook.getWorksheet(0).getColumns().get(0).getWidth());
-            }
-            else {
-                Assertions.assertTrue(true);
-            }
+            Assertions.assertNotNull(Workbook.load(stream, options));
         }
     }
 
-    @ParameterizedTest
-    @DisplayName("Test of the ImportOption property EnforceValidRowDimensions")
-    @CsvSource({
-            "valid_column_row_dimensions.xlsx, true, false, 0",
-            "invalid_row_height_min.xlsx, true, true, -1",
-            "invalid_row_height_max.xlsx, true, true, 1",
-            "invalid_column_width_min.xlsx, true, false, 0",
-            "invalid_column_width_max.xlsx, true, false, 0",
-            "valid_column_row_dimensions.xlsx, false, false, 0",
-            "invalid_row_height_min.xlsx, false, false, 0",
-            "invalid_row_height_max.xlsx, false, false, 0",
-            "invalid_column_width_min.xlsx, false, false, 0",
-            "invalid_column_width_max.xlsx, false, false, 0"
-    })
-    void enforceValidRowDimensionsTest(String fileName, boolean givenOptionValue, boolean expectedThrow, int rowFlag) throws Exception {
-        ImportOptions options = new ImportOptions();
-        options.setEnforceValidRowDimensions(givenOptionValue);
-        options.setEnforceValidColumnDimensions(false);
-        InputStream stream = TestUtils.getResource(fileName);
-
-        if (expectedThrow) {
-            Assertions.assertThrows(Exception.class, () -> Workbook.load(stream, options));
-        } else {
-            Workbook workbook = Workbook.load(stream, options);
-            if (rowFlag == -1){
-                Assertions.assertEquals(Worksheet.MIN_ROW_HEIGHT, workbook.getWorksheet(0).getRowHeights().get(0));
-            }
-            else if (rowFlag == 1){
-                Assertions.assertEquals(Worksheet.MAX_ROW_HEIGHT, workbook.getWorksheet(0).getRowHeights().get(0));
-            }
-            else {
-                Assertions.assertTrue(true);
-            }
-        }
-    }
-
-    private static <T, D> void assertValues(Map<String, T> givenCells, ImportOptions importOptions, BiConsumer<Object, Object> assertionAction, Map<String, D> expectedCells)
+    private static <T, D> void assertValues(Map<String, T> givenCells, ReaderOptions importOptions, BiConsumer<Object, Object> assertionAction, Map<String, D> expectedCells)
             throws Exception {
         Workbook workbook = new Workbook("worksheet1");
         for (Map.Entry<String, T> cell : givenCells.entrySet()) {

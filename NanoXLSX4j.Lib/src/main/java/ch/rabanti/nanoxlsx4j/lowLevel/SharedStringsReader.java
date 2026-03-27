@@ -1,14 +1,14 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2025
+ * Copyright Raphael Stoeckli @ 2026
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
-import ch.rabanti.nanoxlsx4j.Helper;
-import ch.rabanti.nanoxlsx4j.ImportOptions;
+import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
+import ch.rabanti.nanoxlsx4j.options.ReaderOptions;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class SharedStringsReader {
      *
      * @param importOptions Import options instance
      */
-    public SharedStringsReader(ImportOptions importOptions) {
+    public SharedStringsReader(ReaderOptions importOptions) {
         if (importOptions != null) {
             this.capturePhoneticCharacters = importOptions.isEnforcePhoneticCharacterImport();
             if (this.capturePhoneticCharacters) {
@@ -107,7 +107,7 @@ public class SharedStringsReader {
             if (this.capturePhoneticCharacters) {
                 if (node.hasChildNodes() &&
                         node.getChildNodes().get(0).getName().equalsIgnoreCase("t") &&
-                        !Helper.isNullOrEmpty(node.getChildNodes().get(0).getInnerText())) {
+                        !ParserUtils.isNullOrEmpty(node.getChildNodes().get(0).getInnerText())) {
                     String start = node.getAttribute("sb");
                     String end = node.getAttribute("eb");
                     this.phoneticsInfo.add(new PhoneticInfo(node.getChildNodes().get(0).getInnerText(), start, end));
@@ -116,7 +116,7 @@ public class SharedStringsReader {
             return;
         }
 
-        if (node.getName().equalsIgnoreCase("t") && !Helper.isNullOrEmpty(node.getInnerText())) {
+        if (node.getName().equalsIgnoreCase("t") && !ParserUtils.isNullOrEmpty(node.getInnerText())) {
             // Reproduces the new line behavior of Excel
             String text = node.getInnerText().replace("\r\n", "\n").replace("\n", "\r\n");
             sb.append(text);

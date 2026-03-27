@@ -7,11 +7,13 @@
     <groupId>ch.rabanti</groupId>
     <artifactId>nanoxlsx4j-root</artifactId>
     <packaging>pom</packaging>
-    <version>2.5.5</version>
+    <version>3.0.0-SNAPSHOT</version>
     <modules>
+        <module>NanoXLSX4j.Core</module>
+        <module>NanoXLSX4j.Reader</module>
+        <module>NanoXLSX4j.Writer</module>
         <module>NanoXLSX4j.Lib</module>
-        <!-- Do not add this to build -->
-        <!-- <module>NanoXLSX4j.Demo</module> -->
+        <!-- Demo moved to: https://github.com/rabanti-github/NanoXLSX.Demo -->
     </modules>
 
     <properties>

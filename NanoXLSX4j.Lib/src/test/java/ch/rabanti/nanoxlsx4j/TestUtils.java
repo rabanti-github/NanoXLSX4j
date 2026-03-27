@@ -1,6 +1,7 @@
 package ch.rabanti.nanoxlsx4j;
 
 import ch.rabanti.nanoxlsx4j.exceptions.IOException;
+import ch.rabanti.nanoxlsx4j.options.ReaderOptions;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 
 import java.io.ByteArrayInputStream;
@@ -133,7 +134,7 @@ public class TestUtils {
         assertTrue(list.contains(expectedEntry));
     }
 
-    public static Workbook saveAndLoadWorkbook(Workbook workbook, ImportOptions options)
+    public static Workbook saveAndLoadWorkbook(Workbook workbook, ReaderOptions options)
             throws IOException, java.io.IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         workbook.saveAsStream(stream);

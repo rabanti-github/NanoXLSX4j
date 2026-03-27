@@ -1,12 +1,12 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2025
+ * Copyright Raphael Stoeckli @ 2026
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 package ch.rabanti.nanoxlsx4j.lowLevel;
 
-import ch.rabanti.nanoxlsx4j.Helper;
+import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
 
 /**
  * Static class with common util methods, used during reading XLSX files
@@ -25,7 +25,7 @@ public class ReaderUtils {
      * @return arsed boolean as number (0 = false, 1 = true)
      */
     protected static int parseBinaryBoolean(String rawValue) {
-        if (Helper.isNullOrEmpty(rawValue)) {
+        if (ParserUtils.isNullOrEmpty(rawValue)) {
             return 0;
         }
         IntParser parser = new IntParser(rawValue);

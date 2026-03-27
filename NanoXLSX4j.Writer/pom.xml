@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.rabanti</groupId>
+        <artifactId>nanoxlsx4j-root</artifactId>
+        <version>3.0.0-SNAPSHOT</version> <!-- Maintain also in sibling modules and root -->
+    </parent>
+
+    <artifactId>nanoxlsx4j-writer</artifactId>
+    <packaging>jar</packaging>
+
+    <name>NanoXLSX4j Writer</name>
+    <description>
+        Writer module of NanoXLSX4j: all XLSX writing / serialisation logic (XlsxWriter
+        and related utilities).
+        Source files will be migrated here from nanoxlsx4j-lib in a future release.
+    </description>
+
+    <dependencies>
+        <!-- CORE -->
+        <dependency>
+            <groupId>ch.rabanti</groupId>
+            <artifactId>nanoxlsx4j-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- TEST -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.9.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

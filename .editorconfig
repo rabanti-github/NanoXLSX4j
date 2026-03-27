@@ -1,0 +1,65 @@
+# EditorConfig — https://editorconfig.org
+# Aligned with CodeStyle.xml (Eclipse JDT formatter profile "Default project style").
+# Supported by IntelliJ IDEA, Eclipse, VS Code, NetBeans, and any EditorConfig-aware editor.
+root = true
+
+# ──────────────────────────────────────────────────────────────────────────────
+# All files — baseline
+# ──────────────────────────────────────────────────────────────────────────────
+[*]
+charset                  = utf-8
+end_of_line              = lf
+indent_style             = space
+indent_size              = 4
+tab_width                = 4
+trim_trailing_whitespace = true
+insert_final_newline     = false
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Java source files
+# ──────────────────────────────────────────────────────────────────────────────
+[*.java]
+max_line_length = 120
+
+# IntelliJ IDEA Java-specific formatting (requires IntelliJ 2019.2+).
+# These mirror the Eclipse JDT settings defined in CodeStyle.xml.
+
+# Indentation
+ij_java_continuation_indent_size           = 8     # continuation_indentation = 2 levels × indent_size 4
+ij_java_indent_case_from_switch            = true  # indent_switchstatements_compare_to_switch = true
+
+# Braces — K&R (end-of-line) for all constructs
+ij_java_brace_style                        = end_of_line
+
+# Clause placement on new lines
+ij_java_else_on_new_line                   = true  # insert_new_line_before_else_in_if_statement = insert
+ij_java_catch_on_new_line                  = true  # insert_new_line_before_catch_in_try_statement = insert
+ij_java_finally_on_new_line               = true  # insert_new_line_before_finally_in_try_statement = insert
+
+# One-line policies
+ij_java_keep_simple_methods_in_one_line    = false # keep_method_body_on_one_line = one_line_never
+ij_java_keep_control_statement_in_one_line = true  # keep_then/else_statement_on_same_line = true
+
+# Blank lines
+ij_java_blank_lines_before_imports         = 1     # blank_lines_before_imports = 1
+ij_java_blank_lines_after_imports          = 1     # blank_lines_after_imports  = 1
+ij_java_blank_lines_around_method          = 1     # blank_lines_before_method  = 1
+
+# ──────────────────────────────────────────────────────────────────────────────
+# XML — Maven POMs, config files, descriptors
+# ──────────────────────────────────────────────────────────────────────────────
+[*.xml]
+max_line_length = 120
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Properties / YAML — typically use 2-space indent
+# ──────────────────────────────────────────────────────────────────────────────
+[*.{properties,yml,yaml}]
+indent_size = 2
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Markdown — preserve trailing spaces (two spaces = hard line break)
+# ──────────────────────────────────────────────────────────────────────────────
+[*.md]
+trim_trailing_whitespace = false
+max_line_length          = off

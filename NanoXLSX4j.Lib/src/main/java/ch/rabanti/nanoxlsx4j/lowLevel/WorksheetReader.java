@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2025
+ * Copyright Raphael Stoeckli @ 2026
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -9,8 +9,9 @@ package ch.rabanti.nanoxlsx4j.lowLevel;
 import ch.rabanti.nanoxlsx4j.Address;
 import ch.rabanti.nanoxlsx4j.Cell;
 import ch.rabanti.nanoxlsx4j.Column;
-import ch.rabanti.nanoxlsx4j.Helper;
-import ch.rabanti.nanoxlsx4j.ImportOptions;
+import ch.rabanti.nanoxlsx4j.utils.DataUtils;
+import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
+import ch.rabanti.nanoxlsx4j.options.ReaderOptions;
 import ch.rabanti.nanoxlsx4j.Range;
 import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
@@ -51,7 +52,7 @@ public class WorksheetReader {
     private final Map<String, Cell> data;
     private final SharedStringsReader sharedStrings;
     private final Map<String, String> styleAssignment = new HashMap<>();
-    private final ImportOptions importOptions;
+    private final ReaderOptions importOptions;
     private List<String> dateStyles;
     private List<String> timeStyles;
     private Map<String, Style> resolvedStyles;
@@ -241,7 +242,7 @@ public class WorksheetReader {
      * @param sharedStrings        SharedStringsReader object
      * @param styleReaderContainer Resolved styles, used to determine dates or times
      */
-    public WorksheetReader(SharedStringsReader sharedStrings, StyleReaderContainer styleReaderContainer, ImportOptions options) {
+    public WorksheetReader(SharedStringsReader sharedStrings, StyleReaderContainer styleReaderContainer, ReaderOptions options) {
         this.data = new HashMap<>();
         this.sharedStrings = sharedStrings;
         this.importOptions = options;
@@ -398,7 +399,7 @@ public class WorksheetReader {
                                 this.paneSplitValue.paneSplitRowIndex = intParser.value;
                             }
                             else {
-                                this.paneSplitValue.paneSplitHeight = Helper.getPaneSplitHeight(Float.parseFloat(attribute));
+                                this.paneSplitValue.paneSplitHeight = DataUtils.getPaneSplitHeight(Float.parseFloat(attribute));
                             }
                         }
 
@@ -409,7 +410,7 @@ public class WorksheetReader {
                                 this.paneSplitValue.paneSplitColumnIndex = Integer.parseInt(attribute);
                             }
                             else {
-                                this.paneSplitValue.paneSplitWidth = Helper.getPaneSplitWidth(Float.parseFloat(attribute));
+                                this.paneSplitValue.paneSplitWidth = DataUtils.getPaneSplitWidth(Float.parseFloat(attribute));
                             }
                         }
 
@@ -698,7 +699,7 @@ public class WorksheetReader {
             rawValue = getGloballyEnforcedValue(rawValue, cellAddress);
             rawValue = getGloballyEnforcedFlagValues(rawValue, cellAddress);
             importedType = resolveType(rawValue, importedType);
-            if (importedType == Cell.CellType.DATE && rawValue instanceof Date && ((Date) rawValue).getTime() < Helper.FIRST_ALLOWED_EXCEL_DATE.getTime()) {
+            if (importedType == Cell.CellType.DATE && rawValue instanceof Date && ((Date) rawValue).getTime() < DataUtils.FIRST_ALLOWED_EXCEL_DATE.getTime()) {
                 // Fix conversion from time to date, where time has no days
                 rawValue = addTemporalUnits((Date) rawValue, 1, 0, 0, 0);
             }
@@ -753,10 +754,10 @@ public class WorksheetReader {
         }
         if (importOptions.isEnforceDateTimesAsNumbers()) {
             if (data instanceof Date) {
-                data = Helper.getOADate((Date) data, true);
+                data = DataUtils.getOADate((Date) data, true);
             }
             else if (data instanceof Duration) {
-                data = Helper.getOATime((Duration) data);
+                data = DataUtils.getOATime((Duration) data);
             }
         }
         if (importOptions.isEnforceEmptyValuesAsString()) {
@@ -771,25 +772,25 @@ public class WorksheetReader {
         if (address.Row < importOptions.getEnforcingStartRowNumber()) {
             return data;
         }
-        if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToDouble)) {
+        if (importOptions.getGlobalEnforcingType().equals(ReaderOptions.GlobalType.AllNumbersToDouble)) {
             Object tempDouble = convertToDouble(data);
             if (tempDouble != null) {
                 return tempDouble;
             }
         }
-        if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToBigDecimal)) {
+        if (importOptions.getGlobalEnforcingType().equals(ReaderOptions.GlobalType.AllNumbersToDecimal)) {
             Object tempBigDecimal = convertToBigDecimal(data);
             if (tempBigDecimal != null) {
                 return tempBigDecimal;
             }
         }
-        else if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.AllNumbersToInt)) {
+        else if (importOptions.getGlobalEnforcingType().equals(ReaderOptions.GlobalType.AllNumbersToInt)) {
             Object tempInt = convertToInt(data);
             if (tempInt != null) {
                 return tempInt;
             }
         }
-        else if (importOptions.getGlobalEnforcingType().equals(ImportOptions.GlobalType.EverythingToString)) {
+        else if (importOptions.getGlobalEnforcingType().equals(ReaderOptions.GlobalType.EverythingToString)) {
             return convertToString(data);
         }
         return data;
@@ -808,7 +809,7 @@ public class WorksheetReader {
         switch (importOptions.getEnforcedColumnTypes().get(address.Column)) {
             case Numeric:
                 return getNumericValue(data, importedTyp);
-            case BigDecimal:
+            case Decimal:
                 return convertToBigDecimal(data);
             case Double:
                 return convertToDouble(data);
@@ -860,7 +861,7 @@ public class WorksheetReader {
     }
 
     private Boolean tryParseBool(String raw) {
-        if (Helper.isNullOrEmpty(raw)) {
+        if (ParserUtils.isNullOrEmpty(raw)) {
             return null;
         }
         Object nValue = getNumericValue(raw);
@@ -918,10 +919,10 @@ public class WorksheetReader {
             }
         }
         else if (Date.class.equals(cls)) {
-            return BigDecimal.valueOf(Helper.getOADate((Date) data));
+            return BigDecimal.valueOf(DataUtils.getOADate((Date) data));
         }
         else if (Duration.class.equals(cls)) {
-            return BigDecimal.valueOf(Helper.getOATime((Duration) data));
+            return BigDecimal.valueOf(DataUtils.getOATime((Duration) data));
         }
         else if (String.class.equals(cls)) {
             String tempString = (String) data;
@@ -931,11 +932,11 @@ public class WorksheetReader {
             }
             Date tempDate = tryParseDate(tempString, importOptions);
             if (tempDate != null) {
-                return BigDecimal.valueOf(Helper.getOADate(tempDate));
+                return BigDecimal.valueOf(DataUtils.getOADate(tempDate));
             }
             Duration tempTime = tryParseTime(tempString, importOptions);
             if (tempTime != null) {
-                return BigDecimal.valueOf(Helper.getOATime(tempTime));
+                return BigDecimal.valueOf(DataUtils.getOATime(tempTime));
             }
         }
         return data;
@@ -948,11 +949,11 @@ public class WorksheetReader {
         double tempDouble;
         Class<?> cls = data.getClass();
         if (Date.class.equals(cls)) {
-            tempDouble = Helper.getOADate((Date) data, true);
+            tempDouble = DataUtils.getOADate((Date) data, true);
             return convertDoubleToInt(tempDouble);
         }
         else if (Duration.class.equals(cls)) {
-            tempDouble = Helper.getOATime((Duration) data);
+            tempDouble = DataUtils.getOATime((Duration) data);
             return convertDoubleToInt(tempDouble);
         }
         else if (Float.class.equals(cls) || BigDecimal.class.equals(cls) || Double.class.equals(cls)) {
@@ -978,7 +979,7 @@ public class WorksheetReader {
             return data;
         }
         else if (Duration.class.equals(cls)) {
-            Date root = Helper.FIRST_ALLOWED_EXCEL_DATE;
+            Date root = DataUtils.FIRST_ALLOWED_EXCEL_DATE;
             TimeComponent t = new TimeComponent(((Duration) data).get(ChronoUnit.SECONDS));
             root = addTemporalUnits(root, -1, t.getHours(), t.getMinutes(), t.getSeconds());
             return root;
@@ -993,7 +994,7 @@ public class WorksheetReader {
             return convertDateFromDouble(data);
         }
         else if (String.class.equals(cls)) {
-            Date date2 = tryParseDate((String) data, importOptions.getDateFormatter());
+            Date date2 = tryParseDate((String) data, importOptions.getDateTimeFormatter());
             if (date2 != null) {
                 return date2;
             }
@@ -1006,7 +1007,7 @@ public class WorksheetReader {
         try {
             Date date;
             date = formatter.parse(raw);
-            if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()) {
+            if (date.getTime() >= DataUtils.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= DataUtils.LAST_ALLOWED_EXCEL_DATE.getTime()) {
                 return date;
             }
         }
@@ -1036,7 +1037,7 @@ public class WorksheetReader {
             return convertTimeFromDouble(data);
         }
         else if (String.class.equals(cls)) {
-            Duration time = tryParseTime((String) data, importOptions.getTimeFormatter());
+            Duration time = tryParseTime((String) data, importOptions.getTimeSpanFormatter());
             if (time != null) {
                 return time;
             }
@@ -1048,9 +1049,9 @@ public class WorksheetReader {
     private static Duration tryParseTime(String raw, DateTimeFormatter formatter) {
         try {
             Duration time;
-            time = Helper.parseTime(raw, formatter);
+            time = DataUtils.parseTime(raw, formatter);
             double days = time.get(ChronoUnit.SECONDS) / 86400d;
-            if (days >= 0d && days < Helper.MAX_OADATE_VALUE) {
+            if (days >= 0d && days < DataUtils.MAX_OADATE_VALUE) {
                 return time;
             }
             else {
@@ -1067,12 +1068,12 @@ public class WorksheetReader {
         if (dValue == null) {
             return new Result<>(raw, Cell.CellType.STRING);
         }
-        if ((valueType == Cell.CellType.DATE && (dValue < Helper.MIN_OADATE_VALUE || dValue > Helper.MAX_OADATE_VALUE)) ||
-                (valueType == Cell.CellType.TIME && (dValue < 0.0 || dValue > Helper.MAX_OADATE_VALUE))) {
+        if ((valueType == Cell.CellType.DATE && (dValue < DataUtils.MIN_OADATE_VALUE || dValue > DataUtils.MAX_OADATE_VALUE)) ||
+                (valueType == Cell.CellType.TIME && (dValue < 0.0 || dValue > DataUtils.MAX_OADATE_VALUE))) {
             // fallback to number (cannot be anything else)
             return new Result<>(getNumericValue(raw), Cell.CellType.NUMBER);
         }
-        Date tempDate = Helper.getDateFromOA(dValue);
+        Date tempDate = DataUtils.getDateFromOA(dValue);
         if (dValue < 1.0) {
             tempDate = addTemporalUnits(tempDate, 1, 0, 0, 0); // Modify wrong 1st date when < 1
         }
@@ -1082,7 +1083,7 @@ public class WorksheetReader {
         else {
             CALENDAR.setTime(tempDate);
             return new Result<>(
-                    Helper.createDuration(dValue.intValue(), CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)),
+                    DataUtils.createDuration(dValue.intValue(), CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND)),
                     TIME
             );
         }
@@ -1090,9 +1091,9 @@ public class WorksheetReader {
 
     private Object convertDateFromDouble(Object data) {
         Object oaDate = convertToDouble(data);
-        if (oaDate instanceof Double && (Double) oaDate < Helper.MAX_OADATE_VALUE) {
-            Date date = Helper.getDateFromOA((Double) oaDate);
-            if (date.getTime() >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()) {
+        if (oaDate instanceof Double && (Double) oaDate < DataUtils.MAX_OADATE_VALUE) {
+            Date date = DataUtils.getDateFromOA((Double) oaDate);
+            if (date.getTime() >= DataUtils.FIRST_ALLOWED_EXCEL_DATE.getTime() && date.getTime() <= DataUtils.LAST_ALLOWED_EXCEL_DATE.getTime()) {
                 return date;
             }
         }
@@ -1103,10 +1104,10 @@ public class WorksheetReader {
         Object oaDate = convertToDouble(data);
         if (oaDate instanceof Double) {
             double d = (Double) oaDate;
-            if (d >= Helper.MIN_OADATE_VALUE && d <= Helper.MAX_OADATE_VALUE) {
-                Date date = Helper.getDateFromOA(d);
+            if (d >= DataUtils.MIN_OADATE_VALUE && d <= DataUtils.MAX_OADATE_VALUE) {
+                Date date = DataUtils.getDateFromOA(d);
                 CALENDAR.setTime(date);
-                return Helper.createDuration((int) d, CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND));
+                return DataUtils.createDuration((int) d, CALENDAR.get(Calendar.HOUR_OF_DAY), CALENDAR.get(Calendar.MINUTE), CALENDAR.get(Calendar.SECOND));
             }
         }
         return data;
@@ -1150,12 +1151,12 @@ public class WorksheetReader {
             return ((Boolean) data).toString();
         }
         else if (Date.class.equals(cls)) {
-            return importOptions.getDateFormatter().format((Date) data);
+            return importOptions.getDateTimeFormatter().format((Date) data);
         }
         else if (Duration.class.equals(cls)) {
             TimeComponent t = new TimeComponent((int) ((Duration) data).toSeconds());
             LocalTime tempTime = LocalTime.of(t.getHours(), t.getMinutes(), t.getSeconds(), t.getDays());
-            return importOptions.getTimeFormatter().format(tempTime);
+            return importOptions.getTimeSpanFormatter().format(tempTime);
         }
         return data.toString();
     }
@@ -1174,11 +1175,11 @@ public class WorksheetReader {
                 }
                 Date tempDate = tryParseDate(tempString, importOptions);
                 if (tempDate != null) {
-                    return Helper.getOADate(tempDate);
+                    return DataUtils.getOADate(tempDate);
                 }
                 Duration tempTime = tryParseTime(tempString, importOptions);
                 if (tempTime != null) {
-                    return Helper.getOATime(tempTime);
+                    return DataUtils.getOATime(tempTime);
                 }
                 tempObject = convertToBool(raw);
                 if (tempObject instanceof Boolean) {
@@ -1188,9 +1189,9 @@ public class WorksheetReader {
             case NUMBER:
                 return raw;
             case DATE:
-                return Helper.getOADate((Date) raw);
+                return DataUtils.getOADate((Date) raw);
             case TIME:
-                return Helper.getOATime((Duration) raw);
+                return DataUtils.getOATime((Duration) raw);
             case BOOL:
                 if ((boolean) raw) {
                     return 1;
@@ -1327,26 +1328,26 @@ public class WorksheetReader {
     }
 
     /**
-     * Gets the column width according to {@link ImportOptions#isEnforceValidColumnDimensions()}
+     * Gets the column width according to {@link ReaderOptions#isEnforceStrictValidation()}
      *
      * @param rawValue Raw column value
      * @return Modified column width in case
-     * {@link ImportOptions#isEnforceValidColumnDimensions() is set to false, and the raw value was invalid
-     * @throws Throws a WorksheetException if the raw value was invalid and
-     *                {@link ImportOptions#isEnforceValidColumnDimensions() is set to true
+     * {@link ReaderOptions#isEnforceStrictValidation()} is set to false, and the raw value was invalid
+     * @throws WorksheetException if the raw value was invalid and
+     *                            {@link ReaderOptions#isEnforceStrictValidation()} is set to true
      */
     private float getValidatedWidth(float rawValue) throws WorksheetException {
         if (rawValue < Worksheet.MIN_COLUMN_WIDTH) {
-            if (importOptions.isEnforceValidColumnDimensions()) {
-                throw new WorksheetException(String.format("The worksheet contains an invalid column width (too small: %f) value. Consider using the ImportOption 'setEnforceValidColumnDimensions' to ignore this error.", rawValue));
+            if (importOptions.isEnforceStrictValidation()) {
+                throw new WorksheetException(String.format("The worksheet contains an invalid column width (too small: %f) value. Consider using the ReaderOption 'setEnforceStrictValidation' to ignore this error.", rawValue));
             }
             else {
                 return Worksheet.MIN_COLUMN_WIDTH;
             }
         }
         else if (rawValue > Worksheet.MAX_COLUMN_WIDTH) {
-            if (importOptions.isEnforceValidColumnDimensions()) {
-                throw new WorksheetException(String.format("The worksheet contains an invalid column width (too large: %f) value. Consider using the ImportOption 'setEnforceValidColumnDimensions' to ignore this error.", rawValue));
+            if (importOptions.isEnforceStrictValidation()) {
+                throw new WorksheetException(String.format("The worksheet contains an invalid column width (too large: %f) value. Consider using the ReaderOption 'setEnforceStrictValidation' to ignore this error.", rawValue));
             }
             else {
                 return Worksheet.MAX_COLUMN_WIDTH;
@@ -1386,12 +1387,12 @@ public class WorksheetReader {
      * @param options Import options to take the parsing patterns of
      * @return LocalTime instance or null if not possible to parse
      */
-    private static Date tryParseDate(String raw, ImportOptions options) {
+    private static Date tryParseDate(String raw, ReaderOptions options) {
         try {
-            if (options != null && options.getDateFormatter() != null) {
-                Date date = options.getDateFormatter().parse(raw);
+            if (options != null && options.getDateTimeFormatter() != null) {
+                Date date = options.getDateTimeFormatter().parse(raw);
                 long d = date.getTime();
-                if (d >= Helper.FIRST_ALLOWED_EXCEL_DATE.getTime() && d <= Helper.LAST_ALLOWED_EXCEL_DATE.getTime()) {
+                if (d >= DataUtils.FIRST_ALLOWED_EXCEL_DATE.getTime() && d <= DataUtils.LAST_ALLOWED_EXCEL_DATE.getTime()) {
                     return date;
                 }
             }
@@ -1426,9 +1427,9 @@ public class WorksheetReader {
      * @param options Import options to take the parsing patterns of
      * @return Duration instance or null if not possible to parse
      */
-    private static Duration tryParseTime(String raw, ImportOptions options) {
+    private static Duration tryParseTime(String raw, ReaderOptions options) {
         try {
-            TemporalAccessor time = options.getTimeFormatter().parse(raw);
+            TemporalAccessor time = options.getTimeSpanFormatter().parse(raw);
             int days = time.get(ChronoField.NANO_OF_SECOND);
             int hours = time.get(ChronoField.HOUR_OF_DAY);
             int minutes = time.get(ChronoField.MINUTE_OF_HOUR);
