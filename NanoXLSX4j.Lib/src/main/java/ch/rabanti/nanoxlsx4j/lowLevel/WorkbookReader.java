@@ -1,6 +1,6 @@
 /*
  * NanoXLSX4j is a small Java library to write and read XLSX (Microsoft Excel 2007 or newer) files in an easy and native way
- * Copyright Raphael Stoeckli © 2025
+ * Copyright Raphael Stoeckli © 2026
  * This library is licensed under the MIT License.
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
@@ -178,6 +178,7 @@ public class WorkbookReader {
      * @throws IOException Thrown if the workbook information could not be determined
      */
     private void getWorksheetInformation(XmlDocument.XmlNodeList nodes) throws IOException {
+        int visibleWorksheetOrder = 0;
         for (XmlDocument.XmlNode node : nodes) {
             if (node.getName().equalsIgnoreCase("sheet")) {
                 try {
@@ -188,7 +189,8 @@ public class WorkbookReader {
                     boolean hiddenState = state != null && state.equalsIgnoreCase("hidden");
                     WorksheetDefinition definition = new WorksheetDefinition(id, sheetName, relId);
                     definition.setHidden(hiddenState);
-                    worksheetDefinitions.put(id, definition);
+                    worksheetDefinitions.put(visibleWorksheetOrder, definition);
+                    visibleWorksheetOrder++;
                 }
                 catch (Exception e) {
                     throw new IOException("The workbook information could not be resolved. Please see the inner exception:", e);

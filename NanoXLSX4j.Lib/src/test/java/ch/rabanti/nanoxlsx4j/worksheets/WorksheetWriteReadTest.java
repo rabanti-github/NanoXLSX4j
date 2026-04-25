@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -589,7 +590,6 @@ public class WorksheetWriteReadTest {
         assertFalse(givenWorksheet.getSheetProtectionValues().contains(Worksheet.SheetProtectionValue.selectUnlockedCells));
     }
 
-
     @DisplayName("Test of the 'sheetProtectionPasswordHash' property when writing and reading a worksheet")
     @ParameterizedTest(name = "Given password \"{0}\" should lead to the same hash on worksheet {1} when writing and reading a worksheet")
     @CsvSource(
@@ -688,6 +688,17 @@ public class WorksheetWriteReadTest {
                 CellXf.TextBreakValue.shrinkToFit,
                 givenWorksheet.getCell("A3").getCellStyle().getCellXf().getAlignment()
         );
+    }
+
+    @DisplayName("Test of the correct reading order ow worksheets if the worksheets wre manually reordered in Excel (WS1 is on pos 2 and WS2 is on pos 1")
+    @Test()
+    public void readSwappedWorksheetsTest() throws Exception {
+        // The file has two worksheets: "table 2" at index 0 and "Table 1" as index 1
+        InputStream stream = TestUtils.getResource("swapped_worksheets.xlsx");
+        Workbook workbook = Workbook.load(stream);
+        assertEquals("Table 2", workbook.getWorksheet(0).getSheetName());
+        assertEquals("Table 1", workbook.getWorksheet(1).getSheetName());
+        assertEquals(2, workbook.getWorksheets().size());
     }
 
     private static Map<Worksheet.SheetProtectionValue, Boolean> prepareSheetProtectionValues(String tokenString) {
