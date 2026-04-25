@@ -1020,6 +1020,7 @@ public class Workbook {
     public static Workbook load(String filename, ReaderOptions importOptions) throws IOException, java.io.IOException {
         XlsxReader r = new XlsxReader(filename, importOptions);
         r.read();
+        r.getWorkbook().setFilename(filename);
         return r.getWorkbook();
     }
 

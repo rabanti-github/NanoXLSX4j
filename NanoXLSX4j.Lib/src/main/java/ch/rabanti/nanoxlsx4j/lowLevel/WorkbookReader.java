@@ -178,6 +178,7 @@ public class WorkbookReader {
      * @throws IOException Thrown if the workbook information could not be determined
      */
     private void getWorksheetInformation(XmlDocument.XmlNodeList nodes) throws IOException {
+        int visibleWorksheetOrder = 0;
         for (XmlDocument.XmlNode node : nodes) {
             if (node.getName().equalsIgnoreCase("sheet")) {
                 try {
@@ -188,7 +189,8 @@ public class WorkbookReader {
                     boolean hiddenState = state != null && state.equalsIgnoreCase("hidden");
                     WorksheetDefinition definition = new WorksheetDefinition(id, sheetName, relId);
                     definition.setHidden(hiddenState);
-                    worksheetDefinitions.put(id, definition);
+                    worksheetDefinitions.put(visibleWorksheetOrder, definition);
+                    visibleWorksheetOrder++;
                 }
                 catch (Exception e) {
                     throw new IOException("The workbook information could not be resolved. Please see the inner exception:", e);
