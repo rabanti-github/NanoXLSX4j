@@ -1,5 +1,13 @@
 # Change Log
 
+## v2.5.6
+
+---
+Release Date: **25.04.2026**
+
+- Fixed order of worksheets when manually changed
+- Added filename to workbook when reading from file
+
 ## v2.5.5
 
 ---
