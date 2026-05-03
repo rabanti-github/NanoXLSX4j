@@ -1,5 +1,12 @@
 # Change Log
 
+## v2.5.7
+
+---
+Release Date: **03.05.2026**
+
+- Fixed a bug on empty worksheets without defined sheet views 
+
 ## v2.5.6
 
 ---

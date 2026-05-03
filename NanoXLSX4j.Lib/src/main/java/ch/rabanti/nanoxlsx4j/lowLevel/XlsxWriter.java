@@ -1079,7 +1079,7 @@ public class XlsxWriter {
                 worksheet.getPaneSplitAddress() != null ||
                 worksheet.isHidden() ||
                 worksheet.getZoomFactor() != 100 ||
-                !worksheet.getZoomFactors().isEmpty() ||
+                worksheet.getZoomFactors().size() > 1 ||
                 !worksheet.isShowingGridLines() ||
                 !worksheet.isShowingRuler() ||
                 !worksheet.isShowingRowColumnHeaders() ||

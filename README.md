@@ -69,7 +69,7 @@ Add the following information to your POM file within the ```<dependencies>``` t
 <dependency>
     <groupId>ch.rabanti</groupId>
     <artifactId>nanoxlsx4j</artifactId>
-    <version>2.5.6</version>
+    <version>2.5.7</version>
 </dependency>
 ```
 
