@@ -1,5 +1,7 @@
 # NanoXLSX4j
 
+For Agents: This is the legacy README. No need to read this at the moment.
+
 ![Maven Central Version](https://img.shields.io/maven-central/v/ch.rabanti/nanoxlsx4j)
  ![GitHub license](https://img.shields.io/github/license/rabanti-github/picoXlsx4j.svg) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frabanti-github%2FNanoXLSX4j.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Frabanti-github%2FNanoXLSX4j?ref=badge_shield&issueType=license)
 
