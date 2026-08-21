@@ -21,6 +21,8 @@ class ModuleDescriptorTest {
         Set<String> requiredModules = requiredModules(module);
         assertFalse(requiredModules.contains("ch.rabanti.nanoxlsx4j.reader"));
         assertFalse(requiredModules.contains("ch.rabanti.nanoxlsx4j.writer"));
+        assertTrue(module.getDescriptor().exports().stream()
+            .anyMatch(export -> export.source().equals("ch.rabanti.nanoxlsx4j.colors") && !export.isQualified()));
     }
 
     private static Set<String> requiredModules(Module module) {
