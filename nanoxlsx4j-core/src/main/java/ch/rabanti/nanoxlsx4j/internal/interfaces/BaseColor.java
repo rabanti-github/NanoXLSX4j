@@ -6,12 +6,12 @@
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 
-package ch.rabanti.nanoxlsx4j.colors;
+package ch.rabanti.nanoxlsx4j.internal.interfaces;
 
 /**
  * Represents a color value defined by the system or the user.
  */
-public interface ColorValue {
+public interface BaseColor {
 
     /**
      * Gets the string representation used for the color value.
