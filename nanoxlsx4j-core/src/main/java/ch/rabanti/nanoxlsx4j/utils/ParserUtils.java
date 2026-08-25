@@ -51,6 +51,11 @@ public class ParserUtils {
         return !isNullOrEmpty(input) ? input.toLowerCase(INVARIANT_CULTURE) : input;
     }
 
+    /**
+     * Convenience method to check in one step whether a string is null or empty
+     * @param input String to check
+     * @return True if null or empty, otherwise false
+     */
     public static boolean isNullOrEmpty(String input) {
         return input == null || input.isEmpty();
     }

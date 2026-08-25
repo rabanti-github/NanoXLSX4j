@@ -8,15 +8,11 @@
 
 package ch.rabanti.nanoxlsx4j.exceptions;
 
-/**
- * Exception for errors related to styles.
- */
-public class StyleException extends RuntimeException {
-
+public class WorksheetException extends RuntimeException {
     /**
      * Default constructor
      */
-    public StyleException() {
+    public WorksheetException() {
         super();
     }
 
@@ -25,7 +21,7 @@ public class StyleException extends RuntimeException {
      *
      * @param message Message of the exception
      */
-    public StyleException(String message) {
+    public WorksheetException(String message) {
         super(message);
     }
 
@@ -33,9 +29,9 @@ public class StyleException extends RuntimeException {
      * Constructor with passed message and inner exception
      *
      * @param message Message of the exception
-     * @param cause Inner exception
+     * @param cause   Inner exception
      */
-    public StyleException(String message, Throwable cause) {
+    public WorksheetException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -44,7 +40,7 @@ public class StyleException extends RuntimeException {
      *
      * @param cause Inner exception
      */
-    public StyleException(Throwable cause) {
+    public WorksheetException(Throwable cause) {
         super(cause);
     }
 }
