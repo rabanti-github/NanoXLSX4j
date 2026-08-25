@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.lang.module.ModuleDescriptor;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 class ModuleDescriptorTest {
@@ -14,6 +16,9 @@ class ModuleDescriptorTest {
     @Test
     void hasExpectedModuleBoundary() {
         Module module = getClass().getModule();
+
+        // The following line let IntelliJ ignore this test. It still works with mvn Test
+        Assumptions.assumeTrue(module.isNamed(), "JPMS boundary test requires execution on the module path");
 
         assertTrue(module.isNamed());
         assertEquals("ch.rabanti.nanoxlsx4j.core", module.getName());
