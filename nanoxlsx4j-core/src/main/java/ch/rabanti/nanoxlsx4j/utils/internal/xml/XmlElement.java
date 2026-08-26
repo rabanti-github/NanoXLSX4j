@@ -433,7 +433,7 @@ final class XmlElement {
      * @param writer Target XML stream writer
      * @throws XMLStreamException If the writer cannot write the XML structure
      */
-    private void writeTo(XMLStreamWriter writer) throws XMLStreamException {
+    void writeTo(XMLStreamWriter writer) throws XMLStreamException {
         writeTo(writer, null);
     }
 
