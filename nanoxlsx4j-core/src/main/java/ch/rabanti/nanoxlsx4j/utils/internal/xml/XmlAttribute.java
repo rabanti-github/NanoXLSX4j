@@ -10,19 +10,17 @@ package ch.rabanti.nanoxlsx4j.utils.internal.xml;
 
 import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
 /**
- * Class representing an internally used XML attribute
+ * Record representing an internally used XML attribute.
+ *
+ * @param name name of the attribute without a prefix
+ * @param value attribute value
+ * @param prefix attribute prefix, or an empty string if no prefix is defined
  */
-final class XmlAttribute {
-
-    private final String name;
-    private final String value;
-    private final boolean hasPrefix;
-    private final String prefix;
+record XmlAttribute(String name, String value, String prefix) {
 
     /**
      * Gets the name of the attribute (without prefix)
@@ -45,7 +43,16 @@ final class XmlAttribute {
      * @return True if defined, otherwise false
      */
     public boolean isHasPrefix() {
-        return hasPrefix;
+        return hasPrefix();
+    }
+
+    /**
+     * Gets whether a prefix for the attribute was defined.
+     *
+     * @return true if defined, otherwise false
+     */
+    public boolean hasPrefix() {
+        return !ParserUtils.isNullOrEmpty(prefix);
     }
 
     /**
@@ -54,19 +61,6 @@ final class XmlAttribute {
      */
     public String getPrefix() {
         return prefix;
-    }
-
-    /**
-     * Constructor with all parameters
-     * @param name Attribute name
-     * @param value Attribute value
-     * @param prefix Attribute prefix (do not pass null)
-     */
-    XmlAttribute(String name, String value, String prefix) {
-        this.name = name;
-        this.value = value;
-        this.prefix = prefix;
-        this.hasPrefix = !ParserUtils.isNullOrEmpty(prefix);
     }
 
     /**
@@ -134,36 +128,10 @@ final class XmlAttribute {
         {
             return Optional.empty();
         }
-        if (attributes.stream().noneMatch(a -> a.getName().equals(name)))
+        if (attributes.stream().noneMatch(a -> a.name().equals(name)))
         {
             return Optional.empty();
         }
-        return attributes.stream().filter(a -> a.getName().equals(name)).findFirst();
-    }
-
-    /**
-     * Returns whether two instances are the same
-     * @param o   the reference object with which to compare.
-     * @return True if this instance and the other are the same
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof XmlAttribute that))
-            return false;
-
-        return Objects.equals(name, that.name) && Objects.equals(value, that.value) &&
-                Objects.equals(prefix, that.prefix);
-    }
-
-    /**
-     * Gets the hash code of the attribute
-     * @return Hash Code
-     */
-    @Override
-    public int hashCode() {
-        int result = Objects.hashCode(name);
-        result = 31 * result + Objects.hashCode(value);
-        result = 31 * result + Objects.hashCode(prefix);
-        return result;
+        return attributes.stream().filter(a -> a.name().equals(name)).findFirst();
     }
 }

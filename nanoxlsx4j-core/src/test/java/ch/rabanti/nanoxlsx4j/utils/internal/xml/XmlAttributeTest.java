@@ -31,10 +31,10 @@ class XmlAttributeTest {
     void createXmlAttributeTest(String name, String value, String prefix) {
         XmlAttribute attribute = XmlAttribute.createAttribute(name, value, prefix);
 
-        assertEquals(name, attribute.getName());
-        assertEquals(value, attribute.getValue());
-        assertEquals(prefix, attribute.getPrefix());
-        assertEquals(!prefix.isEmpty(), attribute.isHasPrefix());
+        assertEquals(name, attribute.name());
+        assertEquals(value, attribute.value());
+        assertEquals(prefix, attribute.prefix());
+        assertEquals(!prefix.isEmpty(), attribute.hasPrefix());
     }
 
     @DisplayName("CreateEmptyAttributeTest: Should create attribute with empty value")
@@ -46,10 +46,10 @@ class XmlAttributeTest {
     void createEmptyAttributeTest(String name, String expectedValue) {
         XmlAttribute attribute = XmlAttribute.createEmptyAttribute(name);
 
-        assertEquals(name, attribute.getName());
-        assertEquals(expectedValue, attribute.getValue());
-        assertEquals("", attribute.getPrefix());
-        assertFalse(attribute.isHasPrefix());
+        assertEquals(name, attribute.name());
+        assertEquals(expectedValue, attribute.value());
+        assertEquals("", attribute.prefix());
+        assertFalse(attribute.hasPrefix());
     }
 
     @DisplayName("EqualsTest: Two attributes with same properties should be equal")

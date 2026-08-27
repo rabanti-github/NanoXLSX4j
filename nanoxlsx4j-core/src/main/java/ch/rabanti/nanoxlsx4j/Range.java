@@ -105,7 +105,6 @@ public record Range(Address startAddress, Address endAddress) {
                 this.endAddress.column() < other.startAddress.column() || this.startAddress.column() > other.endAddress.column());
     }
 
-    // TODO Is it possible to create a immutable list?
     /**
      * Gets a list of all addresses between the start and end address
      *
