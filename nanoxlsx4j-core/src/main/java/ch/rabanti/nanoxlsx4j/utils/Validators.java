@@ -10,6 +10,8 @@ package ch.rabanti.nanoxlsx4j.utils;
 
 import java.util.regex.Pattern;
 
+import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 public class Validators {
@@ -77,6 +79,70 @@ public class Validators {
         String message = validateColorInternal(hexCode, useAlpha, allowEmpty);
         if (message != null) {
             throw new StyleException(message);
+        }
+    }
+
+    /**
+     * Validates the passed string, whether it is a valid single cell address or cell range. The address or range can contain modifier characters ({@link Cell.AddressType})
+     *
+     * @param expression The address expression to validate
+     * @throws FormatException A format exception is thrown if the passed address is not a valid cell address or range
+     */ public static void validateCellAddressExpression(String expression)
+    {
+        validateCellAddressExpression(expression,Cell.AddressScope.ANY);
+    }
+
+    /**
+     * Validates the passed string, whether it is a valid single cell address or cell range. The address or range can contain modifier characters ({@link Cell.AddressType})
+     *
+     * <p>Remarks: If {@code scope} is {@link Cell.AddressScope#RANGE}, an explicit range expression is required; a single address is rejected even though {@link Cell#resolveCellRange(String)} can represent it as a one-cell range. If the scope is {@link Cell.AddressScope#INVALID}, the validation is inverted, so that a valid cell or range will throw an exception.</p>
+     *
+     * @param expression The address expression to validate
+     * @param scope Optional parameter to validate for a specific address scope (Any, SingleAddress, Range). Default is: Any
+     * @throws FormatException A format exception is thrown if the passed address is not a valid cell address or range
+     */ public static void validateCellAddressExpression(String expression, Cell.AddressScope scope)
+    {
+        boolean isCellAddress = false;
+        boolean isRange = false;
+        Exception lastException = null;
+        try
+        {
+            Cell.resolveCellCoordinate(expression);
+            isCellAddress = true;
+        }
+        catch (Exception ex)
+        {
+            if (scope == Cell.AddressScope.SINGLE_ADDRESS)
+            {
+                throw new FormatException(ex.getMessage(), ex); // No further checks necessary
+            }
+            lastException = ex;
+        }
+        try
+        {
+            Cell.resolveCellRange(expression);
+            isRange = true;
+        }
+        catch (Exception ex)
+        {
+            if (scope == Cell.AddressScope.RANGE)
+            {
+                throw new FormatException(ex.getMessage(), ex); // No further checks necessary
+            }
+            lastException = ex;
+        }
+        if (scope == Cell.AddressScope.RANGE && isCellAddress && isRange)
+        {
+            FormatException innerException = new FormatException("The expression (" + expression + ") is a single cell address, but a cell range was expected");
+            throw new FormatException(innerException.getMessage(), innerException);
+        }
+        else if (scope == Cell.AddressScope.ANY && !isCellAddress && !isRange)
+        {
+            throw new FormatException(lastException.getMessage(), lastException); // Not a cell or range
+        }
+        else if (scope == Cell.AddressScope.INVALID && (isCellAddress || isRange))
+        {
+            throw new FormatException("The passed expression is valid cell address or range, but the validation was explicitly inverted");
         }
     }
 
