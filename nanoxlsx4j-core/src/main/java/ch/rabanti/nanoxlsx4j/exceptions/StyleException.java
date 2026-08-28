@@ -33,7 +33,7 @@ public class StyleException extends RuntimeException {
      * Constructor with passed message and inner exception
      *
      * @param message Message of the exception
-     * @param cause Inner exception
+     * @param cause   Inner exception
      */
     public StyleException(String message, Throwable cause) {
         super(message, cause);

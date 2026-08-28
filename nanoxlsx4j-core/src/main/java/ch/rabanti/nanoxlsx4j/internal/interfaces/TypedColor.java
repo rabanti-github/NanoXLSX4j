@@ -10,18 +10,21 @@ package ch.rabanti.nanoxlsx4j.internal.interfaces;
 
 /**
  * Interface to represent typed color with a specific value, based on a generic type {@code T}
+ *
  * @param <T> The concrete color value type
  */
 public interface TypedColor<T> extends BaseColor {
 
     /**
      * Gets the color value of the type {@code  T}
+     *
      * @return Value of the type {@code  T}
      */
     T getColorValue();
 
     /**
      * Sets the color value of the type {@code T}
+     *
      * @param colorValue Value of the type {@code T}
      */
     void setColorValue(T colorValue);

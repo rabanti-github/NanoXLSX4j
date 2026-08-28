@@ -35,10 +35,15 @@ public class Cell implements Comparable<Cell> {
     public enum CellType {
         /** Type for single characters and strings */
         STRING,
-        /** Type for all numeric types (long, integer, float, double, short, byte and decimal; signed and unsigned, if
-         available) */
+        /**
+         * Type for all numeric types (long, integer, float, double, short, byte and decimal; signed and unsigned, if
+         * available)
+         */
         NUMBER,
-        /** Type for dates, represented by {@link Date}  (Note: Dates before 1900-01-01 and after 9999-12-31 are not allowed) */
+        /**
+         * Type for dates, represented by {@link Date}  (Note: Dates before 1900-01-01 and after 9999-12-31 are not
+         * allowed)
+         */
         DATE,
         /** Type for times (Note: Internally handled as OAdate, represented by {@link java.time.Duration}) */
         TIME,
@@ -46,16 +51,16 @@ public class Cell implements Comparable<Cell> {
         BOOL,
         /** Type for Formulas (The cell will be handled differently) */
         FORMULA,
-        /** Type for empty cells. This type is only used for merged cells (all cells except the first of the cell
-        range) */
+        /**
+         * Type for empty cells. This type is only used for merged cells (all cells except the first of the cell range)
+         */
         EMPTY,
         /**
          *
          * <p>Remarks: The preferred value for this type is an {@link ch.rabanti.nanoxlsx4j.enums.FormulaError}. A
-         * formula whose cached result is an error
-         * remains a {@link CellType#FORMULA} cell and exposes the error through {@link FormulaData#getCachedValue()}
-         * and {@link FormulaData#getCachedValueType()}. Explicitly changing a formula cell to this type discards its
-         * formula metadata.
+         * formula whose cached result is an error remains a {@link CellType#FORMULA} cell and exposes the error through
+         * {@link FormulaData#getCachedValue()} and {@link FormulaData#getCachedValueType()}. Explicitly changing a
+         * formula cell to this type discards its formula metadata.
          * </p>
          */
         ERROR,
@@ -104,18 +109,22 @@ public class Cell implements Comparable<Cell> {
 // getters & setters
 
     /**
-     * Gets the combined cell Address as string in the format A1 - XFD1048576. The address may contain a {@link Cell.AddressType} modifier (e.g. C$50)
+     * Gets the combined cell Address as string in the format A1 - XFD1048576. The address may contain a
+     * {@link Cell.AddressType} modifier (e.g. C$50)
+     *
      * @return Cell address as string
      */
-    public  String getCellAddress(){
+    public String getCellAddress() {
         return resolveCellAddress(columnNumber, rowNumber, cellAddressType);
     }
 
     /**
-     * Sets the combined cell Address as string in the format A1 - XFD1048576. The address may contain a {@link Cell.AddressType} modifier (e.g. C$50)
+     * Sets the combined cell Address as string in the format A1 - XFD1048576. The address may contain a
+     * {@link Cell.AddressType} modifier (e.g. C$50)
+     *
      * @param cellAddress Cell address as string
      */
-    public void setCellAddress(String cellAddress){
+    public void setCellAddress(String cellAddress) {
         Address address = resolveCellCoordinate(cellAddress);
         this.columnNumber = address.column();
         this.rowNumber = address.row();
@@ -124,17 +133,19 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * Gets the combined cell Address as Address object
+     *
      * @return Address instance
      */
-    public Address getCellAddress2(){
+    public Address getCellAddress2() {
         return new Address(columnNumber, rowNumber, cellAddressType);
     }
 
     /**
      * Sets the combined cell Address as Address object
+     *
      * @param cellAddress Address instance
      */
-    public void setCellAddress2(Address cellAddress){
+    public void setCellAddress2(Address cellAddress) {
         setColumnNumber(cellAddress.column());
         setRowNumber(cellAddress.row());
         cellAddressType = cellAddress.type();
@@ -142,6 +153,7 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * Gets the assigned style of the cell
+     *
      * @return Cell style
      */
     public Style getCellStyle() {
@@ -150,6 +162,7 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * Gets the number of the column (zero-based)
+     *
      * @return Column number
      */
     public int getColumnNumber() {
@@ -158,8 +171,8 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * Sets the number of the column (zero-based)
-     * @param columnNumber Column number
      *
+     * @param columnNumber Column number
      * @throws RangeException Thrown if the column number is out of range
      */
     public void setColumnNumber(int columnNumber) {
@@ -169,6 +182,7 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * Gets the type of the cell
+     *
      * @return Type of the cell
      */
     public CellType getDataType() {
@@ -178,39 +192,35 @@ public class Cell implements Comparable<Cell> {
     /**
      * Sets the type of the cell
      *
-     * <p>Remarks: Changing the type of an existing cell can create or discard formula metadata and update aggregated workbook features.
-     * Prefer assigning {@link Cell#getValue()} when automatic type resolution is intended. Repeated manual transitions to or from {@link CellType#FORMULA}
-     * may allocate formula metadata and cause feature-counter propagation.
+     * <p>Remarks: Changing the type of an existing cell can create or discard formula metadata and update aggregated
+     * workbook features. Prefer assigning {@link Cell#getValue()} when automatic type resolution is intended. Repeated
+     * manual transitions to or from {@link CellType#FORMULA} may allocate formula metadata and cause feature-counter
+     * propagation.
      * </p>
      */
     public void setDataType(CellType dataType) {
-        if (this.dataType == dataType)
-        {
+        if (this.dataType == dataType) {
             return;
         }
-        if (dataType == CellType.FORMULA)
-        {
-            this.setDataType( dataType);
-            if (formula == null)
-            {
+        if (dataType == CellType.FORMULA) {
+            this.setDataType(dataType);
+            if (formula == null) {
                 this.formula = new FormulaData(getValueAsFormulaExpression());
-            }
-            else
-            {
+            } else {
                 attachFormulaFeatures();
                 synchronizeValueFromFormula();
             }
             return;
         }
-        if (this.dataType == CellType.FORMULA)
-        {
+        if (this.dataType == CellType.FORMULA) {
             clearFormula();
         }
-        this.setDataType(dataType);
+        this.dataType = dataType;
     }
 
     /**
      * Gets the number of the row (zero-based)
+     *
      * @return Row number
      */
     public int getRowNumber() {
@@ -219,8 +229,8 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * Sets the number of the row (zero-based)
-     * @param rowNumber Row number
      *
+     * @param rowNumber Row number
      * @throws RangeException Thrown if the row number is out of range
      */
     public void setRowNumber(int rowNumber) {
@@ -230,8 +240,10 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * Gets the optional address type that can be part of the cell address.
+     *
      * @return Address type
-     * <p>Remarks: The type has no influence on the behavior of the cell, though. It is preserved to avoid losing information on the address object of the cell</p>
+     * <p>Remarks: The type has no influence on the behavior of the cell, though. It is preserved to avoid losing
+     * information on the address object of the cell</p>
      */
     public AddressType getCellAddressType() {
         return cellAddressType;
@@ -239,8 +251,11 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * Sets the optional address type that can be part of the cell address.
+     *
      * @param cellAddressType Address type
-     * <p>Remarks: The type has no influence on the behavior of the cell, though. It is preserved to avoid losing information on the address object of the cell</p>
+     *                        <p>Remarks: The type has no influence on the behavior of the cell, though. It is
+     *                        preserved
+     *                        to avoid losing information on the address object of the cell</p>
      */
     public void setCellAddressType(AddressType cellAddressType) {
         this.cellAddressType = cellAddressType;
@@ -255,23 +270,23 @@ public class Cell implements Comparable<Cell> {
     }
 
     /**
-     * Sets the value of the cell (generic object type). When setting a value, the {@link Cell#setDataType(CellType)} ()} is automatically resolved
+     * Sets the value of the cell (generic object type). When setting a value, the {@link Cell#setDataType(CellType)}
+     * ()} is automatically resolved
      *
-     * <p>Remarks: Assigning a value automatically resolves the cell type and may therefore replace formula metadata. An
-     * {@link ch.rabanti.nanoxlsx4j.enums.FormulaError} value resolves to a standalone {@link CellType#ERROR} cell.
-     * For formula cells, the assigned value is also synchronized with {@link FormulaData#getExpression()}. Linked formula cells whose
-     * {@link FormulaData#getMasterCellAddress()} is set retain their special cached-value behavior.
+     * <p>Remarks: Assigning a value automatically resolves the cell type and may therefore replace formula metadata.
+     * An {@link ch.rabanti.nanoxlsx4j.enums.FormulaError} value resolves to a standalone {@link CellType#ERROR} cell.
+     * For formula cells, the assigned value is also synchronized with {@link FormulaData#getExpression()}. Linked
+     * formula cells whose {@link FormulaData#getMasterCellAddress()} is set retain their special cached-value
+     * behavior.
      * </p>
      */
     public void setValue(Object value) {
         this.value = value;
         resolveCellType();
-        if (dataType != CellType.FORMULA || formula == null)
-        {
+        if (dataType != CellType.FORMULA || formula == null) {
             return;
         }
-        if (formula.getMasterCellAddress() == null)
-        {
+        if (formula.getMasterCellAddress() == null) {
             String expression = getValueAsFormulaExpression();
             if (!Objects.equals(formula.getExpression(), expression) && formula.getDefinedNameReference() != null) {
                 formula.setDefinedNameReference(null); // Remove additional references
@@ -281,10 +296,13 @@ public class Cell implements Comparable<Cell> {
     }
 
     /**
-     * Gets the Formula object in case of the cell has the DataType {@link CellType#FORMULA}. Default is null, if the cell does not contain a formula
+     * Gets the Formula object in case of the cell has the DataType {@link CellType#FORMULA}. Default is null, if the
+     * cell does not contain a formula
      *
-     * <p>Remarks: The plain text of the formula is still set in {@link @link Cell#getValue()}. One exception are linked cells ({@link FormulaData.FormulaType#ARRAY} and {@link FormulaData#getMasterCellAddress()} is set).
-     * In this case, the cached value will be in {@link Cell#getValue()} due to compatibility reason.
+     * <p>Remarks: The plain text of the formula is still set in {@link @link Cell#getValue()}. One exception are
+     * linked
+     * cells ({@link FormulaData.FormulaType#ARRAY} and {@link FormulaData#getMasterCellAddress()} is set). In this
+     * case, the cached value will be in {@link Cell#getValue()} due to compatibility reason.
      * </p>
      */
     public FormulaData getFormula() {
@@ -292,16 +310,19 @@ public class Cell implements Comparable<Cell> {
     }
 
     /**
-     * Sets the Formula object internally in case of the cell has the DataType {@link CellType#FORMULA}. Default is null, if the cell does not contain a formula
+     * Sets the Formula object internally in case of the cell has the DataType {@link CellType#FORMULA}. Default is
+     * null, if the cell does not contain a formula
      *
-     * <p>Remarks: The plain text of the formula is still set in {@link @link Cell#getValue()}. One exception are linked cells ({@link FormulaData.FormulaType#ARRAY} and {@link FormulaData#getMasterCellAddress()} is set).
-     * In this case, the cached value will be in {@link Cell#getValue()} due to compatibility reason.
-     * <br />API note: Do not manually tamper with Formula. There is {@link FeatureSet} inside, responsible for up-stream propagated feature counters.
+     * <p>Remarks: The plain text of the formula is still set in {@link @link Cell#getValue()}. One exception are
+     * linked
+     * cells ({@link FormulaData.FormulaType#ARRAY} and {@link FormulaData#getMasterCellAddress()} is set). In this
+     * case, the cached value will be in {@link Cell#getValue()} due to compatibility reason. <br />API note: Do not
+     * manually tamper with Formula. There is {@link FeatureSet} inside, responsible for up-stream propagated feature
+     * counters.
      * </p>
      */
     void setFormula(FormulaData formula) {
-        if (this.formula == formula)
-        {
+        if (this.formula == formula) {
             return;
         }
         detachFormulaFeatures();
@@ -315,88 +336,78 @@ public class Cell implements Comparable<Cell> {
     /**
      * Default constructor. Cells created with this constructor do not have a link to a worksheet initially
      */
-    public Cell()
-    {
-        this.setDataType( CellType.DEFAULT);
+    public Cell() {
+        this.setDataType(CellType.DEFAULT);
     }
 
     /**
-     * Constructor with value and cell type. Cells created with this constructor do not have a link to a worksheet initially
+     * Constructor with value and cell type. Cells created with this constructor do not have a link to a worksheet
+     * initially
      *
-     * <p>Remarks: If the {@link Cell#getDataType()} is defined as {@link CellType#EMPTY} any passed value will be set to null</p>
+     * <p>Remarks: If the {@link Cell#getDataType()} is defined as {@link CellType#EMPTY} any passed value will be set
+     * to null</p>
      *
      * @param value Value of the cell
-     * @param type Type of the cell
+     * @param type  Type of the cell
      */
-    public Cell(Object value, CellType type)
-    {
-        if (type == CellType.EMPTY)
-        {
+    public Cell(Object value, CellType type) {
+        if (type == CellType.EMPTY) {
             this.value = null;
-        }
-        else
-        {
+        } else {
             this.value = value;
         }
         setDataType(type);
-        if (type == CellType.DEFAULT)
-        {
+        if (type == CellType.DEFAULT) {
             resolveCellType();
         }
     }
 
     /**
-     * Constructor with value, cell type and address as string. The worksheet reference is set to null and must be assigned later
+     * Constructor with value, cell type and address as string. The worksheet reference is set to null and must be
+     * assigned later
      *
-     * <p>Remarks: If the {@link Cell#getDataType()} is defined as {@link CellType#EMPTY} any passed value will be set to null</p>
+     * <p>Remarks: If the {@link Cell#getDataType()} is defined as {@link CellType#EMPTY} any passed value will be set
+     * to null</p>
      *
-     * @param value Value of the cell
-     * @param type Type of the cell
+     * @param value   Value of the cell
+     * @param type    Type of the cell
      * @param address Address of the cell
      */
-    public Cell(Object value, CellType type, String address)
-    {
-        if (type == CellType.EMPTY)
-        {
+    public Cell(Object value, CellType type, String address) {
+        if (type == CellType.EMPTY) {
             this.value = null;
-        }
-        else
-        {
+        } else {
             this.value = value;
         }
         setDataType(type);
         setCellAddress(address);
-        if (type == CellType.DEFAULT)
-        {
+        if (type == CellType.DEFAULT) {
             resolveCellType();
         }
     }
 
     /**
-     * Constructor with value, cell type and address as struct. The worksheet reference is set to null and must be assigned later
+     * Constructor with value, cell type and address as struct. The worksheet reference is set to null and must be
+     * assigned later
      *
-     * <p>Remarks: If the {@link Cell#getDataType()} is defined as {@link CellType#EMPTY} any passed value will be set to null</p>
+     * <p>Remarks: If the {@link Cell#getDataType()} is defined as {@link CellType#EMPTY} any passed value will be set
+     * to null</p>
      *
-     * @param value Value of the cell
-     * @param type Type of the cell
+     * @param value   Value of the cell
+     * @param type    Type of the cell
      * @param address Address struct of the cell
      */
-    public Cell(Object value, CellType type, Address address)
-    {
-        if (type == CellType.EMPTY)
-        {
+    public Cell(Object value, CellType type, Address address) {
+        if (type == CellType.EMPTY) {
             this.value = null;
-        }
-        else
-        {
+        } else {
             this.value = value;
         }
         setDataType(type);
         columnNumber = address.column();
         rowNumber = address.row();
         this.cellAddressType = address.type();
-        if (type == CellType.DEFAULT)
-        {
+        if (type == CellType.DEFAULT) {
             resolveCellType();
         }
     }
@@ -408,14 +419,12 @@ public class Cell implements Comparable<Cell> {
     /// <param name="type">Type of the cell</param>
     /// <param name="column">Column number of the cell (zero-based)</param>
     /// <param name="row">Row number of the cell (zero-based)</param>
-    public Cell(Object value, CellType type, int column, int row)
-    {
+    public Cell(Object value, CellType type, int column, int row) {
         this(value, type);
         setColumnNumber(column);
         setRowNumber(row);
         this.cellAddressType = AddressType.DEFAULT;
-        if (type == CellType.DEFAULT)
-        {
+        if (type == CellType.DEFAULT) {
             resolveCellType();
         }
     }
@@ -425,37 +434,38 @@ public class Cell implements Comparable<Cell> {
     /**
      * Removes the assigned style from the cell
      */
-    public void removeStyle()
-    {
+    public void removeStyle() {
         this.cellStyle = null;
     }
 
     /**
      * Sets this cell as a reference to a {@link DefinedName} (workbook- or worksheet-scoped). The cell's
-     * {@link Cell#getDataType()} becomes {@link CellType#FORMULA} and its {@link Cell#getValue()} is set to {@link DefinedName#getName()}.
+     * {@link Cell#getDataType()} becomes {@link CellType#FORMULA} and its {@link Cell#getValue()} is set to
+     * {@link DefinedName#getName()}.
      *
      * @param definedName Defined name to associate with this cell. Must not be null.
-     * @return Returns the range object of transposed linked cells if the type is {@link DefinedName.NameType#RANGE}. The value is null otherwise.
+     * @return Returns the range object of transposed linked cells if the type is {@link DefinedName.NameType#RANGE}.
+     * The value is null otherwise.
      * @throws WorksheetException Thrown if {@code definedName} is null.
      */
-    Range setReference(DefinedName definedName)
-    {
+    Range setReference(DefinedName definedName) {
         return setReference(definedName, null);
     }
 
     /**
      * Sets this cell as a reference to a {@link DefinedName} (workbook- or worksheet-scoped). The cell's
-     * {@link Cell#getDataType()} becomes {@link CellType#FORMULA} and its {@link Cell#getValue()} is set to {@link DefinedName#getName()}.
+     * {@link Cell#getDataType()} becomes {@link CellType#FORMULA} and its {@link Cell#getValue()} is set to
+     * {@link DefinedName#getName()}.
      *
      * @param definedName Defined name to associate with this cell. Must not be null.
-     * @param cachedValue Optional cached value that will be shown as long as the cell is not refreshed. The value will be ignored if the defined name type is {@link DefinedName.NameType#CONSTANT}
-     * @return Returns the range object of transposed linked cells if the type is {@link DefinedName.NameType#RANGE}. The value is null otherwise.
+     * @param cachedValue Optional cached value that will be shown as long as the cell is not refreshed. The value will
+     *                    be ignored if the defined name type is {@link DefinedName.NameType#CONSTANT}
+     * @return Returns the range object of transposed linked cells if the type is {@link DefinedName.NameType#RANGE}.
+     * The value is null otherwise.
      * @throws WorksheetException Thrown if {@code definedName} is null.
      */
-    Range setReference(DefinedName definedName, Object cachedValue)
-    {
-        if (definedName == null)
-        {
+    Range setReference(DefinedName definedName, Object cachedValue) {
+        if (definedName == null) {
             throw new WorksheetException("The defined name to set as cell reference must not be null.");
         }
         if (this.formula == null) {
@@ -465,24 +475,17 @@ public class Cell implements Comparable<Cell> {
         Range referenceRange = null;
         formula.setDefinedNameReference(definedName);
         formula.setExpression(definedName.getName());
-        if (definedName.getType() == DefinedName.NameType.RANGE)
-        {
+        if (definedName.getType() == DefinedName.NameType.RANGE) {
             formula.setType(FormulaData.FormulaType.ARRAY);
             referenceRange = transposeDefinedNameArrayRange(definedName.getTextValue());
         }
-        if (definedName.getType() == DefinedName.NameType.CONSTANT)
-        {
+        if (definedName.getType() == DefinedName.NameType.CONSTANT) {
             formula.setCachedValue(definedName.getTextValue());
             formula.setCachedValueType(FormulaData.resolveCachedValueType(definedName.getValue()));
-        }
-        else
-        {
-            if (cachedValue == null || (cachedValue instanceof String && ((String) cachedValue).isEmpty()))
-            {
+        } else {
+            if (cachedValue == null || (cachedValue instanceof String && ((String) cachedValue).isEmpty())) {
                 formula.setCachedValueType(CellType.NUMBER);
-            }
-                else
-            {
+            } else {
                 formula.setCachedValueType(FormulaData.resolveCachedValueType(cachedValue));
             }
             formula.setCachedValue(ParserUtils.toCachedValueString(cachedValue)); // Force value as plain OOXML string
@@ -494,50 +497,53 @@ public class Cell implements Comparable<Cell> {
     }
 
     /**
-     * Method resets the Cell type and tries to find the actual type. This is used if a Cell was created with the {@link Cell.CellType#DEFAULT} or automatically if a value was set by {@link Cell#setValue(Object)}}.
-     * {@link Cell.CellType#FORMULA} will skip this method and {@link Cell.CellType#EMPTY} will discard the value of the cell
+     * Method resets the Cell type and tries to find the actual type. This is used if a Cell was created with the
+     * {@link Cell.CellType#DEFAULT} or automatically if a value was set by {@link Cell#setValue(Object)}}.
+     * {@link Cell.CellType#FORMULA} will skip this method and {@link Cell.CellType#EMPTY} will discard the value of the
+     * cell
      */
-    public void resolveCellType()
-    {
-        if (this.value == null)
-        {
+    public void resolveCellType() {
+        if (this.value == null) {
             this.setDataType(CellType.EMPTY);
             this.value = null;
             return;
         }
-        if (this.dataType == CellType.FORMULA)
-        { return; } // Do not overwrite type
+        if (this.dataType == CellType.FORMULA) {
+            return;
+        } // Do not overwrite type
         Object t = this.value;
-        if (t instanceof Boolean)
-        { this.setDataType(CellType.BOOL); }
-        else if (t instanceof Byte) // C# type sbyte not existing
-        { setDataType( CellType.NUMBER); }
-            else if (t instanceof BigDecimal) // c# decimal
-    { setDataType( CellType.NUMBER); }
-    else if (t instanceof Double)
-        { setDataType( CellType.NUMBER); }
-            else if (t instanceof Float)
-        { setDataType( CellType.NUMBER); }
-            else if (t instanceof  Integer) // C# type uint not existing
-        { setDataType( CellType.NUMBER); }
-            else if (t instanceof  Long) // C# type ulong not existing
-        { setDataType( CellType.NUMBER); }
-            else if (t instanceof  Short) // C# type ushort not existing
-        { setDataType( CellType.NUMBER); }
-            else if (t instanceof Date)
-    {
-        setDataType( CellType.DATE);
-        setStyle(BasicStyles.getDateFormat());
-    }
-
-    else if (t instanceof Duration)
-    {
-        setDataType( CellType.TIME);
-        setStyle(BasicStyles.getTimeFormat());
-    }
-    else if (t instanceof Errors)
-    { setDataType( CellType.ERROR); }
-    else { setDataType( CellType.STRING); } // Default (char, string, object)
+        if (t instanceof Boolean) {
+            this.setDataType(CellType.BOOL);
+        } else if (t instanceof Byte) // C# type sbyte not existing
+        {
+            setDataType(CellType.NUMBER);
+        } else if (t instanceof BigDecimal) // c# decimal
+        {
+            setDataType(CellType.NUMBER);
+        } else if (t instanceof Double) {
+            setDataType(CellType.NUMBER);
+        } else if (t instanceof Float) {
+            setDataType(CellType.NUMBER);
+        } else if (t instanceof Integer) // C# type uint not existing
+        {
+            setDataType(CellType.NUMBER);
+        } else if (t instanceof Long) // C# type ulong not existing
+        {
+            setDataType(CellType.NUMBER);
+        } else if (t instanceof Short) // C# type ushort not existing
+        {
+            setDataType(CellType.NUMBER);
+        } else if (t instanceof Date) {
+            setDataType(CellType.DATE);
+            setStyle(BasicStyles.getDateFormat());
+        } else if (t instanceof Duration) {
+            setDataType(CellType.TIME);
+            setStyle(BasicStyles.getTimeFormat());
+        } else if (t instanceof Errors) {
+            setDataType(CellType.ERROR);
+        } else {
+            setDataType(CellType.STRING);
+        } // Default (char, string, object)
     }
 
     /**
@@ -549,15 +555,11 @@ public class Cell implements Comparable<Cell> {
      * @param isHidden If true, the value of the cell will be invisible if the worksheet is protected
      * @throws StyleException Throws a StyleException if the style used to lock cells cannot be referenced
      */
-    public void setCellLockedState(boolean isLocked, boolean isHidden)
-    {
+    public void setCellLockedState(boolean isLocked, boolean isHidden) {
         Style lockStyle;
-        if (cellStyle == null)
-        {
+        if (cellStyle == null) {
             lockStyle = new Style();
-        }
-        else
-        {
+        } else {
             lockStyle = cellStyle.copyStyle();
         }
         lockStyle.getCurrentCellXf().setLocked(isLocked);
@@ -569,30 +571,29 @@ public class Cell implements Comparable<Cell> {
      * Sets the style of the cell
      *
      * @param style Style to assign
-     * @return If the passed style already exists in the repository, the existing one will be returned, otherwise the passed one
+     * @return If the passed style already exists in the repository, the existing one will be returned, otherwise the
+     * passed one
      */
-    public Style setStyle(Style style)
-    {
+    public Style setStyle(Style style) {
         return setStyleInternal(style, false);
     }
 
     /**
      * Sets the style of the cell internally
      *
-     * @param style Style to assign
-     * @param unmanaged Internally used: If true, the style repository is not invoked and only the style object of the cell is updated. Do not use!
-     * @return If the passed style already exists in the repository, the existing one will be returned, otherwise the passed one
+     * @param style     Style to assign
+     * @param unmanaged Internally used: If true, the style repository is not invoked and only the style object of the
+     *                  cell is updated. Do not use!
+     * @return If the passed style already exists in the repository, the existing one will be returned, otherwise the
+     * passed one
      */
-     Style setStyleInternal(Style style, boolean unmanaged)
-    {
-        if (style == null)
-        {
+    Style setStyleInternal(Style style, boolean unmanaged) {
+        if (style == null) {
             throw new StyleException("No style to assign was defined");
         }
-        if (unmanaged){
+        if (unmanaged) {
             this.cellStyle = style;
-        }
-        else{
+        } else {
             this.cellStyle = StyleRepository.getInstance().addStyle(style);
         }
         return this.cellStyle;
@@ -603,17 +604,15 @@ public class Cell implements Comparable<Cell> {
      *
      * @return Copy of this cell
      */
-    Cell copy()
-    {
+    Cell copy() {
         Cell copy = new Cell();
         copy.value = this.value;
         copy.setCellAddress(this.getCellAddress());
         copy.setCellAddressType(this.cellAddressType);
-        if (this.formula != null){
+        if (this.formula != null) {
             copy.formula = this.formula.copy();
         }
-        if (this.cellStyle != null)
-        {
+        if (this.cellStyle != null) {
             copy.setStyleInternal(this.cellStyle, true);
         }
         return copy;
@@ -623,8 +622,8 @@ public class Cell implements Comparable<Cell> {
      * Implemented CompareTo method
      *
      * <p>Remarks: Note that this method only compares the row and column numbers,
-     * since the values or styles may be completely different types, and therefore hard to compare at all.<br />
-     * The {@link Cell#equals(Object)} method considers values and style, though.
+     * since the values or styles may be completely different types, and therefore hard to compare at all.<br /> The
+     * {@link Cell#equals(Object)} method considers values and style, though.
      * </p>
      *
      * @param other Object to compare
@@ -632,27 +631,27 @@ public class Cell implements Comparable<Cell> {
      */
     @Override
     public int compareTo(Cell other) {
-        if (other == null)
-        {
+        if (other == null) {
             return -1;
         }
-        if (rowNumber == other.rowNumber)
-        {
+        if (rowNumber == other.rowNumber) {
             return Integer.compare(columnNumber, other.columnNumber);
         }
 
-        return Integer.compare(rowNumber,other.rowNumber);
+        return Integer.compare(rowNumber, other.rowNumber);
     }
 
     /**
      * Compares two objects whether they are addresses and equal
-     * @param o   the reference object with which to compare.
+     *
+     * @param o the reference object with which to compare.
      * @return True if not null, of the same type and equal
      */
     @Override
     public final boolean equals(Object o) {
-        if (!(o instanceof Cell cell))
+        if (!(o instanceof Cell cell)) {
             return false;
+        }
 
         return columnNumber == cell.columnNumber && rowNumber == cell.rowNumber &&
                 Objects.equals(cellStyle, cell.cellStyle) && dataType == cell.dataType &&
@@ -662,6 +661,7 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * Gets the hash code of the cell
+     *
      * @return Hash code
      */
     @Override
@@ -680,65 +680,65 @@ public class Cell implements Comparable<Cell> {
 
     /**
      * Converts a List of supported objects into a list of cells
-     * @param <T> Generic data type
+     *
+     * @param <T>  Generic data type
      * @param list List of generic objects
      * @return List of cells
      */
-    public static <T> List<Cell> convertArray(List<T> list)
-    {
+    public static <T> List<Cell> convertArray(List<T> list) {
         List<Cell> output = new ArrayList<>();
-        if (list == null)
-        {
+        if (list == null) {
             return output;
         }
         Cell c;
         Object o;
         //Type t;
-        for (T item : list)
-        {
-            if (item == null) // DO NOT LISTEN to code suggestions! This is wrong for bool: if (object.Equals(item, default(T)))
+        for (T item : list) {
+            if (item ==
+                    null) // DO NOT LISTEN to code suggestions! This is wrong for bool: if (object.Equals(item,
+            // default(T)))
             {
                 c = new Cell(null, CellType.EMPTY);
                 output.add(c);
                 continue;
             }
             o = item; // intermediate object is necessary to cast the types below
-           // t = item.GetType();
-            if (item instanceof  Cell)
-            { c = (Cell)item; }
-            else if (item instanceof  Boolean)
-            { c = new Cell((boolean)o, CellType.BOOL); }
-            else if (item instanceof  Byte)
-            { c = new Cell((byte)o, CellType.NUMBER); } // no C# sbyte available
+            // t = item.GetType();
+            if (item instanceof Cell) {
+                c = (Cell) item;
+            } else if (item instanceof Boolean) {
+                c = new Cell((boolean) o, CellType.BOOL);
+            } else if (item instanceof Byte) {
+                c = new Cell((byte) o, CellType.NUMBER);
+            } // no C# sbyte available
 
-        else if (item instanceof  BigDecimal)
-        { c = new Cell((BigDecimal)o, CellType.NUMBER); }
-        else if (item instanceof  Double)
-            { c = new Cell((double)o, CellType.NUMBER); }
-                else if (item instanceof  Float)
-            { c = new Cell((float)o, CellType.NUMBER); }
-                else if (item instanceof  Integer) // no C# uint available
-            { c = new Cell((int)o, CellType.NUMBER); }
-        else if (item instanceof  Long) // no C# ulong available
-            { c = new Cell((long)o, CellType.NUMBER); }
-        else if (item instanceof  Short)
-            { c = new Cell((short)o, CellType.NUMBER); } // no C# ushort available}
-        else if (item instanceof  Date)
-        {
-            c = new Cell((Date)o, CellType.DATE);
-            c.setStyle(BasicStyles.getDateFormat());
-        }
-        else if (item instanceof  Duration)
-        {
-            c = new Cell((Duration)o, CellType.TIME);
-            c.setStyle(BasicStyles.getTimeFormat());
-        }
-        else if (item instanceof  String)
-        { c = new Cell((String)o, CellType.STRING); }
-        else // Default = unspecified object
-        {
-            c = new Cell(o.toString(), CellType.DEFAULT);
-        }
+            else if (item instanceof BigDecimal) {
+                c = new Cell((BigDecimal) o, CellType.NUMBER);
+            } else if (item instanceof Double) {
+                c = new Cell((double) o, CellType.NUMBER);
+            } else if (item instanceof Float) {
+                c = new Cell((float) o, CellType.NUMBER);
+            } else if (item instanceof Integer) // no C# uint available
+            {
+                c = new Cell((int) o, CellType.NUMBER);
+            } else if (item instanceof Long) // no C# ulong available
+            {
+                c = new Cell((long) o, CellType.NUMBER);
+            } else if (item instanceof Short) {
+                c = new Cell((short) o, CellType.NUMBER);
+            } // no C# ushort available}
+            else if (item instanceof Date) {
+                c = new Cell((Date) o, CellType.DATE);
+                c.setStyle(BasicStyles.getDateFormat());
+            } else if (item instanceof Duration) {
+                c = new Cell((Duration) o, CellType.TIME);
+                c.setStyle(BasicStyles.getTimeFormat());
+            } else if (item instanceof String) {
+                c = new Cell((String) o, CellType.STRING);
+            } else // Default = unspecified object
+            {
+                c = new Cell(o.toString(), CellType.DEFAULT);
+            }
             output.add(c);
         }
         return output;
@@ -750,10 +750,9 @@ public class Cell implements Comparable<Cell> {
      * @param range Range to process
      * @return List of cell addresses
      * @throws FormatException Throws a FormatException if a part of the passed range is malformed
-     * @throws RangeException Throws a RangeException if the range is out of range (A-XFD and 1 to 1048576)
+     * @throws RangeException  Throws a RangeException if the range is out of range (A-XFD and 1 to 1048576)
      */
-    public static List<Address> getCellRange(String range)
-    {
+    public static List<Address> getCellRange(String range) {
         Range range2 = resolveCellRange(range);
         return getCellRange(range2.startAddress(), range2.endAddress());
     }
@@ -762,13 +761,12 @@ public class Cell implements Comparable<Cell> {
      * Get a list of cell addresses from a cell range
      *
      * @param startAddress Start address as string in the format A1 - XFD1048576
-     * @param endAddress End address as string in the format A1 - XFD1048576
+     * @param endAddress   End address as string in the format A1 - XFD1048576
      * @return List of cell addresses
      * @throws FormatException Throws a FormatException if a part of the passed range is malformed
-     * @throws RangeException Throws a RangeException if the range is out of range (A-XFD and 1 to 1048576)
+     * @throws RangeException  Throws a RangeException if the range is out of range (A-XFD and 1 to 1048576)
      */
-    public static List<Address> getCellRange(String startAddress, String endAddress)
-    {
+    public static List<Address> getCellRange(String startAddress, String endAddress) {
         Address start = resolveCellCoordinate(startAddress);
         Address end = resolveCellCoordinate(endAddress);
         return getCellRange(start, end);
@@ -778,14 +776,14 @@ public class Cell implements Comparable<Cell> {
      * Get a list of cell addresses from a cell range
      *
      * @param startColumn Start column (zero based)
-     * @param startRow Start row (zero based)
-     * @param endColumn End column (zero based)
-     * @param endRow End row (zero based)
+     * @param startRow    Start row (zero based)
+     * @param endColumn   End column (zero based)
+     * @param endRow      End row (zero based)
      * @return List of cell addresses
-     * @throws RangeException Throws a RangeException if the value of one passed address parts is out of range (A-XFD and 1 to 1048576)
+     * @throws RangeException Throws a RangeException if the value of one passed address parts is out of range (A-XFD
+     *                        and 1 to 1048576)
      */
-    public static List<Address> getCellRange(int startColumn, int startRow, int endColumn, int endRow)
-    {
+    public static List<Address> getCellRange(int startColumn, int startRow, int endColumn, int endRow) {
         Address start = new Address(startColumn, startRow);
         Address end = new Address(endColumn, endRow);
         return getCellRange(start, end);
@@ -863,25 +861,23 @@ public class Cell implements Comparable<Cell> {
         };
     }
 
-
- //  /**
- //   * Gets the column and row number (zero based) of a cell by the address
- //   *
- //   * @param address Address as string in the format A1 - XFD1048576
- //   * @return Struct with row and column
- //   * @throws FormatException Throws a FormatException if the passed address is malformed
- //   * @throws RangeException Throws a RangeException if the value of the passed address is out of range (A-XFD and 1 to 1048576)
- //   */
- //  public static Address resolveCellCoordinate(String address)
- //  {
- //      int row;
- //      int column;
- //      AddressType type;
- //      Address addressObject = resolveCellCoordinate(address);
- //      return new Address(addressObject.column(), addressObject.row(), addressObject.type());
- //  }
-
-
+    //  /**
+    //   * Gets the column and row number (zero based) of a cell by the address
+    //   *
+    //   * @param address Address as string in the format A1 - XFD1048576
+    //   * @return Struct with row and column
+    //   * @throws FormatException Throws a FormatException if the passed address is malformed
+    //   * @throws RangeException Throws a RangeException if the value of the passed address is out of range (A-XFD
+    //   and 1 to 1048576)
+    //   */
+    //  public static Address resolveCellCoordinate(String address)
+    //  {
+    //      int row;
+    //      int column;
+    //      AddressType type;
+    //      Address addressObject = resolveCellCoordinate(address);
+    //      return new Address(addressObject.column(), addressObject.row(), addressObject.type());
+    //  }
 
     /**
      * Gets the column and row number (zero based) of a cell by the address
@@ -1024,21 +1020,16 @@ public class Cell implements Comparable<Cell> {
      * @param addressExpression Address expression
      * @return Scope of the address expression
      */
-    public static AddressScope getAddressScope(String addressExpression)
-    {
-        try
-        {
+    public static AddressScope getAddressScope(String addressExpression) {
+        try {
             resolveCellCoordinate(addressExpression);
             return AddressScope.SINGLE_ADDRESS;
-        }
-        catch(Exception e) // any
+        } catch (Exception e) // any
         {
-            try
-            {
+            try {
                 resolveCellRange(addressExpression);
                 return AddressScope.RANGE;
-            }
-            catch(Exception e2) // any
+            } catch (Exception e2) // any
             {
                 return AddressScope.INVALID;
             }
@@ -1078,10 +1069,8 @@ public class Cell implements Comparable<Cell> {
      *
      * @param features Worksheet feature set.
      */
-    void bindFeatures(FeatureSet features)
-    {
-        if (worksheetFeatures == features)
-        {
+    void bindFeatures(FeatureSet features) {
+        if (worksheetFeatures == features) {
             return;
         }
         unbindFeatures();
@@ -1089,11 +1078,10 @@ public class Cell implements Comparable<Cell> {
         attachFormulaFeatures();
     }
 
-/**
- * Removes this cell's formula contribution from its worksheet feature set.
- */
-    void unbindFeatures()
-    {
+    /**
+     * Removes this cell's formula contribution from its worksheet feature set.
+     */
+    void unbindFeatures() {
         detachFormulaFeatures();
         worksheetFeatures = null;
     }
@@ -1101,10 +1089,8 @@ public class Cell implements Comparable<Cell> {
     /**
      * Propagates Cell.Formula.Expression back to Cell.Value
      */
-    private void synchronizeValueFromFormula()
-    {
-        if (formula.getMasterCellAddress() == null)
-        {
+    private void synchronizeValueFromFormula() {
+        if (formula.getMasterCellAddress() == null) {
             this.value = formula.getExpression();  // Sync back from formula to cell
         }
     }
@@ -1112,10 +1098,8 @@ public class Cell implements Comparable<Cell> {
     /**
      * Adds a feature set to the formula. Mainly used to add a formula in an existing cell
      */
-    private void attachFormulaFeatures()
-    {
-        if (worksheetFeatures != null && dataType == CellType.FORMULA && formula != null)
-        {
+    private void attachFormulaFeatures() {
+        if (worksheetFeatures != null && dataType == CellType.FORMULA && formula != null) {
             formula.getFeatures().add(worksheetFeatures);
         }
     }
@@ -1123,8 +1107,7 @@ public class Cell implements Comparable<Cell> {
     /**
      * Clears a formula and all its metadata from an existing cell
      */
-    private void clearFormula()
-    {
+    private void clearFormula() {
         detachFormulaFeatures();
         formula = null;
     }
@@ -1132,10 +1115,8 @@ public class Cell implements Comparable<Cell> {
     /**
      * Removes the feature set of the formula. Mainly used to clear a formula in a existing cell
      */
-    private void detachFormulaFeatures()
-    {
-        if (worksheetFeatures != null && dataType == CellType.FORMULA && formula != null)
-        {
+    private void detachFormulaFeatures() {
+        if (worksheetFeatures != null && dataType == CellType.FORMULA && formula != null) {
             formula.getFeatures().Remove(worksheetFeatures);
         }
     }
@@ -1145,9 +1126,8 @@ public class Cell implements Comparable<Cell> {
      *
      * @return Value as string or null, of no value was set
      */
-    private String getValueAsFormulaExpression()
-    {
-        if (formula == null){
+    private String getValueAsFormulaExpression() {
+        if (formula == null) {
             return null;
         }
         return value.toString();
@@ -1159,14 +1139,12 @@ public class Cell implements Comparable<Cell> {
      * @param referenceExpression Range expression as string (to be validated first)
      * @return Transposed range of affected liked cells
      */
-    private Range transposeDefinedNameArrayRange(String referenceExpression)
-    {
+    private Range transposeDefinedNameArrayRange(String referenceExpression) {
         Range resolvedRange = new Range(referenceExpression);
         int rowCount = resolvedRange.endAddress().row() - resolvedRange.startAddress().row();
         int columnCount = resolvedRange.endAddress().column() - resolvedRange.startAddress().column();
         return new Range(this.columnNumber, this.rowNumber, this.columnNumber + columnCount, this.rowNumber + rowCount);
     }
-
 
     private static boolean isAsciiLetter(char character) {
         return character >= 'A' && character <= 'Z' || character >= 'a' && character <= 'z';

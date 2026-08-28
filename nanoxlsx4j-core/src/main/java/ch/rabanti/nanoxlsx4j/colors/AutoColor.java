@@ -22,6 +22,7 @@ public class AutoColor implements BaseColor {
 
     /**
      * The string value of an auto color is always null
+     *
      * @return Null in any case
      */
     @Override

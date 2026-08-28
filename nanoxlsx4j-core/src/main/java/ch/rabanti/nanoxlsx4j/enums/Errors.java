@@ -8,9 +8,9 @@
 
 package ch.rabanti.nanoxlsx4j.enums;
 
-import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
-
 import java.util.Optional;
+
+import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 
 /** Provides conversions for formula errors. */
 public final class Errors {

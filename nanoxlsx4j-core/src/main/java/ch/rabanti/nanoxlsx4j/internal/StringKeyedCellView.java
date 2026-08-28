@@ -8,9 +8,6 @@
 
 package ch.rabanti.nanoxlsx4j.internal;
 
-import ch.rabanti.nanoxlsx4j.Cell;
-import ch.rabanti.nanoxlsx4j.Worksheet;
-
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.Collection;
@@ -22,11 +19,14 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Worksheet;
+
 /**
  * Non-materializing read-only view over the internal cell dictionary that exposes cells keyed by their rendered address
  * string (e.g. "A1"). All read paths delegate directly to the backing dictionary, translating keys on-the-fly without
- * allocating a snapshot copy. Mutation is intentionally unsupported; use the corresponding {@link Worksheet}
- * operations instead.
+ * allocating a snapshot copy. Mutation is intentionally unsupported; use the corresponding {@link Worksheet} operations
+ * instead.
  * <p>This class is for internal use only.</p>
  */
 public final class StringKeyedCellView extends AbstractMap<String, Cell> {
@@ -139,7 +139,7 @@ public final class StringKeyedCellView extends AbstractMap<String, Cell> {
     /**
      * Mutation is unsupported by this read-only view.
      *
-     * @param key cell address
+     * @param key   cell address
      * @param value cell value
      * @return never returns normally
      * @throws UnsupportedOperationException always
@@ -196,7 +196,7 @@ public final class StringKeyedCellView extends AbstractMap<String, Cell> {
     /**
      * Mutation is unsupported by this read-only view.
      *
-     * @param key cell address
+     * @param key   cell address
      * @param value cell value
      * @return never returns normally
      * @throws UnsupportedOperationException always
@@ -209,7 +209,7 @@ public final class StringKeyedCellView extends AbstractMap<String, Cell> {
     /**
      * Mutation is unsupported by this read-only view.
      *
-     * @param key cell address
+     * @param key   cell address
      * @param value expected cell value
      * @return never returns normally
      * @throws UnsupportedOperationException always
@@ -222,7 +222,7 @@ public final class StringKeyedCellView extends AbstractMap<String, Cell> {
     /**
      * Mutation is unsupported by this read-only view.
      *
-     * @param key cell address
+     * @param key      cell address
      * @param oldValue expected cell value
      * @param newValue replacement cell value
      * @return never returns normally
@@ -236,7 +236,7 @@ public final class StringKeyedCellView extends AbstractMap<String, Cell> {
     /**
      * Mutation is unsupported by this read-only view.
      *
-     * @param key cell address
+     * @param key   cell address
      * @param value replacement cell value
      * @return never returns normally
      * @throws UnsupportedOperationException always
@@ -249,7 +249,7 @@ public final class StringKeyedCellView extends AbstractMap<String, Cell> {
     /**
      * Mutation is unsupported by this read-only view.
      *
-     * @param key cell address
+     * @param key             cell address
      * @param mappingFunction function used to create a cell
      * @return never returns normally
      * @throws UnsupportedOperationException always
@@ -262,21 +262,23 @@ public final class StringKeyedCellView extends AbstractMap<String, Cell> {
     /**
      * Mutation is unsupported by this read-only view.
      *
-     * @param key cell address
+     * @param key               cell address
      * @param remappingFunction function used to replace a cell
      * @return never returns normally
      * @throws UnsupportedOperationException always
      */
     @Override
-    public Cell computeIfPresent(String key,
-                                 BiFunction<? super String, ? super Cell, ? extends Cell> remappingFunction) {
+    public Cell computeIfPresent(
+            String key,
+            BiFunction<? super String, ? super Cell, ? extends Cell> remappingFunction
+    ) {
         throw readOnly();
     }
 
     /**
      * Mutation is unsupported by this read-only view.
      *
-     * @param key cell address
+     * @param key               cell address
      * @param remappingFunction function used to compute a cell
      * @return never returns normally
      * @throws UnsupportedOperationException always
@@ -289,15 +291,17 @@ public final class StringKeyedCellView extends AbstractMap<String, Cell> {
     /**
      * Mutation is unsupported by this read-only view.
      *
-     * @param key cell address
-     * @param value cell value to merge
+     * @param key               cell address
+     * @param value             cell value to merge
      * @param remappingFunction function used to merge cell values
      * @return never returns normally
      * @throws UnsupportedOperationException always
      */
     @Override
-    public Cell merge(String key, Cell value,
-                      BiFunction<? super Cell, ? super Cell, ? extends Cell> remappingFunction) {
+    public Cell merge(
+            String key, Cell value,
+            BiFunction<? super Cell, ? super Cell, ? extends Cell> remappingFunction
+    ) {
         throw readOnly();
     }
 

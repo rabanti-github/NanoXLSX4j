@@ -95,34 +95,34 @@ public record Address(int column, int row, Cell.AddressType type) implements Com
         return Cell.resolveCellAddress(column, row, type);
     }
 
+    /**
+     * Gets the column address (A - XFD)
+     *
+     * @return Column address as letter(s)
+     */
+    public String getColumn() {
+        return Cell.resolveColumnAddress(column);
+    }
 
-   /**
-    * Gets the column address (A - XFD)
-    *
-    * @return Column address as letter(s)
-    */
-   public String getColumn() {
-       return Cell.resolveColumnAddress(column);
-   }
-
-   // /**
-   //  * Gets the column number (zero based)
-   //  * @return Column number as int
-   //  */
-   // public int getColumn() {
-   //     return column;
-   // }
+    // /**
+    //  * Gets the column number (zero based)
+    //  * @return Column number as int
+    //  */
+    // public int getColumn() {
+    //     return column;
+    // }
 //
-   // /**
-   //  * Gets the row number (zero based)
-   //  * @return Row number
-   //  */
-   // public int getRow() {
-   //     return row;
-   // }
+    // /**
+    //  * Gets the row number (zero based)
+    //  * @return Row number
+    //  */
+    // public int getRow() {
+    //     return row;
+    // }
 
     /**
      * Gets the referencing type of the address
+     *
      * @return Referencing type
      */
     public Cell.AddressType getType() {

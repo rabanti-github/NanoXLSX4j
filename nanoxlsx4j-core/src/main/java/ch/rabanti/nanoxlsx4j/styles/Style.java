@@ -10,7 +10,7 @@ public class Style {
         return currentCellXf;
     }
 
-    public Style copyStyle(){
+    public Style copyStyle() {
         return null;
     }
 }

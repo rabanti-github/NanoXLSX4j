@@ -17,9 +17,9 @@ public final class XmlUtils {
     }
 
     /**
-     * Replaces characters that are not legal in XML 1.0 with spaces. Markup characters such as {@code <},
-     * {@code >}, and {@code &} are retained because XML writers escape them. Valid supplementary Unicode code
-     * points through {@code U+10FFFF} are retained, while isolated UTF-16 surrogate code units are replaced.
+     * Replaces characters that are not legal in XML 1.0 with spaces. Markup characters such as {@code <}, {@code >},
+     * and {@code &} are retained because XML writers escape them. Valid supplementary Unicode code points through
+     * {@code U+10FFFF} are retained, while isolated UTF-16 surrogate code units are replaced.
      *
      * @param input Input value, or {@code null}
      * @return Sanitized value; an empty string when the input is {@code null}
@@ -31,7 +31,7 @@ public final class XmlUtils {
 
         StringBuilder sanitized = null;
         int unchangedStart = 0;
-        for (int index = 0; index < input.length();) {
+        for (int index = 0; index < input.length(); ) {
             int codePoint = input.codePointAt(index);
             int codePointLength = Character.charCount(codePoint);
             if (!isValidXmlCharacter(codePoint)) {

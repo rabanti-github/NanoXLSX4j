@@ -110,7 +110,7 @@ public class SystemColor implements TypedColor<SystemColor.Value> {
     }
 
     private String lastColor = "000000";
-    private Value colorValue =  Value.WINDOW_TEXT;
+    private Value colorValue = Value.WINDOW_TEXT;
 
     /**
      * Gets the enum value of the system color

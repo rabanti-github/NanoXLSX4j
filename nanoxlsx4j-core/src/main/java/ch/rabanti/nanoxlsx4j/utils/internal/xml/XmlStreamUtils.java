@@ -24,8 +24,8 @@ public final class XmlStreamUtils {
 
     /**
      * Creates a namespace-aware XML input factory with DTD and external-entity processing disabled. Comments,
-     * processing instructions, and whitespace outside simple element text remain stream events and are ignored by
-     * the element-oriented helpers in this class.
+     * processing instructions, and whitespace outside simple element text remain stream events and are ignored by the
+     * element-oriented helpers in this class.
      *
      * @return Configured XML input factory
      */
@@ -42,8 +42,8 @@ public final class XmlStreamUtils {
     }
 
     /**
-     * Returns whether the reader is positioned on a start element whose local name matches the supplied name,
-     * ignoring case. Namespace prefixes are not considered.
+     * Returns whether the reader is positioned on a start element whose local name matches the supplied name, ignoring
+     * case. Namespace prefixes are not considered.
      *
      * @param reader    XML stream reader
      * @param localName Local element name to match
@@ -55,8 +55,8 @@ public final class XmlStreamUtils {
     }
 
     /**
-     * Reads the text content of a simple leaf element. The reader must be positioned on its start element and is
-     * left positioned on the matching end element. Empty and self-closing elements return an empty string.
+     * Reads the text content of a simple leaf element. The reader must be positioned on its start element and is left
+     * positioned on the matching end element. Empty and self-closing elements return an empty string.
      *
      * @param reader XML stream reader positioned on a leaf start element
      * @return Text content of the element, or an empty string if it has no content

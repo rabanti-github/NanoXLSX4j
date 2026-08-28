@@ -8,12 +8,6 @@
 
 package ch.rabanti.nanoxlsx4j.utils.internal.xml;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,11 +15,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
-import ch.rabanti.nanoxlsx4j.exceptions.IOException;
-import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import ch.rabanti.nanoxlsx4j.exceptions.IOException;
+import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
 
 /**
  * Class representing an internally used XML element / node
@@ -403,6 +402,7 @@ final class XmlElement {
         }
         throw new IOException("None of the specified successor elements were found");
     }
+
     /**
      * Transforms this custom XML element and its children into a standard namespace-aware DOM document.
      *
@@ -632,11 +632,12 @@ final class XmlElement {
         element.hasAttributes = true;
         return element;
     }
+
     /**
      * Recursively creates a standard DOM element from a custom XML element without an inherited default namespace.
      *
-     * @param document          DOM document to which the element belongs
-     * @param customElement     Custom XML element to convert
+     * @param document         DOM document to which the element belongs
+     * @param customElement    Custom XML element to convert
      * @param parentNamespaces Namespace prefixes inherited from the parent element
      * @return DOM element representing the custom element
      */
@@ -648,17 +649,18 @@ final class XmlElement {
     /**
      * Recursively creates a standard namespace-aware DOM element from a custom XML element.
      *
-     * @param document          DOM document to which the element belongs
-     * @param customElement     Custom XML element to convert
+     * @param document         DOM document to which the element belongs
+     * @param customElement    Custom XML element to convert
      * @param parentNamespaces Namespace prefixes inherited from the parent element
-     * @param defaultXmlNsUri   Default namespace URI inherited from the parent element, or {@code null}
+     * @param defaultXmlNsUri  Default namespace URI inherited from the parent element, or {@code null}
      * @return DOM element representing the custom element
      */
     private static Element createXmlElement(
             Document document,
             XmlElement customElement,
             Map<String, String> parentNamespaces,
-            String defaultXmlNsUri) {
+            String defaultXmlNsUri
+    ) {
         Map<String, String> namespaces = parentNamespaces;
         if (customElement.hasNameSpaces && customElement.prefixNameSpaceMap != null) {
             namespaces = new HashMap<>(parentNamespaces);
@@ -680,7 +682,8 @@ final class XmlElement {
             xmlElement.setAttributeNS(
                     XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
                     XMLConstants.XMLNS_ATTRIBUTE,
-                    namespaceOrEmpty(customElement.defaultXmlNsUri));
+                    namespaceOrEmpty(customElement.defaultXmlNsUri)
+            );
         }
         if (customElement.hasNameSpaces && customElement.prefixNameSpaceMap != null) {
             for (Map.Entry<String, String> namespace : customElement.prefixNameSpaceMap.entrySet()) {
@@ -690,7 +693,8 @@ final class XmlElement {
                 xmlElement.setAttributeNS(
                         XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
                         XMLConstants.XMLNS_ATTRIBUTE + ':' + namespace.getKey(),
-                        namespace.getValue());
+                        namespace.getValue()
+                );
             }
         }
 
@@ -728,13 +732,15 @@ final class XmlElement {
                 element.setAttributeNS(
                         XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
                         XMLConstants.XMLNS_ATTRIBUTE + ':' + attributeName,
-                        attribute.getValue());
+                        attribute.getValue()
+                );
                 return;
             }
             element.setAttributeNS(
                     namespaces.get(attributePrefix),
                     attributePrefix + ':' + attributeName,
-                    attribute.getValue());
+                    attribute.getValue()
+            );
             return;
         }
 
@@ -749,13 +755,15 @@ final class XmlElement {
                 element.setAttributeNS(
                         namespaces.get(implicitPrefix),
                         implicitPrefix + ':' + localName,
-                        attribute.getValue());
+                        attribute.getValue()
+                );
             }
         } else if (XMLConstants.XMLNS_ATTRIBUTE.equals(attributeName)) {
             element.setAttributeNS(
                     XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
                     XMLConstants.XMLNS_ATTRIBUTE,
-                    attribute.getValue());
+                    attribute.getValue()
+            );
         } else {
             element.setAttribute(attributeName, attribute.getValue());
         }
@@ -778,7 +786,8 @@ final class XmlElement {
                     attribute.getPrefix(),
                     resolveNamespace(attribute.getPrefix(), prefixNameSpaceMap, writer),
                     attributeName,
-                    attribute.getValue());
+                    attribute.getValue()
+            );
             return;
         }
 
@@ -792,7 +801,8 @@ final class XmlElement {
                     implicitPrefix,
                     resolveNamespace(implicitPrefix, prefixNameSpaceMap, writer),
                     attributeName.substring(colonIndex + 1),
-                    attribute.getValue());
+                    attribute.getValue()
+            );
         } else if (!XMLConstants.XMLNS_ATTRIBUTE.equals(attributeName)) {
             writer.writeAttribute(attributeName, attribute.getValue());
         }

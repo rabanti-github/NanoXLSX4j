@@ -132,7 +132,7 @@ public final class FeatureSet {
      * @return True if the feature has a count of >0 in this set
      */
     public boolean containsWorksheetFormula() {
-        return  getWorksheetFormulaCount() > 0;
+        return getWorksheetFormulaCount() > 0;
     }
 
     /**

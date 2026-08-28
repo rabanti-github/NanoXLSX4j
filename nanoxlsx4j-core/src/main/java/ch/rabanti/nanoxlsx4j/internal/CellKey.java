@@ -25,8 +25,9 @@ public final class CellKey {
 
     /**
      * Constructor with all parameters
+     *
      * @param column Column number
-     * @param row Row number
+     * @param row    Row number
      */
     public CellKey(int column, int row) {
         this.column = column;
@@ -35,6 +36,7 @@ public final class CellKey {
 
     /**
      * Returns whether two instances of CellKey are the same
+     *
      * @param other The reference CellKey with which to compare
      * @return True if this instance and the other are the same
      */
@@ -44,21 +46,25 @@ public final class CellKey {
 
     /**
      * Returns whether two instances are the same
-     * @param o   The reference object with which to compare
+     *
+     * @param o The reference object with which to compare
      * @return True if this instance and the other are the same
      */
     @Override
     public final boolean equals(Object o) {
-        if (!(o instanceof CellKey cellKey))
+        if (!(o instanceof CellKey cellKey)) {
             return false;
+        }
 
         return column == cellKey.column && row == cellKey.row;
     }
 
     // Excel max: 16 384 columns (14 bits) × 1 048 576 rows (20 bits) — fits cleanly in 34 bits,
     // so a simple multiply+XOR gives a collision-free hash across the valid address space.
+
     /**
      * Gets the hash code of the cell key
+     *
      * @return Hash code
      */
     @Override
@@ -68,6 +74,7 @@ public final class CellKey {
 
     /**
      * Returns the String representation of the cell key
+     *
      * @return Cell address
      */
     @Override
