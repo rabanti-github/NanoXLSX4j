@@ -8,6 +8,7 @@
 
 package ch.rabanti.nanoxlsx4j;
 
+import ch.rabanti.nanoxlsx4j.annotations.InternalApi;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 import ch.rabanti.nanoxlsx4j.styles.Style;
 import ch.rabanti.nanoxlsx4j.styles.StyleRepository;
@@ -149,7 +150,8 @@ public class Column {
      * @return If the passed style already exists in the repository, the existing one will be returned, otherwise the
      * passed one
      */
-    Style setDefaultColumnStyleInternal(Style defaultColumnStyle, boolean unmanaged) {
+    @InternalApi
+    public Style setDefaultColumnStyleInternal(Style defaultColumnStyle, boolean unmanaged) {
         if (defaultColumnStyle == null) {
             this.defaultColumnStyle = null;
             return null;

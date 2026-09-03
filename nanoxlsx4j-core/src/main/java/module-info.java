@@ -2,9 +2,11 @@ module ch.rabanti.nanoxlsx4j.core {
     requires java.xml;
     requires java.compiler;
 
+    exports ch.rabanti.nanoxlsx4j.annotations;
     exports ch.rabanti.nanoxlsx4j.colors;
     exports ch.rabanti.nanoxlsx4j.enums;
     exports ch.rabanti.nanoxlsx4j.exceptions;
+    exports ch.rabanti.nanoxlsx4j.options;
     exports ch.rabanti.nanoxlsx4j.styles;
     exports ch.rabanti.nanoxlsx4j.themes;
     exports ch.rabanti.nanoxlsx4j.utils;

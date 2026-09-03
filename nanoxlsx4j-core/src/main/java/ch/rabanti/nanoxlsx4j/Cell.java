@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import ch.rabanti.nanoxlsx4j.annotations.InternalApi;
 import ch.rabanti.nanoxlsx4j.enums.Errors;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
@@ -587,7 +588,8 @@ public class Cell implements Comparable<Cell> {
      * @return If the passed style already exists in the repository, the existing one will be returned, otherwise the
      * passed one
      */
-    Style setStyleInternal(Style style, boolean unmanaged) {
+    @InternalApi
+    public Style setStyleInternal(Style style, boolean unmanaged) {
         if (style == null) {
             throw new StyleException("No style to assign was defined");
         }

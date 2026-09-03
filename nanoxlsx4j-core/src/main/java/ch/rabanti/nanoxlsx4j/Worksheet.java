@@ -1,11 +1,16 @@
 package ch.rabanti.nanoxlsx4j;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
+import ch.rabanti.nanoxlsx4j.internal.CellKey;
 import ch.rabanti.nanoxlsx4j.internal.FeatureSet;
 import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
 
@@ -74,6 +79,10 @@ public class Worksheet {
     private int sheetId;
     private String sheetName;
     private FeatureSet features = new FeatureSet();
+    private final Map<CellKey, Cell> cells = new HashMap<>(1000);
+    // Note: This is a live view of cells. It does not double the memory footprint
+    private final Collection<Cell> cellValues = Collections.unmodifiableCollection(cells.values());
+    private final Map<Integer, Column> columns = new HashMap<>();
 
 //getters&setters
 
@@ -92,6 +101,23 @@ public class Worksheet {
 
     FeatureSet getFeatures() {
         return this.features;
+    }
+
+    /**
+     * Gets a live, read-only view of all cells for iteration-heavy code paths.
+     *
+     * @return Cell values without allocating address strings
+     */
+    public Collection<Cell> getCellValues() {
+        return cellValues;
+    }
+
+    public Map<CellKey, Cell> getCells() {
+        return cells;
+    }
+
+    public Map<Integer, Column> getColumns() {
+        return columns;
     }
 
     /**
@@ -219,6 +245,4 @@ public class Worksheet {
         }
         return false;
     }
-
-
 }
