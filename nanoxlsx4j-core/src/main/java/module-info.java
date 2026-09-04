@@ -7,6 +7,7 @@ module ch.rabanti.nanoxlsx4j.core {
     exports ch.rabanti.nanoxlsx4j.enums;
     exports ch.rabanti.nanoxlsx4j.exceptions;
     exports ch.rabanti.nanoxlsx4j.options;
+    exports ch.rabanti.nanoxlsx4j.registry;
     exports ch.rabanti.nanoxlsx4j.styles;
     exports ch.rabanti.nanoxlsx4j.themes;
     exports ch.rabanti.nanoxlsx4j.utils;
@@ -15,4 +16,9 @@ module ch.rabanti.nanoxlsx4j.core {
     exports ch.rabanti.nanoxlsx4j.utils.internal.xml to
             ch.rabanti.nanoxlsx4j.reader,
             ch.rabanti.nanoxlsx4j.writer;
+    exports ch.rabanti.nanoxlsx4j.internal.registry to
+            ch.rabanti.nanoxlsx4j.reader,
+            ch.rabanti.nanoxlsx4j.writer;
+
+    uses ch.rabanti.nanoxlsx4j.registry.Plugin;
 }

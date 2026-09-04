@@ -28,6 +28,14 @@ class ModuleDescriptorTest {
         assertFalse(requiredModules.contains("ch.rabanti.nanoxlsx4j.writer"));
         assertTrue(module.getDescriptor().exports().stream()
             .anyMatch(export -> export.source().equals("ch.rabanti.nanoxlsx4j.colors") && !export.isQualified()));
+        assertTrue(module.getDescriptor().exports().stream()
+            .anyMatch(export -> export.source().equals("ch.rabanti.nanoxlsx4j.registry") && !export.isQualified()));
+        assertTrue(module.getDescriptor().exports().stream()
+            .anyMatch(export -> export.source().equals("ch.rabanti.nanoxlsx4j.internal.registry")
+                && export.isQualified()
+                && export.targets().equals(Set.of(
+                    "ch.rabanti.nanoxlsx4j.reader", "ch.rabanti.nanoxlsx4j.writer"))));
+        assertTrue(module.getDescriptor().uses().contains("ch.rabanti.nanoxlsx4j.registry.Plugin"));
     }
 
     private static Set<String> requiredModules(Module module) {
