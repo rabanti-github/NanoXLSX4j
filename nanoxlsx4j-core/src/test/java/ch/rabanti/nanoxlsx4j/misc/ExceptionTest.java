@@ -9,9 +9,8 @@
 package ch.rabanti.nanoxlsx4j.misc;
 
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
-import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.exceptions.NotSupportedContentException;
-import ch.rabanti.nanoxlsx4j.exceptions.PackageException;
+import ch.rabanti.nanoxlsx4j.exceptions.PluginLoadingException;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
@@ -45,27 +44,6 @@ public class ExceptionTest {
 
         IllegalArgumentException inner = new IllegalArgumentException("inner message");
         exception = new FormatException("test", inner);
-        assertEquals("test", exception.getMessage());
-        assertNotNull(exception.getCause());
-        assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
-        assertEquals("inner message", exception.getCause().getMessage());
-    }
-
-    @Test
-    @DisplayName("Test of the  IOExceptio (summary)")
-    public void ioExceptionTest() throws Exception {
-        IOException exception = new IOException();
-        assertNull(exception.getMessage()); // Java exceptions do not generate a default message.
-        assertNull(exception.getCause());
-
-        exception = new IOException("test");
-        assertEquals("test", exception.getMessage());
-        assertNull(exception.getCause());
-
-        assertExceptionSerialization(exception);
-
-        IllegalArgumentException inner = new IllegalArgumentException("inner message");
-        exception = new IOException("test", inner);
         assertEquals("test", exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
@@ -143,20 +121,16 @@ public class ExceptionTest {
     }
 
     @Test
-    @DisplayName("Test of the PackageException (summary)")
-    public void packageExceptionTest() throws Exception {
-        PackageException exception = new PackageException();
-        assertNull(exception.getMessage()); // Java exceptions do not generate a default message.
-        assertNull(exception.getCause());
-
-        exception = new PackageException("test");
+    @DisplayName("Test of the PluginLoadingException (summary)")
+    public void pluginLoadingExceptionTest() throws Exception {
+        PluginLoadingException exception = new PluginLoadingException("test");
         assertEquals("test", exception.getMessage());
         assertNull(exception.getCause());
 
         assertExceptionSerialization(exception);
 
         IllegalArgumentException inner = new IllegalArgumentException("inner message");
-        exception = new PackageException("test", inner);
+        exception = new PluginLoadingException("test", inner);
         assertEquals("test", exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(IllegalArgumentException.class, exception.getCause().getClass());

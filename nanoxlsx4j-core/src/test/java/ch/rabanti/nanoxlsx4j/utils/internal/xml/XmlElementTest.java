@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
-import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -319,7 +319,7 @@ class XmlElementTest {
 
     @DisplayName("AddChildElementBefore should insert before the first occurrence of the first matching ancestor")
     @Test
-    void addChildElementBeforeTest() {
+    void addChildElementBeforeTest() throws IOException {
         XmlElement parent = XmlElement.createElement("Parent");
         XmlElement firstAncestor = parent.addChildElement("Ancestor");
         XmlElement secondAncestor = parent.addChildElement("Ancestor");
@@ -335,7 +335,7 @@ class XmlElementTest {
 
     @DisplayName("AddChildElementBefore should use ancestor names as ordered fallbacks")
     @Test
-    void addChildElementBeforeFallbackTest() {
+    void addChildElementBeforeFallbackTest() throws IOException {
         XmlElement parent = XmlElement.createElement("Parent");
         XmlElement first = parent.addChildElement("First");
         XmlElement fallbackAncestor = parent.addChildElement("FallbackAncestor");
@@ -351,7 +351,7 @@ class XmlElementTest {
 
     @DisplayName("AddChildElementAfter should insert after the last occurrence of the first matching successor")
     @Test
-    void addChildElementAfterTest() {
+    void addChildElementAfterTest() throws IOException {
         XmlElement parent = XmlElement.createElement("Parent");
         XmlElement firstSuccessor = parent.addChildElement("Successor");
         XmlElement secondSuccessor = parent.addChildElement("Successor");
@@ -369,7 +369,7 @@ class XmlElementTest {
 
     @DisplayName("AddChildElementAfter should use successor names as ordered fallbacks")
     @Test
-    void addChildElementAfterFallbackTest() {
+    void addChildElementAfterFallbackTest() throws IOException {
         XmlElement parent = XmlElement.createElement("Parent");
         XmlElement fallbackSuccessor = parent.addChildElement("FallbackSuccessor");
         XmlElement last = parent.addChildElement("Last");
@@ -423,7 +423,7 @@ class XmlElementTest {
     @DisplayName("Relative child insertion should ignore a null child element")
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void addChildElementRelativeNullChildTest(boolean insertBefore) {
+    void addChildElementRelativeNullChildTest(boolean insertBefore) throws IOException {
         XmlElement parent = XmlElement.createElement("Parent");
         XmlElement sibling = parent.addChildElement("Sibling");
 

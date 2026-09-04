@@ -8,6 +8,7 @@
 
 package ch.rabanti.nanoxlsx4j.utils.internal.xml;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +24,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import ch.rabanti.nanoxlsx4j.exceptions.IOException;
 import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
 
 /**
@@ -362,7 +362,7 @@ final class XmlElement {
      * @param ancestors  Names of possible ancestors, ordered by priority
      * @throws IOException Thrown if none of the specified ancestors exists
      */
-    void addChildElementBefore(XmlElement xmlElement, String... ancestors) {
+    void addChildElementBefore(XmlElement xmlElement, String... ancestors) throws IOException {
         if (xmlElement == null) {
             return;
         }
@@ -386,7 +386,7 @@ final class XmlElement {
      * @param successors Names of possible successors, ordered by priority
      * @throws IOException Thrown if none of the specified successors exists
      */
-    void addChildElementAfter(XmlElement xmlElement, String... successors) {
+    void addChildElementAfter(XmlElement xmlElement, String... successors) throws IOException {
         if (xmlElement == null) {
             return;
         }
