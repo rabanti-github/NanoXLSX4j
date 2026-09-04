@@ -37,6 +37,57 @@ public class ParserUtils {
      */
     public static final Locale INVARIANT_CULTURE = Locale.ROOT;
 
+// primitive parsing
+
+    /**
+     * Determines whether a string starts with a specific value
+     *
+     * @param input String to check
+     * @param value Value to be checked, whether it occurs at the beginning of the input string
+     * @return True if the input string starts with the specified value
+     */
+    public static boolean startsWith(String input, String value) {
+        if (input == null && value == null) {
+            return true;
+        } else if (input == null) {
+            return false;
+        } else if (value == null) {
+            return false;
+        }
+        return input.startsWith(value);
+    }
+
+    /**
+     * Determines whether a string does not start with a specific value
+     *
+     * @param input String to check
+     * @param value Value to be checked, whether it occurs not at the beginning of the input string
+     * @return True if the input string does not start with the specified value
+     */
+    public static boolean NotStartsWith(String input, String value) {
+        return !startsWith(input, value);
+    }
+
+    /**
+     * Transforms a string to upper case with null check and invariant culture
+     *
+     * @param input String to transform
+     * @return Upper case string
+     */
+    public static String toUpper(String input) {
+        return !isNullOrEmpty(input) ? input.toUpperCase(INVARIANT_CULTURE) : input;
+    }
+
+    /**
+     * Transforms a string to lower case with null check and invariant culture
+     *
+     * @param input String to transform
+     * @return Lower case string
+     */
+    public static String toLower(String input) {
+        return !isNullOrEmpty(input) ? input.toLowerCase(INVARIANT_CULTURE) : input;
+    }
+
     /**
      * Transforms an integer to an invariant sting
      * <p>
@@ -62,7 +113,10 @@ public class ParserUtils {
      * @return Float as string
      */
     public static String toString(float input) {
-        return Float.toString(input);
+        if (!Float.isFinite(input)) {
+            return Float.toString(input);
+        }
+        return new BigDecimal(Float.toString(input)).stripTrailingZeros().toPlainString();
     }
 
     /**
@@ -90,7 +144,10 @@ public class ParserUtils {
      * @return Double as string
      */
     public static String toString(double input) {
-        return Double.toString(input);
+        if (!Double.isFinite(input)) {
+            return Double.toString(input);
+        }
+        return new BigDecimal(Double.toString(input)).stripTrailingZeros().toPlainString();
     }
 
     /**
@@ -135,55 +192,62 @@ public class ParserUtils {
         return Short.toString(input);
     }
 
-    /**
-     * Transforms a string to upper case with null check and invariant culture
-     *
-     * @param input String to transform
-     * @return Upper case string
-     */
-    public static String toUpper(String input) {
-        return !isNullOrEmpty(input) ? input.toUpperCase(INVARIANT_CULTURE) : input;
+    /// <summary>
+    /// Parses a float independent of the culture info of the host
+    /// </summary>
+    /// <param name="rawValue">Raw number as string</param>
+    /// <returns>Parsed float</returns>
+    /// \remark <remarks>The method does not check the validity and will cause an error if an invalid value is
+    /// passed</remarks>
+    public static float parseFloat(String rawValue) {
+        return Float.parseFloat(rawValue);
     }
 
     /**
-     * Transforms a string to lower case with null check and invariant culture
+     * Parses an int independent of the culture info of the host
      *
-     * @param input String to transform
-     * @return Lower case string
+     * <p>Remarks: The method does not check the validity and will cause an error if an invalid value is passed</p>
+     *
+     * @param rawValue Raw number as string
+     * @return Parsed int
      */
-    public static String toLower(String input) {
-        return !isNullOrEmpty(input) ? input.toLowerCase(INVARIANT_CULTURE) : input;
+    public static int parseInt(String rawValue) {
+        String normalizedValue = normalizeInvariantNumber(rawValue);
+        if (!INVARIANT_DOUBLE_PATTERN.matcher(normalizedValue).matches()) {
+            throw new NumberFormatException("For input string: \"" + rawValue + "\"");
+        }
+        return new BigDecimal(normalizedValue.replace(",", "")).intValueExact();
     }
 
     /**
-     * Convenience method to check in one step whether a string is null or empty
+     * Parses a double independent of the culture info of the host
      *
-     * @param input String to check
-     * @return True if null or empty, otherwise false
+     * <p>Remarks: The method does not check the validity and will cause an error if an invalid value is passed</p>
+     *
+     * @param rawValue Raw number as string
+     * @return Parsed int
      */
-    public static boolean isNullOrEmpty(String input) {
-        return input == null || input.isEmpty();
+    public static double parseDouble(String rawValue) {
+        return Double.parseDouble(rawValue);
     }
 
     /**
-     * Convenience method to check in one step whether a string is null, empty or consists only of whitespaces
+     * Parses a bool as a binary number either based on an int (0/1) or a string expression (true/ false), independent
+     * of the culture info of the host
      *
-     * @param input String to check
-     * @return True if null, empty or whitespaces otherwise false
+     * @param rawValue Raw number or expression as string
+     * @return Parsed bool as number (0 = false, 1 = true)
      */
-    public static boolean isNullOrWhiteSpace(String input) {
-        return input == null || input.isBlank();
-    }
-
-    /**
-     * Null-safe method to compare the equality of two strings, ignoring the case
-     *
-     * @param a String a
-     * @param b String b
-     * @return True if equal, otherwise false
-     */
-    public static boolean equalsIgnoreCase(String a, String b) {
-        return a == null ? b == null : a.equalsIgnoreCase(b);
+    public static int parseBinaryBoolean(String rawValue) {
+        if (isNullOrEmpty(rawValue)) {
+            return 0;
+        }
+        Optional<Integer> value = tryParseInt(rawValue);
+        if (value.isPresent()) {
+            return value.get() >= 1 ? 1 : 0;
+        }
+        Optional<Boolean> regularBool = tryParseBoolean(rawValue);
+        return regularBool.filter(aBoolean -> aBoolean).map(aBoolean -> 1).orElse(0);
     }
 
     /**
@@ -226,6 +290,57 @@ public class ParserUtils {
     }
 
     /**
+     * Tries to parse a long independent of the culture info of the host
+     *
+     * @param rawValue Raw number as string
+     * @return Parsed long, or an empty optional if parsing failed
+     */
+    public static Optional<Long> tryParseLong(String rawValue) {
+        if (rawValue == null) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(Long.parseLong(rawValue.trim()));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Tries to parse a float independent of the culture info of the host
+     *
+     * @param rawValue Raw number as string
+     * @return Parsed float, or an empty optional if parsing failed
+     */
+    public static Optional<Float> tryParseFloat(String rawValue) {
+        if (rawValue == null) {
+            return Optional.empty();
+        }
+        String normalizedValue = normalizeInvariantNumber(rawValue);
+        if (!INVARIANT_DOUBLE_PATTERN.matcher(normalizedValue).matches()) {
+            return Optional.empty();
+        }
+        return Optional.of(Float.parseFloat(normalizedValue.replace(",", "")));
+    }
+
+    /**
+     * Tries to parse a BigDecimal independent of the culture info of the host
+     *
+     * @param rawValue Raw number as string
+     * @return Parsed BigDecimal, or an empty optional if parsing failed
+     */
+    public static Optional<BigDecimal> tryParseBigDecimal(String rawValue) {
+        if (rawValue == null) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(new BigDecimal(rawValue.trim()));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Tries to parse a double independently of the host locale.
      *
      * @param rawValue Raw double value
@@ -235,25 +350,82 @@ public class ParserUtils {
         if (rawValue == null) {
             return Optional.empty();
         }
+        String normalizedValue = normalizeInvariantNumber(rawValue);
+        if (!INVARIANT_DOUBLE_PATTERN.matcher(normalizedValue).matches()) {
+            return Optional.empty();
+        }
+        return Optional.of(Double.parseDouble(normalizedValue.replace(",", "")));
+    }
+
+    private static String normalizeInvariantNumber(String rawValue) {
         String normalizedValue = rawValue.trim();
         if (normalizedValue.endsWith("-") || normalizedValue.endsWith("+")) {
             normalizedValue = normalizedValue.substring(normalizedValue.length() - 1)
                     + normalizedValue.substring(0, normalizedValue.length() - 1);
         }
-        if (!INVARIANT_DOUBLE_PATTERN.matcher(normalizedValue).matches()) {
-            return Optional.empty();
-        }
-        try {
-            return Optional.of(Double.parseDouble(normalizedValue.replace(",", "")));
-        } catch (NumberFormatException e) {
-            return Optional.empty();
-        }
+        return normalizedValue;
     }
 
     /**
+     * Normalizes all newlines of a string to CR+LF
+     *
+     * @param value Input value
+     * @return Normalized value
+     */
+    public static String normalizeNewLines(String value) {
+        if (value == null || (!value.contains("\n") && !value.contains("\r"))) {
+            return value;
+        }
+        return value.replace("\n\r", "\n").replace("\r\n", "\n").replace("\r", "\n").replace("\n", "\r\n");
+    }
+
+    /**
+     * Determines whether the passed character is a ASCII digit character (0-9)
+     *
+     * @param character Character to check
+     * @return True if an ASCII character, otherwise false
+     */
+    public static boolean isAsciiDigit(char character) {
+        return character >= '0' && character <= '9';
+    }
+
+    /**
+     * Convenience method to check in one step whether a string is null or empty
+     *
+     * @param input String to check
+     * @return True if null or empty, otherwise false
+     */
+    public static boolean isNullOrEmpty(String input) {
+        return input == null || input.isEmpty();
+    }
+
+    /**
+     * Convenience method to check in one step whether a string is null, empty or consists only of whitespaces
+     *
+     * @param input String to check
+     * @return True if null, empty or whitespaces otherwise false
+     */
+    public static boolean isNullOrWhiteSpace(String input) {
+        return input == null || input.isBlank();
+    }
+
+    /**
+     * Null-safe method to compare the equality of two strings, ignoring the case
+     *
+     * @param a String a
+     * @param b String b
+     * @return True if equal, otherwise false
+     */
+    public static boolean equalsIgnoreCase(String a, String b) {
+        return a == null ? b == null : a.equalsIgnoreCase(b);
+    }
+
+// formula parsing
+
+    /**
      * Transforms a given object to a string displayed as cached Values. The common known compatible numeric types, like
-     * int, float, sbyte etc. will be transformed to their appropriate string representations. Bool will be either 0 or
-     * 1, or to TRUE or FALSE if convertBoolToNumber is set to false. Date or TimeSpan will be transformed to a OADate
+     * int, float, etc. will be transformed to their appropriate string representations. Boolean will be either 0 or 1,
+     * or to TRUE or FALSE if convertBoolToNumber is set to false. Date or TimeSpan will be transformed to a OADate
      * (numeric) value. Null or an empty string will be transformed to 0. If an unknown object type is passed, its own
      * ToString() method will be used.
      *
@@ -272,8 +444,8 @@ public class ParserUtils {
 
     /**
      * Transforms a given object to a string displayed as cached Values. The common known compatible numeric types, like
-     * int, float, sbyte etc. will be transformed to their appropriate string representations. Bool will be either 0 or
-     * 1, or to TRUE or FALSE if convertBoolToNumber is set to false. Date or TimeSpan will be transformed to a OADate
+     * int, float, etc. will be transformed to their appropriate string representations. Boolean will be either 0 or 1,
+     * or to TRUE or FALSE if convertBoolToNumber is set to false. Date or TimeSpan will be transformed to a OADate
      * (numeric) value. Null or an empty string will be transformed to 0. If an unknown object type is passed, its own
      * ToString() method will be used.
      *
@@ -314,9 +486,9 @@ public class ParserUtils {
         } else if (input instanceof Short) {
             return toString((short) input);
         } else if (input instanceof Date) {
-            return DataUtils.getOADateTimeString((Date) input);
+            return toString(new BigDecimal(DataUtils.getOADateTimeString((Date) input)));
         } else if (input instanceof Duration) {
-            return DataUtils.getOATimeString((Duration) input);
+            return toString(new BigDecimal(DataUtils.getOATimeString((Duration) input)));
         } else {
             return input.toString(); // Generic string
         }
@@ -426,6 +598,8 @@ public class ParserUtils {
     public record WorksheetQualifiedReference(String worksheetName, String reference) {
     }
 
+// external reference parsing
+
     /**
      * Determines whether a formula contains an external workbook reference without parsing the formula. String
      * literals, structured references, and relative R1C1 references are ignored.
@@ -486,5 +660,132 @@ public class ParserUtils {
         }
         return false;
     }
+
+    /**
+     * Determines whether a passed identifier is a valid external link identifier (internal representation, e.g."[2]")
+     *
+     * <p>This method is primarily intended for internal NanoXLSX4j processing
+     * and is not considered part of the stable public API.</p>
+     *
+     * @param identifier Expression to check
+     * @return True if a valid external link ID, otherwise false
+     */
+    public static boolean isValidExternalLinkId(String identifier) {
+        if (isNullOrEmpty(identifier) ||
+                identifier.length() < 3 ||
+                identifier.charAt(0) != '[' ||
+                identifier.charAt(identifier.length() - 1) != ']') {
+            return false;
+        }
+
+        for (int i = 1; i < identifier.length() - 1; i++) {
+            if (!isAsciiDigit(identifier.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Tries to read an external workbook identifier (internal representation, e.g. "[1]") beginning at the specified
+     * position. The out parameter is the length of the token.
+     *
+     * <p>This method is primarily intended for internal NanoXLSX4j processing
+     * and is not considered part of the stable public API.</p>
+     *
+     * <p>Remarks: The actual reading can be made, based on the output, with {@link String#substring(int, int)}</p>
+     *
+     * @param expression Expression where the identifier is supposed to be
+     * @param startIndex Start index in the expression
+     * @return Parsed integer with the ID, or an empty optional if no ID could be determined
+     */
+    public static Optional<Integer> tryReadExternalLinkId(String expression, int startIndex) {
+        if (isNullOrEmpty(expression) ||
+                startIndex < 0 || startIndex >= expression.length() || expression.charAt(startIndex) != '[') {
+            return Optional.empty();
+        }
+
+        int currentIndex = startIndex + 1;
+        if (currentIndex >= expression.length() ||
+                !isAsciiDigit(expression.charAt(currentIndex))) {
+            return Optional.empty();
+        }
+
+        do {
+            currentIndex++;
+        }
+        while (currentIndex < expression.length() && isAsciiDigit(expression.charAt(currentIndex)));
+        if (currentIndex >= expression.length() || expression.charAt(currentIndex) != ']') {
+            return Optional.empty();
+        }
+
+        int closingBracketIndex = currentIndex;
+        if (!hasValidPrefixBoundary(expression, startIndex)) {
+            return Optional.empty();
+        }
+        if (!hasValidSuffixBoundary(expression, closingBracketIndex)) {
+            return Optional.empty();
+        }
+        return Optional.of(closingBracketIndex - startIndex + 1);
+    }
+
+    /**
+     * Prevents structured references such as Table1[1] from being interpreted as external workbook IDs.
+     */
+    private static boolean hasValidPrefixBoundary(String expression, int openingBracketIndex) {
+        if (openingBracketIndex == 0) {
+            return true;
+        }
+
+        char previous = expression.charAt(openingBracketIndex - 1);
+        // Quoted external sheet reference: '[1]Sheet name'!A1
+        if (previous == '\'') {
+            return true;
+        }
+        // Table1[1], SomeName[2], etc.
+        return !isNameCharacter(previous);
+    }
+
+    /**
+     * Ensures that the numeric bracket token is followed by something that can form an external workbook reference.
+     */
+    private static boolean hasValidSuffixBoundary(String expression, int closingBracketIndex) {
+        int nextIndex = closingBracketIndex + 1;
+        if (nextIndex >= expression.length()) {
+            // A bare [1] can be a structured table-column reference.
+            return false;
+        }
+        char next = expression.charAt(nextIndex);
+        // External defined name / workbook prefix: [1]!ExternalName
+        if (next == '!') {
+            return true;
+        }
+        // Broken external sheet reference:  [1]#REF!A1
+        if (next == '#') {
+            return true;
+        }
+        // The sheet or external name must immediately follow the ID.
+        if (Character.isWhitespace(next)) {
+            return false;
+        }
+        return switch (next) {
+            case '"', '[', ']', '(', ')', ',', ';', '+', '-', '*', '/', '^', '&', '=', '<', '>', '%', ':' -> false;
+            default -> true;
+        };
+    }
+
+    /**
+     * Determines whether the passed character is a valid character for an Excel-internal name (e.g. for defined name)
+     *
+     * @param character Character to check
+     * @return True if valid, otherwise false
+     */
+    private static boolean isNameCharacter(char character) {
+        return Character.isLetterOrDigit(character) ||
+                character == '_' ||
+                character == '\\' ||
+                character == '.';
+    }
+
 
 }

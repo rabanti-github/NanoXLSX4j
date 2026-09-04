@@ -11,12 +11,14 @@ package ch.rabanti.nanoxlsx4j.utils;
 import java.util.regex.Pattern;
 
 import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.Worksheet;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
 
 public class Validators {
 
     private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("[a-fA-F0-9]{6,8}");
+    private static final Pattern INVALID_WORKSHEET_NAME_PATTERN = Pattern.compile("[\\[\\]*?/\\\\]");
 
     private Validators() {
         // Do not instantiate
@@ -129,7 +131,7 @@ public class Validators {
             }
             lastException = ex;
         }
-        if (scope == Cell.AddressScope.RANGE && isCellAddress && isRange) {
+        if (scope == Cell.AddressScope.RANGE && isCellAddress) {
             FormatException innerException = new FormatException(
                     "The expression (" + expression + ") is a single cell address, but a cell range was expected");
             throw new FormatException(innerException.getMessage(), innerException);
@@ -138,6 +140,22 @@ public class Validators {
         } else if (scope == Cell.AddressScope.INVALID && (isCellAddress || isRange)) {
             throw new FormatException(
                     "The passed expression is valid cell address or range, but the validation was explicitly inverted");
+        }
+    }
+
+    /**
+     * Validates the passed string, whether it is an expression that can be used as worksheet name.
+     *
+     * @param name Name to validate
+     * @throws FormatException Thrown if the worksheet name is too long or contains illegal characters
+     */
+    public static void validateWorksheetName(String name) {
+        if (ParserUtils.isNullOrEmpty(name) || name.length() > Worksheet.MAX_WORKSHEET_NAME_LENGTH) {
+            throw new FormatException(
+                    "the worksheet name must be between 1 and " + Worksheet.MAX_WORKSHEET_NAME_LENGTH + " characters");
+        }
+        if (INVALID_WORKSHEET_NAME_PATTERN.matcher(name).find()) {
+            throw new FormatException("the worksheet name must not contain the characters [  ]  * ? / \\ ");
         }
     }
 
