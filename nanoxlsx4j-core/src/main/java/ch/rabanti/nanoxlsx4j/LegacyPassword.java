@@ -18,6 +18,11 @@ import java.util.Objects;
 
 /**
  * Represents a legacy password based on Excel's proprietary hashing algorithm.
+ *
+ * <p>The retained character buffer is cleared on replacement and when unset. This is best-effort memory hygiene,
+ * not encrypted storage or protection against memory inspection. Input and returned strings cannot be cleared
+ * by this instance. Call {@link #unsetPassword()} when the password is no longer needed. Instances are not
+ * thread-safe.</p>
  */
 public class LegacyPassword implements Password {
 
@@ -56,8 +61,11 @@ public class LegacyPassword implements Password {
             unsetPassword();
             return;
         }
-        this.password = getSecureString(plainText);
-        this.passwordHash = generateLegacyPasswordHash(plainText);
+        String replacementHash = generateLegacyPasswordHash(plainText);
+        char[] replacement = plainText.toCharArray();
+        clearPasswordBuffer();
+        this.password = replacement;
+        this.passwordHash = replacementHash;
     }
 
     /**
@@ -65,10 +73,7 @@ public class LegacyPassword implements Password {
      */
     @Override
     public void unsetPassword() {
-        if (password != null) {
-            Arrays.fill(password, '\0');
-            password = new char[0];
-        }
+        clearPasswordBuffer();
         passwordHash = null;
     }
 
@@ -102,8 +107,21 @@ public class LegacyPassword implements Password {
      */
     @Override
     public void copyFrom(Password passwordInstance) {
-        this.passwordHash = passwordInstance.getPasswordHash();
-        this.password = getSecureString(passwordInstance.getPassword());
+        Objects.requireNonNull(passwordInstance, "passwordInstance");
+        String replacementHash = passwordInstance.getPasswordHash();
+        char[] replacement;
+        // Only bypass getPassword() for the concrete class: subclasses may override its public contract.
+        if (passwordInstance.getClass() == LegacyPassword.class) {
+            char[] source = ((LegacyPassword) passwordInstance).password;
+            replacement = source == null ? null : source.clone();
+        } else {
+            String plainText = passwordInstance.getPassword();
+            replacement = ParserUtils.isNullOrEmpty(plainText) ? null : plainText.toCharArray();
+        }
+        // Prepare first, including for self-copy, so failures leave this instance unchanged.
+        clearPasswordBuffer();
+        this.password = replacement;
+        this.passwordHash = replacementHash;
         if (passwordInstance instanceof LegacyPassword legacyPassword) {
             this.type = legacyPassword.type;
         }
@@ -174,11 +192,11 @@ public class LegacyPassword implements Password {
         return Integer.toHexString(passwordHash).toUpperCase(Locale.ROOT);
     }
 
-    private static char[] getSecureString(String plainTextPassword) {
-        if (ParserUtils.isNullOrEmpty(plainTextPassword)) {
-            return new char[0];
+    private void clearPasswordBuffer() {
+        if (password != null) {
+            Arrays.fill(password, '\0');
+            password = null;
         }
-        return plainTextPassword.toCharArray();
     }
 
     @Override

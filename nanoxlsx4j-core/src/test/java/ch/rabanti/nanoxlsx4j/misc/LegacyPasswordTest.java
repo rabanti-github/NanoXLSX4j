@@ -21,6 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LegacyPasswordTest {
 
@@ -167,5 +170,93 @@ public class LegacyPasswordTest {
         password3.setPassword(null);
         assertTrue(password1.equals(password2));
         assertFalse(password1.equals(password3));
+    }
+
+    // Java-specific regression tests for owned-buffer cleanup; reference tests above remain unchanged.
+    @Test
+    @DisplayName("Test of clearing password buffers on replacement and unset (Java-specific)")
+    public void replacementClearsOldBufferTest() throws Exception {
+        LegacyPassword password = new LegacyPassword(LegacyPassword.PasswordType.WORKBOOK_PROTECTION);
+        password.setPassword("old");
+        char[] oldBuffer = passwordBuffer(password);
+        password.setPassword("new");
+        assertArrayEquals(new char[oldBuffer.length], oldBuffer);
+        assertEquals("new", password.getPassword());
+        char[] newBuffer = passwordBuffer(password);
+        password.unsetPassword();
+        assertArrayEquals(new char[newBuffer.length], newBuffer);
+        assertNull(password.getPassword());
+        password.unsetPassword();
+        assertNull(password.getPasswordHash());
+    }
+
+    @Test
+    @DisplayName("Test of clearing and independently copying password buffers (Java-specific)")
+    public void copyClearsTargetAndOwnsBufferTest() throws Exception {
+        LegacyPassword source = new LegacyPassword(LegacyPassword.PasswordType.WORKSHEET_PROTECTION);
+        source.setPassword("source");
+        LegacyPassword target = new LegacyPassword(LegacyPassword.PasswordType.WORKBOOK_PROTECTION);
+        target.setPassword("target");
+        char[] oldBuffer = passwordBuffer(target);
+        target.copyFrom(source);
+        assertArrayEquals(new char[oldBuffer.length], oldBuffer);
+        assertNotSame(passwordBuffer(source), passwordBuffer(target));
+        source.unsetPassword();
+        assertEquals("source", target.getPassword());
+        assertEquals(LegacyPassword.PasswordType.WORKSHEET_PROTECTION, target.getType());
+    }
+
+    @Test
+    @DisplayName("Test of preserving the password when copied from itself (Java-specific)")
+    public void selfCopyPreservesPasswordTest() throws Exception {
+        LegacyPassword password = new LegacyPassword(LegacyPassword.PasswordType.WORKBOOK_PROTECTION);
+        password.setPassword("test");
+        String hash = password.getPasswordHash();
+        char[] oldBuffer = passwordBuffer(password);
+        password.copyFrom(password);
+        assertArrayEquals(new char[oldBuffer.length], oldBuffer);
+        assertEquals("test", password.getPassword());
+        assertEquals(hash, password.getPasswordHash());
+    }
+
+    @Test
+    @DisplayName("Test of honoring an overridden getPassword method in copyFrom (Java-specific)")
+    public void copyHonorsSubclassGetterTest() {
+        LegacyPassword source = new LegacyPassword(LegacyPassword.PasswordType.WORKSHEET_PROTECTION) {
+            @Override
+            public String getPassword() {
+                return "overridden";
+            }
+        };
+        source.setPassword("internal");
+        LegacyPassword target = new LegacyPassword(LegacyPassword.PasswordType.WORKBOOK_PROTECTION);
+        target.copyFrom(source);
+        assertEquals("overridden", target.getPassword());
+        assertEquals(source.getPasswordHash(), target.getPasswordHash());
+    }
+
+    @Test
+    @DisplayName("Test of preserving the target state when copyFrom fails (Java-specific)")
+    public void failedCopyPreservesTargetTest() {
+        LegacyPassword source = new LegacyPassword(LegacyPassword.PasswordType.WORKSHEET_PROTECTION) {
+            @Override
+            public String getPassword() {
+                throw new IllegalStateException("Cannot read password");
+            }
+        };
+        LegacyPassword target = new LegacyPassword(LegacyPassword.PasswordType.WORKBOOK_PROTECTION);
+        target.setPassword("retained");
+        String hash = target.getPasswordHash();
+        assertThrows(IllegalStateException.class, () -> target.copyFrom(source));
+        assertEquals("retained", target.getPassword());
+        assertEquals(hash, target.getPasswordHash());
+        assertEquals(LegacyPassword.PasswordType.WORKBOOK_PROTECTION, target.getType());
+    }
+
+    private static char[] passwordBuffer(LegacyPassword password) throws Exception {
+        // Inspect the original array to verify clearing, without exposing it in the production API.
+        var field = LegacyPassword.class.getDeclaredField("password");
+        field.setAccessible(true);
+        return (char[]) field.get(password);
     }
 }
