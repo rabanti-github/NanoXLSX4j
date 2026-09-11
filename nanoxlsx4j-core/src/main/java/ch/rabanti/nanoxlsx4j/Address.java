@@ -104,31 +104,6 @@ public record Address(int column, int row, Cell.AddressType type) implements Com
         return Cell.resolveColumnAddress(column);
     }
 
-    // /**
-    //  * Gets the column number (zero based)
-    //  * @return Column number as int
-    //  */
-    // public int getColumn() {
-    //     return column;
-    // }
-//
-    // /**
-    //  * Gets the row number (zero based)
-    //  * @return Row number
-    //  */
-    // public int getRow() {
-    //     return row;
-    // }
-
-    /**
-     * Gets the referencing type of the address
-     *
-     * @return Referencing type
-     */
-    public Cell.AddressType getType() {
-        return type;
-    }
-
     /**
      * Overwritten ToString method
      *

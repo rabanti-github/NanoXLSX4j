@@ -155,7 +155,7 @@ public class RangeTest {
     public void overlapsTest(String rangeExpression, String givenRange, boolean expectedResult) {
         Range range = new Range(rangeExpression);
         Range range2 = new Range(givenRange);
-        boolean contains = range.Overlaps(range2);
+        boolean contains = range.overlaps(range2);
         assertEquals(contains, expectedResult);
     }
 

@@ -99,7 +99,7 @@ public record Range(Address startAddress, Address endAddress) {
      * @param other Range to check for overlapping
      * @return True if overlapping, otherwise false
      */
-    public boolean Overlaps(Range other) {
+    public boolean overlaps(Range other) {
         return !(this.endAddress.row() < other.startAddress.row() || this.startAddress.row() > other.endAddress.row() ||
                 this.endAddress.column() < other.startAddress.column() ||
                 this.startAddress.column() > other.endAddress.column());
@@ -151,5 +151,15 @@ public record Range(Address startAddress, Address endAddress) {
     @Override
     public int hashCode() {
         return this.toString().hashCode();
+    }
+
+    /**
+     * Creates a (dereferenced, if applicable) deep copy of this range
+     *
+     * @return Copy of this range
+     */
+    Range copy()
+    {
+        return new Range(this.startAddress.copy(), this.endAddress.copy());
     }
 }

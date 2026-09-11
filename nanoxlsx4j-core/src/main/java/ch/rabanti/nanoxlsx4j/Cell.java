@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import ch.rabanti.nanoxlsx4j.annotations.InternalApi;
 import ch.rabanti.nanoxlsx4j.enums.Errors;
@@ -255,8 +256,7 @@ public class Cell implements Comparable<Cell> {
      *
      * @param cellAddressType Address type
      *                        <p>Remarks: The type has no influence on the behavior of the cell, though. It is
-     *                        preserved
-     *                        to avoid losing information on the address object of the cell</p>
+     *                        preserved to avoid losing information on the address object of the cell</p>
      */
     public void setCellAddressType(AddressType cellAddressType) {
         this.cellAddressType = cellAddressType;
@@ -301,9 +301,8 @@ public class Cell implements Comparable<Cell> {
      * cell does not contain a formula
      *
      * <p>Remarks: The plain text of the formula is still set in {@link @link Cell#getValue()}. One exception are
-     * linked
-     * cells ({@link FormulaData.FormulaType#ARRAY} and {@link FormulaData#getMasterCellAddress()} is set). In this
-     * case, the cached value will be in {@link Cell#getValue()} due to compatibility reason.
+     * linked cells ({@link FormulaData.FormulaType#ARRAY} and {@link FormulaData#getMasterCellAddress()} is set). In
+     * this case, the cached value will be in {@link Cell#getValue()} due to compatibility reason.
      * </p>
      */
     public FormulaData getFormula() {
@@ -315,11 +314,10 @@ public class Cell implements Comparable<Cell> {
      * null, if the cell does not contain a formula
      *
      * <p>Remarks: The plain text of the formula is still set in {@link @link Cell#getValue()}. One exception are
-     * linked
-     * cells ({@link FormulaData.FormulaType#ARRAY} and {@link FormulaData#getMasterCellAddress()} is set). In this
-     * case, the cached value will be in {@link Cell#getValue()} due to compatibility reason. <br />API note: Do not
-     * manually tamper with Formula. There is {@link FeatureSet} inside, responsible for up-stream propagated feature
-     * counters.
+     * linked cells ({@link FormulaData.FormulaType#ARRAY} and {@link FormulaData#getMasterCellAddress()} is set). In
+     * this case, the cached value will be in {@link Cell#getValue()} due to compatibility reason. <br />API note: Do
+     * not manually tamper with Formula. There is {@link FeatureSet} inside, responsible for up-stream propagated
+     * feature counters.
      * </p>
      */
     void setFormula(FormulaData formula) {
@@ -445,11 +443,11 @@ public class Cell implements Comparable<Cell> {
      * {@link DefinedName#getName()}.
      *
      * @param definedName Defined name to associate with this cell. Must not be null.
-     * @return Returns the range object of transposed linked cells if the type is {@link DefinedName.NameType#RANGE}.
-     * The value is null otherwise.
+     * @return Returns the optional range object of transposed linked cells if the type is {@link DefinedName.NameType#RANGE}.
+     * The value is empty otherwise.
      * @throws WorksheetException Thrown if {@code definedName} is null.
      */
-    Range setReference(DefinedName definedName) {
+    Optional<Range> setReference(DefinedName definedName) {
         return setReference(definedName, null);
     }
 
@@ -461,11 +459,11 @@ public class Cell implements Comparable<Cell> {
      * @param definedName Defined name to associate with this cell. Must not be null.
      * @param cachedValue Optional cached value that will be shown as long as the cell is not refreshed. The value will
      *                    be ignored if the defined name type is {@link DefinedName.NameType#CONSTANT}
-     * @return Returns the range object of transposed linked cells if the type is {@link DefinedName.NameType#RANGE}.
-     * The value is null otherwise.
+     * @return Returns the optional range object of transposed linked cells if the type is {@link DefinedName.NameType#RANGE}.
+     * The value is empty otherwise.
      * @throws WorksheetException Thrown if {@code definedName} is null.
      */
-    Range setReference(DefinedName definedName, Object cachedValue) {
+    Optional<Range> setReference(DefinedName definedName, Object cachedValue) {
         if (definedName == null) {
             throw new WorksheetException("The defined name to set as cell reference must not be null.");
         }
@@ -494,7 +492,7 @@ public class Cell implements Comparable<Cell> {
         this.setDataType(CellType.FORMULA); // Force type
         this.formula = formula;
         this.value = definedName.getName();
-        return referenceRange;
+        return Optional.ofNullable(referenceRange);
     }
 
     /**
@@ -863,24 +861,6 @@ public class Cell implements Comparable<Cell> {
         };
     }
 
-    //  /**
-    //   * Gets the column and row number (zero based) of a cell by the address
-    //   *
-    //   * @param address Address as string in the format A1 - XFD1048576
-    //   * @return Struct with row and column
-    //   * @throws FormatException Throws a FormatException if the passed address is malformed
-    //   * @throws RangeException Throws a RangeException if the value of the passed address is out of range (A-XFD
-    //   and 1 to 1048576)
-    //   */
-    //  public static Address resolveCellCoordinate(String address)
-    //  {
-    //      int row;
-    //      int column;
-    //      AddressType type;
-    //      Address addressObject = resolveCellCoordinate(address);
-    //      return new Address(addressObject.column(), addressObject.row(), addressObject.type());
-    //  }
-
     /**
      * Gets the column and row number (zero based) of a cell by the address
      *
@@ -1151,6 +1131,4 @@ public class Cell implements Comparable<Cell> {
     private static boolean isAsciiLetter(char character) {
         return character >= 'A' && character <= 'Z' || character >= 'a' && character <= 'z';
     }
-
-
 }

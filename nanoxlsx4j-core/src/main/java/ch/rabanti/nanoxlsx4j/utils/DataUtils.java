@@ -494,7 +494,7 @@ public class DataUtils {
      */
     private static boolean isMergeCandidate(Range a, Range b, RangeMergeStrategy strategy) {
         // First, if they overlap, they are candidates.
-        if (a.Overlaps(b)) {
+        if (a.overlaps(b)) {
             return true;
         }
 
@@ -547,7 +547,7 @@ public class DataUtils {
         List<Range> result = new ArrayList<>();
         // Process each existing range.
         for (Range range : givenRanges) {
-            if (!range.Overlaps(rangeToRemove)) {
+            if (!range.overlaps(rangeToRemove)) {
                 // No overlap: keep the range unchanged.
                 result.add(range);
             } else {
