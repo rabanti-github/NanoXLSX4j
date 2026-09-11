@@ -221,7 +221,7 @@ public class ValidatorsTest {
             "--------------------------------, false"
     }, nullValues = "NULL")
     public void setSheetNameTest(String name, boolean expectedValid) {
-        Worksheet worksheet = new Worksheet(null, 0, null);
+        Worksheet worksheet = new Worksheet();
         assertNull(worksheet.getSheetName());
         if (expectedValid) {
             Validators.validateWorksheetName(name);

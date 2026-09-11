@@ -205,7 +205,7 @@ public class Cell implements Comparable<Cell> {
             return;
         }
         if (dataType == CellType.FORMULA) {
-            this.setDataType(dataType);
+            this.dataType = dataType;
             if (formula == null) {
                 this.formula = new FormulaData(getValueAsFormulaExpression());
             } else {
