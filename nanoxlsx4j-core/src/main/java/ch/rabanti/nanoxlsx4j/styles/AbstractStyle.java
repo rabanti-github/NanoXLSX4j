@@ -85,7 +85,7 @@ public abstract class AbstractStyle implements Comparable<AbstractStyle> {
                 sourceInfo.setAccessible(true); // Necessary to access private field
                 referenceInfo = reference.getClass().getDeclaredField(info.getName());
                 referenceInfo.setAccessible(true); // Necessary to access private field
-                if (!sourceInfo.get(source).equals(referenceInfo.get(reference))) {
+                if (!Objects.equals(sourceInfo.get(source), referenceInfo.get(reference))) {
                     info.setAccessible(true); // Necessary to access private field
                     info.set(this, sourceInfo.get(source));
                 }
