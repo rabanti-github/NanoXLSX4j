@@ -92,7 +92,6 @@ public class DefinedName implements Comparable<DefinedName> {
     private String textValue;
     private String comment;
     private FormulaError error;
-    boolean externalReferences;
     private FeatureSet features;
 
 //getters&setters
@@ -176,7 +175,7 @@ public class DefinedName implements Comparable<DefinedName> {
      * @return If true, the defined name contains external references
      */
     public boolean hasExternalReferences() {
-        return externalReferences;
+        return features.containsExternalLink();
     }
 
     /**
@@ -292,9 +291,6 @@ public class DefinedName implements Comparable<DefinedName> {
         castValue(workbook);
         this.features = FeatureSet.createDefinedName();
         this.features.add(workbook.getFeatures()); // Add feature reference already here
-        if (containsExternalLinks.isPresent()) {
-
-        }
         boolean hasExternalLinks = containsExternalLinks.orElseGet(
                 () -> this.type == NameType.FORMULA
                         && ParserUtils.containsExternalReference(this.textValue)
@@ -317,10 +313,10 @@ public class DefinedName implements Comparable<DefinedName> {
     static DefinedName resolveDefinedName(
             String name, String reference, Workbook workbook, Worksheet localSheet, String comment) {
         ParsedObject parsedObject = getParsedObject(reference);
-        boolean optionalLinks = containsExternalLink(
+        boolean containsExternalLink = containsExternalLink(
                 parsedObject.getWorksheet(), parsedObject.getType(), parsedObject.getValue());
         Worksheet worksheet = null;
-        if (parsedObject.getWorksheet() != null && !optionalLinks) {
+        if (parsedObject.getWorksheet() != null && !containsExternalLink) {
             for (Worksheet ws : workbook.getWorksheets()) {
                 if (ParserUtils.equalsIgnoreCase(parsedObject.getWorksheet(), ws.getSheetName())) {
                     worksheet = ws;
@@ -330,7 +326,7 @@ public class DefinedName implements Comparable<DefinedName> {
         }
         DefinedName definedName = new DefinedName(
                 workbook, parsedObject.getType(), name, parsedObject.getValue(),
-                worksheet, localSheet, comment, Optional.of(optionalLinks)
+                worksheet, localSheet, comment, Optional.of(containsExternalLink)
         );
         definedName.error = parsedObject.getError();
         return definedName;
@@ -573,6 +569,17 @@ public class DefinedName implements Comparable<DefinedName> {
             return cmp;
         }
         return Comparator.nullsFirst(String::compareTo).compare(comment, o.comment);
+    }
+
+    /**
+     * Returns a textual representation of the defined name (intended for debugging).
+     *
+     * @return A short string with name, scope and reference.
+     */
+    @Override
+    public String toString() {
+        String scope = localSheet == null ? "workbook" : "sheet:" + localSheet.getSheetName();
+        return "DefinedName{name=" + name + ", scope=" + scope + ", ref=" + textValue + "}";
     }
 
     /**

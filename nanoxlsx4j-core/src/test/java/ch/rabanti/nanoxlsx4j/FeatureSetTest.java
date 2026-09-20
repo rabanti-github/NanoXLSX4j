@@ -60,14 +60,14 @@ public class FeatureSetTest {
         assertFeatures(parent, 2, 1, 1, 2, 1);
         assertFeatures(root, 2, 1, 1, 2, 1);
 
-        formula.Remove(aggregate);
+        formula.remove(aggregate);
 
         assertFeatures(formula, 1, 0, 0, 1, 1);
         assertFeatures(aggregate, 1, 1, 1, 1);
         assertFeatures(parent, 1, 1, 1, 1);
         assertFeatures(root, 1, 1, 1, 1);
 
-        definedName.Remove(aggregate);
+        definedName.remove(aggregate);
 
         assertFeatures(definedName, 1, 1, 1, 1);
         assertFeatures(aggregate, 0, 0, 0, 0);
@@ -223,7 +223,7 @@ public class FeatureSetTest {
         assertEquals(formulaCount > 0, featureSet.containsFormulas());
         assertEquals(definedNameCount > 0, featureSet.containsDefinedName());
         assertEquals(definedNameFormulaCount > 0, featureSet.containsDefinedNameFormula());
-        assertEquals(definedNameReferenceFormulaCount > 0, featureSet.containsDefinedNameReferenceFormula());
+        assertEquals(definedNameReferenceFormulaCount > 0, featureSet.containsDefinedNameReferences());
         assertEquals(formulaCount - definedNameFormulaCount > 0, featureSet.containsWorksheetFormula());
         assertEquals(externalLinkCount > 0, featureSet.containsExternalLink());
     }

@@ -122,7 +122,7 @@ public final class FeatureSet {
      *
      * @return True if the feature has a count of >0 in this set
      */
-    public boolean containsDefinedNameReferenceFormula() {
+    public boolean containsDefinedNameReferences() {
         return definedNameReferenceFormulaCount > 0;
     }
 
@@ -207,7 +207,7 @@ public final class FeatureSet {
      *
      * @param parent Parent feature set
      */
-    public void Remove(FeatureSet parent) {
+    public void remove(FeatureSet parent) {
         parent.applyDelta(
                 -formulaCount,
                 -definedNameCount,

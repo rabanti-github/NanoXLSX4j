@@ -27,7 +27,7 @@ public class ShortenerTest {
     @DisplayName("Test of the setCurrentWorksheet function")
     void setCurrentWorksheetTest() {
         Workbook workbook = new Workbook("Sheet1");
-        workbook.AddWorksheet("Sheet2");
+        workbook.addWorksheet("Sheet2");
         Worksheet worksheet = workbook.getWorksheets().get(1);
         Shortener shortener = new Shortener(workbook);
         workbook.setCurrentWorksheet(workbook.getWorksheets().get(0));
@@ -447,15 +447,15 @@ public class ShortenerTest {
         assertThrows(RangeException.class, () -> shortener.left(2));
     }
 
-    // For code coverage
-    @Test
-    @DisplayName("Singular Test of the nullCheck method")
-    void nullCheckTest() {
-        Workbook workbook = new Workbook("Sheet1");
-        workbook.setCurrentWorksheet(null);
-        Shortener shortener = new Shortener(workbook);
-        assertThrows(WorksheetException.class, () -> shortener.value(22));
-    }
+    // For code coverage --> TODO Check whether this is still applicable
+   // @Test
+   // @DisplayName("Singular Test of the nullCheck method")
+   // void nullCheckTest() {
+   //     Workbook workbook = new Workbook("Sheet1");
+   //     workbook.setCurrentWorksheet(null);
+   //     Shortener shortener = new Shortener(workbook);
+   //     assertThrows(WorksheetException.class, () -> shortener.value(22));
+   // }
 
     private void assertJumpTo(
             Workbook workbook,

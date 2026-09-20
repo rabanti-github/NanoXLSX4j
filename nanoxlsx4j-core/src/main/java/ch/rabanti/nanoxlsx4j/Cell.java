@@ -1099,7 +1099,7 @@ public class Cell implements Comparable<Cell> {
      */
     private void detachFormulaFeatures() {
         if (worksheetFeatures != null && dataType == CellType.FORMULA && formula != null) {
-            formula.getFeatures().Remove(worksheetFeatures);
+            formula.getFeatures().remove(worksheetFeatures);
         }
     }
 

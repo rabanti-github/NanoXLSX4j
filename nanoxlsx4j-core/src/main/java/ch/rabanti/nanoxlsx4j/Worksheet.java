@@ -886,7 +886,7 @@ public class Worksheet {
      * cell direction (default is {@link CellDirection#COLUMN_TO_COLUMN}).
      *
      * <p>Remarks: Recognized are the following data types: String, int, double, float, long, short, BigDecimal, byte,
-     * Date, Duration, boolean. All other types will be cast into a string using the default ToString() method.<br /> If
+     * Date, Duration, boolean. All other types will be cast into a string using the default toString() method.<br /> If
      * the cell object already has a style definition, and a style or active style is defined, the cell style will be
      * merged, otherwise just set
      * </p>
@@ -1026,8 +1026,9 @@ public class Worksheet {
      * Adds an object to the defined cell address. If the type of the value does not match with one of the supported
      * data types, it will be cast to a String. A prepared object of the type Cell will not be cast but adjusted
      *
-     * <p>Remarks: Recognized are the following data types: Cell (prepared object), string, int, double, float, long,
-     * DateTime, TimeSpan, bool. All other types will be cast into a string using the default ToString() method
+     * <p>Remarks: Recognized are the following data types: Cell (prepared object), String, int, double, float, long,
+     * short, BigDecimal, byte, Date, Duration, boolean. All other types will be cast into a string using the default
+     * ToString() method
      * </p>
      *
      * @param value   Unspecified value to insert
@@ -1407,10 +1408,9 @@ public class Worksheet {
      * of the supported data types, it will be cast to a String. Prepared objects of the type Cell will not be cast but
      * adjusted
      *
-     * <p>Remarks: The data types in the passed list can be mixed. Recognized are the following data types: string,
-     * int,
-     * uint, double, float, long, ulong, short, ushort, decimal, byte, sbyte, DateTime, TimeSpan, bool. All other types
-     * will be cast into a string using the default ToString() method
+     * <p>Remarks: The data types in the passed list can be mixed. Recognized are the following data types: Cell
+     * (prepared object), String, int, double, float, long, short, BigDecimal, byte, Date, Duration, boolean. All other
+     * types will be cast into a string using the default toString() method
      * </p>
      *
      * @param values       List of unspecified objects to insert
@@ -1429,8 +1429,8 @@ public class Worksheet {
      * adjusted
      *
      * <p>Remarks: The data types in the passed list can be mixed. Recognized are the following data types: Cell
-     * (prepared object), string, int, uint, double, float, long, ulong, short, ushort, decimal, byte, sbyte, DateTime,
-     * TimeSpan, bool. All other types will be cast into a string using the default ToString() method
+     * (prepared object), String, int, double, float, long, short, BigDecimal, byte, Date, Duration, boolean. All other
+     * types will be cast into a string using the default toString() method
      * </p>
      *
      * @param values       List of unspecified objects to insert
@@ -1451,8 +1451,8 @@ public class Worksheet {
      * adjusted
      *
      * <p>Remarks: The data types in the passed list can be mixed. Recognized are the following data types: Cell
-     * (prepared object), string, int, uint, double, float, long, ulong, short, ushort, decimal, byte, sbyte, DateTime,
-     * TimeSpan, bool. All other types will be cast into a string using the default ToString() method
+     * (prepared object), String, int, double, float, long, short, BigDecimal, byte, Date, Duration, boolean. All other
+     * types will be cast into a string using the default toString() method
      * </p>
      *
      * @param values    List of unspecified objects to insert
@@ -1472,8 +1472,8 @@ public class Worksheet {
      * adjusted
      *
      * <p>Remarks: The data types in the passed list can be mixed. Recognized are the following data types: Cell
-     * (prepared object), string, int, uint, double, float, long, ulong, short, ushort, decimal, byte, sbyte, DateTime,
-     * TimeSpan, bool. All other types will be cast into a string using the default ToString() method
+     * (prepared object), String, int, double, float, long, short, BigDecimal, byte, Date, Duration, boolean. All other
+     * types will be cast into a string using the default toString() method
      * </p>
      *
      * @param values    List of unspecified objects to insert
@@ -1495,8 +1495,8 @@ public class Worksheet {
      * adjusted
      *
      * <p>Remarks: The data types in the passed list can be mixed. Recognized are the following data types: Cell
-     * (prepared object), string, int, uint, double, float, long, ulong, short, ushort, decimal, byte, sbyte, DateTime,
-     * TimeSpan, bool. All other types will be cast into a string using the default ToString() method
+     * (prepared object), String, int, double, float, long, short, BigDecimal, byte, Date, Duration, boolean. All other
+     * types will be cast into a string using the default toString() method
      * </p>
      *
      * @param values    List of unspecified objects to insert
@@ -1514,8 +1514,8 @@ public class Worksheet {
      * adjusted
      *
      * <p>Remarks: The data types in the passed list can be mixed. Recognized are the following data types: Cell
-     * (prepared object), string, int, uint, double, float, long, ulong, short, ushort, decimal, byte, sbyte, DateTime,
-     * TimeSpan, bool. All other types will be cast into a string using the default ToString() method
+     * (prepared object), String, int, double, float, long, short, BigDecimal, byte, Date, Duration, boolean. All other
+     * types will be cast into a string using the default toString() method
      * </p>
      *
      * @param values    List of unspecified objects to insert
@@ -1533,8 +1533,8 @@ public class Worksheet {
      * Internal function to add a generic list of value to the defined cell range
      *
      * <p>Remarks: The data types in the passed list can be mixed. Recognized are the following data types: Cell
-     * (prepared object), string, int, uint, double, float, long, ulong, short, ushort, decimal, byte, sbyte, DateTime,
-     * TimeSpan, bool. All other types will be cast into a string using the default ToString() method
+     * (prepared object), String, int, double, float, long, short, BigDecimal, byte, Date, Duration, boolean. All other
+     * types will be cast into a string using the default toString() method
      * </p>
      *
      * @param <T>          Data type of the generic value list
@@ -1805,10 +1805,9 @@ public class Worksheet {
      * Gets the last existing cell in the current worksheet (bottom right)
      *
      * <p>Remarks: GetLastCellAddress() will not return the last cell with data in any case. If there is a formatted
-     * (or
-     * with definitions of hidden states, AutoFilters, heights or widths) but empty cell (or many) after the last cell
-     * with data, getLastCellAddress() will return the address of this empty cell. Use {@link #getLastDataCellAddress()}
-     * in this case.
+     * (or with definitions of hidden states, AutoFilters, heights or widths) but empty cell (or many) after the last
+     * cell with data, getLastCellAddress() will return the address of this empty cell. Use
+     * {@link #getLastDataCellAddress()} in this case.
      * </p>
      *
      * @return Optional Cell Address. If no cell address could be determined, empty will be returned
@@ -2373,8 +2372,7 @@ public class Worksheet {
      * first column number (0)
      *
      * <p>Remarks: The value can also be negative. However, resulting row numbers below 0 or above 1048575 will cause
-     * an
-     * exception</p>
+     * an exception</p>
      *
      * @param numberOfRows Number of rows to move
      */
@@ -2386,8 +2384,7 @@ public class Worksheet {
      * Moves the current position to the next row with the number of cells to move (use for a new line)
      *
      * <p>Remarks: The value can also be negative. However, resulting row numbers below 0 or above 1048575 will cause
-     * an
-     * exception</p>
+     * an exception</p>
      *
      * @param numberOfRows       Number of rows to move
      * @param keepColumnPosition If true, the column position is preserved, otherwise set to 0
@@ -3070,22 +3067,15 @@ public class Worksheet {
         setSplit(numberOfColumnsFromLeft, null, freeze, topLeftCell, activePane);
     }
 
-    /// <summary>
-    /// Sets the horizontal and vertical split of the worksheet into four panes. The measurement in rows and columns can
-    /// be used to split and freeze panes
-    /// </summary>
-    /// <param name="numberOfColumnsFromLeft">Number of columns from left of the worksheet to the split line. The
-    /// particular column widths are considered.<br /> The parameter is optional. If left null, the method acts
-    /// identical to <see cref="SetHorizontalSplit(int, bool, Address, WorksheetPane?)"/></param>
-    /// <param name="numberOfRowsFromTop">Number of rows from top of the worksheet to the split line. The particular
-    /// row
-    /// heights are considered.<br /> The parameter is optional. If left null, the method acts identical to <see
-    /// cref="SetVerticalSplit(int, bool, Address, WorksheetPane?)"/></param>
-    /// <param name="freeze">If true, all panes are frozen, otherwise remains movable</param>
-    /// <param name="topLeftCell">Top Left cell address of the bottom right pane (if applicable)</param>
-    /// <param name="activePane">Active pane in the split window.<br />The parameter is optional</param>
-    /// <exception cref="WorksheetException">WorksheetException Thrown if the address of the top left cell is smaller
-    /// the split panes address, if freeze is applied</exception>
+    /**
+     * Sets the horizontal and vertical split of the worksheet into four panes using rows and columns.
+     *
+     * @param numberOfColumnsFromLeft Number of columns from the left, or {@code null} for no vertical split
+     * @param numberOfRowsFromTop     Number of rows from the top, or {@code null} for no horizontal split
+     * @param freeze                  If true, all panes are frozen; otherwise they remain movable
+     * @param topLeftCell             Top left cell address of the bottom right pane
+     * @throws WorksheetException If the top-left cell precedes the split when freezing is applied
+     */
     public void setSplit(
             Integer numberOfColumnsFromLeft, Integer numberOfRowsFromTop, boolean freeze, Address topLeftCell
     ) {
@@ -3348,7 +3338,7 @@ public class Worksheet {
             if (parsedNumber.isPresent()) {
                 number = parsedNumber.get();
             }
-            // if this failed, the start number is 0 (parsed number was >max. int32)
+            // If parsing fails (for example, above Integer.MAX_VALUE), number stays 1.
         }
         while (true) {
             String numberString = ParserUtils.toString(number);

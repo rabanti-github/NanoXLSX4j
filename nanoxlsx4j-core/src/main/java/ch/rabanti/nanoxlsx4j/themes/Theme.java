@@ -140,15 +140,13 @@ public class Theme {
         this.colors = getDefaultColorScheme();
     }
 
-    // TODO getDefaultTheme() was originally internal in C# -> Check accessibility
-
     /**
      * Gets the default theme if no theme was explicitly defined. This theme will be stored into an XLSX file if not
      * otherwise defined
      *
      * @return Theme with default values according to the default theme of Office 2019 (may be deviating)
      */
-    private static Theme getDefaultTheme() {
+     public static Theme getDefaultTheme() {
         Theme theme = new Theme("default", true);
         ColorScheme colors = getDefaultColorScheme();
         theme.setColors(colors);
