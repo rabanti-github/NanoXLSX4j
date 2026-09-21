@@ -854,7 +854,7 @@ public class Workbook {
     ) {
         // Validation is implemented in DefinedName class
         DefinedName definedName = new DefinedName(
-                this, type, name, value, targetWorksheet, localWorksheet, null, Optional.empty());
+                this, type, name, value, targetWorksheet, localWorksheet, comment, Optional.empty());
         addDefinedName(definedName);
         return definedName;
     }
@@ -878,7 +878,7 @@ public class Workbook {
      * @return True if a matching defined name was removed, false if no match was found.
      */
     public boolean removeDefinedName(String name) {
-        return removeDefinedName(name);
+        return removeDefinedName(name, null);
     }
 
     /**

@@ -9,6 +9,8 @@ package ch.rabanti.nanoxlsx4j;
 
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -55,12 +57,12 @@ public class DefinedName implements Comparable<DefinedName> {
     private static final Pattern EXT_WORKSHEET_REFERENCE_REGEX = Pattern.compile("^\\[[0-9]+\\].+");
     private static final int MAX_NAME_LENGTH = 255;
     /**
-     * Disallowed names for defined names (ignore case)
+     * Disallowed names for defined names (ignore case; checked in validateName())
      */
     private static final Set<String> DISALLOWED_NAMES;
 
     static {
-        DISALLOWED_NAMES = new HashSet<String>();
+        DISALLOWED_NAMES = new HashSet<>();
         DISALLOWED_NAMES.add("C");
         DISALLOWED_NAMES.add("R");
     }
@@ -91,7 +93,7 @@ public class DefinedName implements Comparable<DefinedName> {
     private Worksheet targetWorksheet;
     private String textValue;
     private String comment;
-    private FormulaError error;
+    private FormulaError error = FormulaError.NO_ERROR;
     private FeatureSet features;
 
 //getters&setters
@@ -372,7 +374,7 @@ public class DefinedName implements Comparable<DefinedName> {
                     "The name of a defined name must start with a letter, underscore, or backslash. Provided: '" +
                             name + "'");
         }
-        if (DISALLOWED_NAMES.contains(name)) {
+        if (DISALLOWED_NAMES.contains(name.toUpperCase(Locale.ROOT))) { // Note: disallowed names are case-insensitive
             throw new FormatException("'" + name + "' cannot be used as a defined name.");
         }
         for (int i = 1; i < name.length(); i++) {
@@ -548,11 +550,16 @@ public class DefinedName implements Comparable<DefinedName> {
         if (o == null) {
             return 1;
         }
-        int cmp = Comparator.nullsFirst(String::compareTo).compare(name, o.name);
+        int cmp = Comparator.nullsFirst(String.CASE_INSENSITIVE_ORDER)
+                .compare(name, o.name);
         if (cmp != 0) {
             return cmp;
         }
         cmp = type.compareTo(o.type);
+        if (cmp != 0) {
+            return cmp;
+        }
+        cmp =  error.compareTo(o.error);
         if (cmp != 0) {
             return cmp;
         }
@@ -569,6 +576,51 @@ public class DefinedName implements Comparable<DefinedName> {
             return cmp;
         }
         return Comparator.nullsFirst(String::compareTo).compare(comment, o.comment);
+    }
+
+    /**
+     * Determines whether the specified object is equal to this instance.
+     *
+     * @param o the reference object with which to compare.
+     * @return True if equal, otherwise false.
+     */
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof DefinedName that)) {
+            return false;
+        }
+
+        boolean namesEqual = name == null
+                ? that.name == null
+                : name.equalsIgnoreCase(that.name);
+
+        return namesEqual &&
+                type == that.type &&
+                Objects.equals(localSheet, that.localSheet) &&
+                Objects.equals(targetWorksheet, that.targetWorksheet) &&
+                Objects.equals(textValue, that.textValue) &&
+                Objects.equals(comment, that.comment) &&
+                error == that.error;
+    }
+
+    /**
+     * Returns a hash code consistent with {@link DefinedName#equals(Object)}.
+     *
+     * @return Hash code derived from this instance's properties.
+     */
+    @Override
+    public int hashCode() {
+        int result = name == null
+                ? 0
+                : name.toLowerCase(Locale.ROOT).hashCode();
+
+        result = 31 * result + Objects.hashCode(type);
+        result = 31 * result + Objects.hashCode(localSheet);
+        result = 31 * result + Objects.hashCode(targetWorksheet);
+        result = 31 * result + Objects.hashCode(textValue);
+        result = 31 * result + Objects.hashCode(comment);
+        result = 31 * result + Objects.hashCode(error);
+        return result;
     }
 
     /**
