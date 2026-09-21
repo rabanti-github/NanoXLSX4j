@@ -3328,17 +3328,13 @@ public class Worksheet {
             return name;
         }
         Pattern pattern = Pattern.compile("^(.*?)(\\d{1,31})$");
-        // Regex regex = new Regex(@"^(.*?)(\d{1,31})$");
         Matcher match = pattern.matcher(name);
         String prefix = name;
         int number = 1;
-        if (match.groupCount() > 1) {
+        if (match.matches()) {
             prefix = match.group(1);
-            Optional<Integer> parsedNumber = ParserUtils.tryParseInt(match.group(2));
-            if (parsedNumber.isPresent()) {
-                number = parsedNumber.get();
-            }
-            // If parsing fails (for example, above Integer.MAX_VALUE), number stays 1.
+            number = ParserUtils.tryParseInt(match.group(2)).orElse(0);
+            // Match C# int.TryParse: an unrepresentable suffix starts at zero.
         }
         while (true) {
             String numberString = ParserUtils.toString(number);

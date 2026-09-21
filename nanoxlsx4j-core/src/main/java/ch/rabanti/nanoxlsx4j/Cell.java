@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import ch.rabanti.nanoxlsx4j.annotations.InternalApi;
-import ch.rabanti.nanoxlsx4j.enums.Errors;
+import ch.rabanti.nanoxlsx4j.enums.FormulaError;
 import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
 import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
 import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
@@ -207,7 +207,7 @@ public class Cell implements Comparable<Cell> {
         if (dataType == CellType.FORMULA) {
             this.dataType = dataType;
             if (formula == null) {
-                this.formula = new FormulaData(getValueAsFormulaExpression());
+                this.setFormula(new FormulaData(getValueAsFormulaExpression()));
             } else {
                 attachFormulaFeatures();
                 synchronizeValueFromFormula();
@@ -538,7 +538,7 @@ public class Cell implements Comparable<Cell> {
         } else if (t instanceof Duration) {
             setDataType(CellType.TIME);
             setStyle(BasicStyles.getTimeFormat());
-        } else if (t instanceof Errors) {
+        } else if (t instanceof FormulaError) {
             setDataType(CellType.ERROR);
         } else {
             setDataType(CellType.STRING);
@@ -607,6 +607,7 @@ public class Cell implements Comparable<Cell> {
     Cell copy() {
         Cell copy = new Cell();
         copy.value = this.value;
+        copy.setDataType(this.dataType);
         copy.setCellAddress(this.getCellAddress());
         copy.setCellAddressType(this.cellAddressType);
         if (this.formula != null) {
@@ -1109,7 +1110,7 @@ public class Cell implements Comparable<Cell> {
      * @return Value as string or null, of no value was set
      */
     private String getValueAsFormulaExpression() {
-        if (formula == null) {
+        if (value == null) {
             return null;
         }
         return value.toString();

@@ -189,7 +189,7 @@ public class Column {
      */
     public Column(String columnAddress) {
         this();
-        this.columnAddress = columnAddress;
+        this.setColumnAddress(columnAddress);
     }
 
     /**
