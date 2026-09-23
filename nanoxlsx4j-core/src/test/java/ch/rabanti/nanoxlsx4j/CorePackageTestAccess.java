@@ -18,6 +18,22 @@ public final class CorePackageTestAccess {
         formula.setCachedValueType(type);
     }
 
+    public static void setFormulaExpression(FormulaData formula, String expression) {
+        formula.setExpression(expression);
+    }
+
+    public static void setFormulaType(FormulaData formula, FormulaData.FormulaType type) {
+        formula.setType(type);
+    }
+
+    public static void setFormulaRange(FormulaData formula, String range) {
+        formula.setFormulaRange(range);
+    }
+
+    public static FormulaData copyFormulaData(FormulaData formula) {
+        return formula.copy();
+    }
+
     public static Cell copyCell(Cell cell) {
         return cell.copy();
     }

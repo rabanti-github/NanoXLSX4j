@@ -6,20 +6,7 @@
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 
-package ch.rabanti.nanoxlsx4j;
-
-import ch.rabanti.nanoxlsx4j.enums.FormulaError;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.stream.Stream;
+package ch.rabanti.nanoxlsx4j.cells;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -27,6 +14,24 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import ch.rabanti.nanoxlsx4j.Cell;
+import ch.rabanti.nanoxlsx4j.CorePackageTestAccess;
+import ch.rabanti.nanoxlsx4j.DefinedName;
+import ch.rabanti.nanoxlsx4j.FormulaData;
+import ch.rabanti.nanoxlsx4j.Workbook;
+import ch.rabanti.nanoxlsx4j.enums.FormulaError;
 
 public class FormulaDataTest {
 
@@ -58,8 +63,10 @@ public class FormulaDataTest {
         Date date = new GregorianCalendar(2026, 6, 30).getTime();
         assertEquals(Cell.CellType.DATE, new FormulaData("A1", date).getCachedValueType());
         assertEquals(Cell.CellType.TIME, new FormulaData("A1", Duration.ofHours(2)).getCachedValueType());
-        assertEquals(Cell.CellType.ERROR,
-            new FormulaData("A1", FormulaError.DIVISION_BY_ZERO).getCachedValueType());
+        assertEquals(
+                Cell.CellType.ERROR,
+                new FormulaData("A1", FormulaError.DIVISION_BY_ZERO).getCachedValueType()
+        );
         assertEquals(Cell.CellType.STRING, new FormulaData("A1", new Object()).getCachedValueType());
     }
 
@@ -69,10 +76,10 @@ public class FormulaDataTest {
         FormulaData data = new FormulaData("A1");
         assertFalse(data.hasExternalReferences());
 
-        data.setExpression("[1]Sheet1!A1");
+        CorePackageTestAccess.setFormulaExpression(data, "[1]Sheet1!A1");
         assertTrue(data.hasExternalReferences());
 
-        data.setExpression("Table1[Column]");
+        CorePackageTestAccess.setFormulaExpression(data, "Table1[Column]");
         assertFalse(data.hasExternalReferences());
     }
 
@@ -81,7 +88,7 @@ public class FormulaDataTest {
     public void externalReferenceCopyTest() {
         FormulaData data = new FormulaData("[1]Sheet1!A1");
 
-        FormulaData copy = data.copy();
+        FormulaData copy = CorePackageTestAccess.copyFormulaData(data);
 
         assertTrue(copy.hasExternalReferences());
         assertEquals(data, copy);
@@ -91,12 +98,12 @@ public class FormulaDataTest {
     @DisplayName("Test of the FormulaData Copy function with cached value metadata")
     public void copyTest() {
         FormulaData data = new FormulaData("A1", "0");
-        data.setCachedValueType(Cell.CellType.NUMBER);
-        data.setFormulaRange("A1:A2");
+        CorePackageTestAccess.setCachedValueType(data, Cell.CellType.NUMBER);
+        CorePackageTestAccess.setFormulaRange(data, "A1:A2");
         data.setMasterCellAddress("A1");
-        data.setType(FormulaData.FormulaType.ARRAY);
+        CorePackageTestAccess.setFormulaType(data, FormulaData.FormulaType.ARRAY);
 
-        FormulaData copy = data.copy();
+        FormulaData copy = CorePackageTestAccess.copyFormulaData(data);
 
         assertNotSame(data, copy);
         assertEquals(data, copy);
@@ -107,10 +114,10 @@ public class FormulaDataTest {
     @DisplayName("Test of FormulaData equality, comparison and hashing with cached value metadata")
     public void cachedValueTypeComparisonTest() {
         FormulaData number = new FormulaData("A1", "0");
-        number.setCachedValueType(Cell.CellType.NUMBER);
-        FormulaData numberCopy = number.copy();
+        CorePackageTestAccess.setCachedValueType(number, Cell.CellType.NUMBER);
+        FormulaData numberCopy = CorePackageTestAccess.copyFormulaData(number);
         FormulaData text = new FormulaData("A1", "0");
-        text.setCachedValueType(Cell.CellType.STRING);
+        CorePackageTestAccess.setCachedValueType(text, Cell.CellType.STRING);
 
         assertTrue(number.equals(numberCopy));
         assertEquals(0, number.compareTo(numberCopy));
@@ -126,22 +133,49 @@ public class FormulaDataTest {
         FormulaData data = createFormulaData();
 
         assertEquals(1, data.compareTo(null));
-        assertEquals(0, data.compareTo(data.copy()));
-        assertNotEquals(0, data.compareTo(createFormulaData("B1", FormulaData.FormulaType.ARRAY,
-            "A1:A2", createDefinedNameReference(), null, Cell.CellType.NUMBER, "A1")));
-        assertNotEquals(0, data.compareTo(createFormulaData("A1", FormulaData.FormulaType.SHARED,
-            "A1:A2", createDefinedNameReference(), null, Cell.CellType.NUMBER, "A1")));
-        assertNotEquals(0, data.compareTo(createFormulaData("A1", FormulaData.FormulaType.ARRAY,
-            "A1:A3", createDefinedNameReference(), null, Cell.CellType.NUMBER, "A1")));
-        // DefinedName construction is not ported yet; null versus a reference exercises the same FormulaData branch.
-        assertNotEquals(0, data.compareTo(createFormulaData("A1", FormulaData.FormulaType.ARRAY,
-            "A1:A2", null, null, Cell.CellType.NUMBER, "A1")));
-        assertNotEquals(0, data.compareTo(createFormulaData("A1", FormulaData.FormulaType.ARRAY,
-            "A1:A2", createDefinedNameReference(), null, Cell.CellType.STRING, "A1")));
-        assertNotEquals(0, data.compareTo(createFormulaData("A1", FormulaData.FormulaType.ARRAY,
-            "A1:A2", createDefinedNameReference(), 2, Cell.CellType.NUMBER, "A1")));
-        assertNotEquals(0, data.compareTo(createFormulaData("A1", FormulaData.FormulaType.ARRAY,
-            "A1:A2", createDefinedNameReference(), null, Cell.CellType.NUMBER, "A2")));
+        assertEquals(0, data.compareTo(CorePackageTestAccess.copyFormulaData(data)));
+        assertNotEquals(
+                0, data.compareTo(createFormulaData(
+                        "B1", FormulaData.FormulaType.ARRAY,
+                        "A1:A2", createDefinedNameReference(), null, Cell.CellType.NUMBER, "A1"
+                ))
+        );
+        assertNotEquals(
+                0, data.compareTo(createFormulaData(
+                        "A1", FormulaData.FormulaType.SHARED,
+                        "A1:A2", createDefinedNameReference(), null, Cell.CellType.NUMBER, "A1"
+                ))
+        );
+        assertNotEquals(
+                0, data.compareTo(createFormulaData(
+                        "A1", FormulaData.FormulaType.ARRAY,
+                        "A1:A3", createDefinedNameReference(), null, Cell.CellType.NUMBER, "A1"
+                ))
+        );
+        assertNotEquals(
+                0, data.compareTo(createFormulaData(
+                        "A1", FormulaData.FormulaType.ARRAY,
+                        "A1:A2", createDefinedNameReference("OtherName"), null, Cell.CellType.NUMBER, "A1"
+                ))
+        );
+        assertNotEquals(
+                0, data.compareTo(createFormulaData(
+                        "A1", FormulaData.FormulaType.ARRAY,
+                        "A1:A2", createDefinedNameReference(), null, Cell.CellType.STRING, "A1"
+                ))
+        );
+        assertNotEquals(
+                0, data.compareTo(createFormulaData(
+                        "A1", FormulaData.FormulaType.ARRAY,
+                        "A1:A2", createDefinedNameReference(), 2, Cell.CellType.NUMBER, "A1"
+                ))
+        );
+        assertNotEquals(
+                0, data.compareTo(createFormulaData(
+                        "A1", FormulaData.FormulaType.ARRAY,
+                        "A1:A2", createDefinedNameReference(), null, Cell.CellType.NUMBER, "A2"
+                ))
+        );
     }
 
     @Test
@@ -151,21 +185,35 @@ public class FormulaDataTest {
 
         assertFalse(data.equals((FormulaData) null));
         assertTrue(data.equals(data));
-        assertTrue(data.equals(data.copy()));
-        assertFalse(data.equals(createFormulaData("B1", FormulaData.FormulaType.ARRAY,
-            "A1:A2", data.getDefinedNameReference(), null, Cell.CellType.NUMBER, "A1")));
-        assertFalse(data.equals(createFormulaData("A1", FormulaData.FormulaType.SHARED,
-            "A1:A2", data.getDefinedNameReference(), null, Cell.CellType.NUMBER, "A1")));
-        assertFalse(data.equals(createFormulaData("A1", FormulaData.FormulaType.ARRAY,
-            "A1:A3", data.getDefinedNameReference(), null, Cell.CellType.NUMBER, "A1")));
-        assertFalse(data.equals(createFormulaData("A1", FormulaData.FormulaType.ARRAY,
-            "A1:A2", null, null, Cell.CellType.NUMBER, "A1")));
-        assertFalse(data.equals(createFormulaData("A1", FormulaData.FormulaType.ARRAY,
-            "A1:A2", data.getDefinedNameReference(), 2, Cell.CellType.NUMBER, "A1")));
-        assertFalse(data.equals(createFormulaData("A1", FormulaData.FormulaType.ARRAY,
-            "A1:A2", data.getDefinedNameReference(), null, Cell.CellType.STRING, "A1")));
-        assertFalse(data.equals(createFormulaData("A1", FormulaData.FormulaType.ARRAY,
-            "A1:A2", data.getDefinedNameReference(), null, Cell.CellType.NUMBER, "A2")));
+        assertTrue(data.equals(CorePackageTestAccess.copyFormulaData(data)));
+        assertFalse(data.equals(createFormulaData(
+                "B1", FormulaData.FormulaType.ARRAY,
+                "A1:A2", data.getDefinedNameReference(), null, Cell.CellType.NUMBER, "A1"
+        )));
+        assertFalse(data.equals(createFormulaData(
+                "A1", FormulaData.FormulaType.SHARED,
+                "A1:A2", data.getDefinedNameReference(), null, Cell.CellType.NUMBER, "A1"
+        )));
+        assertFalse(data.equals(createFormulaData(
+                "A1", FormulaData.FormulaType.ARRAY,
+                "A1:A3", data.getDefinedNameReference(), null, Cell.CellType.NUMBER, "A1"
+        )));
+        assertFalse(data.equals(createFormulaData(
+                "A1", FormulaData.FormulaType.ARRAY,
+                "A1:A2", createDefinedNameReference("OtherName"), null, Cell.CellType.NUMBER, "A1"
+        )));
+        assertFalse(data.equals(createFormulaData(
+                "A1", FormulaData.FormulaType.ARRAY,
+                "A1:A2", data.getDefinedNameReference(), 2, Cell.CellType.NUMBER, "A1"
+        )));
+        assertFalse(data.equals(createFormulaData(
+                "A1", FormulaData.FormulaType.ARRAY,
+                "A1:A2", data.getDefinedNameReference(), null, Cell.CellType.STRING, "A1"
+        )));
+        assertFalse(data.equals(createFormulaData(
+                "A1", FormulaData.FormulaType.ARRAY,
+                "A1:A2", data.getDefinedNameReference(), null, Cell.CellType.NUMBER, "A2"
+        )));
     }
 
     @Test
@@ -173,7 +221,7 @@ public class FormulaDataTest {
     public void equalsObjectTest() {
         FormulaData data = createFormulaData();
 
-        assertTrue(data.equals((Object) data.copy()));
+        assertTrue(data.equals((Object) CorePackageTestAccess.copyFormulaData(data)));
         assertFalse(data.equals((Object) null));
         assertFalse(data.equals("Wrong type"));
     }
@@ -182,7 +230,7 @@ public class FormulaDataTest {
     @DisplayName("Test of the FormulaData GetHashCode method")
     public void getHashCodeTest() {
         FormulaData data = createFormulaData();
-        FormulaData copy = data.copy();
+        FormulaData copy = CorePackageTestAccess.copyFormulaData(data);
         FormulaData empty = new FormulaData();
 
         assertEquals(data.hashCode(), copy.hashCode());
@@ -193,23 +241,25 @@ public class FormulaDataTest {
     private static Stream<Arguments> formulaDataConstructorTest2Data() {
         // Java has no ushort, uint, or ulong equivalents. Its signed byte covers the C# byte and sbyte cases.
         return Stream.of(
-            Arguments.of((Object) null, Cell.CellType.DEFAULT),
-            Arguments.of("0", Cell.CellType.STRING),
-            Arguments.of('x', Cell.CellType.STRING),
-            Arguments.of(true, Cell.CellType.BOOL),
-            Arguments.of((byte) 1, Cell.CellType.NUMBER),
-            Arguments.of((byte) -1, Cell.CellType.NUMBER),
-            Arguments.of((short) -2, Cell.CellType.NUMBER),
-            Arguments.of(-3, Cell.CellType.NUMBER),
-            Arguments.of((long) -4, Cell.CellType.NUMBER),
-            Arguments.of(1.25f, Cell.CellType.NUMBER),
-            Arguments.of(2.5d, Cell.CellType.NUMBER)
+                Arguments.of((Object) null, Cell.CellType.DEFAULT),
+                Arguments.of("0", Cell.CellType.STRING),
+                Arguments.of('x', Cell.CellType.STRING),
+                Arguments.of(true, Cell.CellType.BOOL),
+                Arguments.of((byte) 1, Cell.CellType.NUMBER),
+                Arguments.of((byte) -1, Cell.CellType.NUMBER),
+                Arguments.of((short) -2, Cell.CellType.NUMBER),
+                Arguments.of(-3, Cell.CellType.NUMBER),
+                Arguments.of((long) -4, Cell.CellType.NUMBER),
+                Arguments.of(1.25f, Cell.CellType.NUMBER),
+                Arguments.of(2.5d, Cell.CellType.NUMBER)
         );
     }
 
     private static FormulaData createFormulaData() {
-        return createFormulaData("A1", FormulaData.FormulaType.ARRAY, "A1:A2", createDefinedNameReference(), null,
-            Cell.CellType.NUMBER, "A1");
+        return createFormulaData(
+                "A1", FormulaData.FormulaType.ARRAY, "A1:A2", createDefinedNameReference(), null,
+                Cell.CellType.NUMBER, "A1"
+        );
     }
 
     private static FormulaData createFormulaData(
@@ -219,18 +269,23 @@ public class FormulaDataTest {
             DefinedName definedName,
             Object cachedValue,
             Cell.CellType cachedValueType,
-            String masterCellAddress) {
+            String masterCellAddress
+    ) {
         FormulaData data = new FormulaData(expression, cachedValue != null ? cachedValue : 1);
-        data.setType(type);
-        data.setFormulaRange(formulaRange);
+        CorePackageTestAccess.setFormulaType(data, type);
+        CorePackageTestAccess.setFormulaRange(data, formulaRange);
         data.setDefinedNameReference(definedName);
-        data.setCachedValueType(cachedValueType);
+        CorePackageTestAccess.setCachedValueType(data, cachedValueType);
         data.setMasterCellAddress(masterCellAddress);
         return data;
     }
 
     private static DefinedName createDefinedNameReference() {
+        return createDefinedNameReference("definedName1");
+    }
+
+    private static DefinedName createDefinedNameReference(String name) {
         Workbook workbook = new Workbook("Sheet1");
-       return new DefinedName(workbook, DefinedName.NameType.FORMULA, "definedName1", "A1+A2", workbook.getWorksheets().get(0));
+        return workbook.addDefinedNameConstant(name, 1);
     }
 }

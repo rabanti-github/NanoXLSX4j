@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 
 class ModuleDescriptorTest {
 
+    // TODO check on module integration
+
     @Test
     void hasExpectedModuleBoundary() {
         Module module = getClass().getModule();
@@ -27,20 +29,20 @@ class ModuleDescriptorTest {
         assertFalse(requiredModules.contains("ch.rabanti.nanoxlsx4j.reader"));
         assertFalse(requiredModules.contains("ch.rabanti.nanoxlsx4j.writer"));
         assertTrue(module.getDescriptor().exports().stream()
-            .anyMatch(export -> export.source().equals("ch.rabanti.nanoxlsx4j.colors") && !export.isQualified()));
+                .anyMatch(export -> export.source().equals("ch.rabanti.nanoxlsx4j.colors") && !export.isQualified()));
         assertTrue(module.getDescriptor().exports().stream()
-            .anyMatch(export -> export.source().equals("ch.rabanti.nanoxlsx4j.registry") && !export.isQualified()));
+                .anyMatch(export -> export.source().equals("ch.rabanti.nanoxlsx4j.registry") && !export.isQualified()));
         assertTrue(module.getDescriptor().exports().stream()
-            .anyMatch(export -> export.source().equals("ch.rabanti.nanoxlsx4j.internal.registry")
-                && export.isQualified()
-                && export.targets().equals(Set.of(
-                    "ch.rabanti.nanoxlsx4j.reader", "ch.rabanti.nanoxlsx4j.writer"))));
+                .anyMatch(export -> export.source().equals("ch.rabanti.nanoxlsx4j.internal.registry")
+                        && export.isQualified()
+                        && export.targets().equals(Set.of(
+                        "ch.rabanti.nanoxlsx4j.reader", "ch.rabanti.nanoxlsx4j.writer"))));
         assertTrue(module.getDescriptor().uses().contains("ch.rabanti.nanoxlsx4j.registry.Plugin"));
     }
 
     private static Set<String> requiredModules(Module module) {
         return module.getDescriptor().requires().stream()
-            .map(ModuleDescriptor.Requires::name)
-            .collect(Collectors.toUnmodifiableSet());
+                .map(ModuleDescriptor.Requires::name)
+                .collect(Collectors.toUnmodifiableSet());
     }
 }

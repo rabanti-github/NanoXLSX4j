@@ -6,14 +6,8 @@
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 
-package ch.rabanti.nanoxlsx4j.misc;
+package ch.rabanti.nanoxlsx4j.exceptions;
 
-import ch.rabanti.nanoxlsx4j.exceptions.FormatException;
-import ch.rabanti.nanoxlsx4j.exceptions.NotSupportedContentException;
-import ch.rabanti.nanoxlsx4j.exceptions.PluginLoadingException;
-import ch.rabanti.nanoxlsx4j.exceptions.RangeException;
-import ch.rabanti.nanoxlsx4j.exceptions.StyleException;
-import ch.rabanti.nanoxlsx4j.exceptions.WorksheetException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
