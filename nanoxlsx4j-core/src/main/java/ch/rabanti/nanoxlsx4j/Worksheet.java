@@ -1613,7 +1613,7 @@ public class Worksheet {
     public void setStyle(Range cellRange, Style style) {
         List<Address> addresses = cellRange.resolveEnclosedAddresses();
         for (Address address : addresses) {
-            CellKey key = new CellKey(address.row(), address.column());
+            CellKey key = new CellKey(address.column(), address.row());
             if (cells.containsKey(key)) {
                 Cell existing = cells.get(key);
                 if (style == null) {
@@ -2297,7 +2297,7 @@ public class Worksheet {
      * @return List of cell objects. If the column doesn't exist, an empty list is returned
      * @throws RangeException A range exception is thrown if the address is not valid
      */
-    public List<Cell> GetColumn(String columnAddress) {
+    public List<Cell> getColumn(String columnAddress) {
         int column = Cell.resolveColumn(columnAddress);
         return getColumn(column);
     }
@@ -2640,7 +2640,7 @@ public class Worksheet {
      * @param endColumn   Column number with the last appearance of an auto filter drop down
      * @throws RangeException Throws a RangeException if the start or end address out of range
      */
-    public void SetAutoFilter(int startColumn, int endColumn) {
+    public void setAutoFilter(int startColumn, int endColumn) {
         String start = Cell.resolveCellAddress(startColumn, 0);
         String end = Cell.resolveCellAddress(endColumn, 0);
         if (endColumn < startColumn) {

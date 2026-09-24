@@ -1,5 +1,7 @@
 package ch.rabanti.nanoxlsx4j;
 
+import ch.rabanti.nanoxlsx4j.internal.interfaces.Password;
+
 /** Access to package-private Core methods for tests that mirror the C# directory structure. */
 public final class CorePackageTestAccess {
 
@@ -34,6 +36,10 @@ public final class CorePackageTestAccess {
         return formula.copy();
     }
 
+    public static boolean hasSameFeatureSet(FormulaData first, FormulaData second) {
+        return first.getFeatures() == second.getFeatures();
+    }
+
     public static Cell copyCell(Cell cell) {
         return cell.copy();
     }
@@ -44,5 +50,21 @@ public final class CorePackageTestAccess {
 
     public static int worksheetExternalLinkCount(Worksheet worksheet) {
         return worksheet.getFeatures().getExternalLinkCount();
+    }
+
+    public static void recalculateAutoFilter(Worksheet worksheet) {
+        worksheet.recalculateAutoFilter();
+    }
+
+    public static void recalculateColumns(Worksheet worksheet) {
+        worksheet.recalculateColumns();
+    }
+
+    public static void resolveMergedCells(Worksheet worksheet) {
+        worksheet.resolveMergedCells();
+    }
+
+    public static void setSheetProtectionPassword(Worksheet worksheet, Password password) {
+        worksheet.setSheetProtectionPassword(password);
     }
 }
