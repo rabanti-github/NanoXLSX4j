@@ -22,6 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import ch.rabanti.nanoxlsx4j.annotations.InternalApi;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
@@ -29,7 +30,8 @@ import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
 /**
  * Class representing an internally used XML element / node
  */
-final class XmlElement {
+@InternalApi
+public final class XmlElement {
 
     private final boolean hasPrefix;
     private boolean hasNameSpaces;

@@ -6,14 +6,10 @@
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 
-package ch.rabanti.nanoxlsx4j.internal.registry;
+package ch.rabanti.nanoxlsx4j.registry;
 
-import ch.rabanti.nanoxlsx4j.registry.NanoXlsxPlugin;
-import ch.rabanti.nanoxlsx4j.registry.PluginProvider;
-
-@NanoXlsxPlugin(pluginUuid = "SERVICE_PLUGIN")
-public class ServiceDiscoveredPlugin implements PluginProvider {
-
-    public ServiceDiscoveredPlugin() {
-    }
+/**
+ * Marker interface for NanoXLSX4j service providers discovered through {@link java.util.ServiceLoader}.
+ */
+public interface PluginProvider {
 }

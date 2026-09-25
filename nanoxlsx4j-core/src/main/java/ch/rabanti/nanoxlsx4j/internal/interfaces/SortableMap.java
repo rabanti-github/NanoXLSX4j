@@ -7,6 +7,9 @@
  */
 package ch.rabanti.nanoxlsx4j.internal.interfaces;
 
+// Note: The interface was named SortableMap, because the 1:1 port "ISortedMap" -> "SortedMap" is already occupied by
+// a JDK type
+
 /**
  * Interface to represent a sorted map with FormattableText as key and string as value
  */

@@ -6,13 +6,13 @@
  * You find a copy of the license in project folder or on: http://opensource.org/licenses/MIT
  */
 
-package ch.rabanti.nanoxlsx4j.registry;
+package ch.rabanti.nanoxlsx4j.internal.interfaces.reader;
+
+import ch.rabanti.nanoxlsx4j.annotations.InternalApi;
 
 /**
- * Marker interface for NanoXLSX4j service providers.
- * <p>
- * Reader- and writer-specific plug-in interfaces extend this interface when those contracts are available.
- * Implementations are discovered through {@link java.util.ServiceLoader}.
+ * Interface, used by XML queue reader classes
  */
-public interface Plugin {
+@InternalApi
+public interface PluginQueueReader extends PluginBaseReader {
 }

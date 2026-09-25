@@ -26,7 +26,7 @@ import ch.rabanti.nanoxlsx4j.annotations.InternalApi;
 import ch.rabanti.nanoxlsx4j.exceptions.PluginLoadingException;
 import ch.rabanti.nanoxlsx4j.registry.NanoXlsxPlugin;
 import ch.rabanti.nanoxlsx4j.registry.NanoXlsxQueuePlugin;
-import ch.rabanti.nanoxlsx4j.registry.Plugin;
+import ch.rabanti.nanoxlsx4j.registry.PluginProvider;
 
 /**
  * Discovers and resolves NanoXLSX4j plug-ins.
@@ -54,7 +54,7 @@ public final class PluginLoader {
      */
     @InternalApi
     public static boolean initialize() {
-        return initialize(ServiceLoader.load(Plugin.class));
+        return initialize(ServiceLoader.load(PluginProvider.class));
     }
 
     /**
@@ -66,7 +66,7 @@ public final class PluginLoader {
     @InternalApi
     public static boolean initialize(ClassLoader classLoader) {
         Objects.requireNonNull(classLoader, "classLoader");
-        return initialize(ServiceLoader.load(Plugin.class, classLoader));
+        return initialize(ServiceLoader.load(PluginProvider.class, classLoader));
     }
 
     /**
@@ -79,7 +79,7 @@ public final class PluginLoader {
      * @return New replacement instance or fallback
      */
     @InternalApi
-    public static <T extends Plugin> T getPlugin(String pluginUuid, Class<T> requestedType, T fallback) {
+    public static <T extends PluginProvider> T getPlugin(String pluginUuid, Class<T> requestedType, T fallback) {
         requireInitialized();
         Objects.requireNonNull(pluginUuid, "pluginUuid");
         Objects.requireNonNull(requestedType, "requestedType");
@@ -118,7 +118,8 @@ public final class PluginLoader {
      * @return Immutable list of UUID and plug-in instance pairs
      */
     @InternalApi
-    public static <T extends Plugin> List<QueuePlugin<T>> getQueuePlugins(String queueUuid, Class<T> requestedType) {
+    public static <T extends PluginProvider> List<QueuePlugin<T>> getQueuePlugins(
+            String queueUuid, Class<T> requestedType) {
         requireInitialized();
         Objects.requireNonNull(queueUuid, "queueUuid");
         Objects.requireNonNull(requestedType, "requestedType");
@@ -138,7 +139,7 @@ public final class PluginLoader {
         return List.copyOf(instances);
     }
 
-    static boolean initializePluginsForTesting(Collection<Class<? extends Plugin>> pluginTypes) {
+    static boolean initializePluginsForTesting(Collection<Class<? extends PluginProvider>> pluginTypes) {
         Objects.requireNonNull(pluginTypes, "pluginTypes");
         if (registry != null) {
             return false;
@@ -152,12 +153,12 @@ public final class PluginLoader {
         }
     }
 
-    private static boolean initialize(ServiceLoader<Plugin> serviceLoader) {
+    private static boolean initialize(ServiceLoader<PluginProvider> serviceLoader) {
         if (registry != null) {
             return false;
         }
 
-        List<Class<? extends Plugin>> pluginTypes = new ArrayList<>();
+        List<Class<? extends PluginProvider>> pluginTypes = new ArrayList<>();
         try {
             serviceLoader.stream().forEach(provider -> pluginTypes.add(provider.type()));
         } catch (ServiceConfigurationError | RuntimeException error) {
@@ -179,12 +180,12 @@ public final class PluginLoader {
         }
     }
 
-    private static PluginRegistry buildRegistry(Collection<Class<? extends Plugin>> pluginTypes) {
+    private static PluginRegistry buildRegistry(Collection<Class<? extends PluginProvider>> pluginTypes) {
         Map<String, PluginDefinition> replacements = new HashMap<>();
         Map<String, List<PluginDefinition>> queues = new HashMap<>();
         Set<QueueDefinitionKey> queueDefinitions = new HashSet<>();
 
-        for (Class<? extends Plugin> pluginType : pluginTypes) {
+        for (Class<? extends PluginProvider> pluginType : pluginTypes) {
             validateProvider(pluginType);
 
             NanoXlsxPlugin replacement = pluginType.getAnnotation(NanoXlsxPlugin.class);
@@ -232,7 +233,7 @@ public final class PluginLoader {
         return candidate.type().getName().compareTo(current.type().getName()) < 0 ? candidate : current;
     }
 
-    private static void validateProvider(Class<? extends Plugin> pluginType) {
+    private static void validateProvider(Class<? extends PluginProvider> pluginType) {
         if (pluginType == null) {
             throw new PluginLoadingException("Plug-in provider type must not be null");
         }
@@ -242,12 +243,13 @@ public final class PluginLoader {
             throw new PluginLoadingException("Plug-in provider must be a public concrete class: "
                 + pluginType.getName());
         }
-        if (!Plugin.class.isAssignableFrom(pluginType)) {
-            throw new PluginLoadingException("Plug-in provider does not implement Plugin: " + pluginType.getName());
+        if (!PluginProvider.class.isAssignableFrom(pluginType)) {
+            throw new PluginLoadingException(
+                "Plug-in provider does not implement PluginProvider: " + pluginType.getName());
         }
 
         try {
-            Constructor<? extends Plugin> constructor = pluginType.getConstructor();
+            Constructor<? extends PluginProvider> constructor = pluginType.getConstructor();
             if (!Modifier.isPublic(constructor.getModifiers())) {
                 throw new PluginLoadingException("Plug-in provider must have a public no-argument constructor: "
                     + pluginType.getName());
@@ -258,14 +260,15 @@ public final class PluginLoader {
         }
     }
 
-    private static void validateUuid(String uuid, String elementName, Class<? extends Plugin> pluginType) {
+    private static void validateUuid(
+            String uuid, String elementName, Class<? extends PluginProvider> pluginType) {
         if (uuid.isBlank()) {
             throw new PluginLoadingException("Annotation element " + elementName + " must not be blank on "
                 + pluginType.getName());
         }
     }
 
-    private static Plugin createInstance(PluginDefinition definition) {
+    private static PluginProvider createInstance(PluginDefinition definition) {
         try {
             return definition.type().getConstructor().newInstance();
         } catch (ReflectiveOperationException | LinkageError exception) {
@@ -288,13 +291,14 @@ public final class PluginLoader {
      * @param <T> Plug-in type
      */
     @InternalApi
-    public record QueuePlugin<T extends Plugin>(String pluginUuid, T plugin) {
+    public record QueuePlugin<T extends PluginProvider>(String pluginUuid, T plugin) {
     }
 
-    private record PluginDefinition(String pluginUuid, int order, Class<? extends Plugin> type) {
+    private record PluginDefinition(String pluginUuid, int order, Class<? extends PluginProvider> type) {
     }
 
-    private record QueueDefinitionKey(String queueUuid, String pluginUuid, Class<? extends Plugin> type) {
+    private record QueueDefinitionKey(
+            String queueUuid, String pluginUuid, Class<? extends PluginProvider> type) {
     }
 
     private record PluginRegistry(

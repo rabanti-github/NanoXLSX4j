@@ -19,6 +19,12 @@ module ch.rabanti.nanoxlsx4j.core {
     exports ch.rabanti.nanoxlsx4j.internal.registry to
             ch.rabanti.nanoxlsx4j.reader,
             ch.rabanti.nanoxlsx4j.writer;
+    exports ch.rabanti.nanoxlsx4j.internal.interfaces.reader to
+            ch.rabanti.nanoxlsx4j.reader;
+    exports ch.rabanti.nanoxlsx4j.internal.interfaces.writer to
+            ch.rabanti.nanoxlsx4j.writer;
+    exports ch.rabanti.nanoxlsx4j.internal.discovery to
+            ch.rabanti.nanoxlsx4j.reader;
 
-    uses ch.rabanti.nanoxlsx4j.registry.Plugin;
+    uses ch.rabanti.nanoxlsx4j.registry.PluginProvider;
 }

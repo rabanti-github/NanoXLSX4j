@@ -7,10 +7,12 @@
  */
 package ch.rabanti.nanoxlsx4j.internal.interfaces;
 
+import ch.rabanti.nanoxlsx4j.registry.PluginProvider;
+
 /**
  * Interface to define classes that can be handles by extension packages (plug-ins)
  */
-public interface Plugin {
+public interface Plugin extends PluginProvider {
 
     /**
      * General execute method without any parameters

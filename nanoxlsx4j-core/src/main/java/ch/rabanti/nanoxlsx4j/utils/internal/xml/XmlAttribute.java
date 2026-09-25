@@ -11,6 +11,7 @@ package ch.rabanti.nanoxlsx4j.utils.internal.xml;
 import java.util.Optional;
 import java.util.Set;
 
+import ch.rabanti.nanoxlsx4j.annotations.InternalApi;
 import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
 
 /**
@@ -20,7 +21,8 @@ import ch.rabanti.nanoxlsx4j.utils.ParserUtils;
  * @param value  attribute value
  * @param prefix attribute prefix, or an empty string if no prefix is defined
  */
-record XmlAttribute(String name, String value, String prefix) {
+@InternalApi
+public record XmlAttribute(String name, String value, String prefix) {
 
     /**
      * Gets the name of the attribute (without prefix)

@@ -24,7 +24,7 @@ import ch.rabanti.nanoxlsx4j.annotations.InternalApi;
  * internally used to compose the style environment right before saving an XLSX file.
  */
 @InternalApi
-class StyleManager {
+public class StyleManager {
 
     private final List<AbstractStyle> borders;
     private final List<AbstractStyle> cellXfs;

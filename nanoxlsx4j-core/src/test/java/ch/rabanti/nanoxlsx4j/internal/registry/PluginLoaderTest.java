@@ -40,7 +40,7 @@ import ch.rabanti.nanoxlsx4j.exceptions.PluginLoadingException;
 import ch.rabanti.nanoxlsx4j.internal.registry.PluginLoader.QueuePlugin;
 import ch.rabanti.nanoxlsx4j.registry.NanoXlsxPlugin;
 import ch.rabanti.nanoxlsx4j.registry.NanoXlsxQueuePlugin;
-import ch.rabanti.nanoxlsx4j.registry.Plugin;
+import ch.rabanti.nanoxlsx4j.registry.PluginProvider;
 
 class PluginLoaderTest {
 
@@ -98,7 +98,7 @@ class PluginLoaderTest {
                 new URL[] {providerJar.toUri().toURL()}, getClass().getClassLoader())) {
             assertTrue(PluginLoader.initialize(classLoader));
 
-            Plugin plugin = PluginLoader.getPlugin("SERVICE_PLUGIN", Plugin.class, null);
+            PluginProvider plugin = PluginLoader.getPlugin("SERVICE_PLUGIN", PluginProvider.class, null);
 
             assertEquals(ServiceDiscoveredPlugin.class.getName(), plugin.getClass().getName());
             assertSame(classLoader, plugin.getClass().getClassLoader());
@@ -121,9 +121,9 @@ class PluginLoaderTest {
     @DisplayName("A missing replacement returns the supplied fallback instance")
     void returnsFallbackForMissingReplacementTest() {
         PluginLoader.initializePluginsForTesting(List.of());
-        Plugin fallback = new PlainPlugin();
+        PluginProvider fallback = new PlainPlugin();
 
-        assertSame(fallback, PluginLoader.getPlugin("UNKNOWN", Plugin.class, fallback));
+        assertSame(fallback, PluginLoader.getPlugin("UNKNOWN", PluginProvider.class, fallback));
     }
 
     @Test
@@ -131,7 +131,7 @@ class PluginLoaderTest {
     void highestReplacementOrderWinsTest() {
         PluginLoader.initializePluginsForTesting(List.of(ReplacementPlugin.class, HighOrderReplacementPlugin.class));
 
-        Plugin plugin = PluginLoader.getPlugin(REPLACEMENT_UUID, Plugin.class, null);
+        PluginProvider plugin = PluginLoader.getPlugin(REPLACEMENT_UUID, PluginProvider.class, null);
 
         assertInstanceOf(HighOrderReplacementPlugin.class, plugin);
     }
@@ -141,8 +141,8 @@ class PluginLoaderTest {
     void replacementInstancesAreFreshTest() {
         PluginLoader.initializePluginsForTesting(List.of(ReplacementPlugin.class));
 
-        Plugin first = PluginLoader.getPlugin(REPLACEMENT_UUID, Plugin.class, null);
-        Plugin second = PluginLoader.getPlugin(REPLACEMENT_UUID, Plugin.class, null);
+        PluginProvider first = PluginLoader.getPlugin(REPLACEMENT_UUID, PluginProvider.class, null);
+        PluginProvider second = PluginLoader.getPlugin(REPLACEMENT_UUID, PluginProvider.class, null);
 
         assertNotSame(first, second);
     }
@@ -152,7 +152,7 @@ class PluginLoaderTest {
     void replacementTieUsesProviderNameTest() {
         PluginLoader.initializePluginsForTesting(List.of(ZReplacementPlugin.class, AReplacementPlugin.class));
 
-        Plugin plugin = PluginLoader.getPlugin(REPLACEMENT_UUID, Plugin.class, null);
+        PluginProvider plugin = PluginLoader.getPlugin(REPLACEMENT_UUID, PluginProvider.class, null);
 
         assertInstanceOf(AReplacementPlugin.class, plugin);
     }
@@ -175,7 +175,8 @@ class PluginLoaderTest {
             AQueuePlugin.class,
             AQueuePlugin.class));
 
-        List<QueuePlugin<Plugin>> plugins = PluginLoader.getQueuePlugins(QUEUE_UUID, Plugin.class);
+        List<QueuePlugin<PluginProvider>> plugins =
+            PluginLoader.getQueuePlugins(QUEUE_UUID, PluginProvider.class);
 
         assertTrue(PluginLoader.hasQueuePlugins(QUEUE_UUID));
         assertEquals(List.of("A_PLUGIN", "Z_PLUGIN", "LATER_PLUGIN"),
@@ -200,14 +201,16 @@ class PluginLoaderTest {
     void queueResultsAreImmutableAndInstancesAreFreshTest() {
         PluginLoader.initializePluginsForTesting(List.of(AQueuePlugin.class));
 
-        List<QueuePlugin<Plugin>> first = PluginLoader.getQueuePlugins(QUEUE_UUID, Plugin.class);
-        List<QueuePlugin<Plugin>> second = PluginLoader.getQueuePlugins(QUEUE_UUID, Plugin.class);
+        List<QueuePlugin<PluginProvider>> first =
+            PluginLoader.getQueuePlugins(QUEUE_UUID, PluginProvider.class);
+        List<QueuePlugin<PluginProvider>> second =
+            PluginLoader.getQueuePlugins(QUEUE_UUID, PluginProvider.class);
 
         assertNotSame(first.getFirst().plugin(), second.getFirst().plugin());
         assertThrows(UnsupportedOperationException.class,
             () -> first.add(new QueuePlugin<>("OTHER", new PlainPlugin())));
         assertFalse(PluginLoader.hasQueuePlugins("UNKNOWN"));
-        assertTrue(PluginLoader.getQueuePlugins("UNKNOWN", Plugin.class).isEmpty());
+        assertTrue(PluginLoader.getQueuePlugins("UNKNOWN", PluginProvider.class).isEmpty());
     }
 
     @Test
@@ -218,7 +221,7 @@ class PluginLoaderTest {
 
         assertTrue(PluginLoader.initializePluginsForTesting(List.of(ReplacementPlugin.class)));
         assertInstanceOf(ReplacementPlugin.class,
-            PluginLoader.getPlugin(REPLACEMENT_UUID, Plugin.class, null));
+            PluginLoader.getPlugin(REPLACEMENT_UUID, PluginProvider.class, null));
     }
 
     @Test
@@ -262,49 +265,49 @@ class PluginLoaderTest {
         PluginLoader.initializePluginsForTesting(List.of(ThrowingPlugin.class));
 
         assertThrows(PluginLoadingException.class,
-            () -> PluginLoader.getPlugin("THROWING", Plugin.class, null));
+            () -> PluginLoader.getPlugin("THROWING", PluginProvider.class, null));
     }
 
     // Test plugins
 
     @NanoXlsxPlugin(pluginUuid = REPLACEMENT_UUID)
-    public static class ReplacementPlugin implements Plugin {
+    public static class ReplacementPlugin implements PluginProvider {
         public ReplacementPlugin() {
         }
     }
 
     @NanoXlsxPlugin(pluginUuid = REPLACEMENT_UUID, order = 10)
-    public static class HighOrderReplacementPlugin implements Plugin {
+    public static class HighOrderReplacementPlugin implements PluginProvider {
         public HighOrderReplacementPlugin() {
         }
     }
 
     @NanoXlsxPlugin(pluginUuid = REPLACEMENT_UUID, order = 5)
-    public static class AReplacementPlugin implements Plugin {
+    public static class AReplacementPlugin implements PluginProvider {
         public AReplacementPlugin() {
         }
     }
 
     @NanoXlsxPlugin(pluginUuid = REPLACEMENT_UUID, order = 5)
-    public static class ZReplacementPlugin implements Plugin {
+    public static class ZReplacementPlugin implements PluginProvider {
         public ZReplacementPlugin() {
         }
     }
 
     @NanoXlsxQueuePlugin(pluginUuid = "A_PLUGIN", queueUuid = QUEUE_UUID)
-    public static class AQueuePlugin implements Plugin {
+    public static class AQueuePlugin implements PluginProvider {
         public AQueuePlugin() {
         }
     }
 
     @NanoXlsxQueuePlugin(pluginUuid = "Z_PLUGIN", queueUuid = QUEUE_UUID)
-    public static class ZQueuePlugin implements Plugin {
+    public static class ZQueuePlugin implements PluginProvider {
         public ZQueuePlugin() {
         }
     }
 
     @NanoXlsxQueuePlugin(pluginUuid = "LATER_PLUGIN", queueUuid = QUEUE_UUID, order = 1)
-    public static class LaterQueuePlugin implements Plugin {
+    public static class LaterQueuePlugin implements PluginProvider {
         public LaterQueuePlugin() {
         }
     }
@@ -315,51 +318,51 @@ class PluginLoaderTest {
         }
     }
 
-    public interface SpecializedPlugin extends Plugin {
+    public interface SpecializedPlugin extends PluginProvider {
     }
 
-    public static class PlainPlugin implements Plugin {
+    public static class PlainPlugin implements PluginProvider {
         public PlainPlugin() {
         }
     }
 
-    public static class UnannotatedPlugin implements Plugin {
+    public static class UnannotatedPlugin implements PluginProvider {
         public UnannotatedPlugin() {
         }
     }
 
     @NanoXlsxPlugin(pluginUuid = " ")
-    public static class BlankReplacementPlugin implements Plugin {
+    public static class BlankReplacementPlugin implements PluginProvider {
         public BlankReplacementPlugin() {
         }
     }
 
     @NanoXlsxQueuePlugin(pluginUuid = "PLUGIN", queueUuid = "")
-    public static class BlankQueuePlugin implements Plugin {
+    public static class BlankQueuePlugin implements PluginProvider {
         public BlankQueuePlugin() {
         }
     }
 
     @NanoXlsxPlugin(pluginUuid = "NON_PUBLIC")
-    private static class NonPublicPlugin implements Plugin {
+    private static class NonPublicPlugin implements PluginProvider {
         public NonPublicPlugin() {
         }
     }
 
     @NanoXlsxPlugin(pluginUuid = "ABSTRACT")
-    public abstract static class AbstractPlugin implements Plugin {
+    public abstract static class AbstractPlugin implements PluginProvider {
         public AbstractPlugin() {
         }
     }
 
     @NanoXlsxPlugin(pluginUuid = "MISSING_CONSTRUCTOR")
-    public static class MissingConstructorPlugin implements Plugin {
+    public static class MissingConstructorPlugin implements PluginProvider {
         public MissingConstructorPlugin(String value) {
         }
     }
 
     @NanoXlsxPlugin(pluginUuid = "THROWING")
-    public static class ThrowingPlugin implements Plugin {
+    public static class ThrowingPlugin implements PluginProvider {
         public ThrowingPlugin() {
             throw new IllegalStateException("Expected constructor failure");
         }
@@ -388,7 +391,7 @@ class PluginLoaderTest {
             classBytes.transferTo(jar);
             jar.closeEntry();
 
-            jar.putNextEntry(new JarEntry("META-INF/services/" + Plugin.class.getName()));
+            jar.putNextEntry(new JarEntry("META-INF/services/" + PluginProvider.class.getName()));
             jar.write((providerClassName + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
             jar.closeEntry();
         }
@@ -405,7 +408,7 @@ class PluginLoaderTest {
     private static Path createServiceJar(Path tempDirectory, String providerClassName) throws Exception {
         Path jarPath = tempDirectory.resolve("malformed-plugin.jar");
         try (JarOutputStream jar = new JarOutputStream(Files.newOutputStream(jarPath))) {
-            jar.putNextEntry(new JarEntry("META-INF/services/" + Plugin.class.getName()));
+            jar.putNextEntry(new JarEntry("META-INF/services/" + PluginProvider.class.getName()));
             jar.write((providerClassName + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
             jar.closeEntry();
         }
