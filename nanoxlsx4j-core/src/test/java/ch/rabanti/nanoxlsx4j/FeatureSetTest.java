@@ -1,14 +1,18 @@
 package ch.rabanti.nanoxlsx4j;
 
 import ch.rabanti.nanoxlsx4j.internal.FeatureSet;
-import org.junit.jupiter.api.Disabled;
+import ch.rabanti.nanoxlsx4j.enums.FormulaError;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FeatureSetTest {
 
@@ -143,11 +147,26 @@ public class FeatureSetTest {
         assertFeatures(root, formulaCount, 1, formulaCount, externalLinkCount);
     }
 
-    @Disabled("TODO: Requires Workbook and defined-name support")
     @Test
     @DisplayName("A defined-name formula with an external link is not counted as a worksheet formula")
     public void definedNameExternalFormulaUpdatesWorkbookFeatures() {
-        // TODO: C# reference: NanoXlsx.Core.Test/FeatureSetTest.cs; missing Workbook defined-name support.
+        Workbook workbook = new Workbook("Sheet1");
+
+        workbook.addDefinedNameFormula("ExternalFormula", "[1]ExternalSheet!A1");
+
+        assertTrue(workbook.getCurrentWorksheet().getCells().isEmpty());
+        assertEquals(1, workbook.getFeatures().getFormulaCount());
+        assertEquals(1, workbook.getFeatures().getDefinedNameCount());
+        assertEquals(1, workbook.getFeatures().getDefinedNameFormulaCount());
+        assertEquals(0, workbook.getFeatures().getDefinedNameReferenceFormulaCount());
+        assertEquals(0, workbook.getFeatures().getWorksheetFormulaCount());
+        assertEquals(1, workbook.getFeatures().getExternalLinkCount());
+        assertTrue(workbook.getFeatures().containsDefinedNameFormula());
+        assertFalse(workbook.getFeatures().containsDefinedNameReferences());
+        assertFalse(workbook.getFeatures().containsWorksheetFormula());
+
+        assertTrue(workbook.removeDefinedName("ExternalFormula"));
+        assertFeatures(workbook.getFeatures(), 0, 0, 0, 0);
     }
 
     @Test
@@ -170,32 +189,96 @@ public class FeatureSetTest {
         assertFeatures(parent, 1, 0, 0, 1, 1);
     }
 
-    @Disabled("TODO: Requires Workbook and the complete Cell.CellType model")
-    @Test
+    @ParameterizedTest
+    @EnumSource(
+            value = Cell.CellType.class,
+            names = {"STRING", "NUMBER", "BOOL", "DATE", "TIME", "EMPTY", "ERROR"}
+    )
     @DisplayName("Changing a formula cell to a non-formula type removes its feature contribution")
-    public void cellFormulaTypeChangeRemovesFeatures() {
-        // TODO: C# reference: NanoXlsx.Core.Test/FeatureSetTest.cs; missing Workbook and Cell.CellType.
+    public void cellFormulaTypeChangeRemovesFeatures(Cell.CellType targetType) {
+        Workbook workbook = new Workbook("Sheet1");
+        Worksheet worksheet = workbook.getCurrentWorksheet();
+        worksheet.addCellFormula("[1]ExternalSheet!A1", "A1");
+        Cell cell = worksheet.getCells().get("A1");
+
+        assertEquals(1, workbook.getFeatures().getFormulaCount());
+        assertEquals(1, workbook.getFeatures().getExternalLinkCount());
+
+        cell.setDataType(targetType);
+
+        assertEquals(targetType, cell.getDataType());
+        assertNull(cell.getFormula());
+        assertEquals(0, worksheet.getFeatures().getFormulaCount());
+        assertEquals(0, worksheet.getFeatures().getExternalLinkCount());
+        assertEquals(0, workbook.getFeatures().getFormulaCount());
+        assertEquals(0, workbook.getFeatures().getExternalLinkCount());
     }
 
-    @Disabled("TODO: Requires Workbook and formula metadata support")
     @Test
     @DisplayName("A cached formula error preserves formula and external-link features")
     public void cellFormulaCachedErrorPreservesFeatures() {
-        // TODO: C# reference: NanoXlsx.Core.Test/FeatureSetTest.cs; missing Workbook and FormulaData.
+        Workbook workbook = new Workbook("Sheet1");
+        Worksheet worksheet = workbook.getCurrentWorksheet();
+        worksheet.addCellFormula("[1]ExternalSheet!A1", "A1");
+        Cell cell = worksheet.getCells().get("A1");
+
+        cell.getFormula().setCachedValue(FormulaError.REFERENCE);
+        CorePackageTestAccess.setCachedValueType(cell.getFormula(), Cell.CellType.ERROR);
+
+        assertEquals(Cell.CellType.FORMULA, cell.getDataType());
+        assertEquals("[1]ExternalSheet!A1", cell.getFormula().getExpression());
+        assertEquals(1, worksheet.getFeatures().getFormulaCount());
+        assertEquals(1, worksheet.getFeatures().getExternalLinkCount());
+        assertEquals(1, workbook.getFeatures().getFormulaCount());
+        assertEquals(1, workbook.getFeatures().getExternalLinkCount());
     }
 
-    @Disabled("TODO: Requires Workbook and FormulaData")
     @Test
     @DisplayName("Replacing formula metadata keeps feature counters balanced")
     public void cellFormulaReplacementUpdatesFeatures() {
-        // TODO: C# reference: NanoXlsx.Core.Test/FeatureSetTest.cs; missing Workbook and FormulaData.
+        Workbook workbook = new Workbook("Sheet1");
+        Worksheet worksheet = workbook.getCurrentWorksheet();
+        worksheet.addCellFormula("A1", "A1");
+        Cell cell = worksheet.getCells().get("A1");
+
+        CorePackageTestAccess.setFormula(cell, new FormulaData("[1]ExternalSheet!A1"));
+
+        assertEquals(1, worksheet.getFeatures().getFormulaCount());
+        assertEquals(1, workbook.getFeatures().getFormulaCount());
+        assertEquals(1, worksheet.getFeatures().getExternalLinkCount());
+        assertEquals(1, workbook.getFeatures().getExternalLinkCount());
+
+        cell.setValue(null);
+
+        assertEquals(Cell.CellType.EMPTY, cell.getDataType());
+        assertNull(cell.getFormula());
+        assertEquals(0, worksheet.getFeatures().getFormulaCount());
+        assertEquals(0, workbook.getFeatures().getFormulaCount());
+        assertEquals(0, workbook.getFeatures().getExternalLinkCount());
     }
 
-    @Disabled("TODO: Requires Workbook, DefinedName, and formula metadata support")
     @Test
     @DisplayName("Changing a defined-name formula value removes its resolved reference feature")
     public void cellDefinedNameFormulaValueChangeUpdatesFeatures() {
-        // TODO: C# reference: NanoXlsx.Core.Test/FeatureSetTest.cs; missing Workbook, DefinedName, and FormulaData.
+        Workbook workbook = new Workbook("Sheet1");
+        Worksheet worksheet = workbook.getCurrentWorksheet();
+        DefinedName definedName = workbook.addDefinedNameConstant("NamedValue", 1);
+        worksheet.addCellReference(definedName, "A1");
+        Cell cell = worksheet.getCells().get("A1");
+
+        assertEquals(1, worksheet.getFeatures().getDefinedNameReferenceFormulaCount());
+        assertEquals(1, workbook.getFeatures().getDefinedNameReferenceFormulaCount());
+        assertEquals(0, worksheet.getFeatures().getDefinedNameFormulaCount());
+        assertEquals(0, workbook.getFeatures().getDefinedNameFormulaCount());
+
+        cell.setValue("A1");
+
+        assertNull(cell.getFormula().getDefinedNameReference());
+        assertEquals("A1", cell.getFormula().getExpression());
+        assertEquals(0, worksheet.getFeatures().getDefinedNameReferenceFormulaCount());
+        assertEquals(0, workbook.getFeatures().getDefinedNameReferenceFormulaCount());
+        assertEquals(1, workbook.getFeatures().getDefinedNameCount());
+        assertEquals(1, workbook.getFeatures().getFormulaCount());
     }
 
     private static void assertFeatures(
